@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-13)
 
 **Core value:** Every legal citation returned by the system is verified against authoritative sources -- no hallucinated cases pass through.
-**Current focus:** Phase 5 - Quote Verification (IN PROGRESS)
+**Current focus:** Phase 5 - Quote Verification (COMPLETE)
 
 ## Current Position
 
 Phase: 5 of 6 (Quote Verification)
-Plan: 1 of 2 in current phase
-Status: Plan 05-01 Complete
-Last activity: 2026-02-13 -- Completed 05-01-PLAN.md
+Plan: 2 of 2 in current phase
+Status: Phase 05 Complete
+Last activity: 2026-02-13 -- Completed 05-02-PLAN.md
 
-Progress: [███████░░░] 70%
+Progress: [████████░░] 80%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
-- Average duration: 3.6min
-- Total execution time: 0.42 hours
+- Total plans completed: 8
+- Average duration: 3.5min
+- Total execution time: 0.47 hours
 
 **By Phase:**
 
@@ -31,11 +31,15 @@ Progress: [███████░░░] 70%
 | 02-citation-parsing | 1/1 | 4min | 4min |
 | 03-citation-verification-error-handling | 2/2 | 7min | 3.5min |
 | 04-caching | 1/1 | 3min | 3min |
-| 05-quote-verification | 1/2 | 4min | 4min |
+| 05-quote-verification | 2/2 | 7min | 3.5min |
 
 **Recent Trend:**
-- Last 5 plans: 02-01 (4min), 03-01 (4min), 03-02 (3min), 04-01 (3min), 05-01 (4min)
+- Last 5 plans: 03-01 (4min), 03-02 (3min), 04-01 (3min), 05-01 (4min), 05-02 (3min)
 - Trend: stable
+
+| Phase | Plan | Duration | Tasks | Files |
+|-------|------|----------|-------|-------|
+| Phase 05 P02 | 3min | 2 tasks | 3 files |
 
 *Updated after each plan completion*
 
@@ -68,6 +72,7 @@ Recent decisions affecting current work:
 - [05-01]: Named imports for fuzzball (CJS module with no default export in ESM context)
 - [05-01]: Sliding window with refinement pass for excerpt extraction instead of full O(n*m) scan
 - [05-01]: Paragraph chunking for texts >50K chars to keep fuzzy matching performant
+- [05-02]: valid threshold at score >= 70 (raw score always returned for custom thresholds)
 
 ### Pending Todos
 
@@ -81,5 +86,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-13
-Stopped at: Completed 05-01-PLAN.md
+Stopped at: Completed 05-02-PLAN.md
 Resume file: None
