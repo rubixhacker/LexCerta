@@ -31,11 +31,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. A tool call with invalid input returns a Zod validation error before any processing occurs
   4. All tool responses use the same JSON envelope format (valid, metadata, error fields)
   5. Server refuses to start if required environment variables (COURTLISTENER_API_KEY) are missing
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 01-01: Project scaffolding and MCP server with Streamable HTTP transport
-- [ ] 01-02: Input validation, response envelope, SSE fallback, and startup config validation
+- [ ] 01-01-PLAN.md — Project scaffolding and MCP server with Streamable HTTP transport
+- [ ] 01-02-PLAN.md — SSE fallback, input validation tests, and integration test suite
 
 ### Phase 2: Citation Parsing
 **Goal**: Users can submit citation strings and receive parsed, normalized citation objects with clear errors for bad input
