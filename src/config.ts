@@ -12,9 +12,9 @@ export type Config = z.infer<typeof ConfigSchema>;
 export function loadConfig(): Config {
 	const result = ConfigSchema.safeParse(process.env);
 	if (!result.success) {
-		logger.error("Invalid configuration:");
-		logger.error(result.error.format());
-		process.exit(1);
+		const message = `Invalid configuration: ${result.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join(", ")}`;
+		logger.error(message);
+		throw new Error(message);
 	}
 	return result.data;
 }

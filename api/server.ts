@@ -2,10 +2,9 @@ import { createMcpHandler } from "mcp-handler";
 import { loadConfig } from "../src/config.js";
 import { registerTools } from "../src/server.js";
 
-const config = loadConfig();
-
 const handler = createMcpHandler(
 	(server) => {
+		const config = loadConfig();
 		registerTools(server, config);
 	},
 	{

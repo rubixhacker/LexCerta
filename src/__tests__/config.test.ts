@@ -19,13 +19,10 @@ describe("Config validation (Success Criterion 5)", () => {
 		expect(config.COURTLISTENER_API_KEY).toBe("test-key-123");
 	});
 
-	it("loadConfig() calls process.exit(1) when COURTLISTENER_API_KEY is missing", async () => {
+	it("loadConfig() throws when COURTLISTENER_API_KEY is missing", async () => {
 		process.env.COURTLISTENER_API_KEY = undefined;
-		const exitSpy = vi.spyOn(process, "exit").mockImplementation(() => undefined as never);
 		const { loadConfig } = await import("../config.js");
-		loadConfig();
-		expect(exitSpy).toHaveBeenCalledWith(1);
-		exitSpy.mockRestore();
+		expect(() => loadConfig()).toThrow("Invalid configuration");
 	});
 
 	it("PORT defaults to 3000 when not set", async () => {
