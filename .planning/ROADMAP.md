@@ -13,7 +13,7 @@ LexCerta delivers an MCP-native legal citation verification server that eliminat
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: MCP Server Foundation** - Working MCP server with Streamable HTTP transport, input validation, and structured responses ✓ 2026-02-13
-- [ ] **Phase 2: Citation Parsing** - Parse and normalize West Reporter citations into structured objects
+- [x] **Phase 2: Citation Parsing** - Parse and normalize West Reporter citations into structured objects ✓ 2026-02-13
 - [ ] **Phase 3: Citation Verification** - Verify citation existence via CourtListener with resilient error handling
 - [ ] **Phase 4: Caching** - In-memory cache layer for verified citations to stay within API rate limits
 - [ ] **Phase 5: Quote Verification** - Verify quoted passages appear in cited opinions via fuzzy matching
@@ -49,7 +49,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 02-01-PLAN.md — TDD citation parser with reporter normalization and MCP tool registration
+- [x] 02-01-PLAN.md — TDD citation parser with reporter normalization and MCP tool registration
 
 ### Phase 3: Citation Verification & Error Handling
 **Goal**: Users can verify whether a West Reporter citation refers to a real case, with unambiguous responses distinguishing real cases, hallucinated citations, API failures, and rate limits
@@ -115,7 +115,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. MCP Server Foundation | 2/2 | ✓ Complete | 2026-02-13 |
-| 2. Citation Parsing | 0/1 | Not started | - |
+| 2. Citation Parsing | 1/1 | ✓ Complete | 2026-02-13 |
 | 3. Citation Verification & Error Handling | 0/2 | Not started | - |
 | 4. Caching | 0/1 | Not started | - |
 | 5. Quote Verification | 0/2 | Not started | - |
