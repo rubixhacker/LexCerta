@@ -1,3 +1,5 @@
+export type VerificationStatus = "verified" | "not_found" | "rate_limited" | "error";
+
 export interface ToolResponseEnvelope {
 	valid: boolean;
 	metadata: Record<string, unknown> | null;
