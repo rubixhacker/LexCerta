@@ -1,4 +1,5 @@
 {
+	"buildCommand": "",
 	"rewrites": [{ "source": "/(.+)", "destination": "/api/server" }],
 	"functions": {
 		"api/server.ts": {
