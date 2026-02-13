@@ -34,7 +34,7 @@ function makeOpinionResponse(
 		type,
 		plain_text: opts.plain_text ?? "",
 		html: opts.html ?? "",
-		cluster: `https://www.courtlistener.com/api/rest/v4/clusters/100/`,
+		cluster: "https://www.courtlistener.com/api/rest/v4/clusters/100/",
 	};
 }
 
@@ -52,11 +52,7 @@ describe("CourtListenerClient.fetchClusterOpinions", () => {
 
 	it("returns rate_limited without calling fetch when rate limiter denies", async () => {
 		const rateLimiter = createMockRateLimiter(false);
-		const client = new CourtListenerClient(
-			"test-key",
-			createPassthroughPolicy(),
-			rateLimiter,
-		);
+		const client = new CourtListenerClient("test-key", createPassthroughPolicy(), rateLimiter);
 
 		const result = await client.fetchClusterOpinions(100);
 
