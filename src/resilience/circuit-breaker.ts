@@ -1,11 +1,11 @@
 import {
-	circuitBreaker,
 	ConsecutiveBreaker,
+	ExponentialBackoff,
+	TimeoutStrategy,
+	circuitBreaker,
 	handleType,
 	retry,
-	ExponentialBackoff,
 	timeout,
-	TimeoutStrategy,
 	wrap,
 } from "cockatiel";
 import { logger } from "../logger.js";
@@ -50,11 +50,7 @@ const retryPolicy = retry(serverErrorPolicy, {
 });
 
 // Compose: outer retry -> circuit breaker -> inner timeout
-export const courtListenerPolicy = wrap(
-	retryPolicy,
-	courtListenerBreaker,
-	timeoutPolicy,
-);
+export const courtListenerPolicy = wrap(retryPolicy, courtListenerBreaker, timeoutPolicy);
 
 // Observable events for logging
 courtListenerBreaker.onBreak(() => {
