@@ -102,10 +102,10 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. An MCP client can connect to LexCerta at a Vercel URL and successfully verify a citation
   2. The deployed server passes all the same verification and quote integrity checks as the local server
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 06-01: Vercel Edge Function deployment with mcp-handler
+- [ ] 06-01-PLAN.md — Extract registerTools(), create Vercel entry point with mcp-handler, vercel.json routing
 
 ## Progress
 
