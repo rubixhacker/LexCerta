@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-13)
 
 **Core value:** Every legal citation returned by the system is verified against authoritative sources -- no hallucinated cases pass through.
-**Current focus:** Phase 2 - Citation Parsing
+**Current focus:** Phase 3 - Citation Verification & Error Handling
 
 ## Current Position
 
-Phase: 2 of 6 (Citation Parsing) -- COMPLETE
-Plan: 1 of 1 in current phase
-Status: Phase Complete
-Last activity: 2026-02-13 -- Completed 02-01-PLAN.md (Phase 2 done)
+Phase: 3 of 6 (Citation Verification & Error Handling)
+Plan: 1 of 2 in current phase
+Status: In Progress
+Last activity: 2026-02-13 -- Completed 03-01-PLAN.md
 
-Progress: [███░░░░░░░] 33%
+Progress: [████░░░░░░] 40%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
-- Average duration: 3.7min
-- Total execution time: 0.18 hours
+- Total plans completed: 4
+- Average duration: 3.8min
+- Total execution time: 0.25 hours
 
 **By Phase:**
 
@@ -29,9 +29,10 @@ Progress: [███░░░░░░░] 33%
 |-------|-------|-------|----------|
 | 01-mcp-server-foundation | 2/2 | 7min | 3.5min |
 | 02-citation-parsing | 1/1 | 4min | 4min |
+| 03-citation-verification-error-handling | 1/2 | 4min | 4min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (3min), 01-02 (4min), 02-01 (4min)
+- Last 5 plans: 01-01 (3min), 01-02 (4min), 02-01 (4min), 03-01 (4min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -54,6 +55,9 @@ Recent decisions affecting current work:
 - [01-02]: SDK rejects batch requests containing initialize + other messages
 - [02-01]: Iterative page-candidate regex strategy instead of single greedy/lazy regex for correct series suffix and pin cite handling
 - [02-01]: Pure parser module (src/parser/) with zero MCP SDK dependency, bridged by src/tools/parse-citation.ts
+- [03-01]: ExecutionPolicy interface instead of cockatiel IPolicy for simpler test mocking
+- [03-01]: TimeoutStrategy.Aggressive for cockatiel timeout (cancels via AbortSignal)
+- [03-01]: 4500 default tokens (90% of CourtListener 5000/hr limit) as safety margin
 
 ### Pending Todos
 
@@ -67,5 +71,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-13
-Stopped at: Completed 02-01-PLAN.md (Phase 2 complete)
+Stopped at: Completed 03-01-PLAN.md
 Resume file: None
