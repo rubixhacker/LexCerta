@@ -33,6 +33,9 @@
     "typescript": "^5.7",
     "vitest": "^4"
   },
+  "engines": {
+    "node": ">=20"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC"
