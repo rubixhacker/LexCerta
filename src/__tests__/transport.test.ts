@@ -1,7 +1,7 @@
 import type { Server } from "node:http";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { resetClient } from "../server.js";
-import { createApp } from "../transport.js";
+import { resetClient } from "../server";
+import { createApp } from "../transport";
 
 let server: Server;
 let baseUrl: string;

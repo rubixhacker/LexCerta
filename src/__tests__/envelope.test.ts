@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { type ToolResponseEnvelope, createToolResponse } from "../types.js";
+import { type ToolResponseEnvelope, createToolResponse } from "../types";
 
 describe("Response envelope format (Success Criterion 4)", () => {
 	it("createToolResponse returns content array with one text item", () => {

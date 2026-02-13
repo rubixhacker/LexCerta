@@ -1,6 +1,6 @@
-import { createMcpHandler } from "mcp-handler";
 import { loadConfig } from "@/config";
 import { registerTools } from "@/server";
+import { createMcpHandler } from "mcp-handler";
 
 const handler = createMcpHandler(
 	(server) => {

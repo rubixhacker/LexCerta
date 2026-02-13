@@ -8,7 +8,7 @@ import {
 	timeout,
 	wrap,
 } from "cockatiel";
-import { logger } from "../logger.js";
+import { logger } from "../logger";
 
 // Custom error types for response classification
 export class RateLimitError extends Error {

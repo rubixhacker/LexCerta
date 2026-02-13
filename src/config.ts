@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { logger } from "./logger.js";
+import { logger } from "./logger";
 
 export const ConfigSchema = z.object({
 	COURTLISTENER_API_KEY: z.string().min(1, "COURTLISTENER_API_KEY is required"),

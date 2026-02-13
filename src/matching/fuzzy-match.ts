@@ -1,5 +1,5 @@
 import { partial_ratio, ratio } from "fuzzball";
-import type { OpinionText } from "../clients/courtlistener.js";
+import type { OpinionText } from "../clients/courtlistener";
 
 export interface MatchResult {
 	score: number; // 0-100

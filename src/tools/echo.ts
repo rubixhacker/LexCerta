@@ -1,7 +1,7 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { logger } from "../logger.js";
-import { createToolResponse } from "../types.js";
+import { logger } from "../logger";
+import { createToolResponse } from "../types";
 
 export function registerEchoTool(server: McpServer): void {
 	server.registerTool(

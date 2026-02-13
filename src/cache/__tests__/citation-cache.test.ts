@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { CitationMatch } from "../../clients/courtlistener.js";
-import { CitationCache } from "../citation-cache.js";
+import type { CitationMatch } from "../../clients/courtlistener";
+import { CitationCache } from "../citation-cache";
 
 function makeLookup(citation = "347 U.S. 483"): { matches: CitationMatch[] } {
 	return {

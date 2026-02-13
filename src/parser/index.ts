@@ -1,7 +1,7 @@
-import { normalizeReporter } from "./reporters.js";
-import type { ParseResult, ParsedCitation } from "./types.js";
+import { normalizeReporter } from "./reporters";
+import type { ParseResult, ParsedCitation } from "./types";
 
-export type { ParsedCitation, CitationParseError, ParseResult } from "./types.js";
+export type { ParsedCitation, CitationParseError, ParseResult } from "./types";
 
 /**
  * Match a citation string of the form "volume reporter page [trailing]".

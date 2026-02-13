@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { RateLimitError } from "../../resilience/circuit-breaker.js";
-import { CourtListenerClient } from "../courtlistener.js";
-import type { ExecutionPolicy } from "../courtlistener.js";
+import { RateLimitError } from "../../resilience/circuit-breaker";
+import { CourtListenerClient } from "../courtlistener";
+import type { ExecutionPolicy } from "../courtlistener";
 
 function createPassthroughPolicy(): ExecutionPolicy {
 	return {

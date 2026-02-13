@@ -1,7 +1,7 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { parseCitation } from "../parser/index.js";
-import { createToolResponse } from "../types.js";
+import { parseCitation } from "../parser/index";
+import { createToolResponse } from "../types";
 
 export function registerParseCitationTool(server: McpServer): void {
 	server.registerTool(

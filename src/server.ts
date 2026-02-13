@@ -1,15 +1,15 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { CitationCache } from "./cache/citation-cache.js";
-import { OpinionCache } from "./cache/opinion-cache.js";
-import { CourtListenerClient } from "./clients/courtlistener.js";
-import type { Config } from "./config.js";
-import { logger } from "./logger.js";
-import { courtListenerPolicy } from "./resilience/circuit-breaker.js";
-import { TokenBucketRateLimiter } from "./resilience/rate-limiter.js";
-import { registerEchoTool } from "./tools/echo.js";
-import { registerParseCitationTool } from "./tools/parse-citation.js";
-import { registerVerifyCitationTool } from "./tools/verify-citation.js";
-import { registerVerifyQuoteTool } from "./tools/verify-quote.js";
+import { CitationCache } from "./cache/citation-cache";
+import { OpinionCache } from "./cache/opinion-cache";
+import { CourtListenerClient } from "./clients/courtlistener";
+import type { Config } from "./config";
+import { logger } from "./logger";
+import { courtListenerPolicy } from "./resilience/circuit-breaker";
+import { TokenBucketRateLimiter } from "./resilience/rate-limiter";
+import { registerEchoTool } from "./tools/echo";
+import { registerParseCitationTool } from "./tools/parse-citation";
+import { registerVerifyCitationTool } from "./tools/verify-citation";
+import { registerVerifyQuoteTool } from "./tools/verify-quote";
 
 /**
  * Module-level singleton client. Persists across stateless transport requests

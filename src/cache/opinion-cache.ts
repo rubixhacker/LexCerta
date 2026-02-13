@@ -1,5 +1,5 @@
 import { LRUCache } from "lru-cache";
-import type { OpinionText } from "../clients/courtlistener.js";
+import type { OpinionText } from "../clients/courtlistener";
 
 export interface CachedOpinionText {
 	opinions: OpinionText[];

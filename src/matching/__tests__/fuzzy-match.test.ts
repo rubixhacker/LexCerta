@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { OpinionText } from "../../clients/courtlistener.js";
-import { matchQuoteAcrossOpinions, matchQuoteInOpinion, normalizeText } from "../fuzzy-match.js";
+import type { OpinionText } from "../../clients/courtlistener";
+import { matchQuoteAcrossOpinions, matchQuoteInOpinion, normalizeText } from "../fuzzy-match";
 
 describe("normalizeText", () => {
 	it("collapses whitespace", () => {

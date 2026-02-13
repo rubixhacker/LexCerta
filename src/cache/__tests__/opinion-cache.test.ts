@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { OpinionText } from "../../clients/courtlistener.js";
-import { OpinionCache } from "../opinion-cache.js";
+import type { OpinionText } from "../../clients/courtlistener";
+import { OpinionCache } from "../opinion-cache";
 
 function makeOpinion(id: number, text: string): OpinionText {
 	return {

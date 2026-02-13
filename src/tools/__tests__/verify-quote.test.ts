@@ -1,21 +1,21 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { describe, expect, it, vi } from "vitest";
-import { CitationCache } from "../../cache/citation-cache.js";
-import { OpinionCache } from "../../cache/opinion-cache.js";
+import { CitationCache } from "../../cache/citation-cache";
+import { OpinionCache } from "../../cache/opinion-cache";
 import type {
 	CitationMatch,
 	CourtListenerClient,
 	LookupResponse,
 	OpinionTextResponse,
-} from "../../clients/courtlistener.js";
-import type { BestMatchResult } from "../../matching/fuzzy-match.js";
-import { registerVerifyQuoteTool } from "../verify-quote.js";
+} from "../../clients/courtlistener";
+import type { BestMatchResult } from "../../matching/fuzzy-match";
+import { registerVerifyQuoteTool } from "../verify-quote";
 
 vi.mock("../../matching/fuzzy-match.js", () => ({
 	matchQuoteAcrossOpinions: vi.fn(),
 }));
 
-import { matchQuoteAcrossOpinions } from "../../matching/fuzzy-match.js";
+import { matchQuoteAcrossOpinions } from "../../matching/fuzzy-match";
 const mockMatchQuote = vi.mocked(matchQuoteAcrossOpinions);
 
 /** Standard verified cluster for reuse across tests */

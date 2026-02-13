@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseCitation } from "../parser/index.js";
+import { parseCitation } from "../parser/index";
 
 describe("parseCitation", () => {
 	describe("standard parsing", () => {

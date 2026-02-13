@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { TokenBucketRateLimiter } from "../rate-limiter.js";
+import { TokenBucketRateLimiter } from "../rate-limiter";
 
 describe("TokenBucketRateLimiter", () => {
 	beforeEach(() => {

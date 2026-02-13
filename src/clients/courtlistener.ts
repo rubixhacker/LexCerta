@@ -1,5 +1,5 @@
-import { logger } from "../logger.js";
-import { ApiError, RateLimitError } from "../resilience/circuit-breaker.js";
+import { logger } from "../logger";
+import { ApiError, RateLimitError } from "../resilience/circuit-breaker";
 
 /** Minimal policy interface compatible with cockatiel IPolicy and test mocks */
 export interface ExecutionPolicy {

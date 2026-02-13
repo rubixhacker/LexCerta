@@ -1,11 +1,11 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import type { CitationCache } from "../cache/citation-cache.js";
-import type { OpinionCache } from "../cache/opinion-cache.js";
-import type { CourtListenerClient } from "../clients/courtlistener.js";
-import { matchQuoteAcrossOpinions } from "../matching/fuzzy-match.js";
-import { parseCitation } from "../parser/index.js";
-import { createToolResponse } from "../types.js";
+import type { CitationCache } from "../cache/citation-cache";
+import type { OpinionCache } from "../cache/opinion-cache";
+import type { CourtListenerClient } from "../clients/courtlistener";
+import { matchQuoteAcrossOpinions } from "../matching/fuzzy-match";
+import { parseCitation } from "../parser/index";
+import { createToolResponse } from "../types";
 
 export function registerVerifyQuoteTool(
 	server: McpServer,

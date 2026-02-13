@@ -1,8 +1,8 @@
 import { BrokenCircuitError } from "cockatiel";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { ApiError, RateLimitError } from "../../resilience/circuit-breaker.js";
-import { CourtListenerClient } from "../courtlistener.js";
-import type { ExecutionPolicy } from "../courtlistener.js";
+import { ApiError, RateLimitError } from "../../resilience/circuit-breaker";
+import { CourtListenerClient } from "../courtlistener";
+import type { ExecutionPolicy } from "../courtlistener";
 
 // Pass-through policy for isolated client testing
 function createPassthroughPolicy(): ExecutionPolicy {

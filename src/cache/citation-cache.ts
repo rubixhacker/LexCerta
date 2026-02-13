@@ -1,5 +1,5 @@
 import { LRUCache } from "lru-cache";
-import type { CitationMatch } from "../clients/courtlistener.js";
+import type { CitationMatch } from "../clients/courtlistener";
 
 export interface CachedLookup {
 	matches: CitationMatch[];

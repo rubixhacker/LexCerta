@@ -1,10 +1,10 @@
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import express, { type Request, type Response } from "express";
-import type { Config } from "./config.js";
-import { loadConfig } from "./config.js";
-import { logger } from "./logger.js";
-import { createServer } from "./server.js";
+import type { Config } from "./config";
+import { loadConfig } from "./config";
+import { logger } from "./logger";
+import { createServer } from "./server";
 
 const sseTransports = new Map<string, SSEServerTransport>();
 

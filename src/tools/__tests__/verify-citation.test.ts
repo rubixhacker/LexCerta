@@ -1,12 +1,12 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { describe, expect, it, vi } from "vitest";
-import { CitationCache } from "../../cache/citation-cache.js";
+import { CitationCache } from "../../cache/citation-cache";
 import type {
 	CitationMatch,
 	CourtListenerClient,
 	LookupResponse,
-} from "../../clients/courtlistener.js";
-import { registerVerifyCitationTool } from "../verify-citation.js";
+} from "../../clients/courtlistener";
+import { registerVerifyCitationTool } from "../verify-citation";
 
 /**
  * Capture the handler registered by registerVerifyCitationTool by mocking McpServer.

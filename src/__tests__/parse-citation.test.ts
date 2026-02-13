@@ -1,6 +1,6 @@
 import type { Server } from "node:http";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { createApp } from "../transport.js";
+import { createApp } from "../transport";
 
 let server: Server;
 let baseUrl: string;
