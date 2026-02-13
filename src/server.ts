@@ -1,5 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { CitationCache } from "./cache/citation-cache.js";
+import { OpinionCache } from "./cache/opinion-cache.js";
 import { CourtListenerClient } from "./clients/courtlistener.js";
 import type { Config } from "./config.js";
 import { logger } from "./logger.js";
@@ -8,6 +9,7 @@ import { TokenBucketRateLimiter } from "./resilience/rate-limiter.js";
 import { registerEchoTool } from "./tools/echo.js";
 import { registerParseCitationTool } from "./tools/parse-citation.js";
 import { registerVerifyCitationTool } from "./tools/verify-citation.js";
+import { registerVerifyQuoteTool } from "./tools/verify-quote.js";
 
 /**
  * Module-level singleton client. Persists across stateless transport requests
@@ -15,6 +17,7 @@ import { registerVerifyCitationTool } from "./tools/verify-citation.js";
  */
 let sharedClient: CourtListenerClient | null = null;
 let sharedCache: CitationCache | null = null;
+let sharedOpinionCache: OpinionCache | null = null;
 
 function getClient(config: Config): CourtListenerClient {
 	if (!sharedClient) {
@@ -35,10 +38,18 @@ function getCache(): CitationCache {
 	return sharedCache;
 }
 
+function getOpinionCache(): OpinionCache {
+	if (!sharedOpinionCache) {
+		sharedOpinionCache = new OpinionCache();
+	}
+	return sharedOpinionCache;
+}
+
 /** Reset singleton client and cache (for testing). */
 export function resetClient(): void {
 	sharedClient = null;
 	sharedCache = null;
+	sharedOpinionCache = null;
 }
 
 export function createServer(config: Config): McpServer {
@@ -49,11 +60,15 @@ export function createServer(config: Config): McpServer {
 
 	const client = getClient(config);
 	const cache = getCache();
+	const opinionCache = getOpinionCache();
 
 	registerEchoTool(server);
 	registerParseCitationTool(server);
 	registerVerifyCitationTool(server, client, cache);
-	logger.debug("Registered tools: echo, parse_citation, verify_west_citation");
+	registerVerifyQuoteTool(server, client, cache, opinionCache);
+	logger.debug(
+		"Registered tools: echo, parse_citation, verify_west_citation, verify_quote_integrity",
+	);
 
 	return server;
 }

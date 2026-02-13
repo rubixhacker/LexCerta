@@ -1,7 +1,7 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import type { OpinionCache } from "../cache/opinion-cache.js";
 import type { CitationCache } from "../cache/citation-cache.js";
+import type { OpinionCache } from "../cache/opinion-cache.js";
 import type { CourtListenerClient } from "../clients/courtlistener.js";
 import { matchQuoteAcrossOpinions } from "../matching/fuzzy-match.js";
 import { parseCitation } from "../parser/index.js";
@@ -19,14 +19,8 @@ export function registerVerifyQuoteTool(
 			description:
 				"Verify that a quoted passage actually appears in a cited court opinion. Returns a match score (0-100), classification (high/medium/low), and the best-matching excerpt from the opinion for comparison. First confirms the citation exists before fetching opinion text.",
 			inputSchema: {
-				citation: z
-					.string()
-					.min(1)
-					.describe("West Reporter citation, e.g., '347 U.S. 483'"),
-				text: z
-					.string()
-					.min(1)
-					.describe("Quoted passage to verify against the opinion text"),
+				citation: z.string().min(1).describe("West Reporter citation, e.g., '347 U.S. 483'"),
+				text: z.string().min(1).describe("Quoted passage to verify against the opinion text"),
 			},
 		},
 		async ({ citation, text }) => {
@@ -50,9 +44,7 @@ export function registerVerifyQuoteTool(
 			let verifiedCluster = null;
 			const cached = citationCache.get(normalized);
 			if (cached) {
-				const verifiedMatch = cached.matches.find(
-					(m) => m.status === 200 && m.clusters.length > 0,
-				);
+				const verifiedMatch = cached.matches.find((m) => m.status === 200 && m.clusters.length > 0);
 				if (verifiedMatch) {
 					verifiedCluster = verifiedMatch.clusters[0];
 				}
@@ -102,8 +94,7 @@ export function registerVerifyQuoteTool(
 					metadata: { status: "citation_not_found" },
 					error: {
 						code: "CITATION_NOT_FOUND",
-						message:
-							"Cannot verify quote: citation not found in CourtListener database.",
+						message: "Cannot verify quote: citation not found in CourtListener database.",
 					},
 				});
 			}
@@ -198,8 +189,7 @@ export function registerVerifyQuoteTool(
 					court: verifiedCluster.docket.court,
 					...(result.shortQuoteWarning
 						? {
-								warning:
-									"Quote is very short (<20 chars). Match score may be unreliable.",
+								warning: "Quote is very short (<20 chars). Match score may be unreliable.",
 							}
 						: {}),
 				},
