@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-13)
 
 **Core value:** Every legal citation returned by the system is verified against authoritative sources -- no hallucinated cases pass through.
-**Current focus:** v1.0 MVP shipped. Planning next milestone.
+**Current focus:** v1.1 Launch & Monetization
 
 ## Current Position
 
-Milestone: v1.0 MVP -- SHIPPED
-Last activity: 2026-02-13 -- Milestone completed and archived
-
-Progress: [██████████] 100%
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-02-13 — Milestone v1.1 started
 
 ## Performance Metrics
 
@@ -40,5 +40,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-13
-Stopped at: v1.0 milestone archived
+Stopped at: Milestone v1.1 started, defining requirements
 Resume file: None
