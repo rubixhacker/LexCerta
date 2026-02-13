@@ -46,7 +46,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Configuration & Deployment
 
-- [ ] **DEPLOY-01**: Server deploys to Vercel as an Edge Function via `mcp-handler`
+- [ ] **DEPLOY-01**: Server deploys to Vercel as a Serverless Function via `mcp-handler`
 - [ ] **DEPLOY-02**: API keys (COURTLISTENER_API_KEY) are managed via environment variables
 - [ ] **DEPLOY-03**: Server configuration is validated at startup via Zod schema
 
