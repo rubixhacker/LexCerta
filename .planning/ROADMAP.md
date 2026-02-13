@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: MCP Server Foundation** - Working MCP server with Streamable HTTP transport, input validation, and structured responses ✓ 2026-02-13
 - [x] **Phase 2: Citation Parsing** - Parse and normalize West Reporter citations into structured objects ✓ 2026-02-13
 - [x] **Phase 3: Citation Verification** - Verify citation existence via CourtListener with resilient error handling ✓ 2026-02-13
-- [ ] **Phase 4: Caching** - In-memory cache layer for verified citations to stay within API rate limits
+- [x] **Phase 4: Caching** - In-memory cache layer for verified citations to stay within API rate limits ✓ 2026-02-13
 - [ ] **Phase 5: Quote Verification** - Verify quoted passages appear in cited opinions via fuzzy matching
 - [ ] **Phase 6: Production Deployment** - Deploy to Vercel as an Edge Function accessible to remote AI agents
 
@@ -78,7 +78,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 04-01-PLAN.md — In-memory LRU cache with singleton wiring into verification pipeline
+- [x] 04-01-PLAN.md — In-memory LRU cache with singleton wiring into verification pipeline
 
 ### Phase 5: Quote Verification
 **Goal**: Users can verify that a quoted passage actually appears in the cited court opinion, with fuzzy matching to handle minor formatting differences
@@ -117,6 +117,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 1. MCP Server Foundation | 2/2 | ✓ Complete | 2026-02-13 |
 | 2. Citation Parsing | 1/1 | ✓ Complete | 2026-02-13 |
 | 3. Citation Verification & Error Handling | 2/2 | ✓ Complete | 2026-02-13 |
-| 4. Caching | 0/1 | Not started | - |
+| 4. Caching | 1/1 | ✓ Complete | 2026-02-13 |
 | 5. Quote Verification | 0/2 | Not started | - |
 | 6. Production Deployment | 0/1 | Not started | - |
