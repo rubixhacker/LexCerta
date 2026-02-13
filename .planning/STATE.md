@@ -9,29 +9,29 @@ See: .planning/PROJECT.md (updated 2026-02-13)
 
 ## Current Position
 
-Phase: 1 of 6 (MCP Server Foundation)
-Plan: 1 of 2 in current phase
-Status: Executing
-Last activity: 2026-02-13 -- Completed 01-01-PLAN.md
+Phase: 1 of 6 (MCP Server Foundation) -- COMPLETE
+Plan: 2 of 2 in current phase
+Status: Phase Complete
+Last activity: 2026-02-13 -- Completed 01-02-PLAN.md (Phase 1 done)
 
-Progress: [█░░░░░░░░░] 8%
+Progress: [██░░░░░░░░] 17%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: 3min
-- Total execution time: 0.05 hours
+- Total plans completed: 2
+- Average duration: 3.5min
+- Total execution time: 0.12 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-mcp-server-foundation | 1/2 | 3min | 3min |
+| 01-mcp-server-foundation | 2/2 | 7min | 3.5min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (3min)
-- Trend: baseline
+- Last 5 plans: 01-01 (3min), 01-02 (4min)
+- Trend: stable
 
 *Updated after each plan completion*
 
@@ -48,6 +48,9 @@ Recent decisions affecting current work:
 - [01-01]: Stateless transport (sessionIdGenerator: undefined) for serverless-ready design
 - [01-01]: Express bundled from SDK dependency, not installed separately
 - [01-01]: Zod v3.25 (not v4) for simpler imports and SDK compatibility
+- [01-02]: SDK returns SSE format for Streamable HTTP POST responses; Accept header must include both application/json and text/event-stream
+- [01-02]: Stateless mode allows tool calls without prior initialize request
+- [01-02]: SDK rejects batch requests containing initialize + other messages
 
 ### Pending Todos
 
@@ -61,5 +64,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-13
-Stopped at: Completed 01-01-PLAN.md
+Stopped at: Completed 01-02-PLAN.md (Phase 1 complete)
 Resume file: None
