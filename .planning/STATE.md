@@ -10,25 +10,25 @@ See: .planning/PROJECT.md (updated 2026-02-13)
 ## Current Position
 
 Phase: 7 of 12 (Next.js Migration)
-Plan: 0 of ? in current phase
-Status: Ready to plan
-Last activity: 2026-02-13 -- Roadmap created for v1.1 Launch & Monetization
+Plan: 1 of 2 in current phase
+Status: Executing
+Last activity: 2026-02-13 -- Completed 07-01 Next.js migration foundation
 
-Progress: [||||||||||..........] 50% (v1.0 shipped, v1.1 phases 7-12 pending)
+Progress: [||||||||||..........] 50% (v1.0 shipped, v1.1 phase 7 plan 1/2 done)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9 (v1.0)
+- Total plans completed: 10 (9 v1.0 + 1 v1.1)
 - Average duration: 3.3 min
-- Total execution time: 0.50 hours
+- Total execution time: 0.55 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | v1.0 (1-6) | 9 | ~30 min | ~3.3 min |
-| v1.1 (7-12) | - | - | - |
+| v1.1 (7-12) | 1 | 3 min | 3 min |
 
 **Recent Trend:**
 - v1.0 completed in single session
@@ -46,6 +46,9 @@ Recent decisions affecting current work:
 - Stripe for payments (subscriptions + one-time credit packs)
 - Weighted metering (parse=0, verify=1, quote=1)
 - Credit packs supplement subscription (no surprise bills)
+- Removed .js extensions from all src/ imports for bundler compatibility
+- Used @/ path alias for route handler imports to src/
+- Kept "type": "module" in package.json (no build issues)
 
 ### Pending Todos
 
@@ -60,5 +63,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-13
-Stopped at: Roadmap created for v1.1 milestone
+Stopped at: Completed 07-01-PLAN.md (Next.js migration foundation)
 Resume file: None
