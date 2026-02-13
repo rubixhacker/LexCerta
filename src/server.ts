@@ -1,6 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { logger } from "./logger.js";
 import { registerEchoTool } from "./tools/echo.js";
+import { registerParseCitationTool } from "./tools/parse-citation.js";
 
 export function createServer(): McpServer {
 	const server = new McpServer(
@@ -9,7 +10,8 @@ export function createServer(): McpServer {
 	);
 
 	registerEchoTool(server);
-	logger.debug("Registered tools: echo");
+	registerParseCitationTool(server);
+	logger.debug("Registered tools: echo, parse_citation");
 
 	return server;
 }

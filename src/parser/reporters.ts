@@ -98,10 +98,6 @@ const REPORTER_MAP: Record<string, string> = {
  * Returns the canonical form or null if not recognized.
  */
 export function normalizeReporter(raw: string): string | null {
-	const key = raw
-		.toLowerCase()
-		.replace(/\./g, "")
-		.replace(/\s+/g, " ")
-		.trim();
+	const key = raw.toLowerCase().replace(/\./g, "").replace(/\s+/g, " ").trim();
 	return REPORTER_MAP[key] ?? null;
 }

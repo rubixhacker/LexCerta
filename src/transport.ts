@@ -68,10 +68,7 @@ export function createApp() {
 			res.on("close", () => {
 				sseTransports.delete(transport.sessionId);
 				server.close();
-				logger.info(
-					"SSE client disconnected, sessionId:",
-					transport.sessionId,
-				);
+				logger.info("SSE client disconnected, sessionId:", transport.sessionId);
 			});
 
 			await server.connect(transport);

@@ -1,4 +1,4 @@
-import { type Server } from "node:http";
+import type { Server } from "node:http";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { createApp } from "../transport.js";
 
@@ -86,11 +86,7 @@ describe("Streamable HTTP (Success Criterion 1)", () => {
 	});
 
 	it("POST /mcp with echo tool returns envelope response", async () => {
-		const toolCall = jsonRpc(
-			"tools/call",
-			{ name: "echo", arguments: { message: "hello" } },
-			2,
-		);
+		const toolCall = jsonRpc("tools/call", { name: "echo", arguments: { message: "hello" } }, 2);
 		const { status, messages } = await mcpPost(toolCall);
 		expect(status).toBe(200);
 		expect(messages.length).toBeGreaterThanOrEqual(1);
@@ -119,35 +115,25 @@ describe("Streamable HTTP (Success Criterion 1)", () => {
 
 describe("Input validation (Success Criterion 3)", () => {
 	it("echo tool with empty message returns validation error", async () => {
-		const toolCall = jsonRpc(
-			"tools/call",
-			{ name: "echo", arguments: { message: "" } },
-			3,
-		);
+		const toolCall = jsonRpc("tools/call", { name: "echo", arguments: { message: "" } }, 3);
 		const { status, messages } = await mcpPost(toolCall);
 		expect(status).toBe(200);
 
 		const body = messages[0] as Record<string, unknown>;
 		// Zod validation error surfaces as JSON-RPC error or isError flag
 		const hasError =
-			body.error !== undefined ||
-			(body.result as Record<string, unknown>)?.isError === true;
+			body.error !== undefined || (body.result as Record<string, unknown>)?.isError === true;
 		expect(hasError).toBe(true);
 	});
 
 	it("echo tool with missing message field returns error", async () => {
-		const toolCall = jsonRpc(
-			"tools/call",
-			{ name: "echo", arguments: {} },
-			4,
-		);
+		const toolCall = jsonRpc("tools/call", { name: "echo", arguments: {} }, 4);
 		const { status, messages } = await mcpPost(toolCall);
 		expect(status).toBe(200);
 
 		const body = messages[0] as Record<string, unknown>;
 		const hasError =
-			body.error !== undefined ||
-			(body.result as Record<string, unknown>)?.isError === true;
+			body.error !== undefined || (body.result as Record<string, unknown>)?.isError === true;
 		expect(hasError).toBe(true);
 	});
 
@@ -180,7 +166,7 @@ describe("SSE fallback (Success Criterion 2)", () => {
 		expect(res.headers.get("content-type")).toContain("text/event-stream");
 
 		// Read the first chunk to verify endpoint event
-		const reader = res.body!.getReader();
+		const reader = res.body?.getReader();
 		const { value } = await reader.read();
 		const text = new TextDecoder().decode(value);
 		expect(text).toContain("event: endpoint");

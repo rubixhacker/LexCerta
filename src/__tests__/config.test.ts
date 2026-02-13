@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Config validation (Success Criterion 5)", () => {
 	const originalEnv = process.env;
@@ -20,10 +20,8 @@ describe("Config validation (Success Criterion 5)", () => {
 	});
 
 	it("loadConfig() calls process.exit(1) when COURTLISTENER_API_KEY is missing", async () => {
-		delete process.env.COURTLISTENER_API_KEY;
-		const exitSpy = vi
-			.spyOn(process, "exit")
-			.mockImplementation(() => undefined as never);
+		process.env.COURTLISTENER_API_KEY = undefined;
+		const exitSpy = vi.spyOn(process, "exit").mockImplementation(() => undefined as never);
 		const { loadConfig } = await import("../config.js");
 		loadConfig();
 		expect(exitSpy).toHaveBeenCalledWith(1);
@@ -32,7 +30,7 @@ describe("Config validation (Success Criterion 5)", () => {
 
 	it("PORT defaults to 3000 when not set", async () => {
 		process.env.COURTLISTENER_API_KEY = "test-key";
-		delete process.env.PORT;
+		process.env.PORT = undefined;
 		const { loadConfig } = await import("../config.js");
 		const config = loadConfig();
 		expect(config.PORT).toBe(3000);

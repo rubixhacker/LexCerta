@@ -25,16 +25,10 @@ describe("parseCitation", () => {
 			expect(withPeriods.ok).toBe(true);
 			expect(withoutPeriods.ok).toBe(true);
 			if (withPeriods.ok && withoutPeriods.ok) {
-				expect(withoutPeriods.citation.volume).toBe(
-					withPeriods.citation.volume,
-				);
-				expect(withoutPeriods.citation.reporter).toBe(
-					withPeriods.citation.reporter,
-				);
+				expect(withoutPeriods.citation.volume).toBe(withPeriods.citation.volume);
+				expect(withoutPeriods.citation.reporter).toBe(withPeriods.citation.reporter);
 				expect(withoutPeriods.citation.page).toBe(withPeriods.citation.page);
-				expect(withoutPeriods.citation.normalized).toBe(
-					withPeriods.citation.normalized,
-				);
+				expect(withoutPeriods.citation.normalized).toBe(withPeriods.citation.normalized);
 			}
 		});
 	});
@@ -102,16 +96,13 @@ describe("parseCitation", () => {
 			["100 So. 3d 200", "So. 3d"],
 		];
 
-		it.each(standardReporters)(
-			"recognizes '%s' as reporter '%s'",
-			(input, expectedReporter) => {
-				const result = parseCitation(input);
-				expect(result.ok).toBe(true);
-				if (result.ok) {
-					expect(result.citation.reporter).toBe(expectedReporter);
-				}
-			},
-		);
+		it.each(standardReporters)("recognizes '%s' as reporter '%s'", (input, expectedReporter) => {
+			const result = parseCitation(input);
+			expect(result.ok).toBe(true);
+			if (result.ok) {
+				expect(result.citation.reporter).toBe(expectedReporter);
+			}
+		});
 	});
 
 	describe("variant normalization", () => {
