@@ -46,10 +46,10 @@ Plans:
   2. Calling `parse_citation` with "123 S Ct 456" (missing periods) returns the same normalized result as "123 S. Ct. 456"
   3. Calling `parse_citation` with gibberish like "not a citation" returns a clear error message explaining why parsing failed
   4. All standard West Reporter abbreviations (U.S., S. Ct., F.2d, F.3d, etc.) are recognized and normalized
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 02-01: Citation parser with normalization and West Reporter format handling
+- [ ] 02-01-PLAN.md — TDD citation parser with reporter normalization and MCP tool registration
 
 ### Phase 3: Citation Verification & Error Handling
 **Goal**: Users can verify whether a West Reporter citation refers to a real case, with unambiguous responses distinguishing real cases, hallucinated citations, API failures, and rate limits
