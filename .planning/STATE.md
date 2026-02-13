@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-13)
 
 **Core value:** Every legal citation returned by the system is verified against authoritative sources -- no hallucinated cases pass through.
-**Current focus:** Phase 3 - Citation Verification & Error Handling (COMPLETE)
+**Current focus:** Phase 4 - Caching (COMPLETE)
 
 ## Current Position
 
-Phase: 3 of 6 (Citation Verification & Error Handling)
-Plan: 2 of 2 in current phase
+Phase: 4 of 6 (Caching)
+Plan: 1 of 1 in current phase
 Status: Phase Complete
-Last activity: 2026-02-13 -- Completed 03-02-PLAN.md
+Last activity: 2026-02-13 -- Completed 04-01-PLAN.md
 
-Progress: [█████░░░░░] 50%
+Progress: [██████░░░░] 60%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
-- Average duration: 3.6min
-- Total execution time: 0.30 hours
+- Total plans completed: 6
+- Average duration: 3.5min
+- Total execution time: 0.35 hours
 
 **By Phase:**
 
@@ -30,9 +30,10 @@ Progress: [█████░░░░░] 50%
 | 01-mcp-server-foundation | 2/2 | 7min | 3.5min |
 | 02-citation-parsing | 1/1 | 4min | 4min |
 | 03-citation-verification-error-handling | 2/2 | 7min | 3.5min |
+| 04-caching | 1/1 | 3min | 3min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (3min), 01-02 (4min), 02-01 (4min), 03-01 (4min), 03-02 (3min)
+- Last 5 plans: 01-02 (4min), 02-01 (4min), 03-01 (4min), 03-02 (3min), 04-01 (3min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -60,6 +61,9 @@ Recent decisions affecting current work:
 - [03-01]: 4500 default tokens (90% of CourtListener 5000/hr limit) as safety margin
 - [03-02]: Module-level singleton client in server.ts (not per-McpServer) to preserve rate limiter and circuit breaker state across stateless requests
 - [03-02]: createServer() now requires Config parameter -- transport.ts accepts optional Config and falls back to loadConfig()
+- [04-01]: No TTL on cache entries -- citations are immutable legal records that never change
+- [04-01]: Only cache ok responses -- rate_limited and error are transient and must be retried
+- [04-01]: classifyMatches helper extracted to share match classification between fresh and cached paths
 
 ### Pending Todos
 
@@ -73,5 +77,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-13
-Stopped at: Completed 03-02-PLAN.md (Phase 3 complete)
+Stopped at: Completed 04-01-PLAN.md (Phase 4 complete)
 Resume file: None
