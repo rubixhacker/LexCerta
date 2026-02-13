@@ -1,0 +1,29 @@
+{
+  "name": "lexcerta",
+  "version": "0.1.0",
+  "description": "MCP server for legal citation verification via CourtListener",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "build": "tsc",
+    "start": "node build/index.js",
+    "test": "vitest",
+    "lint": "biome check src/",
+    "format": "biome format --write src/"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.26",
+    "zod": "^3.25"
+  },
+  "devDependencies": {
+    "typescript": "^5.7",
+    "@types/node": "^22",
+    "@types/express": "^5",
+    "tsx": "^4",
+    "vitest": "^4",
+    "@biomejs/biome": "^1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
