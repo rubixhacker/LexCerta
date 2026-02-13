@@ -41,10 +41,11 @@
   2. MCP clients can call parse_citation, verify_west_citation, and verify_quote_integrity at the new /api/mcp endpoint and get identical results to v1.0
   3. Streamable HTTP transport works for MCP requests (SSE backward compat via mcp-handler)
   4. Top-level /api directory is removed; all routes live under app/api/
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 07-01: TBD
+- [ ] 07-01-PLAN.md — Install Next.js, update configs, create App Router + MCP route handler, remove old api/
+- [ ] 07-02-PLAN.md — Deploy to Vercel, verify MCP tools work at new endpoint (checkpoint)
 
 ### Phase 8: Supabase Backend & Auth
 **Goal**: Users can create accounts and log into a protected dashboard on lexcerta.ai
