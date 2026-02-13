@@ -1,9 +1,7 @@
 {
-	"buildCommand": "",
-	"rewrites": [{ "source": "/(.+)", "destination": "/api/server" }],
-	"functions": {
-		"api/server.ts": {
-			"maxDuration": 60
-		}
-	}
+  "functions": {
+    "app/api/mcp/[transport]/route.ts": {
+      "maxDuration": 60
+    }
+  }
 }
