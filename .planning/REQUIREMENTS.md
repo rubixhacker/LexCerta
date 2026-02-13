@@ -97,40 +97,40 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| MCP-01 | — | Pending |
-| MCP-02 | — | Pending |
-| MCP-03 | — | Pending |
-| MCP-04 | — | Pending |
-| MCP-05 | — | Pending |
-| PARSE-01 | — | Pending |
-| PARSE-02 | — | Pending |
-| PARSE-03 | — | Pending |
-| PARSE-04 | — | Pending |
-| VERIFY-01 | — | Pending |
-| VERIFY-02 | — | Pending |
-| VERIFY-03 | — | Pending |
-| VERIFY-04 | — | Pending |
-| VERIFY-05 | — | Pending |
-| QUOTE-01 | — | Pending |
-| QUOTE-02 | — | Pending |
-| QUOTE-03 | — | Pending |
-| QUOTE-04 | — | Pending |
-| QUOTE-05 | — | Pending |
-| CACHE-01 | — | Pending |
-| CACHE-02 | — | Pending |
-| CACHE-03 | — | Pending |
-| DEPLOY-01 | — | Pending |
-| DEPLOY-02 | — | Pending |
-| DEPLOY-03 | — | Pending |
-| ERR-01 | — | Pending |
-| ERR-02 | — | Pending |
-| ERR-03 | — | Pending |
+| MCP-01 | Phase 1 | Pending |
+| MCP-02 | Phase 1 | Pending |
+| MCP-03 | Phase 1 | Pending |
+| MCP-04 | Phase 1 | Pending |
+| MCP-05 | Phase 1 | Pending |
+| PARSE-01 | Phase 2 | Pending |
+| PARSE-02 | Phase 2 | Pending |
+| PARSE-03 | Phase 2 | Pending |
+| PARSE-04 | Phase 2 | Pending |
+| VERIFY-01 | Phase 3 | Pending |
+| VERIFY-02 | Phase 3 | Pending |
+| VERIFY-03 | Phase 3 | Pending |
+| VERIFY-04 | Phase 3 | Pending |
+| VERIFY-05 | Phase 3 | Pending |
+| QUOTE-01 | Phase 5 | Pending |
+| QUOTE-02 | Phase 5 | Pending |
+| QUOTE-03 | Phase 5 | Pending |
+| QUOTE-04 | Phase 5 | Pending |
+| QUOTE-05 | Phase 5 | Pending |
+| CACHE-01 | Phase 4 | Pending |
+| CACHE-02 | Phase 4 | Pending |
+| CACHE-03 | Phase 4 | Pending |
+| DEPLOY-01 | Phase 6 | Pending |
+| DEPLOY-02 | Phase 1 | Pending |
+| DEPLOY-03 | Phase 1 | Pending |
+| ERR-01 | Phase 3 | Pending |
+| ERR-02 | Phase 3 | Pending |
+| ERR-03 | Phase 3 | Pending |
 
 **Coverage:**
 - v1 requirements: 28 total
-- Mapped to phases: 0
-- Unmapped: 28 ⚠️
+- Mapped to phases: 28
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-13*
-*Last updated: 2026-02-13 after initial definition*
+*Last updated: 2026-02-13 after roadmap creation*
