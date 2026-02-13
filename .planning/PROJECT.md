@@ -34,7 +34,8 @@ Every legal citation returned by the system is verified against authoritative so
 - Uses tiered verification: Eyecite (parsing) → CourtListener (existence) → CAP (full-text)
 - CourtListener API: `https://www.courtlistener.com/api/v3/citations/`
 - CAP API: `https://api.case.law/v1/cases/`
-- Target deployment: Vercel or Supabase Edge Functions
+- Domain: lexcerta.ai (Cloudflare)
+- Target deployment: Cloudflare Workers, Vercel, or Supabase Edge Functions
 - Performance targets: <1.5s existence checks, <3.0s quote verification
 - Accuracy target: 100% detection of fake West citations
 
@@ -44,7 +45,8 @@ Every legal citation returned by the system is verified against authoritative so
 - **Runtime**: Node.js 20+
 - **Transport**: SSE (Server-Sent Events) prioritized over stdio
 - **Secrets**: Requires `COURTLISTENER_API_KEY` and `CAP_API_KEY`
-- **Deployment**: Vercel Edge Functions or Supabase Edge Functions
+- **Domain**: lexcerta.ai on Cloudflare
+- **Deployment**: Cloudflare Workers, Vercel Edge Functions, or Supabase Edge Functions
 
 ## Key Decisions
 
