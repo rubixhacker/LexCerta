@@ -52,12 +52,12 @@ export function resetClient(): void {
 	sharedOpinionCache = null;
 }
 
-export function createServer(config: Config): McpServer {
-	const server = new McpServer(
-		{ name: "lexcerta", version: "0.1.0" },
-		{ capabilities: { logging: {} } },
-	);
-
+/**
+ * Register all LexCerta tools on the given MCP server.
+ * Used by both the local dev entry point (createServer) and the Vercel
+ * entry point (api/server.ts via mcp-handler).
+ */
+export function registerTools(server: McpServer, config: Config): void {
 	const client = getClient(config);
 	const cache = getCache();
 	const opinionCache = getOpinionCache();
@@ -69,6 +69,15 @@ export function createServer(config: Config): McpServer {
 	logger.debug(
 		"Registered tools: echo, parse_citation, verify_west_citation, verify_quote_integrity",
 	);
+}
+
+export function createServer(config: Config): McpServer {
+	const server = new McpServer(
+		{ name: "lexcerta", version: "0.1.0" },
+		{ capabilities: { logging: {} } },
+	);
+
+	registerTools(server, config);
 
 	return server;
 }

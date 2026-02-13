@@ -5,7 +5,11 @@ import type { CitationMatch, CourtListenerClient } from "../clients/courtlistene
 import { parseCitation } from "../parser/index.js";
 import { createToolResponse } from "../types.js";
 
-export function registerVerifyCitationTool(server: McpServer, client: CourtListenerClient, cache: CitationCache): void {
+export function registerVerifyCitationTool(
+	server: McpServer,
+	client: CourtListenerClient,
+	cache: CitationCache,
+): void {
 	server.registerTool(
 		"verify_west_citation",
 		{
@@ -78,9 +82,7 @@ export function registerVerifyCitationTool(server: McpServer, client: CourtListe
 
 /** Classify citation matches into verified/not_found response (shared by fresh and cached paths). */
 function classifyMatches(matches: CitationMatch[], citation: string, normalized: string) {
-	const verifiedMatch = matches.find(
-		(match) => match.status === 200 && match.clusters.length > 0,
-	);
+	const verifiedMatch = matches.find((match) => match.status === 200 && match.clusters.length > 0);
 
 	if (verifiedMatch) {
 		const clusters = verifiedMatch.clusters.map((cluster) => ({
