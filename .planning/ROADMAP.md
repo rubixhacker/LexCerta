@@ -89,11 +89,11 @@ Plans:
   2. Calling `verify_quote_integrity` with a real citation and a fabricated quote returns a low match score with the actual text from the opinion for comparison
   3. Calling `verify_quote_integrity` with a nonexistent citation returns a citation-not-found error before attempting quote matching
   4. Minor formatting differences (extra spaces, punctuation variants) between the submitted quote and opinion text do not cause false negatives
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 05-01: CourtListener Opinions API client for full-text retrieval
-- [ ] 05-02: verify_quote_integrity tool with fuzzy matching pipeline
+- [ ] 05-01-PLAN.md — CourtListener opinion text fetching, opinion cache, and fuzzy matching module (TDD)
+- [ ] 05-02-PLAN.md — verify_quote_integrity MCP tool with server wiring
 
 ### Phase 6: Production Deployment
 **Goal**: LexCerta is deployed to Vercel and accessible to remote MCP clients over the internet
