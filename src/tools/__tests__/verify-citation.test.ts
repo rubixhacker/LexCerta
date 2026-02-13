@@ -1,5 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { describe, expect, it, vi } from "vitest";
+import { CitationCache } from "../../cache/citation-cache.js";
 import type {
 	CitationMatch,
 	CourtListenerClient,
@@ -28,12 +29,15 @@ function captureHandler() {
 		lookupCitation: vi.fn<(citation: string) => Promise<LookupResponse>>(),
 	} as unknown as CourtListenerClient;
 
-	registerVerifyCitationTool(mockServer, mockClient);
+	const cache = new CitationCache();
+
+	registerVerifyCitationTool(mockServer, mockClient, cache);
 
 	return {
 		// biome-ignore lint/style/noNonNullAssertion: handler is set synchronously in registerTool
 		handler: capturedHandler!,
 		mockClient,
+		cache,
 		lookupCitation: (mockClient as unknown as { lookupCitation: ReturnType<typeof vi.fn> })
 			.lookupCitation,
 	};
@@ -168,5 +172,109 @@ describe("verify_west_citation tool", () => {
 		expect(envelope.valid).toBe(false);
 		expect(envelope.error.code).toBe("HALLUCINATION_DETECTED");
 		expect(envelope.metadata.status).toBe("not_found");
+	});
+
+	it("serves second lookup from cache without API call", async () => {
+		const { handler, lookupCitation } = captureHandler();
+		lookupCitation.mockResolvedValue({
+			status: "ok",
+			matches: [
+				{
+					citation: "347 U.S. 483",
+					normalized_citations: ["347 U.S. 483"],
+					start_index: 0,
+					end_index: 12,
+					status: 200,
+					error_message: "",
+					clusters: [
+						{
+							absolute_url: "/opinion/12345/brown-v-board/",
+							case_name: "Brown v. Board of Education",
+							case_name_short: "Brown",
+							date_filed: "1954-05-17",
+							docket: { court: "Supreme Court of the United States", court_id: "scotus" },
+							citations: [{ volume: 347, reporter: "U.S.", page: "483" }],
+						},
+					],
+				} satisfies CitationMatch,
+			],
+		});
+
+		// First call -- hits API
+		const result1 = await handler({ citation: "347 U.S. 483" });
+		const envelope1 = parseEnvelope(result1);
+		expect(envelope1.valid).toBe(true);
+		expect(lookupCitation).toHaveBeenCalledTimes(1);
+
+		// Second call -- served from cache
+		const result2 = await handler({ citation: "347 U.S. 483" });
+		const envelope2 = parseEnvelope(result2);
+		expect(envelope2.valid).toBe(true);
+		expect(envelope2.metadata.caseName).toBe("Brown v. Board of Education");
+		expect(lookupCitation).toHaveBeenCalledTimes(1); // still only 1 API call
+	});
+
+	it("does not cache rate_limited responses", async () => {
+		const { handler, lookupCitation } = captureHandler();
+		lookupCitation.mockResolvedValue({
+			status: "rate_limited",
+			retryAfterMs: 720,
+		});
+
+		await handler({ citation: "347 U.S. 483" });
+		await handler({ citation: "347 U.S. 483" });
+
+		expect(lookupCitation).toHaveBeenCalledTimes(2);
+	});
+
+	it("does not cache error responses", async () => {
+		const { handler, lookupCitation } = captureHandler();
+		lookupCitation.mockResolvedValue({
+			status: "error",
+			code: "API_ERROR",
+			message: "Service unavailable",
+		});
+
+		await handler({ citation: "347 U.S. 483" });
+		await handler({ citation: "347 U.S. 483" });
+
+		expect(lookupCitation).toHaveBeenCalledTimes(2);
+	});
+
+	it("cache lookup completes in under 50ms", async () => {
+		const { handler, lookupCitation } = captureHandler();
+		lookupCitation.mockResolvedValue({
+			status: "ok",
+			matches: [
+				{
+					citation: "347 U.S. 483",
+					normalized_citations: ["347 U.S. 483"],
+					start_index: 0,
+					end_index: 12,
+					status: 200,
+					error_message: "",
+					clusters: [
+						{
+							absolute_url: "/opinion/12345/brown-v-board/",
+							case_name: "Brown v. Board of Education",
+							case_name_short: "Brown",
+							date_filed: "1954-05-17",
+							docket: { court: "Supreme Court of the United States", court_id: "scotus" },
+							citations: [{ volume: 347, reporter: "U.S.", page: "483" }],
+						},
+					],
+				} satisfies CitationMatch,
+			],
+		});
+
+		// Prime cache
+		await handler({ citation: "347 U.S. 483" });
+
+		// Time cached lookup
+		const start = performance.now();
+		await handler({ citation: "347 U.S. 483" });
+		const elapsed = performance.now() - start;
+
+		expect(elapsed).toBeLessThan(50);
 	});
 });

@@ -1,10 +1,11 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import type { CourtListenerClient } from "../clients/courtlistener.js";
+import type { CitationCache } from "../cache/citation-cache.js";
+import type { CitationMatch, CourtListenerClient } from "../clients/courtlistener.js";
 import { parseCitation } from "../parser/index.js";
 import { createToolResponse } from "../types.js";
 
-export function registerVerifyCitationTool(server: McpServer, client: CourtListenerClient): void {
+export function registerVerifyCitationTool(server: McpServer, client: CourtListenerClient, cache: CitationCache): void {
 	server.registerTool(
 		"verify_west_citation",
 		{
@@ -31,8 +32,16 @@ export function registerVerifyCitationTool(server: McpServer, client: CourtListe
 				});
 			}
 
+			const normalized = parseResult.citation.normalized;
+
+			// Step 1.5: Check cache -- serve instantly if already verified
+			const cached = cache.get(normalized);
+			if (cached) {
+				return classifyMatches(cached.matches, citation, normalized);
+			}
+
 			// Step 2: Lookup via CourtListener
-			const lookupResult = await client.lookupCitation(parseResult.citation.normalized);
+			const lookupResult = await client.lookupCitation(normalized);
 
 			// Step 3: Classify response
 			if (lookupResult.status === "rate_limited") {
@@ -60,50 +69,54 @@ export function registerVerifyCitationTool(server: McpServer, client: CourtListe
 				});
 			}
 
-			// status === "ok" -- examine matches
-			const verifiedMatch = lookupResult.matches.find(
-				(match) => match.status === 200 && match.clusters.length > 0,
-			);
-
-			if (verifiedMatch) {
-				const clusters = verifiedMatch.clusters.map((cluster) => ({
-					caseName: cluster.case_name,
-					court: cluster.docket.court,
-					dateFiled: cluster.date_filed,
-					citations: cluster.citations,
-					courtListenerUrl: `https://www.courtlistener.com${cluster.absolute_url}`,
-				}));
-
-				// Return first cluster as primary metadata, include all if ambiguous
-				const primary = clusters[0];
-				return createToolResponse({
-					valid: true,
-					metadata: {
-						status: "verified",
-						caseName: primary.caseName,
-						court: primary.court,
-						dateFiled: primary.dateFiled,
-						citations: primary.citations,
-						courtListenerUrl: primary.courtListenerUrl,
-						...(clusters.length > 1 ? { allMatches: clusters } : {}),
-					},
-					error: null,
-				});
-			}
-
-			// No match with status 200 and clusters -- hallucination
-			return createToolResponse({
-				valid: false,
-				metadata: { status: "not_found" },
-				error: {
-					code: "HALLUCINATION_DETECTED",
-					message: `Citation "${citation}" not found in CourtListener database. This citation may be fabricated.`,
-					details: {
-						queriedCitation: citation,
-						normalized: parseResult.citation.normalized,
-					},
-				},
-			});
+			// status === "ok" -- cache before classifying (only ok responses)
+			cache.set(normalized, { matches: lookupResult.matches });
+			return classifyMatches(lookupResult.matches, citation, normalized);
 		},
 	);
+}
+
+/** Classify citation matches into verified/not_found response (shared by fresh and cached paths). */
+function classifyMatches(matches: CitationMatch[], citation: string, normalized: string) {
+	const verifiedMatch = matches.find(
+		(match) => match.status === 200 && match.clusters.length > 0,
+	);
+
+	if (verifiedMatch) {
+		const clusters = verifiedMatch.clusters.map((cluster) => ({
+			caseName: cluster.case_name,
+			court: cluster.docket.court,
+			dateFiled: cluster.date_filed,
+			citations: cluster.citations,
+			courtListenerUrl: `https://www.courtlistener.com${cluster.absolute_url}`,
+		}));
+
+		const primary = clusters[0];
+		return createToolResponse({
+			valid: true,
+			metadata: {
+				status: "verified",
+				caseName: primary.caseName,
+				court: primary.court,
+				dateFiled: primary.dateFiled,
+				citations: primary.citations,
+				courtListenerUrl: primary.courtListenerUrl,
+				...(clusters.length > 1 ? { allMatches: clusters } : {}),
+			},
+			error: null,
+		});
+	}
+
+	return createToolResponse({
+		valid: false,
+		metadata: { status: "not_found" },
+		error: {
+			code: "HALLUCINATION_DETECTED",
+			message: `Citation "${citation}" not found in CourtListener database. This citation may be fabricated.`,
+			details: {
+				queriedCitation: citation,
+				normalized,
+			},
+		},
+	});
 }
