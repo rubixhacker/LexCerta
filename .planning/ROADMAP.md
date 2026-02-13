@@ -61,11 +61,11 @@ Plans:
   3. When CourtListener returns HTTP 429, the response status is "rate_limited" (not a false "not found")
   4. When CourtListener is down (5xx errors), a circuit breaker prevents cascading failures and the response distinguishes API failure from citation-not-found
   5. The server respects CourtListener API rate limits by tracking request counts
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 03-01: CourtListener API client with rate limiting and circuit breaker
-- [ ] 03-02: verify_west_citation tool with verification pipeline and error classification
+- [ ] 03-01-PLAN.md — CourtListener API client with rate limiter, circuit breaker, and resilience policies (TDD)
+- [ ] 03-02-PLAN.md — verify_west_citation MCP tool with four-state verification pipeline and server wiring
 
 ### Phase 4: Caching
 **Goal**: Verified citation results are cached in memory so repeated lookups are instant and API rate limits are preserved
