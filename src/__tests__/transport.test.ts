@@ -166,7 +166,7 @@ describe("SSE fallback (Success Criterion 2)", () => {
 		expect(res.headers.get("content-type")).toContain("text/event-stream");
 
 		// Read the first chunk to verify endpoint event
-		const reader = res.body?.getReader();
+		const reader = res.body!.getReader();
 		const { value } = await reader.read();
 		const text = new TextDecoder().decode(value);
 		expect(text).toContain("event: endpoint");
