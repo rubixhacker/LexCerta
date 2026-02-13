@@ -3,7 +3,7 @@ import { logger } from "./logger.js";
 import { createApp } from "./transport.js";
 
 const config = loadConfig();
-const app = createApp();
+const app = createApp(config);
 
 app.listen(config.PORT, () => {
 	logger.info("LexCerta MCP server listening on port", config.PORT);

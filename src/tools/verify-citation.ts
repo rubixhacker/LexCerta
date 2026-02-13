@@ -4,10 +4,7 @@ import type { CourtListenerClient } from "../clients/courtlistener.js";
 import { parseCitation } from "../parser/index.js";
 import { createToolResponse } from "../types.js";
 
-export function registerVerifyCitationTool(
-	server: McpServer,
-	client: CourtListenerClient,
-): void {
+export function registerVerifyCitationTool(server: McpServer, client: CourtListenerClient): void {
 	server.registerTool(
 		"verify_west_citation",
 		{
@@ -35,9 +32,7 @@ export function registerVerifyCitationTool(
 			}
 
 			// Step 2: Lookup via CourtListener
-			const lookupResult = await client.lookupCitation(
-				parseResult.citation.normalized,
-			);
+			const lookupResult = await client.lookupCitation(parseResult.citation.normalized);
 
 			// Step 3: Classify response
 			if (lookupResult.status === "rate_limited") {
@@ -46,8 +41,7 @@ export function registerVerifyCitationTool(
 					metadata: { status: "rate_limited" },
 					error: {
 						code: "RATE_LIMITED",
-						message:
-							"CourtListener API rate limit reached. Try again later.",
+						message: "CourtListener API rate limit reached. Try again later.",
 						details: { retryAfterMs: lookupResult.retryAfterMs },
 					},
 				});
@@ -77,8 +71,7 @@ export function registerVerifyCitationTool(
 					court: cluster.docket.court,
 					dateFiled: cluster.date_filed,
 					citations: cluster.citations,
-					courtListenerUrl:
-						`https://www.courtlistener.com${cluster.absolute_url}`,
+					courtListenerUrl: `https://www.courtlistener.com${cluster.absolute_url}`,
 				}));
 
 				// Return first cluster as primary metadata, include all if ambiguous

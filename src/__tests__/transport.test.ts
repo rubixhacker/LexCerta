@@ -1,5 +1,6 @@
 import type { Server } from "node:http";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { resetClient } from "../server.js";
 import { createApp } from "../transport.js";
 
 let server: Server;
@@ -25,6 +26,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+	resetClient();
 	await new Promise<void>((resolve) => {
 		server.close(() => resolve());
 	});
@@ -166,6 +168,7 @@ describe("SSE fallback (Success Criterion 2)", () => {
 		expect(res.headers.get("content-type")).toContain("text/event-stream");
 
 		// Read the first chunk to verify endpoint event
+		// biome-ignore lint/style/noNonNullAssertion: body is guaranteed present after successful SSE response
 		const reader = res.body!.getReader();
 		const { value } = await reader.read();
 		const text = new TextDecoder().decode(value);

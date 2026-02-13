@@ -1,17 +1,48 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { CourtListenerClient } from "./clients/courtlistener.js";
+import type { Config } from "./config.js";
 import { logger } from "./logger.js";
+import { courtListenerPolicy } from "./resilience/circuit-breaker.js";
+import { TokenBucketRateLimiter } from "./resilience/rate-limiter.js";
 import { registerEchoTool } from "./tools/echo.js";
 import { registerParseCitationTool } from "./tools/parse-citation.js";
+import { registerVerifyCitationTool } from "./tools/verify-citation.js";
 
-export function createServer(): McpServer {
+/**
+ * Module-level singleton client. Persists across stateless transport requests
+ * so rate limiter and circuit breaker state is shared (Pitfall 2 from research).
+ */
+let sharedClient: CourtListenerClient | null = null;
+
+function getClient(config: Config): CourtListenerClient {
+	if (!sharedClient) {
+		const rateLimiter = new TokenBucketRateLimiter();
+		sharedClient = new CourtListenerClient(
+			config.COURTLISTENER_API_KEY,
+			courtListenerPolicy,
+			rateLimiter,
+		);
+	}
+	return sharedClient;
+}
+
+/** Reset the singleton client (for testing). */
+export function resetClient(): void {
+	sharedClient = null;
+}
+
+export function createServer(config: Config): McpServer {
 	const server = new McpServer(
 		{ name: "lexcerta", version: "0.1.0" },
 		{ capabilities: { logging: {} } },
 	);
 
+	const client = getClient(config);
+
 	registerEchoTool(server);
 	registerParseCitationTool(server);
-	logger.debug("Registered tools: echo, parse_citation");
+	registerVerifyCitationTool(server, client);
+	logger.debug("Registered tools: echo, parse_citation, verify_west_citation");
 
 	return server;
 }
