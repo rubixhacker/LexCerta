@@ -75,10 +75,10 @@ Plans:
   1. Verifying the same citation twice results in only one CourtListener API call (second is served from cache)
   2. Cache lookups complete in under 50ms
   3. Cached citation results never expire or are invalidated (citations are immutable legal records)
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 04-01: In-memory LRU cache integration into verification pipeline
+- [ ] 04-01-PLAN.md — In-memory LRU cache with singleton wiring into verification pipeline
 
 ### Phase 5: Quote Verification
 **Goal**: Users can verify that a quoted passage actually appears in the cited court opinion, with fuzzy matching to handle minor formatting differences
