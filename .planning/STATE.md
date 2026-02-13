@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-13)
 
 **Core value:** Every legal citation returned by the system is verified against authoritative sources -- no hallucinated cases pass through.
-**Current focus:** Phase 5 - Quote Verification (COMPLETE)
+**Current focus:** Phase 6 - Production Deployment (COMPLETE)
 
 ## Current Position
 
-Phase: 5 of 6 (Quote Verification)
-Plan: 2 of 2 in current phase
-Status: Phase 05 Complete
-Last activity: 2026-02-13 -- Completed 05-02-PLAN.md
+Phase: 6 of 6 (Production Deployment)
+Plan: 1 of 1 in current phase
+Status: Phase 06 Complete -- ALL PHASES COMPLETE
+Last activity: 2026-02-13 -- Completed 06-01-PLAN.md
 
-Progress: [████████░░] 80%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 8
-- Average duration: 3.5min
-- Total execution time: 0.47 hours
+- Total plans completed: 9
+- Average duration: 3.3min
+- Total execution time: 0.50 hours
 
 **By Phase:**
 
@@ -32,14 +32,15 @@ Progress: [████████░░] 80%
 | 03-citation-verification-error-handling | 2/2 | 7min | 3.5min |
 | 04-caching | 1/1 | 3min | 3min |
 | 05-quote-verification | 2/2 | 7min | 3.5min |
+| 06-production-deployment | 1/1 | 2min | 2min |
 
 **Recent Trend:**
-- Last 5 plans: 03-01 (4min), 03-02 (3min), 04-01 (3min), 05-01 (4min), 05-02 (3min)
+- Last 5 plans: 03-02 (3min), 04-01 (3min), 05-01 (4min), 05-02 (3min), 06-01 (2min)
 - Trend: stable
 
 | Phase | Plan | Duration | Tasks | Files |
 |-------|------|----------|-------|-------|
-| Phase 05 P02 | 3min | 2 tasks | 3 files |
+| Phase 06 P01 | 2min | 2 tasks | 7 files |
 
 *Updated after each plan completion*
 
@@ -73,6 +74,9 @@ Recent decisions affecting current work:
 - [05-01]: Sliding window with refinement pass for excerpt extraction instead of full O(n*m) scan
 - [05-01]: Paragraph chunking for texts >50K chars to keep fuzzy matching performant
 - [05-02]: valid threshold at score >= 70 (raw score always returned for custom thresholds)
+- [06-01]: --legacy-peer-deps for mcp-handler install (strict peer dep on SDK 1.25.2 vs project 1.26.0)
+- [06-01]: loadConfig() at module top-level in api/server.ts for fail-fast on missing env vars
+- [06-01]: Node.js runtime (not Edge) for cockatiel/lru-cache/fuzzball CJS compatibility
 
 ### Pending Todos
 
@@ -86,5 +90,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-13
-Stopped at: Completed 05-02-PLAN.md
+Stopped at: Completed 06-01-PLAN.md -- ALL PHASES COMPLETE
 Resume file: None
