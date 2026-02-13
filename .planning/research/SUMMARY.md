@@ -1,326 +1,355 @@
 # Project Research Summary
 
-**Project:** LexCerta - Legal Citation Verification MCP Server
-**Domain:** Legal AI anti-hallucination tooling (West Reporter citation verification)
+**Project:** LexCerta v1.1 Launch & Monetization
+**Domain:** SaaS monetization layer for legal citation verification MCP server
 **Researched:** 2026-02-13
 **Confidence:** HIGH
 
 ## Executive Summary
 
-LexCerta is an MCP-native legal citation verification server designed to prevent AI hallucinations in legal document generation. The research reveals three critical architectural changes from the original PRD: (1) Harvard's CAP API has been shut down, requiring CourtListener as the sole data source; (2) MCP's SSE transport was deprecated in March 2025 in favor of Streamable HTTP; and (3) Eyecite citation parser is Python-only with no TypeScript port, requiring use of CourtListener's server-side citation-lookup API instead of local parsing.
+LexCerta v1.1 adds a complete monetization layer to the existing v1.0 MCP server (which provides legal citation verification tools). This is a subsequent milestone focused on commercial viability, not core product functionality. The research validates a proven SaaS architecture: Next.js dashboard + Supabase backend + Stripe billing + API key authentication, with weighted usage metering and credit-based pricing.
 
-The recommended approach collapses the original 3-tier architecture (parse, verify existence, verify quote) into a simpler 2-call pattern: CourtListener's citation-lookup API handles both parsing and existence verification in one request, then CourtListener's Opinions API retrieves full text for quote verification. This architectural simplification actually strengthens the product by eliminating the need to maintain a complex citation parser while leveraging Free Law Project's 55+ million citation dataset and Eyecite implementation server-side.
+The recommended approach requires converting the current Vercel serverless function deployment to a Next.js App Router project, moving the MCP handler from `/api/server.ts` to `app/api/mcp/[transport]/route.ts`, and adding dual authentication (cookie-based for dashboard users, Bearer token for MCP clients). The architecture follows established patterns from OpenAI/Anthropic API products: API keys shown once at creation, copy-once security, usage dashboards with per-tool breakdowns, Stripe-managed billing portal, and credit packs as the overage mechanism. Implementation complexity is moderate — this is well-trodden territory with minimal greenfield work.
 
-The key risk is CourtListener API rate limits (5,000/day free tier, 5,000/hour authenticated). Mitigation requires aggressive caching of verified citations (legal citations are immutable once published) and potentially partnering with Free Law Project for production quota increases. The product's competitive moat is being the only MCP-native citation verification tool with free full-text quote integrity checking—competitors like Clearbrief require LexisNexis subscriptions, and Travis-Prall's CourtListener MCP lacks quote verification.
+The critical risks are integration points with the existing MCP server and maintaining transport compatibility during the Next.js migration. Three middleware injection points modify the v1.0 codebase: (1) API key extraction in the request wrapper, (2) usage recording after tool execution, and (3) credit balance checks before paid tool calls. All tool implementations remain unchanged. Streamable HTTP transport must be preserved during migration (SSE is deprecated as of MCP spec 2025-03-26). Following the dependency-driven build order prevents integration failures: scaffold Next.js first, then Supabase auth, then API keys, then metering, then Stripe, then credit enforcement.
 
 ## Key Findings
 
 ### Recommended Stack
 
-The stack centers on TypeScript with the official MCP SDK, CourtListener API as the sole data source, and Streamable HTTP transport. The original PRD's three-tier architecture must be redesigned because two of the three originally-specified tools no longer exist or are inaccessible.
+The v1.1 stack adds a complete web application layer while preserving the existing MCP server infrastructure. **Critical finding:** The current deployment uses Vercel's "other framework" mode with a top-level `/api` directory. This conflicts with Next.js App Router — migration requires moving `api/server.ts` into the Next.js structure at `app/api/mcp/[transport]/route.ts`.
 
 **Core technologies:**
-- `@modelcontextprotocol/sdk` v1.26.0+: Official TypeScript MCP server framework with native Streamable HTTP transport support
-- Node.js 20 LTS / 22 LTS: LTS stability required for legal-grade tooling
-- `mcp-handler` (not `@vercel/mcp-adapter`): Vercel deployment adapter for Streamable HTTP transport on serverless/edge
-- `zod` v3.25+: Schema validation; avoid v4.x due to documented SDK compatibility issues
-- CourtListener API v4: Single data source for both citation parsing/verification (citation-lookup endpoint) and full-text retrieval (opinions endpoint). Absorbed Harvard CAP's 6.4M case corpus in 2024.
+- **Next.js 15+** (App Router): Dashboard UI and API routes — industry standard for React/TypeScript SaaS apps, excellent Vercel deployment story
+- **Supabase Auth + PostgreSQL**: User accounts, API key storage, usage records — provides RLS security, scales well, free tier sufficient for launch
+- **Stripe**: Subscription billing ($20/mo Solo plan, 500 credits) + one-time credit packs ($50/1K credits) — standard choice for SaaS billing, hosted Customer Portal eliminates custom billing UI
+- **`mcp-handler`**: Vercel MCP adapter with Streamable HTTP support — required for Next.js App Router deployment, successor to deprecated `@vercel/mcp-adapter`
+- **bcrypt**: API key hashing — security requirement, prevents key exposure in database breach
 
-**Critical finding on stack:**
-- CAP API (`api.case.law`) was shut down September 2024—all data migrated to CourtListener
-- SSE transport deprecated in MCP spec March 2025—Streamable HTTP is the current standard
-- Eyecite is Python-only (no npm package)—use CourtListener's citation-lookup API which runs Eyecite server-side
+**Critical version requirements:**
+- `@modelcontextprotocol/sdk@^1.25.1` (minimum) — versions below have DNS rebinding vulnerability CVE-2025-66414
+- `zod@^3.25` (NOT v4) — MCP SDK has documented compatibility issues with Zod v4
+- Node.js 20 LTS minimum (22 LTS preferred)
 
-**API integrations:**
-- CourtListener citation-lookup (`POST /api/rest/v3/citation-lookup/`): Single call replaces both Eyecite parsing and existence verification. Accepts up to 64K chars, returns parsed citations with matched opinion clusters.
-- CourtListener Opinions API (`GET /api/rest/v4/opinions/{id}/`): Retrieves full opinion text for quote verification. Now contains CAP corpus data.
-
-**Supporting libraries:**
-- `p-queue`: Rate limiting for CourtListener API (5,000/day free tier, 5,000/hour authenticated)
-- `lru-cache`: In-memory citation cache to stay within rate limits and meet <1.5s latency target
-- `fastest-levenshtein`: Fuzzy string matching for quote verification
-- Vitest 4.x: Standard for TypeScript testing in 2025-2026
+**Transport requirement:** Streamable HTTP (NOT SSE). SSE was deprecated in MCP spec 2025-03-26. mcp-handler provides automatic SSE backward compatibility but Streamable HTTP must be the primary transport.
 
 ### Expected Features
 
-Research confirms citation verification is a table-stakes feature space with high baseline expectations. Users assume existence verification, hard errors on fake citations, and batch document-level processing. The differentiator is quote integrity verification using free data sources (CAP/CourtListener) while competitors require paid LexisNexis subscriptions (Clearbrief) or omit quote checking entirely (CiteCheck AI, Travis-Prall MCP).
+Research validates a standard developer API billing model. The feature set mirrors OpenAI/Anthropic API dashboards with one legal-specific differentiator: Claude Desktop integration guide for non-technical lawyer users.
 
 **Must have (table stakes):**
-- West Reporter citation parsing (full form, short form, supra, id.)
-- Citation existence verification with hard errors (unambiguous "hallucination detected")
-- Citation normalization (handle format variants: "U.S." vs "US", etc.)
-- Case metadata return (name, court, date, reporter volume)
-- Structured MCP tool responses with clear success/failure semantics
-- Batch/document-level verification (legal documents contain dozens to hundreds of citations)
+- Email/password signup and login (Supabase Auth)
+- API key generation with copy-once display (security pattern users understand)
+- API key revocation (instant kill for leaked keys)
+- API key authentication on MCP endpoints (Bearer token validation)
+- Weighted usage metering (parse_citation=0 credits, verify_west_citation=1, verify_quote_integrity=1)
+- Credit balance display (subscription credits + purchased credit pack credits)
+- Stripe Checkout for Solo plan subscription ($20/mo, 500 credits)
+- Stripe Customer Portal for billing self-service (cancel, update payment, view invoices)
+- Credit pack purchase ($50/1,000 credits, never expire)
+- Stripe webhook handling (checkout.session.completed, invoice.paid, customer.subscription.*)
+- Overage handling with structured error + prompt to buy credit packs (graceful degradation, not hard cutoff)
 
 **Should have (competitive differentiators):**
-- Quote integrity verification (full-text matching)—LexCerta's strongest differentiator; no free/MCP competitor offers this
-- MCP-native interface—only citation tool built for AI agents rather than Word users
-- Tiered confidence scoring (parsed → existence verified → quote verified)
-- Citation position indexing (character offsets for annotation/markup)
-- Caching layer for landmark cases (Miranda, Roe, etc.)
+- Per-tool usage breakdown (show which tools consumed credits)
+- Usage dashboard with current period summary
+- Claude Desktop integration guide (JSON config generator with pre-filled API key — critical for lawyer users)
+- Free trial credits (50 on signup, reduces friction for evaluation)
+- Per-key usage tracking (developers use separate keys for dev/staging/prod)
 
-**Defer (v2+ or explicitly out of scope):**
-- Good Law / Bad Law status (KeyCite/Shepard's equivalent)—requires paid Westlaw/LexisNexis APIs; partial free coverage is malpractice-enabling
-- Statute and regulation verification—entirely different pipeline, different data sources
-- AI-powered citation suggestion/generation—turns verification tool into generative tool, recursive hallucination risk
-- Bluebook formatting enforcement—separate product category (BriefCatch, LegalEase Citations)
-- Real-time document monitoring—requires persistent connection, not request/response MCP model
+**Defer (v2+ based on user feedback):**
+- Usage history chart (7d/30d trend)
+- Usage alerts via email (75%/90%/100% thresholds)
+- OAuth/Google sign-in (Supabase makes this easy but email/password sufficient for launch)
+- API key scoping (read-only vs full access permissions)
+- Multiple subscription tiers (Pro, Enterprise)
+- Team/organization accounts (massive complexity increase, wait for validated demand)
 
 ### Architecture Approach
 
-The recommended architecture is a tiered verification pipeline with chain-of-responsibility pattern: cache → CourtListener API → fallback. Each tier either resolves the request or passes it forward. The architecture collapses the PRD's original 3-tier design (Eyecite parsing + CourtListener existence + CAP full-text) into 2 API calls because CourtListener now handles both parsing and existence verification server-side.
+The architecture adds a Next.js application layer around the existing MCP server with **dual authentication strategies**: cookie-based Supabase Auth for dashboard pages, Bearer token API key auth for MCP clients. Both resolve to the same `account_id` in Supabase. The MCP server itself remains unchanged — auth and metering are cross-cutting concerns handled by middleware, not individual tool implementations.
 
 **Major components:**
-1. **MCP Server + Tool Handlers** — Streamable HTTP transport, Zod-validated tool schemas, routes calls to verification pipeline
-2. **Citation Parser (minimal)** — Normalization only; actual parsing delegated to CourtListener citation-lookup API which runs Eyecite server-side
-3. **Verification Pipeline** — Orchestrates tiered lookup: cache → CourtListener → fallback; circuit breakers protect against API failures
-4. **Cache Layer** — Two-tier: in-memory LRU cache (hot/TTL) + optional Redis/Supabase (persistent). Citations are immutable, cache permanently.
-5. **CourtListener Client** — Wraps citation-lookup (parsing + existence) and opinions APIs (full-text retrieval); handles auth, rate limits, retries
+1. **Next.js App Shell** — SSR pages (dashboard, billing, API keys), route groups for auth and protected areas, middleware for Supabase token refresh
+2. **MCP Route Handler** — Moved from `api/server.ts` to `app/api/mcp/[transport]/route.ts`, wrapped in API key validation, calls existing `registerTools()` from `src/server.ts`
+3. **API Key Auth Middleware** — Validates Bearer tokens, bcrypt-verifies keys, attaches account context to requests, checks credit balance before execution
+4. **Usage Metering** — Records tool calls after execution (fire-and-forget), writes to Supabase `usage_records` table, deferred credit deduction for performance
+5. **Stripe Webhook Handler** — Processes subscription lifecycle events, syncs to Supabase (subscriptions, credit_purchases tables), raw body signature verification
+6. **Supabase Database** — Accounts, api_keys (hashed), usage_records (append-only log), subscriptions (synced from Stripe), credit_purchases (audit trail), Row Level Security policies
 
-**Key patterns:**
-- **Chain of Responsibility:** Cache → CourtListener → fallback, stop at first success
-- **Circuit Breaker:** After N failures, skip failing API tier to preserve rate limits and meet latency targets
-- **Structured Response Envelope:** Consistent `{ status, confidence, source, metadata }` format for all tools
+**Critical integration points with existing v1.0 MCP server:**
+- File move: `api/server.ts` → `app/api/mcp/[transport]/route.ts` (same mcp-handler logic, new path)
+- Auth wrapper: Request handler validates API key BEFORE mcp-handler processes request
+- Usage recording: After tool execution, record tool name + latency to Supabase (does NOT modify tools themselves)
+- Credit gate: Before paid tool execution (weight > 0), check credit balance and reject if insufficient
+- **No changes** to `src/server.ts`, `src/tools/*`, `src/clients/*`, `src/cache/*`, or tool registration logic
 
-**Build order (dependency chain):**
-1. Config + Types (no dependencies)
-2. Citation Parser (minimal, normalization only)
-3. Cache Layer (interface + in-memory)
-4. CourtListener API Client
-5. Circuit Breaker (utility)
-6. Verification Pipeline (orchestration)
-7. MCP Server + Tool Handlers (integration)
+**Data flow:**
+```
+MCP Client → POST /api/mcp/mcp (Bearer token) → API Key Middleware (validate, attach account)
+  → mcp-handler → registerTools() → tool executes → response
+  → Usage Metering (async record) → Credit Deduction (deferred, atomic via Supabase RPC)
+```
 
 ### Critical Pitfalls
 
-The research uncovered six critical pitfalls that would silently break the product if not addressed during architecture and early implementation phases.
+The monetization layer introduces new failure modes beyond the v1.0 MCP server pitfalls (CAP API deprecation, CourtListener rate limits, citation parser ambiguity). Focus on integration and production readiness.
 
-1. **CAP API Is Deprecated** — Harvard shut down api.case.law in September 2024. Teams assuming CAP is available discover 404s at runtime. **Avoid:** Design for CourtListener-only from day one. Data was migrated to CourtListener. No CAP integration work needed.
+1. **Top-level `/api` conflicts with Next.js App Router** — Vercel treats top-level `/api` as framework-independent serverless functions. When a Next.js project also has `app/api/` routes, routing conflicts cause 404/405 errors in production that don't reproduce locally. **Prevention:** Delete the top-level `api/` directory entirely, move MCP handler into `app/api/mcp/[transport]/route.ts` following Next.js conventions.
 
-2. **SSE Transport Is Deprecated** — MCP spec deprecated HTTP+SSE in March 2025, replaced with Streamable HTTP. Building on SSE creates client incompatibility. **Avoid:** Implement Streamable HTTP from the start using official SDK's `StreamableHTTPServerTransport`.
+2. **Using `getSession()` instead of `getUser()` for auth checks** — `getSession()` reads cookies without revalidating tokens, allowing cookie spoofing. Supabase explicitly warns this is a security vulnerability. **Prevention:** Always call `supabase.auth.getUser()` in Server Components and middleware, which validates tokens server-to-server.
 
-3. **CourtListener Deep Pagination Block** — API explicitly blocks offset-based pagination beyond shallow depth. Batch verification breaks at scale. **Avoid:** Use cursor-based pagination exclusively. Follow `next` URLs in API responses, never construct `?page=N` URLs manually.
+3. **Storing raw API keys in database** — Database breach = all API keys compromised. **Prevention:** bcrypt-hash all keys before storage, store only a short prefix (`lc_` + 4 chars) for efficient lookup, then bcrypt-verify full key against hash on validation.
 
-4. **Ambiguous Reporter Abbreviations** — Citations like "100 F. 200" vs "100 F.2d 200" require series disambiguation. False positive verifications occur when wrong reporter series is matched. **Avoid:** Use CourtListener's citation-lookup which handles disambiguation server-side. If building local parser, require date context for series resolution.
+4. **Synchronous credit deduction in request path** — Calling Supabase to atomically decrement credits before processing the MCP request adds 50-100ms latency. **Prevention:** Optimistic check (is balance > 0?) using data already fetched for key validation, then deferred atomic deduction after response via Supabase RPC function.
 
-5. **Short-Form Citations Require Document Context** — Legal documents use Id., supra, and short-form references that cannot be verified in isolation (40-60% of citations in typical briefs). **Avoid:** Design tool schema to accept document context from day one; implement resolution in later phase but reserve parameter space now.
-
-6. **CourtListener Rate Limits Silently Degrade Quality** — 5,000 requests/day free tier exhausts quickly. Subsequent verifications fail silently (HTTP 429). **Avoid:** Implement aggressive caching (citations are immutable). Cache hit ratio must exceed 80% after warm-up. Contact Free Law Project for production quota increase.
+5. **Parsing webhook body as JSON before signature verification** — Stripe's `constructEvent()` requires the raw string body. JSON parsing + stringifying changes bytes, causing signature verification to always fail. **Prevention:** Use `request.text()` for raw body in Next.js App Route handlers, verify signature first, parse event object from Stripe's verified event.
 
 ## Implications for Roadmap
 
-Based on combined research, the recommended phase structure prioritizes foundation (transport, API integration, caching), then core verification (existence + quote), then enhancement (batch, confidence scoring, optimization). This order reflects dependency chains and risk mitigation.
+Based on research, recommended 6-phase structure following dependency order. Each phase delivers working functionality that can be validated before proceeding.
 
-### Phase 1: Foundation & Transport
-**Rationale:** MCP transport choice and API integration patterns are foundational. Changing transport later is painful; API client patterns affect all downstream code. CourtListener API is the single point of integration—must be solid before building verification logic.
+### Phase 1: Next.js Migration & Foundation
+**Rationale:** Infrastructure must be converted before new features can be added. Moving from standalone Vercel functions to Next.js App Router is the foundational change that enables everything else. Critical to preserve existing MCP functionality during migration.
 
 **Delivers:**
-- Streamable HTTP MCP server with tool registration
-- CourtListener API client with auth, rate limiting, circuit breaker
-- Cache layer (in-memory LRU, interface for Redis/Supabase later)
-- Basic citation normalization (reporter abbreviation mapping)
+- Next.js 15 project structure with App Router
+- MCP handler moved to `app/api/mcp/[transport]/route.ts`
+- Streamable HTTP transport verified (SSE backward compat via mcp-handler)
+- Existing v1.0 MCP tools working at new endpoint
+- Tailwind CSS configured for dashboard UI
 
 **Addresses:**
-- SSE deprecation pitfall (use Streamable HTTP from start)
-- CAP deprecation pitfall (CourtListener-only design)
-- Rate limit pitfall (cache layer + circuit breaker)
-- Deep pagination pitfall (cursor-based client from start)
+- Anti-pattern: Top-level `/api` + Next.js conflict (PITFALLS.md)
+- Stack: Next.js + mcp-handler as required deployment target (STACK.md)
+- Architecture: File move + transport preservation (ARCHITECTURE.md)
 
-**Avoids features:** No parsing logic (delegate to CourtListener), no quote verification yet (existence first), no batch processing (single citation flow first).
+**Avoids:**
+- Breaking existing MCP clients during migration
+- Routing conflicts between framework modes
+- SSE-only implementation (deprecated transport)
 
-**Research flag:** Standard MCP patterns, no additional research needed. CourtListener API documented.
+**Research flag:** Standard Next.js + mcp-handler migration, well-documented by Vercel. Skip `/gsd:research-phase`.
 
 ---
 
-### Phase 2: Core Verification (Existence)
-**Rationale:** The anti-hallucination value proposition requires existence verification working reliably. This phase implements the primary use case: verify a single citation exists or is hallucinated. Quote verification (differentiator) depends on existence verification succeeding first.
+### Phase 2: Supabase Backend & Authentication
+**Rationale:** User accounts and database schema are prerequisites for API keys, usage tracking, and billing. Supabase Auth provides the identity layer that everything else depends on.
 
 **Delivers:**
-- `verify_citation` tool: accepts citation string, returns valid/invalid with case metadata
-- Integration with CourtListener citation-lookup API (parsing + existence in one call)
-- Structured MCP response envelope with confidence levels
-- Hard error responses for fake citations ("hallucination detected")
+- Supabase project with PostgreSQL database
+- Tables: accounts, api_keys, usage_records, subscriptions, credit_purchases
+- Row Level Security policies
+- Supabase Auth configured (email/password provider)
+- Next.js middleware for cookie-based auth and token refresh
+- Login/signup pages
+- Protected dashboard shell (layout + empty dashboard page)
 
-**Uses:**
-- CourtListener citation-lookup endpoint (`POST /api/rest/v3/citation-lookup/`)
-- Cache layer (check cache before API, write successful verifications)
-- Circuit breaker (protect against CourtListener outages)
+**Addresses:**
+- Features: Email/password signup and login (FEATURES.md table stakes)
+- Architecture: Dual auth strategy foundations (ARCHITECTURE.md)
+- Database schema with RLS (ARCHITECTURE.md)
 
-**Implements:**
-- Verification Pipeline (Tier 1: cache check, Tier 2: CourtListener lookup)
-- Tool Handler with Zod schema validation
+**Avoids:**
+- `getSession()` security vulnerability (use `getUser()` only)
+- Proceeding to API keys without account infrastructure
 
-**Avoids pitfall:** Ambiguous reporter abbreviations (CourtListener handles disambiguation server-side).
-
-**Research flag:** Standard patterns, no additional research needed.
+**Research flag:** Standard Supabase + Next.js integration. Supabase docs are comprehensive. Skip `/gsd:research-phase`.
 
 ---
 
-### Phase 3: Quote Integrity Verification
-**Rationale:** This is LexCerta's primary differentiator. No free/MCP competitor offers quote verification. Clearbrief requires LexisNexis subscription. This phase delivers the unique value proposition but depends on existence verification (Phase 2) working reliably—cannot fetch full text if citation does not exist.
+### Phase 3: API Key Management System
+**Rationale:** API keys are the authentication mechanism for MCP clients and the identity bridge between dashboard users and MCP requests. Must be implemented before usage metering (which needs to know who made the call).
 
 **Delivers:**
-- `verify_quote_integrity` tool: accepts citation + quoted text, returns match score and context
-- Integration with CourtListener Opinions API for full-text retrieval
-- Fuzzy string matching with normalized whitespace comparison
-- Structured response: `{ exists: bool, quote_match: { found: bool, similarity: float, context: string } }`
+- API key generation with bcrypt hashing and prefix storage
+- Copy-once key display (show raw key only at creation)
+- API key revocation (soft delete via `is_active` flag)
+- Dashboard page for key management (list, create, revoke)
+- API key validation middleware on MCP endpoint
+- Bearer token authentication (`Authorization: Bearer lc_...`)
+- Structured error responses for invalid/missing keys
 
-**Uses:**
-- CourtListener Opinions API v4 (`GET /api/rest/v4/opinions/{id}/`)
-- `fastest-levenshtein` for fuzzy matching
-- Verification Pipeline (extend with Tier 3: full-text retrieval)
+**Addresses:**
+- Features: API key generation, revocation, authentication (FEATURES.md table stakes)
+- Architecture: API key auth middleware (ARCHITECTURE.md Pattern 2)
+- Security: bcrypt hashing, prefix lookup (PITFALLS.md)
 
-**Implements:**
-- Quote Matcher component
-- Extended verification pipeline with quote verification tier
+**Avoids:**
+- Storing raw keys (security pitfall)
+- Proceeding to metering without identity context
 
-**Addresses:** Competitive differentiation (free quote verification using CourtListener's CAP-sourced data).
-
-**Research flag:** Fuzzy matching threshold tuning may need experimentation. Consider `/gsd:research-phase` for optimal similarity thresholds and OCR artifact handling.
+**Research flag:** Standard API key pattern, well-documented by Google Cloud and others. Skip `/gsd:research-phase`.
 
 ---
 
-### Phase 4: Batch & Document-Level Verification
-**Rationale:** Legal documents contain dozens to hundreds of citations. Single-citation verification is table stakes but unusable at scale. This phase implements the document-level workflow users expect. Depends on single-citation pipeline (Phases 2-3) working reliably—batch is parallelized single-citation verification with deduplication.
+### Phase 4: Usage Metering & Dashboard
+**Rationale:** Usage tracking is required before billing can be implemented — Stripe needs to know what to charge for. Metering must be accurate and performant (fire-and-forget recording, no request latency).
 
 **Delivers:**
-- `batch_verify_citations` tool: accepts document text, returns array of verification results
-- Parallel verification with concurrency limits (respect rate limits)
-- Deduplication (verify each unique citation once)
-- Streaming partial results via MCP progress notifications
+- Usage recording middleware (after tool execution, async)
+- Weighted metering: parse_citation=0, verify_west_citation=1, verify_quote_integrity=1
+- Supabase `usage_records` table append-only writes
+- Usage dashboard page showing current period summary
+- Per-tool usage breakdown
+- Per-key usage filtering
 
-**Uses:**
-- CourtListener citation-lookup (accepts up to 64K chars in single request)
-- Verification pipeline (parallelize across deduplicated citations)
-- `p-queue` for concurrency-limited API requests
+**Addresses:**
+- Features: Usage metering, usage dashboard, per-tool breakdown (FEATURES.md table stakes + differentiators)
+- Architecture: Usage metering component (ARCHITECTURE.md)
+- Performance: Fire-and-forget recording pattern (ARCHITECTURE.md Pattern 3)
 
-**Implements:**
-- Batch orchestration layer
-- Deduplication logic
-- Progress streaming
+**Avoids:**
+- Synchronous metering that adds latency
+- Proceeding to billing without usage data
 
-**Avoids pitfall:** Synchronous waterfall anti-pattern (parallelize with rate limit awareness).
-
-**Research flag:** Standard pattern (fan-out with concurrency control). No additional research needed.
+**Research flag:** Standard usage metering pattern. Skip `/gsd:research-phase`.
 
 ---
 
-### Phase 5: Enhancement & Optimization
-**Rationale:** Phases 1-4 deliver complete MVP. This phase adds polish: tiered confidence scoring (expose verification depth), citation position indexing (enable downstream annotation), persistent cache (scale beyond in-memory), and optimization (pre-warm common citations).
+### Phase 5: Stripe Integration & Billing
+**Rationale:** Monetization layer. Subscriptions and credit packs provide the revenue mechanism. Stripe webhooks sync billing state to Supabase so credit enforcement (Phase 6) has accurate data.
 
 **Delivers:**
-- Tiered confidence scoring (`parsed_only`, `existence_verified`, `quote_verified`)
-- Citation position indexing (pass through `start_index`, `end_index` from CourtListener)
-- Redis/Supabase persistent cache integration
-- Pre-warming cache with landmark cases (Miranda, Roe, Brown, etc.)
+- Stripe Products and Prices configured (Solo plan $20/mo 500 credits, Credit Pack $50/1K)
+- Stripe Checkout Session creation for subscriptions
+- Stripe Checkout Session creation for one-time credit packs
+- Stripe webhook handler (`/api/stripe/webhook`) with signature verification
+- Webhook event handling: checkout.session.completed, invoice.paid, customer.subscription.*
+- Supabase sync: subscriptions table, credit_purchases table, credit_balance updates
+- Stripe Customer Portal link on billing dashboard page
+- Billing dashboard page showing subscription status, credit balance, purchase history
 
-**Uses:**
-- Existing verification pipeline (add confidence level tracking)
-- CourtListener citation-lookup response fields (`start_index`, `end_index`)
-- Redis or Supabase for persistent cache layer
+**Addresses:**
+- Features: Stripe Checkout, Customer Portal, credit pack purchase, webhook handling, credit balance display (FEATURES.md table stakes)
+- Architecture: Stripe webhook handler (ARCHITECTURE.md Pattern 4)
+- Security: Raw body signature verification (PITFALLS.md)
 
-**Implements:**
-- Confidence tracking across verification tiers
-- Persistent cache adapter (Redis or Supabase implementation of cache interface)
+**Avoids:**
+- Custom billing UI (use Stripe Customer Portal)
+- JSON-parsed webhook body (breaks signature verification)
 
-**Research flag:** Standard patterns, no additional research needed.
+**Research flag:** Standard Stripe billing pattern. Stripe docs + credit-based pricing model documented. Skip `/gsd:research-phase`.
 
 ---
 
-### Phase 6 (Future): Advanced Features
-**Rationale:** Defer until product-market fit established. These are competitive enhancements, not MVP requirements.
+### Phase 6: Credit Enforcement & Overage Handling
+**Rationale:** Final step that connects usage to billing. Without enforcement, the monetization layer has no teeth. Credit checks must be fast (optimistic) and graceful (prompt to buy, don't just fail).
 
-**Potential features:**
-- Parallel citation resolution (given one reporter, return all parallel citations per Bluebook 10.3.1)
-- Document context for short-form citations (Id., supra, reference citation resolution)
-- Semantic search integration (CourtListener launched semantic API November 2025)
+**Delivers:**
+- Credit balance check before paid tool execution (weight > 0)
+- Optimistic check during auth middleware (already fetching account data)
+- Atomic credit deduction via Supabase RPC function (deferred, after response)
+- Structured MCP error response when credits exhausted
+- Dashboard banner when credits low (<50 remaining)
+- Free tier: parse_citation always allowed (0 credits)
+- Paid tools: verify_west_citation, verify_quote_integrity gated on credit balance
 
-**Research flag:** Phase 6 features each need targeted research. Parallel citation requires reporter system mapping research. Short-form resolution requires Bluebook citation chain research. Semantic search integration requires CourtListener semantic API experimentation.
+**Addresses:**
+- Features: Overage handling with structured error and purchase prompt (FEATURES.md table stakes)
+- Architecture: Credit deduction with optimistic check (ARCHITECTURE.md Pattern 3)
+- UX: Graceful degradation, not hard cutoff (PITFALLS.md)
+
+**Avoids:**
+- Synchronous credit deduction (performance trap)
+- Silent failures when credits exhausted
+
+**Research flag:** Credit-based gating pattern documented by Stigg and Lago. Skip `/gsd:research-phase`.
 
 ---
 
 ### Phase Ordering Rationale
 
-**Dependency-driven:**
-- Phase 1 must precede all others (foundation: transport, API client, cache)
-- Phase 2 must precede Phase 3 (quote verification requires existence verification succeeding first)
-- Phase 4 depends on Phases 2-3 (batch is parallelized single-citation flow)
-- Phase 5 enhances existing pipeline (can only add confidence scoring after tiers exist)
+**Dependency-driven sequencing:**
+1. Next.js migration enables everything else (can't add dashboard without Next.js)
+2. Supabase auth enables API keys (accounts must exist first)
+3. API keys enable usage metering (need to know who made the call)
+4. Usage metering enables billing (need to know what to charge)
+5. Billing enables credit enforcement (need credit balances to gate on)
 
-**Risk-driven:**
-- Address transport deprecation immediately (Phase 1)—switching later is painful
-- Address API integration pitfalls early (Phase 1)—rate limits, pagination, circuit breaker
-- Defer complex features (Phase 6) until core value validated
+**Risk mitigation:**
+- Phase 1 validates existing MCP functionality preserved during migration (prevents breaking v1.0)
+- Phase 2 validates auth before building features dependent on it (prevents rework)
+- Phases 3-6 are additive — each phase delivers user-facing value without breaking prior phases
 
-**Architectural grouping:**
-- Phase 1: Infrastructure layer (transport, clients, cache)
-- Phases 2-3: Verification layer (existence, quote)
-- Phase 4: Orchestration layer (batch, parallel)
-- Phase 5: Enhancement layer (optimization, polish)
+**Parallel work opportunities:**
+- Dashboard UI components can be built in parallel with backend routes (shared between phases)
+- Stripe product configuration can happen during Phase 4 (billing setup doesn't block metering development)
 
 ### Research Flags
 
-**Phases needing targeted research during planning:**
-- **Phase 3 (Quote Verification):** Fuzzy matching threshold tuning, OCR artifact handling strategies. CourtListener's opinion text is machine-generated from CAP, not human-reviewed. Needs experimentation to determine optimal similarity thresholds and whitespace normalization strategies. Consider `/gsd:research-phase` for quote matching strategies.
+**Phases with standard patterns (skip `/gsd:research-phase`):**
+- **Phase 1:** Next.js + mcp-handler migration well-documented by Vercel
+- **Phase 2:** Supabase + Next.js integration is Supabase's reference architecture
+- **Phase 3:** API key management patterns documented by Google Cloud, Makerkit
+- **Phase 4:** Usage metering is standard event logging to database
+- **Phase 5:** Stripe billing + webhooks heavily documented by Stripe
+- **Phase 6:** Credit enforcement is application logic using existing primitives
 
-**Phases with standard patterns (skip research-phase):**
-- **Phase 1 (Foundation):** MCP SDK patterns are well-documented. CourtListener API is documented by Free Law Project with examples.
-- **Phase 2 (Existence Verification):** Standard REST API integration pattern. CourtListener citation-lookup endpoint is straightforward.
-- **Phase 4 (Batch Processing):** Standard fan-out with concurrency control pattern (`Promise.allSettled` + `p-queue`).
-- **Phase 5 (Enhancement):** Incremental additions to existing patterns.
+**Phases that might need deeper research during execution:** None. All patterns are well-established in the SaaS billing domain. The v1.1 milestone is intentionally scoped to proven, low-risk patterns.
+
+**Research completed during this synthesis:**
+- Confirmed mcp-handler usage for Next.js App Router (HIGH confidence from Vercel docs)
+- Confirmed credit-based pricing implementation patterns (MEDIUM-HIGH confidence from Stripe docs + Stigg/Lago guides)
+- Confirmed dual auth strategy viability (HIGH confidence from Supabase docs + Makerkit examples)
 
 ## Confidence Assessment
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | HIGH | MCP SDK is official and stable (v1.26.0). CourtListener API is production-grade (100M+ requests served). CAP deprecation and SSE deprecation confirmed by primary sources (Harvard LIL blog, MCP spec). Eyecite Python-only confirmed by PyPI. All critical findings have HIGH confidence. |
-| Features | MEDIUM-HIGH | Feature landscape confirmed by competitor analysis (CiteCheck AI, Clearbrief, Travis-Prall MCP, WestCheck). Table stakes features match industry expectations. Quote integrity as differentiator is validated (Clearbrief requires LexisNexis; no free competitor offers this). Lower confidence on exact Bluebook compliance requirements (deferred to v2+). |
-| Architecture | HIGH | MCP patterns are well-documented. Tiered pipeline with chain-of-responsibility is standard pattern for multi-source data verification. Circuit breaker pattern is established for API reliability. Build order follows clear dependency chain. |
-| Pitfalls | HIGH | CAP deprecation: confirmed by Harvard LIL official announcement. SSE deprecation: confirmed by MCP specification changelog. CourtListener pagination: confirmed by GitHub source code and issue tracker. Rate limits: confirmed by Free Law Project documentation and community discussions. Reporter abbreviation ambiguity: fundamental to West Reporter system, confirmed by Eyecite documentation. |
+| Stack | HIGH | All technologies are mainstream choices with extensive documentation. Critical finding: mcp-handler for Next.js App Router deployment is verified. Zod version compatibility documented. |
+| Features | HIGH | Feature set mirrors industry-standard API billing (OpenAI/Anthropic). Table stakes vs differentiators clearly distinguished. Anti-features prevent scope creep. |
+| Architecture | HIGH | Next.js + Supabase + Stripe is a reference architecture (vercel/nextjs-subscription-payments). Dual auth pattern documented by Supabase. Integration points with existing MCP server well-defined. |
+| Pitfalls | MEDIUM-HIGH | Integration pitfalls specific to v1.1 (Next.js migration, webhook signature, auth security) validated. v1.0 MCP server pitfalls (CAP deprecation, CourtListener limits) carried forward but not re-researched. |
 
 **Overall confidence:** HIGH
 
-The research uncovered three critical architectural changes from the original PRD, all confirmed by primary sources. The revised architecture is actually simpler than originally planned (CourtListener citation-lookup collapses Tiers 1+2). The main uncertainty is quote verification fuzzy matching thresholds, which can be tuned during Phase 3 implementation.
+Research validates this is a well-trodden path. The risk is not "can this architecture work?" (yes, it's proven) but "will the integration with the existing MCP server introduce bugs?" The answer is: only if the file move (api/server.ts → app/api/mcp/[transport]/route.ts) or auth middleware breaks transport compatibility. Testing after Phase 1 validates this.
 
 ### Gaps to Address
 
-**Quote matching threshold tuning:** Research confirms CourtListener opinion text is machine-generated from CAP and may contain OCR artifacts. The optimal similarity threshold for fuzzy matching (e.g., 0.85? 0.90? 0.95?) requires experimentation during Phase 3. Plan to implement configurable threshold and A/B test against known-good citations.
+**During Phase 1 (Next.js Migration):**
+- Verify mcp-handler `basePath: '/api/mcp'` works correctly with Next.js App Router dynamic routes `[transport]` — mcp-handler docs confirm this but needs runtime validation
+- Confirm Streamable HTTP POST requests reach the handler (not just GET for SSE) — test with MCP Inspector and curl
+- Validate existing CourtListener rate limiter and LRU caches (module-level singletons) persist across warm Vercel function invocations in Next.js mode — behavior should be identical but needs verification
 
-**CourtListener production quota:** Free tier (5,000/day) and authenticated tier (5,000/hour) limits are documented, but production partnership terms are not public. During Phase 1 implementation, contact Free Law Project to understand quota increase options for production deployment.
+**During Phase 3 (API Key System):**
+- Determine optimal bcrypt work factor (rounds) for key hashing — balance security vs latency. Start with default (10 rounds), measure p99 latency, increase if <50ms overhead.
+- Decide cache strategy for validated keys (in-memory LRU vs no cache) — research suggests LRU with 5min TTL for <10K users, Redis for scale
 
-**Short-form citation resolution scope:** Research confirms short-form citations (Id., supra, reference) require document context and are 40-60% of citations in typical briefs. The exact implementation complexity is unclear—whether to build citation chain resolver or defer to v2+. Recommend Phase 1 tool schema reserves `document_context` parameter even if not implemented until later phase.
+**During Phase 5 (Stripe Integration):**
+- Test webhook signature verification with Stripe CLI — raw body handling in Next.js App Route POST handlers needs hands-on validation
+- Confirm Stripe Credit Grants API vs manual credit_balance column trade-offs — Lago and Stigg guides suggest app-managed column for simplicity at low scale
 
-**Vercel vs Supabase deployment trade-offs:** Research presents both options but does not definitively choose. Vercel + mcp-handler is simpler for v1 (stateless serverless). Supabase Edge Functions require authentication integration (coming soon per docs). Recommend Vercel for Phase 1 deployment, evaluate Supabase for persistent cache (Phase 5) or distributed deployment (post-MVP).
+**Not gaps, just validation:**
+- Free trial credits (50 on signup) — implementation is trivial (default value in accounts table), but confirm this aligns with business model intent
+- Credit pack "never expire" semantics — confirm this is desired vs time-limited (research suggests never-expire is user-friendly but needs business validation)
 
 ## Sources
 
 ### Primary (HIGH confidence)
-- [Harvard LIL: Transitions for the Caselaw Access Project](https://lil.law.harvard.edu/blog/2024/03/26/transitions-for-the-caselaw-access-project/) — CAP API deprecation confirmed
-- [MCP Specification: Transports](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports) — SSE deprecation, Streamable HTTP standard
-- [MCP TypeScript SDK GitHub](https://github.com/modelcontextprotocol/typescript-sdk) — Official SDK, Streamable HTTP support, Zod compatibility
-- [@modelcontextprotocol/sdk npm](https://www.npmjs.com/package/@modelcontextprotocol/sdk) — v1.26.0 verified
-- [CourtListener Citation Lookup API](https://free.law/2024/04/16/citation-lookup-api/) — API capabilities, text limits, response fields
-- [Eyecite on PyPI](https://pypi.org/project/eyecite/) — Python-only confirmed, no JS port
-- [CourtListener API rate limit discussion](https://github.com/freelawproject/courtlistener/discussions/1497) — 5,000/day free tier, 5,000/hour authenticated
-- [CourtListener pagination issue](https://github.com/freelawproject/courtlistener/issues/609) — Deep pagination block confirmed
-- [Free Law Project: eyecite GitHub](https://github.com/freelawproject/eyecite) — 55M+ citations tested, citation types, ambiguity handling
-- [freelawproject/citation-regexes](https://github.com/freelawproject/citation-regexes) — JavaScript regex patterns for citation parsing
+- [Vercel mcp-handler GitHub](https://github.com/vercel/mcp-handler) — Next.js App Router deployment, basePath configuration
+- [Vercel MCP Deployment Docs](https://vercel.com/docs/mcp/deploy-mcp-servers-to-vercel) — mcp-handler setup and routing
+- [Supabase Server-Side Auth for Next.js](https://supabase.com/docs/guides/auth/server-side/nextjs) — middleware pattern, getUser() security
+- [Stripe credit-based pricing model](https://docs.stripe.com/billing/subscriptions/usage-based/use-cases/credits-based-pricing-model) — credit grants, meters, implementation flow
+- [Stripe billing credits docs](https://docs.stripe.com/billing/subscriptions/usage-based/billing-credits) — credit grant lifecycle
+- [Stripe webhooks docs](https://docs.stripe.com/webhooks) — signature verification, event handling
+- [@modelcontextprotocol/sdk npm](https://www.npmjs.com/package/@modelcontextprotocol/sdk) — version 1.26.0 verified, CVE-2025-66414 documented
+- [MCP Specification: Transports](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports) — SSE deprecation confirmed
 
-### Secondary (MEDIUM confidence)
-- [Why MCP Deprecated SSE](https://blog.fka.dev/blog/2025-06-06-why-mcp-deprecated-sse-and-go-with-streamable-http/) — Rationale for Streamable HTTP
-- [Vercel MCP Deployment Docs](https://vercel.com/docs/mcp/deploy-mcp-servers-to-vercel) — mcp-handler usage
-- [CourtListener surpasses 100M requests](https://free.law/2025/09/29/one-hundred-million-requests/) — API v4 production status
-- [CiteCheck AI launch coverage](https://www.lawnext.com/2025/06/lawdroid-launches-citecheck-ai-a-fail-safe-against-ai-citation-hallucinations.html) — Competitor features
-- [Clearbrief Cite Check Report](https://www.lawnext.com/2025/12/clearbrief-launches-cite-check-report-to-give-law-firm-partners-an-audit-trail-against-ai-hallucinations.html) — Competitor features
-- [Travis-Prall CourtListener MCP](https://github.com/Travis-Prall/court-listener-mcp) — Closest MCP competitor
-- [Supabase MCP Edge Functions docs](https://supabase.com/docs/guides/getting-started/byo-mcp) — Deployment option
-- [NearForm: MCP Tips, Tricks and Pitfalls](https://nearform.com/digital-community/implementing-model-context-protocol-mcp-tips-tricks-and-pitfalls/) — Implementation mistakes
+### Secondary (MEDIUM-HIGH confidence)
+- [Vercel nextjs-subscription-payments](https://github.com/vercel/nextjs-subscription-payments) — Reference architecture Next.js + Supabase + Stripe
+- [Makerkit: Supabase API Key Management](https://makerkit.dev/blog/tutorials/supabase-api-key-management) — bcrypt hashing, prefix pattern
+- [Makerkit: Stripe Webhooks with Next.js Supabase](https://makerkit.dev/docs/next-supabase/payments/stripe-webhooks) — Webhook event handling
+- [Stigg usage-based pricing guide](https://www.stigg.io/blog-posts/beyond-metering-the-only-guide-youll-ever-need-to-implement-usage-based-pricing) — Overage patterns: credit packs vs hard stop
+- [Lago credit-based pricing](https://getlago.com/blog/credit-based-pricing) — Double-entry ledger pattern
+- [OpenAI API Usage Dashboard](https://help.openai.com/en/articles/10478918-api-usage-dashboard) — Industry reference for usage UI
+- [Google Cloud API key best practices](https://docs.google.google.com/docs/authentication/api-keys-best-practices) — Security patterns
 
-### Tertiary (LOW confidence)
-- [CourtListener Semantic Search launch](https://free.law/2025/11/05/semantic-search-api/) — Future capability, not yet battle-tested
-- [Vitest 4.0 release](https://www.infoq.com/news/2025/12/vitest-4-browser-mode/) — Version verified
-- [FastMCP npm](https://www.npmjs.com/package/fastmcp) — Alternative SDK option
+### Tertiary (MEDIUM confidence)
+- [ColorWhistle SaaS credits system guide 2026](https://colorwhistle.com/saas-credits-system-guide/) — Credit pack implementation patterns
+- [Anthropic Cost and Usage Reporting](https://support.anthropic.com/en/articles/9534590-cost-and-usage-reporting-in-console) — Usage breakdown UI patterns
+- [Vercel Functions API Reference](https://vercel.com/docs/functions/functions-api-reference) — Top-level /api routing behavior
 
 ---
 *Research completed: 2026-02-13*

@@ -1,173 +1,197 @@
-# Feature Research
+# Feature Landscape: v1.1 Launch & Monetization
 
-**Domain:** Legal citation verification MCP server (anti-hallucination)
+**Domain:** SaaS billing dashboard, API key management, usage metering for a developer-facing legal API
 **Researched:** 2026-02-13
-**Confidence:** MEDIUM-HIGH
+**Overall confidence:** MEDIUM-HIGH
 
-## Feature Landscape
+**Context:** LexCerta v1.0 MVP is shipped (MCP server with parse_citation, verify_west_citation, verify_quote_integrity). v1.1 adds monetization: Next.js dashboard, Supabase backend, API key auth, weighted metering, Stripe billing. Two user types: developers (API keys, Claude Desktop integration) and lawyers (via Claude Desktop as end users).
 
-### Table Stakes (Users Expect These)
+---
 
-Features users assume exist. Missing these = product feels incomplete.
+## Table Stakes
 
-| Feature | Why Expected | Complexity | Notes |
-|---------|--------------|------------|-------|
-| West Reporter citation parsing | Core product promise. Every competitor (CiteCheck AI, Clearbrief, WestCheck) does this. Without parsing, nothing else works. | MEDIUM | Eyecite handles this — supports full, short form, supra, id., ibid. references. ~10MB/s throughput. Must handle malformed input gracefully. |
-| Citation existence verification | The fundamental anti-hallucination check. If a citation does not map to a real opinion, the tool must say so definitively. CiteCheck AI, CourtListener API, and every competitor does this. | MEDIUM | CourtListener citation lookup API returns 200/404 status per citation. Database of ~10M citations. Free tier: 5,000 requests/day. |
-| Hard error on fake citations | AI agents must receive unambiguous "this citation does not exist" responses. Soft failures (warnings, maybes) let hallucinations pass through. This is the entire value proposition. | LOW | Return structured error with explicit "hallucination detected" messaging. No graceful degradation — false negatives are unacceptable. |
-| Citation normalization | Agents produce inconsistent formatting ("123 S. Ct 456" vs "123 S. Ct. 456", "US" vs "U.S."). CourtListener API already returns normalized forms. Every citation tool normalizes. | LOW | CourtListener returns `normalized_citations` field. Map common reporter abbreviation variants to canonical West format. |
-| Case metadata return | When a citation is valid, return case name, court, date, reporter volume. Every verification tool returns this context. Agents need it for drafting. | LOW | CourtListener clusters endpoint provides this. Map to clean MCP response schema. |
-| Structured MCP tool responses | MCP-native consumers expect typed tool responses with clear success/failure semantics. This is the interface contract. | LOW | Use MCP SDK response patterns. Include `valid` boolean, metadata object, error object. |
-| Batch/document-level verification | Legal documents contain dozens to hundreds of citations. Verifying one at a time is unusable. CourtListener API accepts up to 64K characters of text. CiteCheck AI processes whole documents. Travis-Prall MCP has `batch_lookup_citations`. | MEDIUM | CourtListener's text-block API is the natural fit — send full text, get all citations back with status. Must handle rate limits (5K/day free tier). |
+Features users expect from any developer API billing product. Missing these makes the product feel broken or untrustworthy.
 
-### Differentiators (Competitive Advantage)
+| Feature | Why Expected | Complexity | Dependencies on Existing System | User Type |
+|---------|--------------|------------|--------------------------------|-----------|
+| Email/password sign-up and login | Every SaaS product has this. Developers and lawyers both need accounts to get API keys and manage billing. No account = no product. | Low | None (new Supabase Auth layer). Dashboard route, not MCP server. | Both |
+| API key generation (create, name, copy-once) | The fundamental developer onboarding action. OpenAI, Anthropic, Google, and every API provider show the key exactly once at creation time. Copy-once is a security pattern users understand. | Low | New Supabase table `api_keys`. Keys must be validated by new MCP server middleware. | Developer |
+| API key revocation | If a key leaks, users must be able to kill it immediately. Google, OpenAI, and Anthropic all provide instant revocation. Non-negotiable for any API product. | Low | Supabase `api_keys` table soft-delete or status field. MCP middleware must check key validity on every request. | Developer |
+| API key authentication on MCP endpoints | Without auth, the MCP server is open. Auth middleware intercepts requests before they reach tool handlers. Must validate key, identify account, and reject invalid/revoked keys with clear error. | Medium | Integrates into existing `transport.ts` Express middleware chain. Must not break Streamable HTTP or SSE transport. Key lookup hits Supabase on every request (cache recommended). | Developer |
+| Usage dashboard (current period) | Users need to see how many credits they have used this billing cycle. OpenAI shows cost + activity views. Anthropic shows usage + cost. At minimum: credits used, credits remaining, current period dates. | Medium | Reads from new Supabase `usage_records` table. Aggregation query by account + billing period. | Both |
+| Credit balance display | Users must see their remaining credits at a glance -- both subscription credits and purchased credit pack credits. Stripe billing credits track this, but a local view is faster and more reliable for the dashboard. | Low | Supabase `credit_balances` table or derived from Stripe Credit Balance Summary API. | Both |
+| Stripe Checkout for subscription signup | Solo plan ($20/mo, 500 credits). Standard Stripe Checkout Session flow -- redirect to Stripe, return to dashboard. Every Stripe-based SaaS does this. | Medium | Stripe Product + Price objects. Stripe Checkout Session creation from Next.js API route. Webhook to provision account on successful payment. | Both |
+| Stripe Customer Portal for subscription management | Cancel, update payment method, view invoices. Stripe provides a hosted portal -- do not build custom UI for this. Users expect self-service billing management. | Low | Stripe Customer Portal configuration. Single API call to create portal session, redirect user. | Both |
+| Credit pack purchase | One-time purchase of additional credits ($50/1,000 credits, never expire). Must be available when subscription credits are exhausted. Stripe Checkout Session with one-time price. | Medium | Stripe Product + Price (one-time). Webhook to add credits to Supabase balance. Must handle "never expire" semantics (no `expires_at` on Stripe credit grant). | Both |
+| Webhook handling (Stripe events) | Process subscription lifecycle events: `checkout.session.completed`, `invoice.paid`, `customer.subscription.deleted`, `customer.subscription.updated`. Without webhooks, billing state drifts from reality. | Medium | New Next.js API route `/api/webhooks/stripe`. Must verify webhook signature. Updates Supabase account status and credit balances. | System |
+| Usage metering per API call | Every tool invocation through an authenticated API key must record: which tool, which key, timestamp, credit cost. This is the billing source of truth. | Medium | New middleware in MCP server records usage after tool execution. Writes to Supabase `usage_records`. Weighted: parse_citation=0, verify_west_citation=1, verify_quote_integrity=1. | System |
+| Overage notification (credits exhausted) | When monthly credits hit zero, user must know immediately. Return a clear API error (not a silent failure) and show status on dashboard. The project context specifies "prompt to buy credit packs" -- this is the right pattern over hard cutoff or surprise overage bills. | Medium | MCP middleware checks credit balance before allowing paid tool calls. Returns structured error with "credits exhausted" message and link to purchase credit packs. Dashboard shows warning banner. | Both |
+| Multiple API keys per account | Developers use separate keys for dev/staging/prod environments. OpenAI organizes by project; even simple APIs allow multiple keys. Minimum viable: 5 keys per account. | Low | Supabase `api_keys` table with `account_id` foreign key. Dashboard list view with create/revoke actions. | Developer |
 
-Features that set the product apart. Not required, but valuable.
+## Differentiators
 
-| Feature | Value Proposition | Complexity | Notes |
-|---------|-------------------|------------|-------|
-| Quote integrity verification (full-text matching) | No existing MCP server or free tool does this. CiteCheck AI only checks citation existence, not whether quoted text actually appears in the opinion. Clearbrief does this but requires LexisNexis subscription and Word. This is LexCerta's strongest differentiator. | HIGH | Requires CAP full-text retrieval (500 cases/day limit) + fuzzy string matching. Must handle OCR artifacts in CAP data (machine-generated, not human-reviewed). Fuzzy matching threshold needs careful tuning. |
-| MCP-native interface (not Word plugin, not web UI) | Every competitor is a Word plugin (Clearbrief, BriefCatch, WestCheck) or web upload (CiteCheck AI). No competitor is MCP-native. AI legal agents (Claude Desktop, custom agents) cannot use Word plugins. LexCerta is the only tool that meets agents where they are. | LOW | This is an architectural choice, not a feature to build. The MCP SDK handles the protocol. The differentiator is being the only option in this form factor. |
-| Tiered confidence scoring | Return not just valid/invalid but a confidence level: parsed (Tier 1), existence confirmed (Tier 2), full-text verified (Tier 3). Agents can make risk-calibrated decisions. No competitor exposes verification depth this way. | LOW | Map the three-tier verification pipeline to explicit confidence levels in the response. E.g., `confidence: "parsed_only"`, `confidence: "existence_verified"`, `confidence: "quote_verified"`. |
-| Citation start/end position indexing | CourtListener API returns character positions for each citation in submitted text. Enables agents to annotate, hyperlink, or highlight specific citations in generated documents. Travis-Prall MCP does not expose this. | LOW | Pass through `start_index` and `end_index` from CourtListener response. Enables downstream agents to do markup/annotation. |
-| Caching layer for landmark cases | Frequently cited cases (Miranda, Roe, Brown v. Board) are requested repeatedly. Caching eliminates API latency and rate limit pressure. No free competitor caches. | MEDIUM | Redis/KV store keyed on normalized citation string. TTL of days/weeks (case law does not change). Dramatically reduces CourtListener/CAP API usage against rate limits. |
-| Parallel citation resolution | Given one reporter citation, return parallel citations (e.g., both state reporter and regional reporter forms). Useful for agents drafting for specific jurisdictions that require parallel citations per Bluebook Rule 10.3.1. | MEDIUM | Requires mapping between reporter systems. CourtListener clusters may link parallel citations. Not all jurisdictions require this. |
+Features that set LexCerta apart from generic API billing products. Not expected, but valued -- especially for the legal/developer crossover audience.
 
-### Anti-Features (Commonly Requested, Often Problematic)
+| Feature | Value Proposition | Complexity | Dependencies on Existing System | User Type |
+|---------|-------------------|------------|--------------------------------|-----------|
+| Per-tool usage breakdown | Show which tools consumed credits (verify_west_citation vs verify_quote_integrity). OpenAI breaks down by model; Anthropic by model + cache status. Most API dashboards only show total usage. Knowing that 80% of credits go to quote verification helps users optimize. | Low | Supabase `usage_records` already stores tool name per record. Dashboard aggregation query grouped by tool. | Both |
+| Usage history chart (7d/30d trend) | Visual trend of daily credit consumption. OpenAI and Anthropic both provide time-series usage charts. Helps users predict when they will exhaust credits and whether they need a higher plan. | Medium | Time-series aggregation from `usage_records`. Chart component in Next.js dashboard (recharts or similar). | Both |
+| Per-key usage tracking | Show usage broken down by API key. OpenAI enables this by default since Dec 2023. Developers with dev/staging/prod keys want to see which environment is consuming credits. | Low | `usage_records` already linked to `api_key_id`. Dashboard filter/groupby on key. | Developer |
+| Claude Desktop integration guide | Lawyers using Claude Desktop need a "copy this config, paste it here" onboarding flow. Not a generic API docs page -- a specific, step-by-step Claude Desktop MCP config generator that outputs the JSON with their API key pre-filled. This bridges the gap for non-technical lawyer users. | Low | Static page in dashboard. Reads user's API key (masked) and generates Claude Desktop `claude_desktop_config.json` snippet. No backend work. | Lawyer |
+| Usage alerts (email at 75%/90%/100%) | Proactive notification before credits run out. Industry best practice is alerts at 75%, 90%, and 100% thresholds. Prevents surprise lockouts. OpenAI and Anthropic both send usage alerts. | Medium | Background job or Supabase trigger that checks credit consumption percentage. Email via Supabase Edge Functions or Resend. Must not spam -- send each threshold email once per billing period. | Both |
+| Free tier / trial credits | Let users try the API before paying. Give 50 free credits on signup (enough for ~50 verifications). Reduces friction for evaluation. Most API products offer free tier or trial credits. | Low | Grant initial credits on account creation. No Stripe subscription required for free tier. Supabase credit balance starts at 50. | Both |
+| API key scoping (read-only vs full access) | Allow keys with restricted permissions. E.g., a key that can only call parse_citation (free, 0 credits) but not verification tools. Useful for testing and demos. | Medium | `api_keys` table gains `scopes` column (e.g., `["parse", "verify", "quote"]`). MCP middleware checks scope before tool execution. | Developer |
+| OAuth / Google sign-in | Reduces signup friction. Supabase Auth supports Google OAuth out of the box. Lawyers especially may not want to create yet another password. | Low | Supabase Auth provider configuration. Dashboard login page adds "Sign in with Google" button. | Both |
 
-Features that seem good but create problems.
+## Anti-Features
 
-| Feature | Why Requested | Why Problematic | Alternative |
-|---------|---------------|-----------------|-------------|
-| Good Law / Bad Law status (KeyCite/Shepard's equivalent) | Lawyers want to know if a case has been overruled, reversed, or criticized. This is the gold standard of citation checking. | Requires Westlaw or LexisNexis paid API access. Thomson Reuters and LexisNexis actively restrict programmatic access. Building this with free tools produces dangerously incomplete results — telling a lawyer a case is "good law" when you only checked free databases is malpractice-enabling. Partial coverage is worse than no coverage. | Explicitly mark this as out of scope in responses. Return `"good_law_status": "not_checked"` with a note that KeyCite/Shepard's verification is required. Never imply a verified citation is "good law." |
-| Statute and regulation verification | Legal documents cite statutes (U.S.C.), regulations (C.F.R.), and secondary sources alongside case law. Users will ask for this. | Entirely different data sources, parsing rules, and verification pipelines. Statutes are amended, renumbered, and repealed constantly. The West Reporter system does not cover statutes. Mixing case law and statute verification in one tool creates false confidence. | Keep scope to West Reporter case citations only. Document the boundary clearly. Statute verification is a separate MCP server. Travis-Prall's MCP already has eCFR tools — do not duplicate. |
-| AI-powered citation suggestion/generation | If a citation is fake, why not suggest the real case the agent probably meant? Seems helpful. | Turns a verification tool into a generative tool. Suggestions could themselves be wrong, creating a recursive hallucination problem. The tool's authority comes from never generating — only verifying. | Return the error with enough metadata (court, date range, topic keywords from the fake citation) that the calling agent can re-search on its own. |
-| Web UI / dashboard | Humans want to see results visually. A dashboard seems obvious. | Splits focus between MCP server and web app. Different deployment, different auth, different testing. The target user is an AI agent, not a human. Humans already have Clearbrief, CiteCheck AI, WestCheck. | Provide clean JSON responses that agents can format for their own UIs. If human visibility is needed, build a simple MCP Inspector integration, not a custom dashboard. |
-| Bluebook formatting enforcement | Full Bluebook compliance checking (italics, parenthetical placement, signal ordering, etc.). | The Bluebook has hundreds of rules spanning typography, ordering, signals, parentheticals, and jurisdiction-specific exceptions. This is a separate product (BriefCatch charges for this). Over-engineering formatting when the core value is verification. | Normalize to standard West format (correct abbreviations, spacing, periods). Leave full Bluebook compliance to dedicated tools like BriefCatch or LegalEase Citations ($22/month). |
-| Real-time document monitoring | Watch a document as it is being drafted and flag citations in real-time. | Requires persistent connection, document access, change detection. Completely different architecture from request/response MCP tools. Word plugin territory. | The MCP tool model is request/response. Agents call verify when they have citations to check. Real-time monitoring is the agent's responsibility, not the server's. |
+Features to explicitly NOT build for v1.1. Commonly requested or seemingly obvious, but counterproductive.
+
+| Anti-Feature | Why It Seems Good | Why Avoid | What to Do Instead |
+|--------------|-------------------|-----------|-------------------|
+| Custom billing portal UI | Full control over billing UX (invoices, payment methods, plan changes). | Stripe Customer Portal handles this and is maintained by Stripe. Building custom billing UI is weeks of work for forms, PCI compliance considerations, edge cases (failed payments, refunds, disputes). Stripe updates their portal automatically when they add features. | Use Stripe Customer Portal. One API call to create a session, redirect the user. Covers 95% of billing management needs. |
+| Team/organization accounts | Multiple users sharing one billing account. Seems natural for law firms. | Massive complexity increase: role-based access control, invitation flows, shared vs per-user keys, billing owner vs member permissions, seat-based pricing logic. v1.1 is solo users only. Add teams when there is validated demand from paying customers. | Single-user accounts only. One email = one account = one billing relationship. Document that team support is on the roadmap if asked. |
+| Usage-based pricing (pay per call, no subscription) | Maximum flexibility. User pays exactly for what they use. | Unpredictable revenue. Harder to implement with Stripe (requires Meters + usage reporting). Harder for users to budget. The subscription + credit pack model gives predictable baseline revenue and user cost predictability. Pure usage-based can be added as a plan later. | Stick with Solo plan ($20/mo, 500 credits) + credit packs ($50/1K). Simple, predictable for both sides. |
+| Multiple subscription tiers at launch | Pro plan, Enterprise plan, custom pricing. Seems like you need tiers. | No data on usage patterns yet. You do not know what a "power user" looks like for this product. Premature tier design leads to awkward pricing that must be changed later (breaking existing subscribers). One plan + credit packs is the right starting point. | Launch with Solo plan only. After 3-6 months of usage data, design Pro tier based on actual power user patterns. Credit packs serve as the "I need more" escape valve in the meantime. |
+| Real-time usage streaming (WebSocket) | Dashboard updates live as API calls happen. Feels modern. | Adds WebSocket infrastructure, connection management, and complexity for a metric that updates at most a few times per minute for most users. Polling or page refresh is fine for a billing dashboard. | Dashboard fetches usage on page load. Add a refresh button. If a user just made API calls and wants to see updated usage, they click refresh. |
+| Admin panel / back-office tools | View all users, manage accounts, override balances, investigate issues. | Scope creep. For early-stage with few users, Supabase Studio dashboard + Stripe Dashboard provide all admin capabilities needed. Building a custom admin panel is a separate product. | Use Supabase Studio for database queries and Stripe Dashboard for billing management. Build admin tooling only when user count makes direct database access impractical (100+ users). |
+| Rate limiting per API key | Throttle individual keys to prevent abuse. | The existing MCP server already has a global rate limiter (4,500/hr against CourtListener's 5,000/hr limit). Per-key rate limiting adds complexity and is redundant with credit-based limiting -- when credits run out, the key is effectively rate-limited to zero on paid tools. | Credit balance acts as the natural rate limit. Global CourtListener rate limiter prevents upstream abuse. Add per-key rate limiting only if a single user is monopolizing the shared CourtListener quota. |
+| Automatic plan upgrades | Detect high usage and auto-upgrade to a higher plan. | Users hate surprise billing changes. Violates trust, especially with lawyers who are sensitive to unauthorized charges. | Send usage alerts. Show "upgrade available" banner. Let the user decide. Never change billing without explicit user action. |
+| SDK / client library | Official npm package for calling LexCerta API. | The MCP protocol IS the SDK. MCP clients (Claude Desktop, custom agents) already know how to call MCP tools. A custom SDK adds a maintenance burden and duplicates what MCP provides. | Document MCP connection configuration. Provide the Claude Desktop JSON config snippet. Users who build custom integrations use the MCP SDK directly. |
 
 ## Feature Dependencies
 
 ```
-[Citation Parsing (Eyecite)]
+[Supabase Auth (sign up/login)]
     |
-    +--requires--> [Citation Normalization]
+    +--enables--> [API Key Generation]
+    |                 |
+    |                 +--enables--> [API Key Auth Middleware on MCP Server]
+    |                 |                 |
+    |                 |                 +--enables--> [Usage Metering per Call]
+    |                 |                 |                 |
+    |                 |                 |                 +--enables--> [Usage Dashboard]
+    |                 |                 |                 |
+    |                 |                 |                 +--enables--> [Per-Tool Breakdown]
+    |                 |                 |                 |
+    |                 |                 |                 +--enables--> [Per-Key Usage Tracking]
+    |                 |                 |                 |
+    |                 |                 |                 +--enables--> [Usage Alerts]
+    |                 |                 |
+    |                 |                 +--enables--> [Credit Balance Check (overage handling)]
+    |                 |
+    |                 +--enables--> [Claude Desktop Config Generator]
     |
-    +--requires--> [Citation Existence Check (CourtListener)]
-                       |
-                       +--requires--> [Case Metadata Return]
-                       |
-                       +--requires--> [Citation Position Indexing]
-                       |
-                       +--enhances--> [Quote Integrity Verification (CAP)]
-                       |
-                       +--enhances--> [Parallel Citation Resolution]
-                       |
-                       +--enhances--> [Caching Layer]
+    +--enables--> [Stripe Checkout (subscription)]
+    |                 |
+    |                 +--enables--> [Stripe Webhooks]
+    |                 |                 |
+    |                 |                 +--enables--> [Credit Balance Provisioning]
+    |                 |                 |
+    |                 |                 +--enables--> [Credit Pack Purchase]
+    |                 |
+    |                 +--enables--> [Stripe Customer Portal]
 
-[Batch Verification] --requires--> [Citation Parsing] + [Existence Check]
-
-[Tiered Confidence Scoring] --requires--> [All three verification tiers operational]
-
-[Quote Integrity] --requires--> [Existence Check] (must confirm case exists before fetching full text)
+[Existing MCP Server (transport.ts)]
+    |
+    +--modified by--> [API Key Auth Middleware]
+    |
+    +--modified by--> [Usage Recording Middleware]
+    |
+    +--modified by--> [Credit Balance Gate]
 ```
 
-### Dependency Notes
+### Critical Path
 
-- **Citation Parsing requires Normalization:** Parsed citations must be normalized before querying CourtListener (which expects canonical forms).
-- **Quote Integrity requires Existence Check:** No point fetching full text from CAP if the citation itself is fake. Existence must pass first.
-- **Batch Verification requires single-citation pipeline:** Batch is a loop/parallel execution of the single-citation flow. Build single first.
-- **Caching enhances Existence Check and Quote Integrity:** Cache sits in front of both CourtListener and CAP calls. Does not block them — additive optimization.
-- **Tiered Confidence requires all tiers:** Cannot report confidence levels until each tier is independently functional.
+The dependency chain that determines build order:
 
-## MVP Definition
+1. **Supabase schema + Auth** -- everything depends on accounts existing
+2. **API key generation + storage** -- auth middleware needs keys to validate
+3. **API key auth middleware on MCP server** -- metering needs to know who is calling
+4. **Usage metering** -- billing needs usage records
+5. **Stripe integration** -- needs accounts to associate with Stripe customers
+6. **Credit balance management** -- needs both Stripe webhooks and usage records
+7. **Dashboard UI** -- needs all backend pieces to display
 
-### Launch With (v1)
+### Integration Points with Existing MCP Server
 
-Minimum viable product — what is needed to validate the concept.
+The v1.0 MCP server must be modified in exactly three places:
 
-- [ ] `verify_west_citation` tool — parse citation string, normalize, check existence via CourtListener, return valid/invalid with metadata. This is the core anti-hallucination check.
-- [ ] `verify_quote_integrity` tool — given citation + quote string, fetch full text from CAP, fuzzy match, return match score. This is the primary differentiator.
-- [ ] Citation normalization — correct common West format errors in input before verification. Embedded in the verification pipeline, not a separate tool.
-- [ ] Hard error responses — unambiguous "hallucination detected" for fake citations. No soft failures.
-- [ ] SSE transport — remote agent connectivity. Without this, only local stdio agents can use the server.
+1. **`transport.ts` (or new middleware):** Add API key extraction from request headers (e.g., `Authorization: Bearer lc_...`) before requests reach tool handlers. Must work for both Streamable HTTP (`POST /mcp`) and SSE (`GET /sse`, `POST /messages`).
 
-### Add After Validation (v1.x)
+2. **Tool handler wrappers:** After a tool executes successfully, record usage to Supabase. The weight is determined by tool name: `parse_citation=0`, `verify_west_citation=1`, `verify_quote_integrity=1`.
 
-Features to add once core is working.
+3. **Pre-execution credit check:** Before executing a paid tool (weight > 0), verify the account has sufficient credits. Reject with structured MCP error if insufficient.
 
-- [ ] Batch/document-level verification — when agents start sending full documents rather than individual citations. Trigger: user feedback that one-at-a-time is too slow.
-- [ ] Caching layer — when API rate limits become a bottleneck. Trigger: hitting CourtListener's 5,000/day free tier limit or CAP's 500/day limit.
-- [ ] Citation position indexing — when agents want to annotate/hyperlink citations in generated text. Trigger: integration with document generation agents.
-- [ ] Tiered confidence scoring — when agents want nuanced risk assessment rather than binary valid/invalid. Trigger: agent developers requesting graduated responses.
+The `server.ts` `registerTools()` function and tool implementations (`verify-citation.ts`, `verify-quote.ts`, `parse-citation.ts`) should NOT be modified. Auth and metering are cross-cutting concerns handled by middleware, not by individual tools.
 
-### Future Consideration (v2+)
+## MVP Recommendation for v1.1
 
-Features to defer until product-market fit is established.
+### Must Have (launch blockers)
 
-- [ ] Parallel citation resolution — requires significant reporter system mapping work. Defer until jurisdiction-specific formatting is a validated need.
-- [ ] Statute/regulation verification — entirely separate pipeline. Only build if case citation verification proves the MCP-native model works.
-- [ ] Good Law status — only feasible with paid API partnerships. Defer until revenue model exists.
+1. **Email/password sign-up and login** -- gate to everything else
+2. **API key generation and revocation** -- the core developer action
+3. **API key auth middleware on MCP server** -- monetization requires auth
+4. **Weighted usage metering** -- must track credits consumed
+5. **Credit balance display** -- users must see remaining credits
+6. **Stripe subscription checkout (Solo plan)** -- the revenue mechanism
+7. **Stripe webhook handling** -- billing state synchronization
+8. **Credit pack purchase flow** -- the overage escape valve
+9. **Stripe Customer Portal link** -- billing self-service
+10. **Overage handling (structured error + prompt to buy)** -- graceful credit exhaustion
 
-## Feature Prioritization Matrix
+### Should Have (launch with if possible, defer 1-2 weeks if needed)
 
-| Feature | User Value | Implementation Cost | Priority |
-|---------|------------|---------------------|----------|
-| Citation existence verification | HIGH | MEDIUM | P1 |
-| Hard error on fake citations | HIGH | LOW | P1 |
-| Citation normalization | HIGH | LOW | P1 |
-| Case metadata return | HIGH | LOW | P1 |
-| Quote integrity verification | HIGH | HIGH | P1 |
-| SSE transport | HIGH | MEDIUM | P1 |
-| Structured MCP responses | HIGH | LOW | P1 |
-| Batch verification | HIGH | MEDIUM | P2 |
-| Caching layer | MEDIUM | MEDIUM | P2 |
-| Tiered confidence scoring | MEDIUM | LOW | P2 |
-| Citation position indexing | MEDIUM | LOW | P2 |
-| Parallel citation resolution | LOW | MEDIUM | P3 |
+1. **Usage dashboard with current period summary** -- users want to see usage, but can check Stripe receipts in the short term
+2. **Per-tool usage breakdown** -- low effort addition to usage dashboard
+3. **Claude Desktop integration guide** -- low effort, high value for lawyer users
+4. **Free trial credits (50 on signup)** -- reduces friction, easy to implement
 
-**Priority key:**
-- P1: Must have for launch
-- P2: Should have, add when possible
-- P3: Nice to have, future consideration
+### Defer (post-launch, data-driven)
 
-## Competitor Feature Analysis
+1. **Usage history chart** -- nice but not blocking
+2. **Per-key usage tracking** -- wait for users with multiple keys
+3. **Usage alerts (email)** -- requires email infrastructure
+4. **OAuth / Google sign-in** -- Supabase makes this easy, but email/password is sufficient for launch
+5. **API key scoping** -- wait for developer feedback on permission needs
 
-| Feature | CiteCheck AI | Clearbrief | Travis-Prall CourtListener MCP | WestCheck (Westlaw) | LexCerta (Our Approach) |
-|---------|-------------|------------|-------------------------------|--------------------|-----------------------|
-| Citation parsing | GPT + OCR extraction | Proprietary | Eyecite-based | Proprietary | Eyecite (open source, 55M+ citations tested) |
-| Existence check | CourtListener API | LexisNexis / Fastcase | CourtListener API | Westlaw database | CourtListener API (free, 10M citation database) |
-| Quote verification | No | Yes (requires LexisNexis sub) | No | Yes (Quick Check) | Yes (CAP full-text, free, 6M+ opinions) |
-| Good Law status | No | No | No | Yes (KeyCite) | No (explicitly out of scope) |
-| Statute verification | No | Yes | Yes (eCFR tools) | Yes | No (explicitly out of scope) |
-| Interface | Web upload | Word plugin | MCP server | Word plugin | MCP server |
-| Batch support | Yes (document upload) | Yes (whole document) | Yes (`batch_lookup_citations`) | Yes (whole document) | v1.x (single citation first, batch after) |
-| Normalization | Implicit | Yes | Yes (`verify_citation_format`) | Yes | Yes (West format canonical) |
-| Pricing | Free (5 reports) / $25-100/mo | Subscription | Free (open source) | Westlaw subscription | Free / open source |
-| Target user | Lawyers (manual upload) | Lawyers (Word users) | AI agents (MCP) | Lawyers (Word users) | AI agents (MCP) |
+## User Type Considerations
 
-### Competitive Positioning
+### Developer Users
 
-LexCerta's competitive moat is the combination of:
-1. **MCP-native** — the only citation verification tool built for AI agents, not human Word users
-2. **Quote integrity on free data** — Clearbrief requires LexisNexis; LexCerta uses CAP (free, 6M+ opinions)
-3. **Honest about scope** — explicitly does not claim Good Law status, preventing false confidence
+Developers expect: API key management, clear documentation, usage visibility, standard auth patterns (Bearer token), predictable error responses when credits are exhausted. They will read docs and configure integrations themselves.
 
-The closest competitor is Travis-Prall's CourtListener MCP, which already exposes `lookup_citation`, `batch_lookup_citations`, and `verify_citation_format`. LexCerta differentiates by adding quote integrity verification (CAP integration) and the tiered verification pipeline with explicit confidence levels. Travis-Prall's MCP is a general-purpose CourtListener/eCFR wrapper; LexCerta is purpose-built for the anti-hallucination use case.
+**Key insight:** Developers want the key management and usage tracking features to work exactly like OpenAI or Anthropic's dashboards. Do not innovate on these patterns -- follow them.
+
+### Lawyer Users (via Claude Desktop)
+
+Lawyers expect: simple signup, a "paste this into Claude Desktop" instruction, visibility into how many "checks" they have left (not "credits" -- use plain language), and the ability to buy more when they run out.
+
+**Key insight:** Lawyers do not think in terms of API keys or credits. The dashboard must translate: "You have 347 citation checks remaining this month" not "347 credits remaining." The Claude Desktop config generator is the most important differentiator for this user type -- it eliminates the technical barrier entirely.
+
+### Dual-Audience Dashboard Strategy
+
+Do NOT build two separate dashboards. Build one dashboard with progressive disclosure:
+
+- **Default view:** Simple -- credit balance ("X checks remaining"), buy more button, Claude Desktop setup guide
+- **Developer view:** Toggle or tab -- API keys, per-key usage, per-tool breakdown, raw usage data
+
+This serves lawyers by default and lets developers access what they need without cluttering the lawyer experience.
 
 ## Sources
 
-- [CourtListener Citation Lookup API announcement](https://free.law/2024/04/16/citation-lookup-api/) — API capabilities, response fields, rate limits (MEDIUM confidence)
-- [Eyecite GitHub](https://github.com/freelawproject/eyecite) — Parser features, citation types, performance (HIGH confidence)
-- [CiteCheck AI launch coverage](https://www.lawnext.com/2025/06/lawdroid-launches-citecheck-ai-a-fail-safe-against-ai-citation-hallucinations.html) — Competitor features, pricing, limitations (MEDIUM confidence)
-- [Clearbrief Cite Check Report](https://www.lawnext.com/2025/12/clearbrief-launches-cite-check-report-to-give-law-firm-partners-an-audit-trail-against-ai-hallucinations.html) — Competitor feature set (MEDIUM confidence)
-- [Travis-Prall CourtListener MCP](https://github.com/Travis-Prall/court-listener-mcp) — Closest MCP competitor, 20+ tools (MEDIUM confidence)
-- [Stanford/Yale AI hallucination study](https://arxiv.org/abs/2405.20362) — 17-33% hallucination rate in commercial legal AI tools (HIGH confidence)
-- [Caselaw Access Project](https://case.law/) — 6M+ opinions, 500/day full-text limit, OCR quality caveat (MEDIUM confidence)
-- [CourtListener Semantic Search API](https://free.law/2025/11/05/semantic-search-api/) — New search capabilities (MEDIUM confidence)
-- [LawNext citation checking directory](https://directory.lawnext.com/categories/citation-checking/) — Market landscape (LOW confidence)
-- [Bluebook parallel citation rules](https://library.ju.edu/bluebook-citation/parallel-citations) — Rule 10.3.1 requirements (HIGH confidence)
+- [Stripe credit-based pricing model docs](https://docs.stripe.com/billing/subscriptions/usage-based/use-cases/credits-based-pricing-model) -- Credit grants, meters, implementation flow (HIGH confidence)
+- [Stripe billing credits docs](https://docs.stripe.com/billing/subscriptions/usage-based/billing-credits) -- Credit grant lifecycle, priority, limitations (HIGH confidence)
+- [OpenAI API Usage Dashboard](https://help.openai.com/en/articles/10478918-api-usage-dashboard) -- Cost + Activity views, per-project filtering, export (MEDIUM confidence)
+- [Anthropic Cost and Usage Reporting](https://support.anthropic.com/en/articles/9534590-cost-and-usage-reporting-in-console) -- Usage breakdown, Admin API (MEDIUM confidence)
+- [Google Cloud API key best practices](https://docs.google.google.com/docs/authentication/api-keys-best-practices) -- Security patterns, rotation, scoping (HIGH confidence)
+- [Stigg usage-based pricing guide](https://www.stigg.io/blog-posts/beyond-metering-the-only-guide-youll-ever-need-to-implement-usage-based-pricing) -- Overage handling patterns: hard stop vs soft limit vs credit packs (MEDIUM confidence)
+- [ColorWhistle SaaS credits system guide 2026](https://colorwhistle.com/saas-credits-system-guide/) -- Credit pack implementation patterns, weighted pricing (MEDIUM confidence)
+- [Lago credit-based pricing explainer](https://getlago.com/blog/credit-based-pricing) -- Double-entry ledger pattern, audit trails (MEDIUM confidence)
+- [Supabase Next.js server-side auth](https://supabase.com/docs/guides/auth/server-side/nextjs) -- Middleware pattern, cookie-based auth (HIGH confidence)
+- [OpenAI project management](https://help.openai.com/en/articles/9186755-managing-your-work-in-the-api-platform-with-projects) -- Per-project API keys, usage tracking per key (MEDIUM confidence)
+- [CloudZero API metrics 2026](https://www.cloudzero.com/blog/api-metrics/) -- Cost per API call as foundational metric (LOW confidence)
 
 ---
-*Feature research for: Legal citation verification MCP server*
+*Feature research for: LexCerta v1.1 Launch & Monetization*
 *Researched: 2026-02-13*
