@@ -2,7 +2,6 @@
   "name": "lexcerta",
   "version": "0.1.0",
   "description": "MCP server for legal citation verification via CourtListener",
-  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
