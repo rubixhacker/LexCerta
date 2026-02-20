@@ -9,9 +9,9 @@ Requirements for Launch & Monetization milestone. Each maps to roadmap phases.
 
 ### Infrastructure
 
-- [ ] **INFRA-01**: Project converts to Next.js App Router with MCP endpoint at app/api/mcp/[transport]/route.ts
+- [x] **INFRA-01**: Project converts to Next.js App Router with MCP endpoint at app/api/mcp/[transport]/route.ts
 - [ ] **INFRA-02**: Supabase database schema deployed with tables for accounts, API keys, usage records, and credit balances
-- [ ] **INFRA-03**: Existing MCP tools (parse, verify, quote) continue working after migration
+- [x] **INFRA-03**: Existing MCP tools (parse, verify, quote) continue working after migration
 
 ### Authentication
 
@@ -80,9 +80,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INFRA-01 | Phase 7 | Pending |
+| INFRA-01 | Phase 7 | Complete |
 | INFRA-02 | Phase 8 | Pending |
-| INFRA-03 | Phase 7 | Pending |
+| INFRA-03 | Phase 7 | Complete |
 | AUTH-01 | Phase 8 | Pending |
 | AUTH-02 | Phase 8 | Pending |
 | AUTH-03 | Phase 8 | Pending |

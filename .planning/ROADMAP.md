@@ -23,7 +23,7 @@
 
 **Milestone Goal:** Turn LexCerta from an open MCP server into a paid service with user accounts, API key auth, usage metering, and Stripe billing on lexcerta.ai.
 
-- [ ] **Phase 7: Next.js Migration** - Convert to Next.js App Router, preserve existing MCP tools
+- [x] **Phase 7: Next.js Migration** - Convert to Next.js App Router, preserve existing MCP tools
 - [ ] **Phase 8: Supabase Backend & Auth** - Database schema, user accounts, signup/login
 - [ ] **Phase 9: API Key Management** - Key CRUD, MCP endpoint authentication middleware
 - [ ] **Phase 10: Usage Metering** - Weighted tool call recording, usage display
@@ -44,8 +44,8 @@
 **Plans**: 2 plans
 
 Plans:
-- [ ] 07-01-PLAN.md — Install Next.js, update configs, create App Router + MCP route handler, remove old api/
-- [ ] 07-02-PLAN.md — Deploy to Vercel, verify MCP tools work at new endpoint (checkpoint)
+- [x] 07-01-PLAN.md — Install Next.js, update configs, create App Router + MCP route handler, remove old api/
+- [x] 07-02-PLAN.md — Deploy to Vercel, verify MCP tools work at new endpoint (checkpoint)
 
 ### Phase 8: Supabase Backend & Auth
 **Goal**: Users can create accounts and log into a protected dashboard on lexcerta.ai
@@ -129,7 +129,7 @@ Phases execute in numeric order: 7 -> 8 -> 9 -> 10 -> 11 -> 12
 | 4. Caching | v1.0 | 1/1 | Complete | 2026-02-13 |
 | 5. Quote Verification | v1.0 | 2/2 | Complete | 2026-02-13 |
 | 6. Production Deployment | v1.0 | 1/1 | Complete | 2026-02-13 |
-| 7. Next.js Migration | v1.1 | 0/? | Not started | - |
+| 7. Next.js Migration | v1.1 | 2/2 | Complete | 2026-02-20 |
 | 8. Supabase Backend & Auth | v1.1 | 0/? | Not started | - |
 | 9. API Key Management | v1.1 | 0/? | Not started | - |
 | 10. Usage Metering | v1.1 | 0/? | Not started | - |
@@ -138,4 +138,4 @@ Phases execute in numeric order: 7 -> 8 -> 9 -> 10 -> 11 -> 12
 
 ---
 *Roadmap created: 2026-02-13*
-*Last updated: 2026-02-13*
+*Last updated: 2026-02-20*
