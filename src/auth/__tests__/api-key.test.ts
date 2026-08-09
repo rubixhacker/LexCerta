@@ -74,6 +74,25 @@ describe("authenticateRequest", () => {
 		expect(JSON.stringify(result)).not.toContain(fixture.token);
 	});
 
+	it.each(["staging", "development", ""])(
+		"returns unavailable for unsupported runtime key environments (%s)",
+		async (keyEnvironment) => {
+			const fixture = await createLocalAuthFixture();
+			const database = new FakeDatabase();
+			database.rows.set(fixture.record.public_id, fixture.record);
+
+			const result = await authenticateRequest(
+				new Request("https://mcp.lexcerta.ai/", {
+					headers: { Authorization: `Bearer ${fixture.token}` },
+				}),
+				{ ...environment(database, fixture.pepper), KEY_ENVIRONMENT: keyEnvironment },
+				fixture.now,
+			);
+
+			expect(result).toEqual({ kind: "unavailable" });
+		},
+	);
+
 	it.each(["missing", "malformed", "expired", "revoked"] as const)(
 		"returns an indistinguishable unauthorized result for %s credentials",
 		async (state) => {

@@ -4,8 +4,8 @@
 	"type": "module",
 	"description": "MCP server for legal citation verification via CourtListener",
 	"scripts": {
-		"dev": "wrangler dev",
-		"deploy": "wrangler deploy",
+		"dev": "wrangler dev --env local",
+		"deploy": "wrangler deploy --env=\"\"",
 		"test": "vitest run",
 		"test:watch": "vitest",
 		"types": "wrangler types worker-configuration.d.ts",

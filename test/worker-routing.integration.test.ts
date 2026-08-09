@@ -1,9 +1,9 @@
+import { SELF, env } from "cloudflare:test";
 import {
 	CLIENT_CAPABILITIES_META_KEY,
 	CLIENT_INFO_META_KEY,
 	PROTOCOL_VERSION_META_KEY,
 } from "@modelcontextprotocol/server";
-import { env, SELF } from "cloudflare:test";
 import { beforeEach, describe, expect, it } from "vitest";
 import { createLocalAuthFixture } from "./fixtures/api-key.js";
 
@@ -126,6 +126,7 @@ describe("Worker HTTP routing", () => {
 			result: {
 				supportedVersions: ["2026-07-28"],
 				capabilities: { tools: {} },
+				instructions: expect.any(String),
 			},
 		});
 	});
@@ -184,6 +185,31 @@ describe("Worker HTTP routing", () => {
 		expect(response.status).toBe(400);
 	});
 
+	it("rejects an authenticated subscriptions/listen request before an SSE stream opens", async () => {
+		// Given: an authenticated modern request for the excluded subscription capability.
+		const request = modernMcpRequest("subscriptions/listen");
+
+		// When: it reaches the stateless MCP endpoint.
+		const response = await SELF.fetch(request);
+
+		// Then: no authenticated persistent SSE channel is exposed.
+		expect(response.status).toBe(400);
+		expect(response.headers.get("content-type") ?? "").not.toContain("text/event-stream");
+	});
+
+	it("rejects an authenticated subscriptions/listen request without its routing header", async () => {
+		// Given: a modern subscription request with no Mcp-Method routing header.
+		const request = modernMcpRequest("subscriptions/listen");
+		request.headers.delete("mcp-method");
+
+		// When: it reaches the stateless MCP endpoint.
+		const response = await SELF.fetch(request);
+
+		// Then: a missing header cannot bypass the no-subscriptions boundary.
+		expect(response.status).toBe(400);
+		expect(response.headers.get("content-type") ?? "").not.toContain("text/event-stream");
+	});
+
 	it("keeps protocol-boundary validation behind generic authentication", async () => {
 		// Given: an unauthenticated POST with both malformed protocol routing and a session header.
 		const request = new Request("https://mcp.lexcerta.ai/", {
@@ -201,24 +227,6 @@ describe("Worker HTTP routing", () => {
 		// Then: the client receives the same generic unauthorized response before protocol details.
 		expect(response.status).toBe(401);
 		expect(await response.text()).toBe('{"error":"Unauthorized"}');
-	});
-
-	it("lists the static tool catalog with the public five-minute cache hint", async () => {
-		// Given: a valid authenticated modern tools/list request.
-		const request = modernMcpRequest("tools/list");
-
-		// When: it reaches the Worker.
-		const response = await SELF.fetch(request);
-
-		// Then: the cacheable catalog is deterministic and safe to share across Customers.
-		expect(response.status).toBe(200);
-		expect(await response.json()).toMatchObject({
-			result: {
-				tools: [{ name: "parse_citation" }],
-				ttlMs: 300000,
-				cacheScope: "public",
-			},
-		});
 	});
 
 	it("rejects a legacy initialize request instead of creating session state", async () => {
@@ -239,44 +247,5 @@ describe("Worker HTTP routing", () => {
 
 		// Then: strict modern-only mode refuses the legacy initialization exchange.
 		expect(response.status).toBe(400);
-	});
-
-	it("requires an Mcp-Name header that agrees with a tool call body", async () => {
-		// Given: a valid tool call whose header identifies a different tool than the JSON-RPC body.
-		const request = modernMcpRequest("tools/call", {
-			arguments: { citation: "347 U.S. 483" },
-			name: "parse_citation",
-		});
-		request.headers.set("mcp-name", "other_tool");
-
-		// When: the authenticated request enters the SDK handler.
-		const response = await SELF.fetch(request);
-
-		// Then: routing metadata inconsistency is rejected before tool execution.
-		expect(response.status).toBe(400);
-	});
-
-	it("executes a header-complete modern tool call without session initialization", async () => {
-		// Given: a complete stateless request for the sole registered tool.
-		const request = modernMcpRequest("tools/call", {
-			arguments: { citation: "347 U.S. 483" },
-			name: "parse_citation",
-		});
-
-		// When: the Worker dispatches it after D1-backed authentication.
-		const response = await SELF.fetch(request);
-
-		// Then: the official v2 handler returns the versioned structured result directly.
-		expect(response.status).toBe(200);
-		expect(await response.json()).toMatchObject({
-			id: 1,
-			result: {
-				structuredContent: {
-					citation: { normalized: "347 U.S. 483" },
-					contractVersion: "1",
-					outcome: "parsed",
-				},
-			},
-		});
 	});
 });

@@ -4,17 +4,18 @@ const API_KEY_TOKEN_PATTERN = /^lc_(live|test)_([A-Za-z0-9-]{1,64})_([A-Za-z0-9_
 const SHA256_HEX_PATTERN = /^[0-9a-f]{64}$/;
 const ZERO_SHA256_HEX = "0".repeat(64);
 const API_KEY_PUBLIC_ID_SCHEMA = z.string().min(1).brand("ApiKeyPublicId");
+const KEY_ENVIRONMENT_SCHEMA = z.enum(["production", "test"]);
 
 const API_KEY_ROW_SCHEMA = z.object({
 	public_id: API_KEY_PUBLIC_ID_SCHEMA,
-	environment: z.enum(["production", "test"]),
+	environment: KEY_ENVIRONMENT_SCHEMA,
 	hmac_sha256_hex: z.string().regex(SHA256_HEX_PATTERN),
 	status: z.enum(["active", "revoked"]),
 	expires_at: z.string().datetime({ offset: true }),
 	revoked_at: z.string().datetime({ offset: true }).nullable(),
 });
 
-export type KeyEnvironment = "production" | "test";
+export type KeyEnvironment = z.infer<typeof KEY_ENVIRONMENT_SCHEMA>;
 
 export type ApiKeyRecord = z.infer<typeof API_KEY_ROW_SCHEMA>;
 export type ApiKeyPublicId = z.infer<typeof API_KEY_PUBLIC_ID_SCHEMA>;
@@ -35,7 +36,7 @@ export interface AuthDatabase {
 export interface AuthEnvironment {
 	readonly DB: AuthDatabase;
 	readonly API_KEY_PEPPER: string;
-	readonly KEY_ENVIRONMENT: KeyEnvironment;
+	readonly KEY_ENVIRONMENT: string;
 }
 
 export type BearerCredential =
@@ -67,6 +68,10 @@ export async function authenticateRequest(
 	now = new Date(),
 ): Promise<AuthenticationResult> {
 	try {
+		const parsedKeyEnvironment = KEY_ENVIRONMENT_SCHEMA.safeParse(env.KEY_ENVIRONMENT);
+		if (!parsedKeyEnvironment.success) return { kind: "unavailable" };
+		const keyEnvironment = parsedKeyEnvironment.data;
+
 		const credential = parseBearerCredential(request.headers.get("authorization"));
 		if (credential.kind !== "credential") return { kind: "unauthorized" };
 
@@ -74,7 +79,7 @@ export async function authenticateRequest(
 		if (tokenParts === null) return { kind: "unauthorized" };
 		const tokenEnvironment = tokenParts[1];
 		const publicId = tokenParts[2];
-		const expectedTokenEnvironment = env.KEY_ENVIRONMENT === "production" ? "live" : "test";
+		const expectedTokenEnvironment = keyEnvironment === "production" ? "live" : "test";
 		if (tokenEnvironment !== expectedTokenEnvironment || publicId === undefined) {
 			return { kind: "unauthorized" };
 		}
@@ -89,7 +94,7 @@ export async function authenticateRequest(
 		const hashMatches = timingSafeHexEqual(digest, expectedHash);
 		if (
 			!record.success ||
-			record.data.environment !== env.KEY_ENVIRONMENT ||
+			record.data.environment !== keyEnvironment ||
 			!hashMatches ||
 			!isUsableRecord(record.data, now)
 		) {

@@ -1,5 +1,6 @@
-import { createMcpHandler, McpServer, preloadSchemas } from "@modelcontextprotocol/server";
+import { McpServer, createMcpHandler, preloadSchemas } from "@modelcontextprotocol/server";
 import { registerParseCitationTool } from "./verification/citation.js";
+import { registerIndeterminateVerificationTools } from "./verification/indeterminate.js";
 
 const PROTOCOL_VERSION = "2026-07-28";
 const CACHE_TTL_MILLISECONDS = 5 * 60 * 1000;
@@ -11,6 +12,8 @@ function createServer(): McpServer {
 		{ name: "lexcerta", version: "1.0.0" },
 		{
 			capabilities: { tools: {} },
+			instructions:
+				"Use the read-only citation and quote evidence tools. Structured results are contract-versioned and source-scoped.",
 			cacheHints: {
 				"server/discover": {
 					cacheScope: "public",
@@ -25,6 +28,7 @@ function createServer(): McpServer {
 		},
 	);
 	registerParseCitationTool(server);
+	registerIndeterminateVerificationTools(server);
 	return server;
 }
 
@@ -38,6 +42,9 @@ export function protocolBoundaryRejection(request: Request): Response | undefine
 		return new Response(null, { status: 400 });
 	}
 	if (request.headers.has("mcp-session-id")) {
+		return new Response(null, { status: 400 });
+	}
+	if (request.headers.get("mcp-method") === "subscriptions/listen") {
 		return new Response(null, { status: 400 });
 	}
 	return undefined;
