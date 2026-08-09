@@ -202,7 +202,7 @@ describe("Worker citation verification", () => {
 			"rate_limited",
 			"rate_limited",
 			true,
-			["GET", "POST"],
+			["GET", "POST", "GET"],
 		],
 		["CourtListener 5xx", "available", "server", "upstream_unavailable", true, ["GET", "POST"]],
 		[

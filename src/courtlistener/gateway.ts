@@ -1,11 +1,18 @@
-import type {
-	CitationLookup,
-	CitationVerificationGateway,
-	CitationVerificationObservation,
-} from "../verification/verify-citation.js";
+import type * as Verification from "../verification/verify-citation.js";
 import type { CitationLookupOutcome, CourtListenerApi, CourtListenerUsage } from "./api.js";
 import type { BudgetDecision, CourtListenerOutcome, QuotaWindow } from "./budget.js";
 import type { CourtListenerCoordinatorRpc } from "./coordinator.js";
+
+const FALLBACK_RETRY_SECONDS = 15 * 60;
+const OUTCOME_FOR_FAILURE = {
+	server: { kind: "server_error" },
+	timeout: { kind: "timeout" },
+	transport: { kind: "transport_error" },
+} satisfies Record<"server" | "timeout" | "transport", CourtListenerOutcome>;
+
+type SyncResult =
+	| { readonly kind: "failed" | "ready" }
+	| { readonly kind: "rate_limited"; readonly retryAt: Date };
 
 export type CourtListenerCitationGatewayOptions = {
 	readonly api: CourtListenerApi;
@@ -16,7 +23,7 @@ export type CourtListenerCitationGatewayOptions = {
 
 export function createCourtListenerCitationGateway(
 	options: CourtListenerCitationGatewayOptions,
-): CitationVerificationGateway {
+): Verification.CitationVerificationGateway {
 	return {
 		async lookup(query) {
 			const admission = await value(() =>
@@ -26,7 +33,7 @@ export function createCourtListenerCitationGateway(
 					reservationToken: options.token(),
 				}),
 			);
-			if (admission === null) return quotaUnknown();
+			if (admission === null) return indeterminate("quota_unknown");
 			return admit(admission, query, options, true);
 		},
 	};
@@ -34,47 +41,38 @@ export function createCourtListenerCitationGateway(
 
 async function admit(
 	admission: BudgetDecision,
-	query: CitationLookup,
+	query: Verification.CitationLookup,
 	options: CourtListenerCitationGatewayOptions,
 	maySynchronize: boolean,
-): Promise<CitationVerificationObservation> {
+): Promise<Verification.CitationVerificationObservation> {
 	switch (admission.kind) {
 		case "reserved":
 			return lookupReserved(admission.token, query, options);
 		case "sync_required":
-			return maySynchronize ? synchronizeAndAdmit(query, options) : quotaUnknown();
+			return maySynchronize ? synchronizeAndAdmit(query, options) : indeterminate("quota_unknown");
 		case "quota_limited":
-			return rateLimited(options.now(), admission.retryAt);
+			return delayed("rate_limited", options.now(), admission.retryAt);
 		case "circuit_open":
-			return circuitOpen(options.now(), admission.retryAt);
+			return delayed("circuit_open", options.now(), admission.retryAt);
 		case "sync_in_progress":
 		case "sync_unavailable":
 		case "quota_exhausted":
 		case "probe_in_flight":
 		case "reservation_conflict":
-			return quotaUnknown();
+		case "reservation_capacity_exhausted":
+			return indeterminate("quota_unknown");
 		default:
 			return assertNever(admission);
 	}
 }
 
 async function synchronizeAndAdmit(
-	query: CitationLookup,
+	query: Verification.CitationLookup,
 	options: CourtListenerCitationGatewayOptions,
-): Promise<CitationVerificationObservation> {
-	const syncToken = options.token();
-	const started = await value(() =>
-		options.coordinator.beginQuotaSync({ now: options.now(), syncToken }),
-	);
-	if (started?.kind !== "started") return quotaUnknown();
-	const usage = await value(() => options.api.getUsage());
-	if (usage?.kind !== "usage") return failSync(syncToken, options);
-	const windows = quotaWindows(usage.currentUsage);
-	if (windows === null) return failSync(syncToken, options);
-	const completed = await value(() =>
-		options.coordinator.recordQuotaSync({ now: options.now(), syncToken, windows }),
-	);
-	if (completed?.kind !== "recorded") return quotaUnknown();
+): Promise<Verification.CitationVerificationObservation> {
+	const sync = await synchronize(options);
+	if (sync.kind === "rate_limited") return delayed("rate_limited", options.now(), sync.retryAt);
+	if (sync.kind === "failed") return indeterminate("quota_unknown");
 	const admission = await value(() =>
 		options.coordinator.admit({
 			endpoint: "citation",
@@ -82,34 +80,55 @@ async function synchronizeAndAdmit(
 			reservationToken: options.token(),
 		}),
 	);
-	if (admission === null) return quotaUnknown();
+	if (admission === null) return indeterminate("quota_unknown");
 	return admit(admission, query, options, false);
 }
 
-async function failSync(
-	syncToken: string,
-	options: CourtListenerCitationGatewayOptions,
-): Promise<CitationVerificationObservation> {
+async function synchronize(options: CourtListenerCitationGatewayOptions): Promise<SyncResult> {
+	const syncToken = options.token();
+	const started = await value(() =>
+		options.coordinator.beginQuotaSync({ now: options.now(), syncToken }),
+	);
+	if (started?.kind !== "started") return { kind: "failed" };
+	const usage = await value(() => options.api.getUsage());
+	if (usage?.kind === "usage") {
+		const windows = quotaWindows(usage.currentUsage);
+		if (windows !== null) {
+			const completed = await value(() =>
+				options.coordinator.recordQuotaSync({ now: options.now(), syncToken, windows }),
+			);
+			return completed?.kind === "recorded" ? { kind: "ready" } : { kind: "failed" };
+		}
+	} else if (usage?.kind === "rate_limited") {
+		const now = options.now();
+		const retryAt = retryDeadline(now, usage.retryAfterSeconds);
+		const recorded = await value(() =>
+			options.coordinator.recordQuotaSyncRateLimited({ now, retryAt, syncToken }),
+		);
+		return recorded?.kind === "recorded" ? { kind: "rate_limited", retryAt } : { kind: "failed" };
+	}
 	await value(() => options.coordinator.failQuotaSync({ now: options.now(), syncToken }));
-	return quotaUnknown();
+	return { kind: "failed" };
 }
 
 async function lookupReserved(
 	reservationToken: string,
-	query: CitationLookup,
+	query: Verification.CitationLookup,
 	options: CourtListenerCitationGatewayOptions,
-): Promise<CitationVerificationObservation> {
+): Promise<Verification.CitationVerificationObservation> {
+	const incomplete = indeterminate("incomplete");
+	const unavailable = indeterminate("upstream_unavailable");
 	const source = await value(() =>
 		options.api.lookupCitation({ normalized: query.normalizedCitation }),
 	);
 	if (source === null)
-		return record(reservationToken, { kind: "transport_error" }, unavailable(), options);
+		return record(reservationToken, { kind: "transport_error" }, unavailable, options);
 	const retrievedAt = options.now().toISOString();
 	switch (source.kind) {
 		case "matched": {
 			const cluster = trustedCluster(source);
 			return cluster === null
-				? record(reservationToken, { kind: "malformed_response" }, incomplete(), options)
+				? record(reservationToken, { kind: "malformed_response" }, incomplete, options)
 				: record(
 						reservationToken,
 						{ kind: "success" },
@@ -128,28 +147,30 @@ async function lookupReserved(
 		case "unknown_reporter":
 		case "item_cap":
 		case "malformed_response":
-			return record(reservationToken, { kind: "malformed_response" }, incomplete(), options);
+			return record(reservationToken, { kind: "malformed_response" }, incomplete, options);
 		case "rate_limited": {
 			const now = options.now();
-			const retryAt = new Date(now.getTime() + (source.retryAfterSeconds ?? 0) * 1_000);
-			return record(
+			const retryAt = retryDeadline(now, source.retryAfterSeconds);
+			const observation = delayed("rate_limited", now, retryAt);
+			const recorded = await record(
 				reservationToken,
 				{ kind: "rate_limited", retryAt },
-				rateLimited(now, retryAt),
+				observation,
 				options,
 			);
+			if (recorded.kind === "indeterminate" && recorded.reason === "quota_unknown") return recorded;
+			const sync = await synchronize(options);
+			return sync.kind === "rate_limited"
+				? delayed("rate_limited", now, sync.retryAt)
+				: observation;
 		}
 		case "unavailable":
-			switch (source.failure) {
-				case "timeout":
-					return record(reservationToken, { kind: "timeout" }, timeout(), options);
-				case "server":
-					return record(reservationToken, { kind: "server_error" }, unavailable(), options);
-				case "transport":
-					return record(reservationToken, { kind: "transport_error" }, unavailable(), options);
-				default:
-					return assertNever(source.failure);
-			}
+			return record(
+				reservationToken,
+				OUTCOME_FOR_FAILURE[source.failure],
+				source.failure === "timeout" ? indeterminate("timeout") : unavailable,
+				options,
+			);
 		default:
 			return assertNever(source);
 	}
@@ -158,9 +179,9 @@ async function lookupReserved(
 async function record(
 	reservationToken: string,
 	outcome: CourtListenerOutcome,
-	observation: CitationVerificationObservation,
+	observation: Verification.CitationVerificationObservation,
 	options: CourtListenerCitationGatewayOptions,
-): Promise<CitationVerificationObservation> {
+): Promise<Verification.CitationVerificationObservation> {
 	const recorded = await value(() =>
 		options.coordinator.recordOutcome({
 			endpoint: "citation",
@@ -169,7 +190,7 @@ async function record(
 			reservationToken,
 		}),
 	);
-	return recorded?.kind === "recorded" ? observation : quotaUnknown();
+	return recorded?.kind === "recorded" ? observation : indeterminate("quota_unknown");
 }
 
 function quotaWindows(usage: readonly CourtListenerUsage[]): readonly QuotaWindow[] | null {
@@ -196,7 +217,7 @@ function quotaWindows(usage: readonly CourtListenerUsage[]): readonly QuotaWindo
 
 function trustedCluster(source: Extract<CitationLookupOutcome, { readonly kind: "matched" }>) {
 	if (source.clusters.length !== 1) return null;
-	const cluster = source.clusters[0];
+	const [cluster] = source.clusters;
 	if (cluster === undefined || !Number.isSafeInteger(cluster.id) || cluster.id <= 0) return null;
 	try {
 		const url = new URL(cluster.canonicalUrl);
@@ -204,48 +225,34 @@ function trustedCluster(source: Extract<CitationLookupOutcome, { readonly kind: 
 			(url.hostname === "courtlistener.com" || url.hostname === "www.courtlistener.com")
 			? cluster
 			: null;
-	} catch (error) {
-		if (error instanceof TypeError) return null;
-		throw error;
+	} catch {
+		return null;
 	}
 }
 
-function quotaUnknown(): CitationVerificationObservation {
-	return { kind: "indeterminate", reason: "quota_unknown" };
+function indeterminate(
+	reason: "incomplete" | "quota_unknown" | "timeout" | "upstream_unavailable",
+): Verification.CitationVerificationObservation {
+	return { kind: "indeterminate", reason };
 }
-function incomplete(): CitationVerificationObservation {
-	return { kind: "indeterminate", reason: "incomplete" };
-}
-function timeout(): CitationVerificationObservation {
-	return { kind: "indeterminate", reason: "timeout" };
-}
-function unavailable(): CitationVerificationObservation {
-	return { kind: "indeterminate", reason: "upstream_unavailable" };
-}
-function rateLimited(now: Date, retryAt: Date): CitationVerificationObservation {
-	return {
-		kind: "indeterminate",
-		reason: "rate_limited",
-		retryAfterSeconds: retrySeconds(now, retryAt),
-	};
-}
-function circuitOpen(now: Date, retryAt: Date): CitationVerificationObservation {
-	return {
-		kind: "indeterminate",
-		reason: "circuit_open",
-		retryAfterSeconds: retrySeconds(now, retryAt),
-	};
+function delayed(
+	reason: "circuit_open" | "rate_limited",
+	now: Date,
+	retryAt: Date,
+): Verification.CitationVerificationObservation {
+	return { kind: "indeterminate", reason, retryAfterSeconds: retrySeconds(now, retryAt) };
 }
 function retrySeconds(now: Date, retryAt: Date): number {
 	return Math.max(1, Math.ceil((retryAt.getTime() - now.getTime()) / 1_000));
 }
-async function value<Value>(call: () => Promise<Value>): Promise<Value | null> {
-	try {
-		return await call();
-	} catch (error) {
+function retryDeadline(now: Date, retryAfterSeconds: number | undefined): Date {
+	return new Date(now.getTime() + (retryAfterSeconds ?? FALLBACK_RETRY_SECONDS) * 1_000);
+}
+function value<Value>(call: () => Promise<Value>): Promise<Value | null> {
+	return call().catch((error: unknown) => {
 		if (error instanceof Error) return null;
 		throw error;
-	}
+	});
 }
 function assertNever(value: never): never {
 	throw new TypeError(`Unexpected CourtListener outcome: ${String(value)}`);

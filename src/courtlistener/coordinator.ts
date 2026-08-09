@@ -3,7 +3,7 @@ import { z } from "zod";
 import {
 	type BudgetDecision,
 	type CourtListenerBudgetState,
-	type CourtListenerEndpoint,
+	type CourtListenerDataEndpoint,
 	type CourtListenerOutcome,
 	type OutcomeRecord,
 	type QuotaSyncCompletion,
@@ -15,6 +15,7 @@ import {
 	initialCourtListenerBudgetState,
 	recordCourtListenerOutcome,
 	recordQuotaSync,
+	recordQuotaSyncRateLimited,
 } from "./budget.js";
 
 const dateSchema = z
@@ -61,6 +62,13 @@ const circuitSchema = z.discriminatedUnion("kind", [
 const confirmedQuotaSchema = z
 	.object({ confirmedAt: dateSchema, windows: z.array(windowSchema).max(100) })
 	.strict();
+const rateLimitSchema = z
+	.object({
+		immediateSyncRequired: z.boolean(),
+		prior: confirmedQuotaSchema.nullable(),
+		retryAt: dateSchema,
+	})
+	.strict();
 const quotaSchema = z.discriminatedUnion("kind", [
 	z.object({ kind: z.literal("unknown") }).strict(),
 	z.object({ kind: z.literal("confirmed"), value: confirmedQuotaSchema }).strict(),
@@ -69,7 +77,7 @@ const quotaSchema = z.discriminatedUnion("kind", [
 			kind: z.literal("sync_in_progress"),
 			leaseExpiresAt: dateSchema,
 			prior: confirmedQuotaSchema.nullable(),
-			retryAt: dateSchema.nullable(),
+			rateLimit: rateLimitSchema.nullable(),
 			token: tokenSchema,
 		})
 		.strict(),
@@ -80,18 +88,30 @@ const quotaSchema = z.discriminatedUnion("kind", [
 			retryAt: dateSchema,
 		})
 		.strict(),
-	z
-		.object({ kind: z.literal("rate_limited"), prior: confirmedQuotaSchema, retryAt: dateSchema })
-		.strict(),
+	z.object({ kind: z.literal("rate_limited"), ...rateLimitSchema.shape }).strict(),
 ]);
 const stateSchema = z
 	.object({
 		circuits: z.object({ case_law: circuitSchema, citation: circuitSchema }).strict(),
 		pendingReservations: z
 			.array(
-				z
-					.object({ endpoint: endpointSchema, leaseExpiresAt: dateSchema, token: tokenSchema })
-					.strict(),
+				z.discriminatedUnion("kind", [
+					z
+						.object({
+							endpoint: endpointSchema,
+							kind: z.literal("data"),
+							leaseExpiresAt: dateSchema,
+							token: tokenSchema,
+						})
+						.strict(),
+					z
+						.object({
+							kind: z.literal("quota_sync"),
+							leaseExpiresAt: dateSchema,
+							token: tokenSchema,
+						})
+						.strict(),
+				]),
 			)
 			.max(100),
 		quota: quotaSchema,
@@ -104,6 +124,7 @@ const syncSchema = z.object({ now: dateSchema, syncToken: tokenSchema }).strict(
 const completeSyncSchema = syncSchema
 	.extend({ windows: z.array(windowSchema).min(1).max(100) })
 	.strict();
+const rateLimitedSyncSchema = syncSchema.extend({ retryAt: dateSchema }).strict();
 const outcomeInputSchema = z
 	.object({
 		endpoint: endpointSchema,
@@ -114,7 +135,7 @@ const outcomeInputSchema = z
 	.strict();
 
 export type CourtListenerCoordinatorAdmission = {
-	readonly endpoint: CourtListenerEndpoint;
+	readonly endpoint: CourtListenerDataEndpoint;
 	readonly now: Date;
 	readonly reservationToken: string;
 };
@@ -122,8 +143,11 @@ export type CourtListenerCoordinatorQuotaSync = { readonly now: Date; readonly s
 export type CourtListenerCoordinatorQuotaSyncCompletion = CourtListenerCoordinatorQuotaSync & {
 	readonly windows: readonly QuotaWindow[];
 };
+export type CourtListenerCoordinatorQuotaSyncRateLimited = CourtListenerCoordinatorQuotaSync & {
+	readonly retryAt: Date;
+};
 export type CourtListenerCoordinatorOutcome = {
-	readonly endpoint: CourtListenerEndpoint;
+	readonly endpoint: CourtListenerDataEndpoint;
 	readonly now: Date;
 	readonly outcome: CourtListenerOutcome;
 	readonly reservationToken: string;
@@ -134,6 +158,9 @@ export interface CourtListenerCoordinatorRpc {
 	beginQuotaSync(input: CourtListenerCoordinatorQuotaSync): Promise<QuotaSyncStart>;
 	recordQuotaSync(input: CourtListenerCoordinatorQuotaSyncCompletion): Promise<QuotaSyncCompletion>;
 	failQuotaSync(input: CourtListenerCoordinatorQuotaSync): Promise<QuotaSyncCompletion>;
+	recordQuotaSyncRateLimited(
+		input: CourtListenerCoordinatorQuotaSyncRateLimited,
+	): Promise<QuotaSyncCompletion>;
 	recordOutcome(input: CourtListenerCoordinatorOutcome): Promise<OutcomeRecord>;
 }
 
@@ -175,6 +202,13 @@ export class CourtListenerCoordinator extends DurableObject implements CourtList
 	async failQuotaSync(input: CourtListenerCoordinatorQuotaSync): Promise<QuotaSyncCompletion> {
 		const parsed = syncSchema.parse(input);
 		return this.transition((state) => failQuotaSync({ ...parsed, state }));
+	}
+
+	async recordQuotaSyncRateLimited(
+		input: CourtListenerCoordinatorQuotaSyncRateLimited,
+	): Promise<QuotaSyncCompletion> {
+		const parsed = rateLimitedSyncSchema.parse(input);
+		return this.transition((state) => recordQuotaSyncRateLimited({ ...parsed, state }));
 	}
 
 	async recordOutcome(input: CourtListenerCoordinatorOutcome): Promise<OutcomeRecord> {

@@ -6,7 +6,7 @@ import {
 import type {
 	CircuitState,
 	CourtListenerBudgetState,
-	CourtListenerEndpoint,
+	CourtListenerDataEndpoint,
 } from "./budget-state.js";
 
 export function recoverExpiredLeases(
@@ -21,22 +21,26 @@ export function recoverExpiredLeases(
 	);
 	const reservationRecovered = expired.reduce<CourtListenerBudgetState>(
 		(next, item) =>
-			setCircuit(next, item.endpoint, failedCircuit(next.circuits[item.endpoint], now)),
+			item.kind === "data"
+				? setCircuit(next, item.endpoint, failedCircuit(next.circuits[item.endpoint], now))
+				: next,
 		{ ...state, pendingReservations: retained },
 	);
-	if (
-		reservationRecovered.quota.kind !== "sync_in_progress" ||
-		now.getTime() < reservationRecovered.quota.leaseExpiresAt.getTime()
-	) {
+	const quota = reservationRecovered.quota;
+	if (quota.kind !== "sync_in_progress") return reservationRecovered;
+	const syncReservationPresent = retained.some(
+		(item) => item.kind === "quota_sync" && item.token === quota.token,
+	);
+	if (now.getTime() < quota.leaseExpiresAt.getTime() && syncReservationPresent) {
 		return reservationRecovered;
 	}
+	const { prior, rateLimit } = quota;
 	return {
 		...reservationRecovered,
-		quota: {
-			kind: "sync_backoff",
-			prior: reservationRecovered.quota.prior,
-			retryAt: after(now, QUOTA_SYNC_INTERVAL_MILLISECONDS),
-		},
+		quota:
+			rateLimit === null
+				? { kind: "sync_backoff", prior, retryAt: after(now, QUOTA_SYNC_INTERVAL_MILLISECONDS) }
+				: { ...rateLimit, immediateSyncRequired: false, kind: "rate_limited" },
 	};
 }
 
@@ -75,7 +79,7 @@ export function closedCircuit(): CircuitState {
 
 export function setCircuit(
 	state: CourtListenerBudgetState,
-	endpoint: CourtListenerEndpoint,
+	endpoint: CourtListenerDataEndpoint,
 	circuit: CircuitState,
 ): CourtListenerBudgetState {
 	return { ...state, circuits: { ...state.circuits, [endpoint]: circuit } };

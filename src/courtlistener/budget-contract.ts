@@ -1,4 +1,4 @@
-import type { CourtListenerBudgetState, CourtListenerEndpoint } from "./budget-state.js";
+import type { CourtListenerBudgetState, CourtListenerDataEndpoint } from "./budget-state.js";
 
 export type BudgetDecision =
 	| { readonly kind: "sync_required"; readonly state: CourtListenerBudgetState }
@@ -25,6 +25,7 @@ export type BudgetDecision =
 	  }
 	| { readonly kind: "probe_in_flight"; readonly state: CourtListenerBudgetState }
 	| { readonly kind: "reservation_conflict"; readonly state: CourtListenerBudgetState }
+	| { readonly kind: "reservation_capacity_exhausted"; readonly state: CourtListenerBudgetState }
 	| {
 			readonly kind: "reserved";
 			readonly state: CourtListenerBudgetState;
@@ -34,6 +35,7 @@ export type BudgetDecision =
 export type QuotaSyncStart =
 	| { readonly kind: "started"; readonly state: CourtListenerBudgetState }
 	| { readonly kind: "already_in_progress"; readonly state: CourtListenerBudgetState }
+	| { readonly kind: "reservation_capacity_exhausted"; readonly state: CourtListenerBudgetState }
 	| {
 			readonly kind: "not_due";
 			readonly retryAt: Date;
@@ -57,7 +59,7 @@ export type OutcomeRecord =
 	| { readonly kind: "unknown_reservation"; readonly state: CourtListenerBudgetState };
 
 export type AdmissionInput = {
-	readonly endpoint: CourtListenerEndpoint;
+	readonly endpoint: CourtListenerDataEndpoint;
 	readonly now: Date;
 	readonly reservationToken: string;
 	readonly state: CourtListenerBudgetState;

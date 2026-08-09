@@ -157,7 +157,7 @@ describe("CourtListener budget", () => {
 		expect(decision.kind).toBe("sync_required");
 	});
 
-	it("treats a 429 as quota retry state and syncs at its exact retry boundary", () => {
+	it("treats a 429 as immediate quota reconciliation without circuit failure", () => {
 		// Given: a citation request was reserved against confirmed quota.
 		const reserved = admit(
 			confirmedState([window("user", "minute", 2), window("citations", "minute", 2)]),
@@ -177,11 +177,8 @@ describe("CourtListener budget", () => {
 		const before = admit(rateLimited.state, "citation", "before", 29_999);
 		const boundary = admit(rateLimited.state, "citation", "boundary", 30_000);
 
-		// Then: it does not add a circuit failure, rate-limits first, and syncs at the boundary.
-		expect(before).toMatchObject({
-			kind: "quota_limited",
-			retryAt: new Date(NOW.getTime() + 30_000),
-		});
+		// Then: it does not add a circuit failure and reconciliation survives the retry window.
+		expect(before.kind).toBe("sync_required");
 		expect(boundary.kind).toBe("sync_required");
 		expect(rateLimited.state.circuits.citation).toEqual({ kind: "closed", consecutiveFailures: 0 });
 	});

@@ -14,9 +14,10 @@ import { QUOTA_SYNC_INTERVAL_MILLISECONDS, after } from "./budget-state.js";
 import type {
 	ConfirmedQuota,
 	CourtListenerBudgetState,
-	CourtListenerEndpoint,
+	CourtListenerDataEndpoint,
 	QuotaState,
 	QuotaWindow,
+	Reservation,
 } from "./budget-state.js";
 
 export function recordQuotaSync(input: {
@@ -26,7 +27,8 @@ export function recordQuotaSync(input: {
 	readonly windows: readonly QuotaWindow[];
 }): QuotaSyncCompletion {
 	const state = recoverExpiredLeases(input.state, input.now);
-	if (state.quota.kind !== "sync_in_progress" || state.quota.token !== input.syncToken) {
+	const reservation = matchingSyncReservation(state, input.syncToken);
+	if (state.quota.kind !== "sync_in_progress" || reservation === undefined) {
 		return { kind: "unknown_sync_token", state };
 	}
 	const value = { confirmedAt: input.now, windows: input.windows };
@@ -34,10 +36,16 @@ export function recordQuotaSync(input: {
 		kind: "recorded",
 		state: {
 			...state,
+			pendingReservations: withoutReservation(state, reservation),
 			quota:
-				state.quota.retryAt === null
+				state.quota.rateLimit === null
 					? { kind: "confirmed", value }
-					: { kind: "rate_limited", prior: value, retryAt: state.quota.retryAt },
+					: {
+							...state.quota.rateLimit,
+							immediateSyncRequired: false,
+							kind: "rate_limited",
+							prior: value,
+						},
 		},
 	};
 }
@@ -48,17 +56,19 @@ export function failQuotaSync(input: {
 	readonly syncToken: string;
 }): QuotaSyncCompletion {
 	const state = recoverExpiredLeases(input.state, input.now);
-	if (state.quota.kind !== "sync_in_progress" || state.quota.token !== input.syncToken) {
+	const reservation = matchingSyncReservation(state, input.syncToken);
+	if (state.quota.kind !== "sync_in_progress" || reservation === undefined) {
 		return { kind: "unknown_sync_token", state };
 	}
-	const { prior, retryAt } = state.quota;
+	const { prior, rateLimit } = state.quota;
 	return {
 		kind: "recorded",
 		state: {
 			...state,
+			pendingReservations: withoutReservation(state, reservation),
 			quota:
-				retryAt !== null && prior !== null
-					? { kind: "rate_limited", prior, retryAt }
+				rateLimit !== null
+					? { ...rateLimit, immediateSyncRequired: false, kind: "rate_limited", prior }
 					: {
 							kind: "sync_backoff",
 							prior,
@@ -68,8 +78,34 @@ export function failQuotaSync(input: {
 	};
 }
 
+export function recordQuotaSyncRateLimited(input: {
+	readonly now: Date;
+	readonly retryAt: Date;
+	readonly state: CourtListenerBudgetState;
+	readonly syncToken: string;
+}): QuotaSyncCompletion {
+	const state = recoverExpiredLeases(input.state, input.now);
+	const reservation = matchingSyncReservation(state, input.syncToken);
+	if (state.quota.kind !== "sync_in_progress" || reservation === undefined) {
+		return { kind: "unknown_sync_token", state };
+	}
+	return {
+		kind: "recorded",
+		state: {
+			...state,
+			pendingReservations: withoutReservation(state, reservation),
+			quota: {
+				immediateSyncRequired: false,
+				kind: "rate_limited",
+				prior: state.quota.prior,
+				retryAt: input.retryAt,
+			},
+		},
+	};
+}
+
 export function recordCourtListenerOutcome(input: {
-	readonly endpoint: CourtListenerEndpoint;
+	readonly endpoint: CourtListenerDataEndpoint;
 	readonly now: Date;
 	readonly outcome: CourtListenerOutcome;
 	readonly reservationToken: string;
@@ -79,12 +115,16 @@ export function recordCourtListenerOutcome(input: {
 	const reservation = state.pendingReservations.find(
 		(item) => item.token === input.reservationToken,
 	);
-	if (reservation === undefined || reservation.endpoint !== input.endpoint) {
+	if (
+		reservation === undefined ||
+		reservation.kind !== "data" ||
+		reservation.endpoint !== input.endpoint
+	) {
 		return { kind: "unknown_reservation", state };
 	}
 	const completed = {
 		...state,
-		pendingReservations: state.pendingReservations.filter((item) => item !== reservation),
+		pendingReservations: withoutReservation(state, reservation),
 	};
 	switch (input.outcome.kind) {
 		case "success":
@@ -119,24 +159,35 @@ export function recordCourtListenerOutcome(input: {
 
 function recordRateLimit(
 	state: CourtListenerBudgetState,
-	endpoint: CourtListenerEndpoint,
+	endpoint: CourtListenerDataEndpoint,
 	retryAt: Date,
 ): CourtListenerBudgetState {
 	if (state.quota.kind === "sync_in_progress") {
 		return setCircuit(
-			{ ...state, quota: { ...state.quota, retryAt } },
+			{
+				...state,
+				quota: {
+					...state.quota,
+					rateLimit: {
+						immediateSyncRequired: false,
+						prior: state.quota.prior,
+						retryAt,
+					},
+				},
+			},
 			endpoint,
 			nonFailureCircuit(state.circuits[endpoint]),
 		);
 	}
 	const prior = confirmedQuota(state.quota);
-	return prior === null
-		? setCircuit(state, endpoint, nonFailureCircuit(state.circuits[endpoint]))
-		: setCircuit(
-				{ ...state, quota: { kind: "rate_limited", prior, retryAt } },
-				endpoint,
-				nonFailureCircuit(state.circuits[endpoint]),
-			);
+	return setCircuit(
+		{
+			...state,
+			quota: { immediateSyncRequired: true, kind: "rate_limited", prior, retryAt },
+		},
+		endpoint,
+		nonFailureCircuit(state.circuits[endpoint]),
+	);
 }
 
 function confirmedQuota(quota: QuotaState): ConfirmedQuota | null {
@@ -148,6 +199,24 @@ function confirmedQuota(quota: QuotaState): ConfirmedQuota | null {
 			return quota.prior;
 		case "unknown":
 		case "rate_limited":
-			return null;
+			return quota.kind === "rate_limited" ? quota.prior : null;
 	}
+}
+
+function matchingSyncReservation(
+	state: CourtListenerBudgetState,
+	token: string,
+): Extract<Reservation, { readonly kind: "quota_sync" }> | undefined {
+	if (state.quota.kind !== "sync_in_progress" || state.quota.token !== token) return undefined;
+	return state.pendingReservations.find(
+		(item): item is Extract<Reservation, { readonly kind: "quota_sync" }> =>
+			item.kind === "quota_sync" && item.token === token,
+	);
+}
+
+function withoutReservation(
+	state: CourtListenerBudgetState,
+	reservation: Reservation,
+): readonly Reservation[] {
+	return state.pendingReservations.filter((item) => item !== reservation);
 }

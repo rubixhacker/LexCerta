@@ -1,8 +1,10 @@
 export const COURTLISTENER_LEASE_MILLISECONDS = 10_000;
 export const FIRST_OPEN_MILLISECONDS = 30_000;
+export const MAX_PENDING_RESERVATIONS = 100;
 export const QUOTA_SYNC_INTERVAL_MILLISECONDS = 15 * 60_000;
 
-export type CourtListenerEndpoint = "citation" | "case_law";
+export type CourtListenerDataEndpoint = "citation" | "case_law";
+export type CourtListenerEndpoint = CourtListenerDataEndpoint | "quota_sync";
 
 export type QuotaWindow = {
 	readonly limit: number;
@@ -23,6 +25,12 @@ export type CircuitState =
 	| { readonly kind: "open"; readonly openForMilliseconds: number; readonly retryAt: Date }
 	| { readonly kind: "half_open"; readonly openForMilliseconds: number };
 
+export type RateLimitState = {
+	readonly immediateSyncRequired: boolean;
+	readonly prior: ConfirmedQuota | null;
+	readonly retryAt: Date;
+};
+
 export type QuotaState =
 	| { readonly kind: "unknown" }
 	| { readonly kind: "confirmed"; readonly value: ConfirmedQuota }
@@ -30,20 +38,23 @@ export type QuotaState =
 			readonly kind: "sync_in_progress";
 			readonly leaseExpiresAt: Date;
 			readonly prior: ConfirmedQuota | null;
-			readonly retryAt: Date | null;
+			readonly rateLimit: RateLimitState | null;
 			readonly token: string;
 	  }
 	| { readonly kind: "sync_backoff"; readonly prior: ConfirmedQuota | null; readonly retryAt: Date }
-	| { readonly kind: "rate_limited"; readonly prior: ConfirmedQuota; readonly retryAt: Date };
+	| ({ readonly kind: "rate_limited" } & RateLimitState);
 
-export type Reservation = {
-	readonly endpoint: CourtListenerEndpoint;
-	readonly leaseExpiresAt: Date;
-	readonly token: string;
-};
+export type Reservation =
+	| {
+			readonly endpoint: CourtListenerDataEndpoint;
+			readonly kind: "data";
+			readonly leaseExpiresAt: Date;
+			readonly token: string;
+	  }
+	| { readonly kind: "quota_sync"; readonly leaseExpiresAt: Date; readonly token: string };
 
 export type CourtListenerBudgetState = {
-	readonly circuits: Readonly<Record<CourtListenerEndpoint, CircuitState>>;
+	readonly circuits: Readonly<Record<CourtListenerDataEndpoint, CircuitState>>;
 	readonly pendingReservations: readonly Reservation[];
 	readonly quota: QuotaState;
 };

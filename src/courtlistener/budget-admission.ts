@@ -2,6 +2,7 @@ import type { AdmissionInput, BudgetDecision, QuotaSyncStart } from "./budget-co
 import { recoverExpiredLeases, setCircuit } from "./budget-leases.js";
 import {
 	COURTLISTENER_LEASE_MILLISECONDS,
+	MAX_PENDING_RESERVATIONS,
 	QUOTA_SYNC_INTERVAL_MILLISECONDS,
 	after,
 } from "./budget-state.js";
@@ -11,12 +12,16 @@ import type {
 	CourtListenerBudgetState,
 	QuotaState,
 	QuotaWindow,
+	RateLimitState,
 } from "./budget-state.js";
 
 export function admitCourtListenerRequest(input: AdmissionInput): BudgetDecision {
 	const state = recoverExpiredLeases(input.state, input.now);
 	if (state.pendingReservations.some((item) => item.token === input.reservationToken)) {
 		return { kind: "reservation_conflict", state };
+	}
+	if (state.pendingReservations.length >= MAX_PENDING_RESERVATIONS) {
+		return { kind: "reservation_capacity_exhausted", state };
 	}
 	const circuit = state.circuits[input.endpoint];
 	switch (circuit.kind) {
@@ -61,6 +66,13 @@ export function beginQuotaSync(input: {
 				state.quota.retryAt,
 			);
 		case "rate_limited":
+			if (state.quota.immediateSyncRequired) {
+				return startQuotaSync(state, input.now, input.syncToken, state.quota.prior, {
+					immediateSyncRequired: false,
+					prior: state.quota.prior,
+					retryAt: state.quota.retryAt,
+				});
+			}
 			return startWhenDue(
 				state,
 				input.now,
@@ -78,13 +90,14 @@ function admitQuota(input: AdmissionInput, circuit: CircuitState): BudgetDecisio
 		case "sync_in_progress":
 			return { kind: "sync_in_progress", state: input.state };
 		case "rate_limited":
+			if (input.state.quota.immediateSyncRequired)
+				return { kind: "sync_required", state: input.state };
 			return input.now.getTime() < input.state.quota.retryAt.getTime()
 				? { kind: "quota_limited", retryAt: input.state.quota.retryAt, state: input.state }
 				: { kind: "sync_required", state: input.state };
 		case "sync_backoff":
-			if (input.now.getTime() >= input.state.quota.retryAt.getTime()) {
+			if (input.now.getTime() >= input.state.quota.retryAt.getTime())
 				return { kind: "sync_required", state: input.state };
-			}
 			return input.state.quota.prior === null
 				? { kind: "sync_unavailable", retryAt: input.state.quota.retryAt, state: input.state }
 				: reserveFromQuota(input, circuit, input.state.quota.prior);
@@ -134,7 +147,12 @@ function reserve(
 			...state,
 			pendingReservations: [
 				...state.pendingReservations,
-				{ endpoint, leaseExpiresAt: after(now, COURTLISTENER_LEASE_MILLISECONDS), token },
+				{
+					endpoint,
+					kind: "data",
+					leaseExpiresAt: after(now, COURTLISTENER_LEASE_MILLISECONDS),
+					token,
+				},
 			],
 			quota: decrementQuota(state.quota, scopes),
 		},
@@ -196,16 +214,28 @@ function startQuotaSync(
 	now: Date,
 	token: string,
 	prior: ConfirmedQuota | null,
+	rateLimit: RateLimitState | null = null,
 ): QuotaSyncStart {
+	if (state.pendingReservations.length >= MAX_PENDING_RESERVATIONS) {
+		return { kind: "reservation_capacity_exhausted", state };
+	}
 	return {
 		kind: "started",
 		state: {
 			...state,
+			pendingReservations: [
+				...state.pendingReservations,
+				{
+					kind: "quota_sync",
+					leaseExpiresAt: after(now, COURTLISTENER_LEASE_MILLISECONDS),
+					token,
+				},
+			],
 			quota: {
 				kind: "sync_in_progress",
 				leaseExpiresAt: after(now, COURTLISTENER_LEASE_MILLISECONDS),
 				prior,
-				retryAt: null,
+				rateLimit,
 				token,
 			},
 		},

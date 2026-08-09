@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { boundedJsonBody } from "./response-body.js";
 
 const COURTLISTENER_ORIGIN = "https://www.courtlistener.com";
 const API_ROOT = `${COURTLISTENER_ORIGIN}/api/rest/v4/`;
@@ -153,14 +154,6 @@ function rateLimited(
 		: { kind: "rate_limited", retryAfterSeconds: retryAfter };
 }
 
-async function body(response: Response): Promise<unknown | undefined> {
-	try {
-		return await response.json();
-	} catch {
-		return undefined;
-	}
-}
-
 function signalFor(timeoutMs: number, signal: AbortSignal | undefined): AbortSignal {
 	const timeout = AbortSignal.timeout(timeoutMs);
 	return signal === undefined ? timeout : AbortSignal.any([signal, timeout]);
@@ -246,7 +239,7 @@ export function createCourtListenerApi(options: CourtListenerApiOptions): CourtL
 			const parsed = z
 				.array(citationItemSchema)
 				.max(1)
-				.safeParse(await body(response));
+				.safeParse(await boundedJsonBody(response));
 			return parsed.success ? citationOutcome(input, parsed.data) : { kind: "malformed_response" };
 		},
 		async getUsage(signal) {
@@ -261,7 +254,7 @@ export function createCourtListenerApi(options: CourtListenerApiOptions): CourtL
 			if (typeof response === "string" || response.status >= 500) return { kind: "unavailable" };
 			if (response.status === 429) return rateLimited(response, now);
 			if (!response.ok) return { kind: "malformed_response" };
-			const parsed = usageResponseSchema.safeParse(await body(response));
+			const parsed = usageResponseSchema.safeParse(await boundedJsonBody(response));
 			return parsed.success
 				? { kind: "usage", currentUsage: parsed.data.current_usage.map(usageRow) }
 				: { kind: "malformed_response" };
