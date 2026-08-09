@@ -19,6 +19,7 @@
 	},
 	"include": [
 		"src/worker.ts",
+		"src/admin/**/*.ts",
 		"src/auth/**/*.ts",
 		"src/verification/**/*.ts",
 		"worker-configuration.d.ts"

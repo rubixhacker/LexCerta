@@ -10,5 +10,6 @@ export default defineConfig({
 	],
 	test: {
 		include: ["src/auth/**/*.test.ts", "src/verification/**/*.test.ts", "test/**/*.test.ts"],
+		exclude: ["test/admin-*.test.ts"],
 	},
 });

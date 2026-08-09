@@ -1,0 +1,39 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "lexcerta-admin",
+	"main": "src/admin/worker.ts",
+	"compatibility_date": "2026-08-01",
+	"workers_dev": false,
+	"routes": [{ "pattern": "admin.lexcerta.ai", "custom_domain": true }],
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "lexcerta-production",
+			"database_id": "00000000-0000-0000-0000-000000000001",
+			"migrations_dir": "migrations"
+		}
+	],
+	"observability": { "enabled": true },
+	"env": {
+		"test": {
+			"name": "lexcerta-admin-test",
+			"workers_dev": true,
+			"routes": [],
+			"d1_databases": [
+				{
+					"binding": "DB",
+					"database_name": "lexcerta-test",
+					"database_id": "00000000-0000-0000-0000-000000000002",
+					"migrations_dir": "migrations"
+				}
+			],
+			"vars": {
+				"ACCESS_AUDIENCE": "admin-audience-test",
+				"ACCESS_ISSUER": "https://access-test.example.invalid",
+				"ACCESS_JWKS_URL": "https://access-test.example.invalid/cdn-cgi/access/certs",
+				"ACCESS_OPERATOR_SUBJECT": "operator-subject-test",
+				"KEY_ENVIRONMENT": "test"
+			}
+		}
+	}
+}
