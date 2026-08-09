@@ -13,6 +13,7 @@ export interface LocalAuthFixtureOptions {
 	readonly state?: LocalFixtureState;
 	readonly publicId?: string;
 	readonly limits?: { readonly minute: number; readonly day: number };
+	readonly limitsVersion?: number;
 }
 
 export interface LocalAuthFixture {
@@ -29,6 +30,7 @@ export async function createLocalAuthFixture(
 	const publicId = options.publicId ?? "local01";
 	const token = `lc_test_${publicId}_${"A".repeat(43)}`;
 	const limits = options.limits ?? { minute: 60, day: 1000 };
+	const limitsVersion = options.limitsVersion ?? 1;
 	const record: ApiKeyRecord = {
 		public_id: createApiKeyPublicId(publicId),
 		environment: "test" satisfies KeyEnvironment,
@@ -38,6 +40,7 @@ export async function createLocalAuthFixture(
 		revoked_at: state === "revoked" ? "2026-08-07T12:00:00.000Z" : null,
 		minute_limit: limits.minute,
 		day_limit: limits.day,
+		limits_version: limitsVersion,
 	};
 	return { token, pepper: LOCAL_PEPPER, now: LOCAL_NOW, record };
 }

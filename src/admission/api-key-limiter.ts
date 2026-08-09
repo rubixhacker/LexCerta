@@ -7,6 +7,7 @@ const USAGE_RETENTION_MILLISECONDS = 24 * 60 * 60 * 1_000;
 export type ApiKeyLimiterAdmission = {
 	readonly admittedAt: number;
 	readonly limits: ApiKeyLimits;
+	readonly limitsVersion: number;
 };
 
 export type ApiKeyLimiterResult =
@@ -15,6 +16,19 @@ export type ApiKeyLimiterResult =
 
 type AdmissionRow = { readonly admitted_at: number };
 type OldestAdmissionRow = { readonly admitted_at: number | null };
+type StoredLimitConfig = {
+	readonly day_limit: number;
+	readonly limits_version: number;
+	readonly minute_limit: number;
+};
+
+export class ApiKeyLimitConfigurationError extends Error {
+	readonly name = "ApiKeyLimitConfigurationError";
+
+	constructor(readonly limitsVersion: number) {
+		super(`conflicting API key limits for version ${limitsVersion}`);
+	}
+}
 
 export class ApiKeyLimiter extends DurableObject {
 	constructor(ctx: DurableObjectState, env: Env) {
@@ -26,16 +40,20 @@ export class ApiKeyLimiter extends DurableObject {
 			this.ctx.storage.sql.exec(
 				"CREATE INDEX IF NOT EXISTS api_key_admissions_admitted_at_idx ON api_key_admissions(admitted_at)",
 			);
+			this.ctx.storage.sql.exec(
+				"CREATE TABLE IF NOT EXISTS api_key_limit_config (singleton INTEGER PRIMARY KEY CHECK (singleton = 1), limits_version INTEGER NOT NULL, minute_limit INTEGER NOT NULL, day_limit INTEGER NOT NULL)",
+			);
 		});
 	}
 
 	async admit(input: ApiKeyLimiterAdmission): Promise<ApiKeyLimiterResult> {
 		const result = this.ctx.storage.transactionSync<ApiKeyLimiterResult>(() => {
+			const limits = this.selectLimits(input);
 			this.deleteExpiredUsage(input.admittedAt);
 			const decision = admitRollingWindow({
 				admissions: this.readDayAdmissions(input.admittedAt),
 				clock: { now: () => new Date(input.admittedAt) },
-				limits: input.limits,
+				limits,
 			});
 
 			switch (decision.kind) {
@@ -71,6 +89,38 @@ export class ApiKeyLimiter extends DurableObject {
 		this.ctx.storage.sql.exec(
 			"DELETE FROM api_key_admissions WHERE admitted_at <= ?1",
 			now - USAGE_RETENTION_MILLISECONDS,
+		);
+	}
+
+	private selectLimits(input: ApiKeyLimiterAdmission): ApiKeyLimits {
+		const stored = this.ctx.storage.sql
+			.exec<StoredLimitConfig>(
+				"SELECT limits_version, minute_limit, day_limit FROM api_key_limit_config WHERE singleton = 1",
+			)
+			.toArray()[0];
+		if (stored === undefined) {
+			this.storeLimits(input);
+			return input.limits;
+		}
+		if (input.limitsVersion > stored.limits_version) {
+			this.storeLimits(input);
+			return input.limits;
+		}
+		if (input.limitsVersion < stored.limits_version) {
+			return { minute: stored.minute_limit, day: stored.day_limit };
+		}
+		if (input.limits.minute !== stored.minute_limit || input.limits.day !== stored.day_limit) {
+			throw new ApiKeyLimitConfigurationError(input.limitsVersion);
+		}
+		return input.limits;
+	}
+
+	private storeLimits(input: ApiKeyLimiterAdmission): void {
+		this.ctx.storage.sql.exec(
+			"INSERT INTO api_key_limit_config (singleton, limits_version, minute_limit, day_limit) VALUES (1, ?1, ?2, ?3) ON CONFLICT(singleton) DO UPDATE SET limits_version = excluded.limits_version, minute_limit = excluded.minute_limit, day_limit = excluded.day_limit",
+			input.limitsVersion,
+			input.limits.minute,
+			input.limits.day,
 		);
 	}
 

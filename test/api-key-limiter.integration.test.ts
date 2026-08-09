@@ -5,6 +5,7 @@ import {
 	runInDurableObject,
 } from "cloudflare:test";
 import { describe, expect, it } from "vitest";
+import { ApiKeyLimitConfigurationError } from "../src/admission/api-key-limiter.js";
 
 const MINUTE = 60_000;
 const DAY = 24 * 60 * MINUTE;
@@ -12,14 +13,19 @@ const DAY = 24 * 60 * MINUTE;
 type Admission = {
 	readonly admittedAt: number;
 	readonly limits: { readonly day: number; readonly minute: number };
+	readonly limitsVersion: number;
 };
 
 function limiterFor(publicId: string) {
 	return env.API_KEY_LIMITER.getByName(publicId);
 }
 
-function admission(admittedAt: number, limits = { minute: 2, day: 10 }): Admission {
-	return { admittedAt, limits };
+function admission(
+	admittedAt: number,
+	limits = { minute: 2, day: 10 },
+	limitsVersion = 0,
+): Admission {
+	return { admittedAt, limits, limitsVersion };
 }
 
 describe("ApiKeyLimiter Durable Object", () => {
@@ -49,11 +55,55 @@ describe("ApiKeyLimiter Durable Object", () => {
 
 		// When: a later admission presents the updated three-request limit through a fresh stub.
 		const result = await limiterFor("latest-limits").admit(
-			admission(now + 2_000, { minute: 3, day: 10 }),
+			admission(now + 2_000, { minute: 3, day: 10 }, 1),
 		);
 
 		// Then: persisted usage survives the separate binding lookup and the raised limit is honored.
 		expect(result).toEqual({ kind: "allowed" });
+	});
+
+	it("denies a stale version after a newer lower limit has been admitted", async () => {
+		// Given: a version-zero admission has read an earlier two-request allowance.
+		const limiter = limiterFor("stale-limit-version");
+		const now = Date.now();
+		const staleAdmission = admission(now + 1_000, { minute: 2, day: 10 }, 0);
+
+		// When: version one lowers the allowance and consumes its only minute slot first.
+		await limiter.admit(admission(now, { minute: 1, day: 10 }, 1));
+		const persistedConfig = await runInDurableObject(limiter, (_instance, state) => {
+			return state.storage.sql
+				.exec<{
+					readonly day_limit: number;
+					readonly limits_version: number;
+					readonly minute_limit: number;
+				}>("SELECT limits_version, minute_limit, day_limit FROM api_key_limit_config")
+				.one();
+		});
+		const result = await limiter.admit(staleAdmission);
+
+		// Then: the stale request uses persisted version-one limits and cannot loosen the reduction.
+		expect(persistedConfig).toEqual({ day_limit: 10, limits_version: 1, minute_limit: 1 });
+		expect(result).toEqual({ kind: "exhausted", retryAfterSeconds: 59 });
+	});
+
+	it("fails closed when the same limits version carries conflicting values", async () => {
+		// Given: version zero has established a two-request allowance for one key object.
+		const limiter = limiterFor("conflicting-limit-version");
+		const now = Date.now();
+		await limiter.admit(admission(now));
+
+		// When: a later request claims that the same version has different limits.
+		// Then: the object rejects the untrustworthy configuration without charging it.
+		const errorName = await runInDurableObject(limiter, async (instance) => {
+			try {
+				await instance.admit(admission(now + 1_000, { minute: 3, day: 10 }));
+			} catch (error) {
+				if (error instanceof ApiKeyLimitConfigurationError) return error.name;
+				throw error;
+			}
+			return undefined;
+		});
+		expect(errorName).toBe(ApiKeyLimitConfigurationError.name);
 	});
 
 	it("retains the rolling allowance after workerd evicts the object instance", async () => {
@@ -120,8 +170,8 @@ describe("ApiKeyLimiter Durable Object", () => {
 		await limiter.admit(admission(now, { minute: 1, day: 1 }));
 
 		// When: requests arrive at the minute and two-day expiry boundaries.
-		const afterMinute = await limiter.admit(admission(now + MINUTE, { minute: 1, day: 2 }));
-		const afterRetention = await limiter.admit(admission(now + 2 * DAY, { minute: 1, day: 2 }));
+		const afterMinute = await limiter.admit(admission(now + MINUTE, { minute: 1, day: 2 }, 1));
+		const afterRetention = await limiter.admit(admission(now + 2 * DAY, { minute: 1, day: 2 }, 1));
 
 		// Then: boundary-expired records cannot exhaust either current rolling window.
 		expect(afterMinute).toEqual({ kind: "allowed" });

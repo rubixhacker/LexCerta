@@ -21,10 +21,11 @@ beforeEach(async () => {
 			expires_at TEXT NOT NULL,
 			revoked_at TEXT,
 			minute_limit INTEGER NOT NULL DEFAULT 60,
-			day_limit INTEGER NOT NULL DEFAULT 1000
+			day_limit INTEGER NOT NULL DEFAULT 1000,
+			limits_version INTEGER NOT NULL DEFAULT 1
 		)`).run();
 	await env.DB.prepare(
-		"INSERT INTO api_key_records (public_id, environment, hmac_sha256_hex, status, expires_at, revoked_at, minute_limit, day_limit) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
+		"INSERT INTO api_key_records (public_id, environment, hmac_sha256_hex, status, expires_at, revoked_at, minute_limit, day_limit, limits_version) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)",
 	)
 		.bind(
 			fixture.record.public_id,
@@ -35,6 +36,7 @@ beforeEach(async () => {
 			fixture.record.revoked_at,
 			fixture.record.minute_limit,
 			fixture.record.day_limit,
+			fixture.record.limits_version,
 		)
 		.run();
 	authorization = `Bearer ${fixture.token}`;

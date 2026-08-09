@@ -74,6 +74,7 @@ describe("authenticateRequest", () => {
 			kind: "authenticated",
 			publicId: fixture.record.public_id,
 			limits: { minute: 60, day: 1000 },
+			limitsVersion: 1,
 		});
 		expect(JSON.stringify(result)).not.toContain(fixture.token);
 	});
@@ -84,6 +85,25 @@ describe("authenticateRequest", () => {
 		database.rows.set(fixture.record.public_id, {
 			...fixture.record,
 			minute_limit: 0,
+		});
+
+		const result = await authenticateRequest(
+			new Request("https://mcp.lexcerta.ai/", {
+				headers: { Authorization: `Bearer ${fixture.token}` },
+			}),
+			environment(database, fixture.pepper),
+			fixture.now,
+		);
+
+		expect(result).toEqual({ kind: "unavailable" });
+	});
+
+	it("fails closed when the allowance limits version is invalid", async () => {
+		const fixture = await createLocalAuthFixture();
+		const database = new FakeDatabase();
+		database.rows.set(fixture.record.public_id, {
+			...fixture.record,
+			limits_version: -1,
 		});
 
 		const result = await authenticateRequest(

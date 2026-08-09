@@ -1,14 +1,22 @@
 import { env } from "cloudflare:test";
 import { beforeAll, describe, expect, it } from "vitest";
-import migrationSql from "../migrations/0001_api_key_records.sql?raw";
+import apiKeyMigrationSql from "../migrations/0001_api_key_records.sql?raw";
+import adminLifecycleMigrationSql from "../migrations/0002_admin_key_lifecycle.sql?raw";
+import limitsVersionMigrationSql from "../migrations/0003_api_key_limit_version.sql?raw";
 
 describe("isolated Worker configuration and D1 migrations", () => {
 	beforeAll(async () => {
-		for (const query of migrationSql
-			.split(";")
-			.map((sql) => sql.trim())
-			.filter(Boolean))
-			await env.DB.prepare(query).run();
+		for (const migration of [
+			apiKeyMigrationSql,
+			adminLifecycleMigrationSql,
+			limitsVersionMigrationSql,
+		]) {
+			for (const query of migration
+				.split(";")
+				.map((sql) => sql.trim())
+				.filter(Boolean))
+				await env.DB.prepare(query).run();
+		}
 	});
 
 	it("uses the non-production key boundary for the test environment", () => {
@@ -38,12 +46,18 @@ describe("isolated Worker configuration and D1 migrations", () => {
 			"minute_limit",
 			"day_limit",
 			"last_used_at",
+			"retention_expires_at",
+			"limits_version",
 		]);
 		expect(
 			indexes.results
 				.map((index) => index.name)
 				.filter((name) => name.startsWith("api_key_records_")),
-		).toEqual(["api_key_records_active_idx", "api_key_records_customer_idx"]);
+		).toEqual([
+			"api_key_records_active_idx",
+			"api_key_records_customer_idx",
+			"api_key_records_retention_idx",
+		]);
 
 		const validCustomer = `migration-test-${crypto.randomUUID()}`;
 		const validPublicId = `migration-${crypto.randomUUID()}`;
@@ -60,6 +74,12 @@ describe("isolated Worker configuration and D1 migrations", () => {
 				"2026-08-10T00:00:00.000Z",
 			)
 			.run();
+		const storedVersion = await env.DB.prepare(
+			"SELECT limits_version FROM api_key_records WHERE public_id = ?1",
+		)
+			.bind(validPublicId)
+			.first<{ readonly limits_version: number }>();
+		expect(storedVersion).toEqual({ limits_version: 0 });
 		await expect(
 			env.DB.prepare(
 				"INSERT INTO api_key_records (public_id, customer_id, environment, hmac_sha256_hex, issued_at, expires_at) VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
@@ -72,6 +92,11 @@ describe("isolated Worker configuration and D1 migrations", () => {
 					"2026-08-09T00:00:00.000Z",
 					"2026-08-10T00:00:00.000Z",
 				)
+				.run(),
+		).rejects.toThrow();
+		await expect(
+			env.DB.prepare("UPDATE api_key_records SET limits_version = -1 WHERE public_id = ?1")
+				.bind(validPublicId)
 				.run(),
 		).rejects.toThrow();
 	});

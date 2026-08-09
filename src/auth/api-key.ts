@@ -15,6 +15,7 @@ const API_KEY_ROW_SCHEMA = z.object({
 	revoked_at: z.string().datetime({ offset: true }).nullable(),
 	minute_limit: z.number().int().positive(),
 	day_limit: z.number().int().positive(),
+	limits_version: z.number().int().nonnegative().safe(),
 });
 
 export type KeyEnvironment = z.infer<typeof KEY_ENVIRONMENT_SCHEMA>;
@@ -51,6 +52,7 @@ export type AuthenticationResult =
 			readonly kind: "authenticated";
 			readonly publicId: ApiKeyPublicId;
 			readonly limits: { readonly minute: number; readonly day: number };
+			readonly limitsVersion: number;
 	  }
 	| { readonly kind: "unauthorized" }
 	| { readonly kind: "unavailable" };
@@ -111,6 +113,7 @@ export async function authenticateRequest(
 			kind: "authenticated",
 			publicId: record.data.public_id,
 			limits: { minute: record.data.minute_limit, day: record.data.day_limit },
+			limitsVersion: record.data.limits_version,
 		};
 	} catch (error) {
 		if (error instanceof AuthInfrastructureError) return { kind: "unavailable" };
@@ -146,7 +149,7 @@ async function readApiKeyRecord(database: AuthDatabase, publicId: string): Promi
 	try {
 		return await database
 			.prepare(
-				"SELECT public_id, environment, hmac_sha256_hex, status, expires_at, revoked_at, minute_limit, day_limit FROM api_key_records WHERE public_id = ?1 LIMIT 1",
+				"SELECT public_id, environment, hmac_sha256_hex, status, expires_at, revoked_at, minute_limit, day_limit, limits_version FROM api_key_records WHERE public_id = ?1 LIMIT 1",
 			)
 			.bind(publicId)
 			.first();

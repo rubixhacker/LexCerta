@@ -1,7 +1,6 @@
 import type { ApiKeyPublicId } from "../auth/api-key.js";
 import type {
 	ApiKeyLifecycleRecord,
-	ApiKeyLimits,
 	KeyEnvironment,
 	SanitizedAuditEvent,
 } from "./key-lifecycle.js";
@@ -25,6 +24,7 @@ export type AdminKeyLimitChange = AdminKeyRevocation;
 
 export type StoredAdminKey = ApiKeyLifecycleRecord & {
 	readonly hmacSha256Hex: string;
+	readonly limitsVersion: number;
 };
 
 export interface AdminKeyStore {
@@ -53,7 +53,7 @@ export function createAdminKeyStore(database: D1Database): AdminKeyStore {
 			const results = await database.batch([
 				database
 					.prepare(
-						"INSERT INTO api_key_records (public_id, customer_id, environment, hmac_sha256_hex, status, issued_at, expires_at, rotation_parent_id, rotation_overlap_until, minute_limit, day_limit, retention_expires_at) SELECT ?1, ?2, ?3, ?4, 'active', ?5, ?6, ?7, NULL, ?8, ?9, ?10 WHERE EXISTS (SELECT 1 FROM api_key_records WHERE public_id = ?7 AND customer_id = ?2 AND environment = ?3 AND status = 'active' AND rotation_overlap_until IS NULL)",
+						"INSERT INTO api_key_records (public_id, customer_id, environment, hmac_sha256_hex, status, issued_at, expires_at, rotation_parent_id, rotation_overlap_until, minute_limit, day_limit, limits_version, retention_expires_at) SELECT ?1, ?2, ?3, ?4, 'active', ?5, ?6, ?7, NULL, ?8, ?9, 0, ?10 WHERE EXISTS (SELECT 1 FROM api_key_records WHERE public_id = ?7 AND customer_id = ?2 AND environment = ?3 AND status = 'active' AND rotation_overlap_until IS NULL)",
 					)
 					.bind(
 						child.publicId,
@@ -98,7 +98,7 @@ export function createAdminKeyStore(database: D1Database): AdminKeyStore {
 			const results = await database.batch([
 				database
 					.prepare(
-						"UPDATE api_key_records SET minute_limit = ?1, day_limit = ?2 WHERE public_id = ?3 AND status = 'active'",
+						"UPDATE api_key_records SET minute_limit = ?1, day_limit = ?2, limits_version = limits_version + 1 WHERE public_id = ?3 AND status = 'active'",
 					)
 					.bind(key.limits.minute, key.limits.day, key.publicId),
 				...auditStatements(database, input.audit, key, {
@@ -111,7 +111,7 @@ export function createAdminKeyStore(database: D1Database): AdminKeyStore {
 		find: async (publicId) => {
 			const row = await database
 				.prepare(
-					"SELECT customer_id, environment, expires_at, issued_at, minute_limit, day_limit, public_id, revoked_at, rotation_overlap_until, rotation_parent_id, status, hmac_sha256_hex FROM api_key_records WHERE public_id = ?1 LIMIT 1",
+					"SELECT customer_id, environment, expires_at, issued_at, minute_limit, day_limit, limits_version, public_id, revoked_at, rotation_overlap_until, rotation_parent_id, status, hmac_sha256_hex FROM api_key_records WHERE public_id = ?1 LIMIT 1",
 				)
 				.bind(publicId)
 				.first<StoredKeyRow>();
@@ -144,7 +144,7 @@ function keyInsertStatements(
 	return [
 		database
 			.prepare(
-				"INSERT INTO api_key_records (public_id, customer_id, environment, hmac_sha256_hex, status, issued_at, expires_at, rotation_parent_id, rotation_overlap_until, minute_limit, day_limit, retention_expires_at) VALUES (?1, ?2, ?3, ?4, 'active', ?5, ?6, NULL, NULL, ?7, ?8, ?9)",
+				"INSERT INTO api_key_records (public_id, customer_id, environment, hmac_sha256_hex, status, issued_at, expires_at, rotation_parent_id, rotation_overlap_until, minute_limit, day_limit, limits_version, retention_expires_at) VALUES (?1, ?2, ?3, ?4, 'active', ?5, ?6, NULL, NULL, ?7, ?8, 0, ?9)",
 			)
 			.bind(
 				key.publicId,
@@ -228,6 +228,7 @@ type StoredKeyRow = {
 	readonly issued_at: string;
 	readonly minute_limit: number;
 	readonly day_limit: number;
+	readonly limits_version: number;
 	readonly public_id: ApiKeyPublicId;
 	readonly revoked_at: string | null;
 	readonly rotation_overlap_until: string | null;
@@ -243,6 +244,7 @@ function fromStoredRow(row: StoredKeyRow): StoredAdminKey {
 		expiresAt: row.expires_at,
 		issuedAt: row.issued_at,
 		limits: { minute: row.minute_limit, day: row.day_limit },
+		limitsVersion: row.limits_version,
 		publicId: row.public_id,
 		revokedAt: row.revoked_at,
 		rotationOverlapUntil: row.rotation_overlap_until,

@@ -2,6 +2,7 @@ import { SELF, env } from "cloudflare:test";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import migrationOne from "../migrations/0001_api_key_records.sql?raw";
 import migrationTwo from "../migrations/0002_admin_key_lifecycle.sql?raw";
+import migrationThree from "../migrations/0003_api_key_limit_version.sql?raw";
 import adminWorker, { type Env as AdminWorkerEnv } from "../src/admin/worker.js";
 
 const PRIVATE_JWK: JsonWebKey = {
@@ -31,6 +32,7 @@ type CredentialResponse = {
 	readonly credential: string;
 	readonly key: { readonly publicId: string; readonly status: string };
 };
+type CountRow = { readonly count: number };
 
 beforeEach(async () => {
 	await env.DB.prepare("DROP TABLE IF EXISTS admin_audit_events").run();
@@ -38,6 +40,7 @@ beforeEach(async () => {
 	await env.DB.prepare("DROP TABLE IF EXISTS customers").run();
 	await applyMigration(migrationOne);
 	await applyMigration(migrationTwo);
+	await applyMigration(migrationThree);
 	vi.stubGlobal("fetch", async () => Response.json({ keys: [PUBLIC_JWK] }));
 });
 
@@ -79,10 +82,7 @@ describe("Access-protected admin Worker", () => {
 
 		// Then: it returns a generic failure and does not create a credential record.
 		expect(response.status).toBe(500);
-		const count = await env.DB.prepare("SELECT COUNT(*) AS count FROM api_key_records").first<{
-			readonly count: number;
-		}>();
-		expect(count?.count).toBe(0);
+		expect(await recordCount()).toBe(0);
 	});
 
 	it("rotates, changes limits, and revokes through operator-only routes", async () => {
@@ -177,10 +177,7 @@ describe("Access-protected admin Worker", () => {
 		// Then: it receives the generic Access rejection and no key record is created.
 		expect(response.status).toBe(401);
 		expect(await response.text()).toBe('{"error":"Unauthorized"}');
-		const count = await env.DB.prepare("SELECT COUNT(*) AS count FROM api_key_records").first<{
-			readonly count: number;
-		}>();
-		expect(count?.count).toBe(0);
+		expect(await recordCount()).toBe(0);
 	});
 
 	it("rejects an assertion with an invalid signature", async () => {
@@ -199,10 +196,7 @@ describe("Access-protected admin Worker", () => {
 
 		// Then: signature verification prevents the spoofed identity from reaching persistence.
 		expect(response.status).toBe(401);
-		const count = await env.DB.prepare("SELECT COUNT(*) AS count FROM api_key_records").first<{
-			readonly count: number;
-		}>();
-		expect(count?.count).toBe(0);
+		expect(await recordCount()).toBe(0);
 	});
 });
 
@@ -263,6 +257,13 @@ async function applyMigration(sql: string): Promise<void> {
 		.filter(Boolean)) {
 		await env.DB.prepare(statement).run();
 	}
+}
+
+async function recordCount(): Promise<number> {
+	const row = await env.DB.prepare(
+		"SELECT COUNT(*) AS count FROM api_key_records",
+	).first<CountRow>();
+	return row?.count ?? 0;
 }
 
 function base64Url(value: string | ArrayBuffer): string {

@@ -2,6 +2,7 @@ import { env } from "cloudflare:test";
 import { beforeEach, describe, expect, it } from "vitest";
 import migrationOne from "../migrations/0001_api_key_records.sql?raw";
 import migrationTwo from "../migrations/0002_admin_key_lifecycle.sql?raw";
+import migrationThree from "../migrations/0003_api_key_limit_version.sql?raw";
 import type { ApiKeyLifecycleRecord, SanitizedAuditEvent } from "../src/admin/key-lifecycle";
 import {
 	type AdminKeyIssue,
@@ -82,15 +83,14 @@ describe("AdminKeyStore against workerd D1", () => {
 		await env.DB.prepare("DROP TABLE IF EXISTS customers").run();
 		await applyMigration(migrationOne);
 		await applyMigration(migrationTwo);
+		await applyMigration(migrationThree);
 	});
 
 	it("persists an issued key without a plaintext credential", async () => {
-		const store = createAdminKeyStore(env.DB);
-
-		await store.issue(issue);
+		await createAdminKeyStore(env.DB).issue(issue);
 
 		const row = await env.DB.prepare(
-			"SELECT public_id, customer_id, hmac_sha256_hex, status, rotation_parent_id, rotation_overlap_until, minute_limit, day_limit, retention_expires_at FROM api_key_records WHERE public_id = ?1",
+			"SELECT public_id, customer_id, hmac_sha256_hex, status, rotation_parent_id, rotation_overlap_until, minute_limit, day_limit, limits_version, retention_expires_at FROM api_key_records WHERE public_id = ?1",
 		)
 			.bind(issuePublicId)
 			.first<Record<string, unknown>>();
@@ -109,6 +109,7 @@ describe("AdminKeyStore against workerd D1", () => {
 			rotation_overlap_until: null,
 			minute_limit: issuedKey.limits.minute,
 			day_limit: issuedKey.limits.day,
+			limits_version: 0,
 			retention_expires_at: retention,
 		});
 		expect(JSON.stringify(row)).not.toContain("lc_test_");
@@ -124,23 +125,21 @@ describe("AdminKeyStore against workerd D1", () => {
 	it("persists rotation lineage and bounded overlap atomically", async () => {
 		const store = createAdminKeyStore(env.DB);
 		await store.issue(issue);
-		const rotation = makeRotation(rotatedPublicId, "b".repeat(64));
-
-		await store.rotate(rotation);
+		await store.rotate(makeRotation(rotatedPublicId, "b".repeat(64)));
 
 		const rows = await env.DB.prepare(
-			"SELECT public_id, rotation_parent_id FROM api_key_records WHERE customer_id = ?1 ORDER BY public_id",
+			"SELECT public_id, rotation_parent_id, limits_version FROM api_key_records WHERE customer_id = ?1 ORDER BY public_id",
 		)
 			.bind(issuedKey.customerId)
-			.all<{ public_id: string; rotation_parent_id: string | null }>();
+			.all<{ public_id: string; rotation_parent_id: string | null; limits_version: number }>();
 		expect(rows.results).toContainEqual({
 			public_id: "key-rotated",
 			rotation_parent_id: "key-issue",
+			limits_version: 0,
 		});
 	});
 
 	it("does not create a child or audit when the rotation parent is unavailable", async () => {
-		const store = createAdminKeyStore(env.DB);
 		const missingParent = createApiKeyPublicId("key-missing-parent");
 		const child = createApiKeyPublicId("key-no-child");
 		const rotation: AdminKeyRotation = {
@@ -150,7 +149,7 @@ describe("AdminKeyStore against workerd D1", () => {
 			audit: makeAudit("key_rotated", child),
 		};
 
-		await expect(store.rotate(rotation)).rejects.toThrow();
+		await expect(createAdminKeyStore(env.DB).rotate(rotation)).rejects.toThrow();
 
 		const persistedChild = await env.DB.prepare(
 			"SELECT public_id FROM api_key_records WHERE public_id = ?1",
@@ -197,12 +196,13 @@ describe("AdminKeyStore against workerd D1", () => {
 		const store = createAdminKeyStore(env.DB);
 		await store.issue(issue);
 		await store.rotate(makeRotation(rotatedPublicId, "b".repeat(64)));
-		const key: ApiKeyLifecycleRecord = {
-			...makeKey(rotatedPublicId),
-			rotationParentId: issuePublicId,
-		};
 		const revocation: AdminKeyRevocation = {
-			key: { ...key, revokedAt: now, status: "revoked" },
+			key: {
+				...makeKey(rotatedPublicId),
+				rotationParentId: issuePublicId,
+				revokedAt: now,
+				status: "revoked",
+			},
 			audit: makeAudit("key_revoked", rotatedPublicId),
 		};
 
@@ -240,28 +240,34 @@ describe("AdminKeyStore against workerd D1", () => {
 		};
 
 		await store.changeLimits(change);
+		await store.changeLimits({
+			key: { ...makeKey(issuePublicId), limits: { minute: 24, day: 480 } },
+			audit: makeAudit("key_limits_changed", issuePublicId),
+		});
 
 		const row = await env.DB.prepare(
-			"SELECT minute_limit, day_limit, hmac_sha256_hex FROM api_key_records WHERE public_id = ?1",
+			"SELECT minute_limit, day_limit, limits_version, hmac_sha256_hex FROM api_key_records WHERE public_id = ?1",
 		)
 			.bind(issuePublicId)
 			.first<Record<string, unknown>>();
 		expect(row).toMatchObject({
-			minute_limit: 12,
-			day_limit: 240,
+			minute_limit: 24,
+			day_limit: 480,
+			limits_version: 2,
 			hmac_sha256_hex: "a".repeat(64),
 		});
+		const found = await store.find(issuePublicId);
+		expect(found?.limitsVersion).toBe(2);
 	});
 
 	it("rolls back an issue when key insertion fails", async () => {
-		const store = createAdminKeyStore(env.DB);
-		await store.issue(issue);
+		await createAdminKeyStore(env.DB).issue(issue);
 		const duplicate: AdminKeyIssue = {
 			...issue,
 			key: { ...issuedKey, customerId: "customer-rolled-back" },
 		};
 
-		await expect(store.issue(duplicate)).rejects.toThrow();
+		await expect(createAdminKeyStore(env.DB).issue(duplicate)).rejects.toThrow();
 
 		const customer = await env.DB.prepare("SELECT id FROM customers WHERE id = ?1")
 			.bind("customer-rolled-back")
