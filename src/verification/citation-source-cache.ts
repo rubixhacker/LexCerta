@@ -71,6 +71,8 @@ export type CitationSourceObservationRecord = {
 	readonly policy?: CitationSourceCachePolicy;
 };
 
+export type CitationSourceNegativePurge = CitationSourceCacheRead;
+
 export function initialCitationSourceCacheState(): CitationSourceCacheState {
 	return { kind: "empty" };
 }
@@ -137,6 +139,24 @@ export function recordCitationSourceObservation(
 		default:
 			return assertNever(input.state);
 	}
+}
+
+export function purgeExpiredCitationNegative(
+	input: CitationSourceNegativePurge,
+): CitationSourceCacheState {
+	const policy = input.policy ?? DEFAULT_CITATION_SOURCE_CACHE_POLICY;
+	if (
+		input.state.kind !== "negative" ||
+		isFresh(input.state.negative.retrievedAt, input.now, policy.negativeFreshnessMs)
+	)
+		return input.state;
+	return input.state.superseded === null
+		? initialCitationSourceCacheState()
+		: {
+				kind: "reversal_pending",
+				superseded: input.state.superseded,
+				firstNegative: input.state.negative,
+			};
 }
 
 function withRetrievedAt(

@@ -68,9 +68,9 @@ describe("CourtListener REST adapter", () => {
 	it.each([
 		["an empty response", [], { kind: "malformed_response" }],
 		[
-			"a source-scoped absence",
+			"a conclusive absence for a different normalized citation",
 			[{ status: 404, normalized_citations: ["1 U.S. 200"], clusters: [] }],
-			{ kind: "absent", normalizedCitation: "347 U.S. 483" },
+			{ kind: "malformed_response" },
 		],
 		[
 			"an ambiguous item",
