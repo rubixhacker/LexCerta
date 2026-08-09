@@ -3,11 +3,13 @@ import {
 	authenticateRequest,
 	createAuthenticationFailureResponse,
 } from "./auth/api-key.js";
+import { createD1CitationObservationStore } from "./cache/d1-citation-observation-store.js";
 import { createCourtListenerApi } from "./courtlistener/api.js";
 import type { CourtListenerCoordinatorRpc } from "./courtlistener/coordinator.js";
 import { createCourtListenerCitationGateway } from "./courtlistener/gateway.js";
 import { createLexCertaMcpHandler, protocolBoundaryRejection } from "./mcp.js";
 import { boundedMcpRequest } from "./request-body.js";
+import { createCachedCitationGateway } from "./verification/cached-citation-gateway.js";
 import type { CitationVerificationGateway } from "./verification/verify-citation.js";
 
 export { ApiKeyLimiter } from "./admission/api-key-limiter.js";
@@ -42,6 +44,7 @@ type CourtListenerEnvironment = {
 
 export type Env = {
 	readonly BUILD_ID: string;
+	readonly DB: D1Database;
 	readonly API_KEY_LIMITER: ApiKeyLimiterNamespace;
 } & AuthEnvironment &
 	CourtListenerEnvironment;
@@ -92,6 +95,15 @@ function unavailableCitationGateway(): CitationVerificationGateway {
 }
 
 function citationGateway(env: Env): CitationVerificationGateway {
+	return createCachedCitationGateway({
+		now: () => new Date(),
+		ownerToken: () => crypto.randomUUID(),
+		store: createD1CitationObservationStore(env.DB),
+		upstream: upstreamCitationGateway(env),
+	});
+}
+
+function upstreamCitationGateway(env: Env): CitationVerificationGateway {
 	const token = env.COURTLISTENER_API_TOKEN;
 	const credentialId = env.COURTLISTENER_CREDENTIAL_ID;
 	const coordinator = env.COURTLISTENER_COORDINATOR;

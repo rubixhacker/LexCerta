@@ -7,6 +7,7 @@ import {
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { initialCourtListenerBudgetState } from "../src/courtlistener/budget.js";
 import { createLocalAuthFixture } from "./fixtures/api-key.js";
+import { resetCitationSourceCache } from "./fixtures/citation-source-cache.js";
 
 let authorization = "";
 const outbound: Request[] = [];
@@ -17,6 +18,7 @@ let citationFixture: CitationFixture = "matched";
 
 beforeEach(async () => {
 	const fixture = await createLocalAuthFixture({ publicId: `citation-${crypto.randomUUID()}` });
+	await resetCitationSourceCache(env.DB);
 	await env.DB.prepare("DROP TABLE IF EXISTS api_key_records").run();
 	await env.DB.prepare(`CREATE TABLE api_key_records (
 			public_id TEXT PRIMARY KEY NOT NULL,
@@ -231,6 +233,11 @@ describe("Worker citation verification", () => {
 						structuredContent: { evidence: { searchComplete: true, source: "courtlistener" } },
 					},
 				});
+				const cached = await SELF.fetch(citationRequest());
+				expect(await cached.json()).toMatchObject({
+					result: { isError: false, structuredContent: { outcome: "not_found" } },
+				});
+				expect(outbound.map((request) => request.method)).toEqual(["GET", "POST"]);
 			}
 			if (reason === "rate_limited") {
 				expect(body).toMatchObject({
