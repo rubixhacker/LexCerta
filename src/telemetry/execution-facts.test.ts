@@ -2,12 +2,12 @@ import { describe, expect, it } from "vitest";
 import type { CitationObservationStore } from "../cache/citation-observation-store.js";
 import type { OpinionSourceStore } from "../cache/opinion-source-store.js";
 import type { CourtListenerApi } from "../courtlistener/api.js";
-import type { CourtListenerCoordinatorRpc } from "../courtlistener/coordinator.js";
 import type { BudgetDecision } from "../courtlistener/budget-contract.js";
 import { initialCourtListenerBudgetState } from "../courtlistener/budget.js";
 import { requestCaseLaw } from "../courtlistener/case-law-admission.js";
-import { createCourtListenerCitationGateway } from "../courtlistener/gateway.js";
 import { readCachedCaseLawOpinion } from "../courtlistener/case-law-opinion-source.js";
+import type { CourtListenerCoordinatorRpc } from "../courtlistener/coordinator.js";
+import { createCourtListenerCitationGateway } from "../courtlistener/gateway.js";
 import { createCachedCitationGateway } from "../verification/cached-citation-gateway.js";
 import { createExecutionFactCollector } from "./execution-facts.js";
 

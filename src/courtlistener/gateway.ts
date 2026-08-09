@@ -1,7 +1,7 @@
 import {
+	type ExecutionFactObserver,
 	observeCircuitStatus,
 	observeCourtListenerOutcome,
-	type ExecutionFactObserver,
 } from "../telemetry/execution-facts.js";
 import type * as Verification from "../verification/verify-citation.js";
 import type { CitationLookupOutcome, CourtListenerApi } from "./api.js";
@@ -64,10 +64,12 @@ async function admit(
 			return delayed("rate_limited", options.now(), admission.retryAt);
 		case "circuit_open":
 			return delayed("circuit_open", options.now(), admission.retryAt);
-		case "sync_in_progress":
-		case "sync_unavailable":
 		case "quota_exhausted":
 			options.executionFacts?.observe({ kind: "upstream", status: "quota_limited" });
+			return indeterminate("quota_unknown");
+		case "sync_in_progress":
+		case "sync_unavailable":
+			options.executionFacts?.observe({ kind: "upstream", status: "quota_unknown" });
 			return indeterminate("quota_unknown");
 		case "probe_in_flight":
 		case "reservation_conflict":

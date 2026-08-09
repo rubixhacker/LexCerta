@@ -145,7 +145,6 @@ describe("telemetry response mapping", () => {
 				},
 			},
 		);
-
 		const summary = await summarizeTelemetryResponse(response, "verify_quote");
 
 		expect(summary).toMatchObject({
@@ -162,7 +161,7 @@ describe("telemetry response mapping", () => {
 			encoder.encode('{"result":{"structuredContent":{"outcome":"verified"}}}'),
 			encoder.encode("x".repeat(MAX_TELEMETRY_RESPONSE_BYTES)),
 		];
-		const response = new Response(
+		const clone = new Response(
 			new ReadableStream<Uint8Array>({
 				start(controller) {
 					controller.enqueue(chunks[0]);
@@ -181,6 +180,10 @@ describe("telemetry response mapping", () => {
 				},
 			},
 		);
+		const response = new Response("original-response", {
+			headers: { "content-type": "application/json" },
+		});
+		response.clone = () => clone;
 
 		const summary = await summarizeTelemetryResponse(response, "verify_quote");
 
@@ -188,9 +191,8 @@ describe("telemetry response mapping", () => {
 			outcome: "verified",
 			responseBytes: MAX_TELEMETRY_RESPONSE_BYTES,
 		});
-		const originalBody = response.body;
-		if (originalBody !== null) await originalBody.cancel();
 		expect(cancelled).toBe(true);
+		expect(await response.text()).toBe("original-response");
 	});
 
 	it("counts a large non-JSON chunk without decoding or retaining its content", async () => {

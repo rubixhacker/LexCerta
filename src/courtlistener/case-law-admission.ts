@@ -1,14 +1,14 @@
+import {
+	type ExecutionFactObserver,
+	observeCircuitStatus,
+	observeCourtListenerOutcome,
+} from "../telemetry/execution-facts.js";
 import type { CourtListenerApi } from "./api.js";
 import type { BudgetDecision } from "./budget-contract.js";
 import type { CourtListenerOutcome } from "./budget.js";
 import type { CourtListenerCaseLawOutcome } from "./case-law-api.js";
 import type { CourtListenerCoordinatorRpc } from "./coordinator.js";
 import { synchronizeCourtListenerQuota } from "./quota-sync.js";
-import {
-	observeCircuitStatus,
-	observeCourtListenerOutcome,
-	type ExecutionFactObserver,
-} from "../telemetry/execution-facts.js";
 
 export type CaseLawAdmissionOptions = {
 	readonly coordinator: CourtListenerCoordinatorRpc;
@@ -71,10 +71,12 @@ async function decide<Value extends object>(
 			return delayed("rate_limited", options.now(), decision.retryAt);
 		case "circuit_open":
 			return delayed("circuit_open", options.now(), decision.retryAt);
-		case "sync_in_progress":
-		case "sync_unavailable":
 		case "quota_exhausted":
 			options.executionFacts?.observe({ kind: "upstream", status: "quota_limited" });
+			return indeterminate("quota_unknown");
+		case "sync_in_progress":
+		case "sync_unavailable":
+			options.executionFacts?.observe({ kind: "upstream", status: "quota_unknown" });
 			return indeterminate("quota_unknown");
 		case "probe_in_flight":
 		case "reservation_conflict":

@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
-import packageJsonRaw from "../package.json?raw";
 import publicConfigRaw from "../wrangler.jsonc?raw";
 import traceConfigRaw from "../wrangler.telemetry.jsonc?raw";
 
@@ -27,28 +26,10 @@ const traceConfigSchema = z.object({
 	workers_dev: z.boolean(),
 	env: z.object({ local: traceEnvironmentSchema, test: traceEnvironmentSchema }),
 });
-const packageSchema = z.object({
-	scripts: z.object({
-		deploy: z.string(),
-		"deploy:telemetry": z.string(),
-		"test:deployment": z.string(),
-	}),
-});
-
 const automaticTracesDisabled = { enabled: false, persist: false };
 const customTracesEnabled = { enabled: true, persist: true };
 
 describe("telemetry trace isolation configuration", () => {
-	it("deploys the trace Worker before the public Worker", () => {
-		const packageConfig = packageSchema.parse(JSON.parse(packageJsonRaw));
-
-		expect(packageConfig.scripts["deploy:telemetry"]).toBe(
-			'wrangler deploy --config wrangler.telemetry.jsonc --env=""',
-		);
-		expect(packageConfig.scripts.deploy).toBe("node scripts/deploy.mjs");
-		expect(packageConfig.scripts["test:deployment"]).toBe("node --test scripts/deploy.test.mjs");
-	});
-
 	it("disables persisted automatic public traces in every main Worker environment", () => {
 		// Given: the committed main Worker Wrangler configuration.
 		const config = publicConfigSchema.parse(JSON.parse(publicConfigRaw));

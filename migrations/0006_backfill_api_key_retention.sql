@@ -13,4 +13,4 @@ SET retention_expires_at = CASE
 		strftime('%H:%M:%f', COALESCE(revoked_at, expires_at))
 	)
 END
-WHERE retention_expires_at IS NULL;
+;
