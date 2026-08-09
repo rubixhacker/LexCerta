@@ -16,16 +16,16 @@ import { createApiKeyPublicId } from "../src/auth/api-key";
 
 const now = "2026-08-09T12:00:00.000Z";
 const retention = "2027-11-07T12:00:00.000Z";
+const MIGRATION_STATEMENTS_PATTERN = /\s*CREATE TRIGGER[\s\S]*?END;|[^;]+;/gu;
 const issuePublicId = createApiKeyPublicId("key-issue");
 const rotatedPublicId = createApiKeyPublicId("key-rotated");
 
 async function applyMigration(sql: string): Promise<void> {
-	for (const query of sql
-		.split(";")
-		.map((statement) => statement.trim())
-		.filter(Boolean)) {
-		await env.DB.prepare(query).run();
-	}
+	await Promise.all(
+		(sql.match(MIGRATION_STATEMENTS_PATTERN) ?? []).map((statement) =>
+			env.DB.prepare(statement.trim()).run(),
+		),
+	);
 }
 
 function makeKey(publicId: ApiKeyLifecycleRecord["publicId"]): ApiKeyLifecycleRecord {

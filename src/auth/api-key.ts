@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { MAXIMUM_API_KEY_LIMITS } from "../admin/key-lifecycle.js";
 
 const API_KEY_TOKEN_PATTERN = /^lc_(live|test)_([A-Za-z0-9-]{1,64})_([A-Za-z0-9_-]{43})$/;
 const SHA256_HEX_PATTERN = /^[0-9a-f]{64}$/;
@@ -13,8 +14,8 @@ const API_KEY_ROW_SCHEMA = z.object({
 	status: z.enum(["active", "revoked"]),
 	expires_at: z.string().datetime({ offset: true }),
 	revoked_at: z.string().datetime({ offset: true }).nullable(),
-	minute_limit: z.number().int().positive(),
-	day_limit: z.number().int().positive(),
+	minute_limit: z.number().int().positive().max(MAXIMUM_API_KEY_LIMITS.minute),
+	day_limit: z.number().int().positive().max(MAXIMUM_API_KEY_LIMITS.day),
 	limits_version: z.number().int().nonnegative().safe(),
 });
 

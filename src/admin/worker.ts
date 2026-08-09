@@ -1,28 +1,28 @@
 import { z } from "zod";
 import { createApiKeyPublicId } from "../auth/api-key.js";
-import { verifyAccessIdentity, type AccessEnvironment, type AccessIdentity } from "./access.js";
+import { type AccessEnvironment, type AccessIdentity, verifyAccessIdentity } from "./access.js";
 import { apiKeyPepper, hmacSha256Hex, secretBytes } from "./credentials.js";
 import {
+	type ApiKeyLifecycleRecord,
+	MAXIMUM_API_KEY_LIMITS,
 	changeApiKeyLimits,
 	issueApiKey,
 	revokeApiKey,
 	rotateApiKey,
-	type ApiKeyLifecycleRecord,
 } from "./key-lifecycle.js";
 import { AdminKeyNotFoundError, createAdminKeyStore } from "./key-store.js";
 import { AdminKeyRotationConflictError } from "./key-store.js";
 
 const ADMIN_ACTION_SCHEMA = z.enum(["rotate", "revoke", "limits"]);
+const API_KEY_LIMITS_SCHEMA = z.object({
+	day: z.number().int().positive().max(MAXIMUM_API_KEY_LIMITS.day),
+	minute: z.number().int().positive().max(MAXIMUM_API_KEY_LIMITS.minute),
+});
 const ISSUE_REQUEST_SCHEMA = z.object({
 	customerId: z.string().min(1).max(256),
-	limits: z
-		.object({ day: z.number().int().positive(), minute: z.number().int().positive() })
-		.optional(),
+	limits: API_KEY_LIMITS_SCHEMA.optional(),
 });
-const LIMITS_REQUEST_SCHEMA = z.object({
-	day: z.number().int().positive(),
-	minute: z.number().int().positive(),
-});
+const LIMITS_REQUEST_SCHEMA = API_KEY_LIMITS_SCHEMA;
 
 export type Env = AccessEnvironment & {
 	readonly API_KEY_PEPPER?: string;

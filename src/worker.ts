@@ -9,8 +9,7 @@ export { ApiKeyLimiter } from "./admission/api-key-limiter.js";
 
 type AdmissionInput = {
 	readonly admittedAt: number;
-	readonly limits: { readonly minute: number; readonly day: number };
-	readonly limitsVersion: number;
+	readonly publicId: string;
 };
 
 type AdmissionResult =
@@ -79,8 +78,7 @@ async function admitRequest(
 	try {
 		return await namespace.getByName(authentication.publicId).admit({
 			admittedAt: Date.now(),
-			limits: authentication.limits,
-			limitsVersion: authentication.limitsVersion,
+			publicId: authentication.publicId,
 		});
 	} catch {
 		// no-excuse-ok: catch
@@ -124,6 +122,8 @@ async function createAdmissionExhaustedResponse(
 
 const MAX_REQUEST_ID_BYTES = 16_384;
 const MAX_STRING_REQUEST_ID_LENGTH = 256;
+const MAX_REQUEST_ID_CHUNKS = 128;
+const MAX_REQUEST_ID_RECOVERY_MILLISECONDS = 100;
 
 async function recoverRequestId(request: Request): Promise<string | number | null | undefined> {
 	try {
@@ -132,13 +132,24 @@ async function recoverRequestId(request: Request): Promise<string | number | nul
 		const reader = body.getReader();
 		const chunks: Uint8Array[] = [];
 		let totalBytes = 0;
+		let chunkCount = 0;
+		const deadline = Date.now() + MAX_REQUEST_ID_RECOVERY_MILLISECONDS;
 		while (true) {
-			const chunk = await reader.read();
+			const chunk = await readChunkBeforeDeadline(reader, deadline);
+			if (chunk === "deadline") {
+				void reader.cancel().catch(() => undefined);
+				return undefined;
+			}
 			if (chunk.done) break;
 			if (chunk.value === undefined) return undefined;
+			chunkCount += 1;
+			if (chunkCount > MAX_REQUEST_ID_CHUNKS) {
+				void reader.cancel().catch(() => undefined);
+				return undefined;
+			}
 			totalBytes += chunk.value.byteLength;
 			if (totalBytes > MAX_REQUEST_ID_BYTES) {
-				await reader.cancel();
+				void reader.cancel().catch(() => undefined);
 				return undefined;
 			}
 			chunks.push(chunk.value);
@@ -160,5 +171,22 @@ async function recoverRequestId(request: Request): Promise<string | number | nul
 	} catch {
 		// no-excuse-ok: catch
 		return undefined;
+	}
+}
+
+type TimedReadResult = ReadableStreamReadResult<Uint8Array> | "deadline";
+
+async function readChunkBeforeDeadline(
+	reader: ReadableStreamDefaultReader<Uint8Array>,
+	deadline: number,
+): Promise<TimedReadResult> {
+	let timeoutId: ReturnType<typeof setTimeout> | undefined;
+	try {
+		const timeout = new Promise<"deadline">((resolve) => {
+			timeoutId = setTimeout(() => resolve("deadline"), Math.max(0, deadline - Date.now()));
+		});
+		return await Promise.race([reader.read(), timeout]);
+	} finally {
+		if (timeoutId !== undefined) clearTimeout(timeoutId);
 	}
 }

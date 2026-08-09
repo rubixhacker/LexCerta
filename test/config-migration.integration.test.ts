@@ -11,11 +11,7 @@ describe("isolated Worker configuration and D1 migrations", () => {
 			adminLifecycleMigrationSql,
 			limitsVersionMigrationSql,
 		]) {
-			for (const query of migration
-				.split(";")
-				.map((sql) => sql.trim())
-				.filter(Boolean))
-				await env.DB.prepare(query).run();
+			for (const query of splitMigrationStatements(migration)) await env.DB.prepare(query).run();
 		}
 	});
 
@@ -99,5 +95,53 @@ describe("isolated Worker configuration and D1 migrations", () => {
 				.bind(validPublicId)
 				.run(),
 		).rejects.toThrow();
+		await expect(
+			env.DB.prepare(
+				"INSERT INTO api_key_records (public_id, customer_id, environment, hmac_sha256_hex, issued_at, expires_at, minute_limit, day_limit) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
+			)
+				.bind(
+					`${validPublicId}-minute-too-large`,
+					validCustomer,
+					"test",
+					"0".repeat(64),
+					"2026-08-09T00:00:00.000Z",
+					"2026-08-10T00:00:00.000Z",
+					601,
+					10_000,
+				)
+				.run(),
+		).rejects.toThrow();
+		await expect(
+			env.DB.prepare(
+				"INSERT INTO api_key_records (public_id, customer_id, environment, hmac_sha256_hex, issued_at, expires_at, minute_limit, day_limit) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
+			)
+				.bind(
+					`${validPublicId}-day-too-large`,
+					validCustomer,
+					"test",
+					"0".repeat(64),
+					"2026-08-09T00:00:00.000Z",
+					"2026-08-10T00:00:00.000Z",
+					600,
+					10_001,
+				)
+				.run(),
+		).rejects.toThrow();
+		await expect(
+			env.DB.prepare("UPDATE api_key_records SET minute_limit = 601 WHERE public_id = ?1")
+				.bind(validPublicId)
+				.run(),
+		).rejects.toThrow();
+		await expect(
+			env.DB.prepare("UPDATE api_key_records SET day_limit = 10001 WHERE public_id = ?1")
+				.bind(validPublicId)
+				.run(),
+		).rejects.toThrow();
 	});
 });
+
+function splitMigrationStatements(migration: string): readonly string[] {
+	return (migration.match(/\s*CREATE TRIGGER[\s\S]*?END;|[^;]+;/g) ?? [])
+		.map((statement) => statement.trim())
+		.filter(Boolean);
+}

@@ -8,5 +8,5 @@ export default defineConfig({
 			miniflare: { bindings: { API_KEY_PEPPER: "admin-test-pepper" } },
 		}),
 	],
-	test: { include: ["src/admin/**/*.test.ts", "test/admin-*.test.ts"] },
+	test: { fileParallelism: false, include: ["src/admin/**/*.test.ts", "test/admin-*.test.ts"] },
 });

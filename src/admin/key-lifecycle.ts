@@ -20,6 +20,11 @@ export const DEFAULT_API_KEY_LIMITS = {
 	day: 1_000,
 } as const satisfies ApiKeyLimits;
 
+export const MAXIMUM_API_KEY_LIMITS = {
+	minute: 600,
+	day: 10_000,
+} as const satisfies ApiKeyLimits;
+
 export type ApiKeyLifecycleRecord = {
 	readonly customerId: string;
 	readonly environment: KeyEnvironment;
@@ -33,7 +38,6 @@ export type ApiKeyLifecycleRecord = {
 	readonly status: "active" | "revoked";
 };
 
-/** A credential response body is the only permitted consumer of this value. */
 export type OneTimePlaintextCredential = {
 	readonly kind: "one_time_plaintext_credential";
 	readonly token: ApiKeyToken;
@@ -45,7 +49,6 @@ export type SanitizedAuditAction =
 	| "key_revoked"
 	| "key_limits_changed";
 
-/** This deliberately cannot carry a plaintext token, secret, HMAC, or request payload. */
 export type SanitizedAuditEvent = {
 	readonly action: SanitizedAuditAction;
 	readonly actorSubject: string;
@@ -124,10 +127,6 @@ export type ChangeApiKeyLimitsResult =
 	  }
 	| Extract<KeyLifecycleError, { readonly kind: "invalid_limits" }>;
 
-/**
- * Turns entropy supplied by the Worker shell into a credential. This pure module never
- * generates or persists secret material; callers must use cryptographically secure entropy.
- */
 export function issueApiKey(input: IssueApiKeyInput): IssueApiKeyResult {
 	const limits = input.limits ?? DEFAULT_API_KEY_LIMITS;
 	if (!areValidLimits(limits)) return { kind: "invalid_limits" };
@@ -261,8 +260,10 @@ function areValidLimits(limits: ApiKeyLimits): boolean {
 	return (
 		Number.isSafeInteger(limits.minute) &&
 		limits.minute > 0 &&
+		limits.minute <= MAXIMUM_API_KEY_LIMITS.minute &&
 		Number.isSafeInteger(limits.day) &&
-		limits.day > 0
+		limits.day > 0 &&
+		limits.day <= MAXIMUM_API_KEY_LIMITS.day
 	);
 }
 

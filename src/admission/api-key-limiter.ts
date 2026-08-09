@@ -1,13 +1,12 @@
 import { DurableObject } from "cloudflare:workers";
-import type { ApiKeyLimits } from "../admin/key-lifecycle.js";
+import { type ApiKeyLimits, MAXIMUM_API_KEY_LIMITS } from "../admin/key-lifecycle.js";
 import { admitRollingWindow } from "./rolling-window.js";
 
 const USAGE_RETENTION_MILLISECONDS = 24 * 60 * 60 * 1_000;
 
 export type ApiKeyLimiterAdmission = {
 	readonly admittedAt: number;
-	readonly limits: ApiKeyLimits;
-	readonly limitsVersion: number;
+	readonly publicId: string;
 };
 
 export type ApiKeyLimiterResult =
@@ -22,6 +21,11 @@ type StoredLimitConfig = {
 	readonly minute_limit: number;
 };
 
+type CanonicalLimitConfig = {
+	readonly limits: ApiKeyLimits;
+	readonly limitsVersion: number;
+};
+
 export class ApiKeyLimitConfigurationError extends Error {
 	readonly name = "ApiKeyLimitConfigurationError";
 
@@ -30,9 +34,24 @@ export class ApiKeyLimitConfigurationError extends Error {
 	}
 }
 
+export class ApiKeyLimitRecordError extends Error {
+	readonly name = "ApiKeyLimitRecordError";
+}
+
+export class ApiKeyLimiterIdentityError extends Error {
+	readonly name = "ApiKeyLimiterIdentityError";
+
+	constructor() {
+		super("Durable Object name does not match the API key public identifier");
+	}
+}
+
 export class ApiKeyLimiter extends DurableObject {
+	private readonly database: D1Database;
+
 	constructor(ctx: DurableObjectState, env: Env) {
 		super(ctx, env);
+		this.database = env.DB;
 		this.ctx.blockConcurrencyWhile(async () => {
 			this.ctx.storage.sql.exec(
 				"CREATE TABLE IF NOT EXISTS api_key_admissions (admitted_at INTEGER NOT NULL)",
@@ -47,8 +66,10 @@ export class ApiKeyLimiter extends DurableObject {
 	}
 
 	async admit(input: ApiKeyLimiterAdmission): Promise<ApiKeyLimiterResult> {
+		if (this.ctx.id.name !== input.publicId) throw new ApiKeyLimiterIdentityError();
+		const canonicalLimits = await this.readCanonicalLimits(input.publicId);
 		const result = this.ctx.storage.transactionSync<ApiKeyLimiterResult>(() => {
-			const limits = this.selectLimits(input);
+			const limits = this.selectLimits(canonicalLimits);
 			this.deleteExpiredUsage(input.admittedAt);
 			const decision = admitRollingWindow({
 				admissions: this.readDayAdmissions(input.admittedAt),
@@ -92,7 +113,24 @@ export class ApiKeyLimiter extends DurableObject {
 		);
 	}
 
-	private selectLimits(input: ApiKeyLimiterAdmission): ApiKeyLimits {
+	private async readCanonicalLimits(publicId: string): Promise<CanonicalLimitConfig> {
+		try {
+			const raw = await this.database
+				.prepare(
+					"SELECT minute_limit, day_limit, limits_version FROM api_key_records WHERE public_id = ?1 LIMIT 1",
+				)
+				.bind(publicId)
+				.first<unknown>();
+			return parseCanonicalLimitConfig(raw);
+		} catch (error) {
+			if (error instanceof ApiKeyLimitRecordError) throw error;
+			throw new ApiKeyLimitRecordError("canonical API key limit lookup unavailable", {
+				cause: error,
+			});
+		}
+	}
+
+	private selectLimits(input: CanonicalLimitConfig): ApiKeyLimits {
 		const stored = this.ctx.storage.sql
 			.exec<StoredLimitConfig>(
 				"SELECT limits_version, minute_limit, day_limit FROM api_key_limit_config WHERE singleton = 1",
@@ -115,7 +153,7 @@ export class ApiKeyLimiter extends DurableObject {
 		return input.limits;
 	}
 
-	private storeLimits(input: ApiKeyLimiterAdmission): void {
+	private storeLimits(input: CanonicalLimitConfig): void {
 		this.ctx.storage.sql.exec(
 			"INSERT INTO api_key_limit_config (singleton, limits_version, minute_limit, day_limit) VALUES (1, ?1, ?2, ?3) ON CONFLICT(singleton) DO UPDATE SET limits_version = excluded.limits_version, minute_limit = excluded.minute_limit, day_limit = excluded.day_limit",
 			input.limitsVersion,
@@ -144,4 +182,37 @@ export class ApiKeyLimiter extends DurableObject {
 		}
 		await this.ctx.storage.setAlarm(row.admitted_at + USAGE_RETENTION_MILLISECONDS);
 	}
+}
+
+function parseCanonicalLimitConfig(value: unknown): CanonicalLimitConfig {
+	if (typeof value !== "object" || value === null || !hasCanonicalLimitFields(value)) {
+		throw new ApiKeyLimitRecordError("canonical API key limit record is missing or malformed");
+	}
+	const minute = value.minute_limit;
+	const day = value.day_limit;
+	const limitsVersion = value.limits_version;
+	if (
+		!isPositiveLimit(minute, MAXIMUM_API_KEY_LIMITS.minute) ||
+		!isPositiveLimit(day, MAXIMUM_API_KEY_LIMITS.day) ||
+		!isNonnegativeSafeInteger(limitsVersion)
+	) {
+		throw new ApiKeyLimitRecordError("canonical API key limit record is missing or malformed");
+	}
+	return { limits: { minute, day }, limitsVersion };
+}
+
+function hasCanonicalLimitFields(value: object): value is {
+	readonly day_limit: unknown;
+	readonly limits_version: unknown;
+	readonly minute_limit: unknown;
+} {
+	return "minute_limit" in value && "day_limit" in value && "limits_version" in value;
+}
+
+function isPositiveLimit(value: unknown, maximum: number): value is number {
+	return typeof value === "number" && Number.isSafeInteger(value) && value > 0 && value <= maximum;
+}
+
+function isNonnegativeSafeInteger(value: unknown): value is number {
+	return typeof value === "number" && Number.isSafeInteger(value) && value >= 0;
 }

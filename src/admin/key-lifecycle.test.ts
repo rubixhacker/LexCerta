@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { createApiKeyPublicId } from "../auth/api-key.js";
 import {
 	DEFAULT_API_KEY_LIMITS,
+	MAXIMUM_API_KEY_LIMITS,
 	changeApiKeyLimits,
 	issueApiKey,
 	revokeApiKey,
@@ -150,6 +151,34 @@ describe("revokeApiKey", () => {
 });
 
 describe("changeApiKeyLimits", () => {
+	it("accepts the documented maximum minute and day limits", () => {
+		const result = changeApiKeyLimits({
+			key: activeKey({ expiresAt: "2026-04-01T00:00:00.000Z" }),
+			limits: MAXIMUM_API_KEY_LIMITS,
+			occurredAt: ISSUED_AT,
+			operatorSubject: OPERATOR_SUBJECT,
+		});
+
+		expect(result).toMatchObject({
+			kind: "limits_changed",
+			key: { limits: { minute: 600, day: 10_000 } },
+		});
+	});
+
+	it.each([
+		{ minute: 601, day: 10_000 },
+		{ minute: 600, day: 10_001 },
+	])("rejects a limit above the documented maximum %#", (limits) => {
+		const result = changeApiKeyLimits({
+			key: activeKey({ expiresAt: "2026-04-01T00:00:00.000Z" }),
+			limits,
+			occurredAt: ISSUED_AT,
+			operatorSubject: OPERATOR_SUBJECT,
+		});
+
+		expect(result).toEqual({ kind: "invalid_limits" });
+	});
+
 	it("accepts positive safe integer limits and emits a sanitized lifecycle audit event", () => {
 		const result = changeApiKeyLimits({
 			key: activeKey({ expiresAt: "2026-04-01T00:00:00.000Z" }),

@@ -251,12 +251,8 @@ async function signedAccessJwt(
 }
 
 async function applyMigration(sql: string): Promise<void> {
-	for (const statement of sql
-		.split(";")
-		.map((value) => value.trim())
-		.filter(Boolean)) {
-		await env.DB.prepare(statement).run();
-	}
+	for (const statement of sql.match(/\s*CREATE TRIGGER[\s\S]*?END;|[^;]+;/g) ?? [])
+		await env.DB.prepare(statement.trim()).run();
 }
 
 async function recordCount(): Promise<number> {
