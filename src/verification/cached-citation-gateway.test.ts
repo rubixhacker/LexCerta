@@ -128,6 +128,99 @@ describe("cached citation gateway", () => {
 		expect(result).toMatchObject({ kind: "verified", freshness: "fresh", cluster: { id: 456 } });
 	});
 
+	it("observes an owner fill after the initial held-lease recheck delay", async () => {
+		// Given: the held lease remains valid while its owner needs two recheck delays to fill D1.
+		let currentTime = NOW;
+		let filled = false;
+		let upstreamCalls = 0;
+		const waitDurations: number[] = [];
+		const gateway = createCachedCitationGateway({
+			now: () => currentTime,
+			ownerToken: () => "waiter",
+			store: {
+				...stalePositiveStore(),
+				read: async () =>
+					filled
+						? {
+								kind: "positive",
+								positive: {
+									kind: "positive",
+									cluster: {
+										id: 456,
+										canonicalUrl: "https://www.courtlistener.com/opinion/456/example/",
+									},
+									retrievedAt: currentTime,
+								},
+							}
+						: null,
+				acquireLease: async () => ({ kind: "held", expiresAt: "2026-08-09T12:00:00.200Z" }),
+			},
+			upstream: {
+				lookup: async () => {
+					upstreamCalls += 1;
+					return { kind: "not_found", retrievedAt: currentTime.toISOString() };
+				},
+			},
+			waitForFill: async (delayMilliseconds) => {
+				waitDurations.push(delayMilliseconds);
+				currentTime = new Date(currentTime.getTime() + delayMilliseconds);
+				filled = waitDurations.length === 2;
+			},
+		});
+
+		// When: the owner stores fresh evidence after more than one 50 ms recheck interval.
+		const result = await gateway.lookup({
+			volume: 347,
+			reporter: "U.S.",
+			page: 483,
+			normalizedCitation: "347 U.S. 483",
+		});
+
+		// Then: the waiter returns the owner fill and never duplicates the upstream request.
+		expect(result).toMatchObject({ kind: "verified", freshness: "fresh", cluster: { id: 456 } });
+		expect(waitDurations).toEqual([50, 100]);
+		expect(upstreamCalls).toBe(0);
+	});
+
+	it("fails closed when a held lease expires without an owner fill", async () => {
+		// Given: a held cache-miss lease whose owner never fills before its recorded expiry.
+		let currentTime = NOW;
+		const waitDurations: number[] = [];
+		let upstreamCalls = 0;
+		const gateway = createCachedCitationGateway({
+			now: () => currentTime,
+			ownerToken: () => "waiter",
+			store: {
+				...stalePositiveStore(),
+				read: async () => null,
+				acquireLease: async () => ({ kind: "held", expiresAt: "2026-08-09T12:00:00.300Z" }),
+			},
+			upstream: {
+				lookup: async () => {
+					upstreamCalls += 1;
+					return { kind: "not_found", retrievedAt: currentTime.toISOString() };
+				},
+			},
+			waitForFill: async (delayMilliseconds) => {
+				waitDurations.push(delayMilliseconds);
+				currentTime = new Date(currentTime.getTime() + delayMilliseconds);
+			},
+		});
+
+		// When: the waiter reaches the held lease expiry without observing a durable fill.
+		const result = await gateway.lookup({
+			volume: 347,
+			reporter: "U.S.",
+			page: 483,
+			normalizedCitation: "347 U.S. 483",
+		});
+
+		// Then: it stops at the lease deadline and reports only an unavailable verification outcome.
+		expect(result).toEqual({ kind: "indeterminate", reason: "upstream_unavailable" });
+		expect(waitDurations).toEqual([50, 100, 150]);
+		expect(upstreamCalls).toBe(0);
+	});
+
 	it("retains stale positive provenance when the D1 lease acquisition fails", async () => {
 		// Given: a retained positive that needs revalidation but whose D1 lease cannot be acquired.
 		const gateway = createCachedCitationGateway({
