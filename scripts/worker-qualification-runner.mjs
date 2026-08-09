@@ -29,6 +29,7 @@ export function runWithWorkerQualificationDeadline(input) {
 		return Promise.reject(new TypeError("worker qualification deadline must be finite"));
 	return new Promise((resolve, reject) => {
 		let settled = false;
+		const controller = new AbortController();
 		const finish = (completion, value) => {
 			if (settled) return;
 			settled = true;
@@ -36,15 +37,17 @@ export function runWithWorkerQualificationDeadline(input) {
 			completion(value);
 		};
 		const timer = input.setTimer(
-			() =>
-				finish(
-					reject,
-					new TypeError(`worker qualification ${input.scenarioId} exceeded harness deadline`),
-				),
+			() => {
+				const error = new TypeError(
+					`worker qualification ${input.scenarioId} exceeded harness deadline`,
+				);
+				controller.abort(error);
+				finish(reject, error);
+			},
 			Math.max(0, input.deadline - input.now()),
 		);
 		Promise.resolve()
-			.then(input.run)
+			.then(() => input.run(controller.signal))
 			.then(
 				(value) => finish(resolve, value),
 				(error) => finish(reject, error),

@@ -37,6 +37,7 @@ test("rejects a stall before record waiting at the scenario deadline and cleans 
 	// Given: a spawned scenario that stalls before it can begin waiting for its benchmark record.
 	const events = [];
 	const timers = [];
+	let runSignal;
 	const completion = runWithWorkerQualificationCleanup({
 		clearSampler: () => events.push("sampler"),
 		closeInspector: () => events.push("inspectors"),
@@ -45,7 +46,10 @@ test("rejects a stall before record waiting at the scenario deadline and cleans 
 				clearTimer: () => events.push("deadline-cleared"),
 				deadline: 10_000,
 				now: () => 9_000,
-				run: () => new Promise(() => {}),
+				run: (signal) => {
+					runSignal = signal;
+					return new Promise(() => {});
+				},
 				scenarioId: "stalled-before-record",
 				setTimer: (callback, delay) => {
 					timers.push({ callback, delay });
@@ -61,6 +65,8 @@ test("rejects a stall before record waiting at the scenario deadline and cleans 
 
 	// Then: the scenario rejects and always closes measurement resources and its process group.
 	await assert.rejects(completion, /stalled-before-record exceeded harness deadline/);
+	assert.equal(runSignal?.aborted, true);
+	assert.match(runSignal?.reason?.message ?? "", /exceeded harness deadline/);
 	assert.deepEqual(events, ["deadline-cleared", "sampler", "inspectors", "child"]);
 });
 

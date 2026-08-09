@@ -62,10 +62,10 @@ export async function runWorkerQualificationScenario(input) {
 				clearTimer: clearTimeout,
 				deadline,
 				now: Date.now,
-				run: async () => {
+				run: async (signal) => {
 					const targets = await waitForWorkerQualificationTargets(input.inspectorPort, deadline);
-					control = await connectCdp(targets.control.webSocketDebuggerUrl);
-					measurement = await connectCdp(targets.measurement.webSocketDebuggerUrl);
+					control = await connectCdp(targets.control.webSocketDebuggerUrl, signal);
+					measurement = await connectCdp(targets.measurement.webSocketDebuggerUrl, signal);
 					await measurement.call("Profiler.enable");
 					await measurement.call("Profiler.setSamplingInterval", { interval: 100 });
 					await measurement.call("HeapProfiler.enable");
