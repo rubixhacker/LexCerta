@@ -37,12 +37,11 @@ const supportedCitationRetrySchema = z
 function boundedUnicodeString(minimum: number, maximum: number) {
 	return z
 		.string()
-		.min(minimum)
-		.max(maximum)
 		.refine((value) => {
 			const length = Array.from(value).length;
 			return length >= minimum && length <= maximum;
-		}, `Expected ${minimum} to ${maximum} Unicode code points.`);
+		}, `Expected ${minimum} to ${maximum} Unicode code points.`)
+		.meta({ minLength: minimum, maxLength: maximum });
 }
 
 export const verifyQuoteInputSchema = z
@@ -55,7 +54,6 @@ const searchedOpinionSchema = z
 		canonicalUrl: courtListenerUrlSchema,
 		representation: z.enum(OPINION_TEXT_REPRESENTATIONS),
 		retrievedAt: z.iso.datetime(),
-		freshness: z.enum(["fresh", "stale"]),
 	})
 	.strict();
 
@@ -115,7 +113,6 @@ export const verifyQuoteOutputSchema = z.discriminatedUnion("outcome", [
 					.strict(),
 				representation: z.enum(OPINION_TEXT_REPRESENTATIONS),
 				retrievedAt: z.iso.datetime(),
-				freshness: z.enum(["fresh", "stale"]),
 			}),
 		})
 		.strict(),

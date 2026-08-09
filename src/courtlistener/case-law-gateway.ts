@@ -3,8 +3,8 @@ import type { CourtListenerApi } from "./api.js";
 import { requestCaseLaw } from "./case-law-admission.js";
 import type {
 	CourtListenerCaseLawApi,
-	CourtListenerCaseLawOutcome,
 	CourtListenerCaseLawOpinion,
+	CourtListenerCaseLawOutcome,
 } from "./case-law-api.js";
 import type { CourtListenerCoordinatorRpc } from "./coordinator.js";
 
@@ -85,7 +85,6 @@ function opinionObservation(
 						opinion: {
 							canonicalUrl,
 							clusterId,
-							freshness: "fresh" as const,
 							id: source.opinion.id,
 							retrievedAt: retrievedAt.toISOString(),
 							text: {

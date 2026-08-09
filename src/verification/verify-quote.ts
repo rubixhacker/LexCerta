@@ -22,7 +22,6 @@ export type QuoteOpinion = {
 	readonly canonicalUrl: string;
 	readonly text: OpinionTextSource;
 	readonly retrievedAt: string;
-	readonly freshness: "fresh" | "stale";
 };
 
 type QuoteFailureReason =
@@ -135,7 +134,6 @@ async function searchCluster(
 		readonly canonicalUrl: string;
 		readonly representation: "html_with_citations" | "html" | "plain_text";
 		readonly retrievedAt: string;
-		readonly freshness: "fresh" | "stale";
 	}> = [];
 	for (const opinionUrl of clusterResult.cluster.opinionUrls) {
 		const opinionResult = await quoteGateway.readOpinion({
@@ -153,7 +151,6 @@ async function searchCluster(
 			canonicalUrl: opinionResult.opinion.canonicalUrl,
 			representation: selected.representation,
 			retrievedAt: opinionResult.opinion.retrievedAt,
-			freshness: opinionResult.opinion.freshness,
 		});
 		if (canonicalText.includes(normalizedQuote)) {
 			return {
@@ -175,13 +172,10 @@ async function searchCluster(
 					},
 					representation: selected.representation,
 					retrievedAt: opinionResult.opinion.retrievedAt,
-					freshness: opinionResult.opinion.freshness,
 				},
 			};
 		}
 	}
-	if (searchedOpinions.some((opinion) => opinion.freshness === "stale"))
-		return indeterminate("incomplete");
 	return {
 		outcome: "not_found",
 		contractVersion: CONTRACT_VERSION,
@@ -207,7 +201,6 @@ function evidence(
 		readonly canonicalUrl: string;
 		readonly representation: "html_with_citations" | "html" | "plain_text";
 		readonly retrievedAt: string;
-		readonly freshness: "fresh" | "stale";
 	}[],
 	requiredOpinionCount: number,
 	searchComplete: boolean,

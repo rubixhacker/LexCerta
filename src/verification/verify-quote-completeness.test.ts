@@ -17,7 +17,6 @@ const opinionUrls = [
 function quoteGateway(input: {
 	readonly calls: string[];
 	readonly failedUrl?: string;
-	readonly freshness?: "fresh" | "stale";
 	readonly text?: string;
 }) {
 	return {
@@ -40,7 +39,6 @@ function quoteGateway(input: {
 					clusterId: 101,
 					canonicalUrl: "https://www.courtlistener.com/opinion/101/example/",
 					text: { plain_text: input.text ?? "A different sufficiently long judicial opinion." },
-					freshness: input.freshness ?? "fresh",
 					retrievedAt: "2026-08-09T12:00:00.000Z",
 				},
 			};
@@ -116,37 +114,5 @@ describe("verifyQuote complete-search semantics", () => {
 		expect(overLimit).toMatchObject({ outcome: "indeterminate", reason: "cluster_limit_exceeded" });
 		expect(atLimitCalls).toEqual(opinionUrls);
 		expect(overLimitCalls).toEqual([]);
-	});
-
-	it("allows stale text to verify but not to establish a complete negative", async () => {
-		// Given: stale retained opinion text with and without an exact normalized match.
-		const matchingCalls: string[] = [];
-		const nonmatchingCalls: string[] = [];
-
-		// When: verification evaluates the stale source text.
-		const [matching, nonmatching] = await Promise.all([
-			verifyQuote(
-				{ citation: "347 U.S. 483", quote: "The stale exact long quotation." },
-				citationGateway,
-				quoteGateway({
-					calls: matchingCalls,
-					freshness: "stale",
-					text: "The stale exact long quotation.",
-				}),
-				{ maxOpinions: 2 },
-			),
-			verifyQuote(
-				{ citation: "347 U.S. 483", quote: "The requested exact long quotation." },
-				citationGateway,
-				quoteGateway({ calls: nonmatchingCalls, freshness: "stale" }),
-				{ maxOpinions: 2 },
-			),
-		]);
-
-		// Then: a positive stale match remains evidenced, but a stale complete miss is indeterminate.
-		expect(matching).toMatchObject({ outcome: "verified", evidence: { freshness: "stale" } });
-		expect(nonmatching).toMatchObject({ outcome: "indeterminate", reason: "incomplete" });
-		expect(matchingCalls).toEqual([opinionUrls[0]]);
-		expect(nonmatchingCalls).toEqual(opinionUrls);
 	});
 });

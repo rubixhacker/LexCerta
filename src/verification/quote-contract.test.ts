@@ -4,7 +4,7 @@ import { verifyQuoteInputSchema } from "./quote-contract.js";
 describe("verifyQuoteInputSchema", () => {
 	it("measures citation and quote bounds by Unicode code points", () => {
 		// Given: boundary values made of supplementary Unicode characters.
-		const character = "é";
+		const character = "😀";
 
 		// When: parsing each schema-boundary request.
 		const results = [

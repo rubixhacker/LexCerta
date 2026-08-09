@@ -74,7 +74,8 @@ describe("CourtListener case-law gateway", () => {
 		const opinion = await source.readOpinion({ cluster: cluster.cluster, opinionUrl: OPINION_URL });
 
 		// Then: every actual GET has its own immediate reservation and recorded outcome.
-		expect(opinion).toMatchObject({ kind: "found", opinion: { freshness: "fresh", id: 456 } });
+		expect(opinion).toMatchObject({ kind: "found", opinion: { id: 456 } });
+		expect(opinion).not.toHaveProperty("opinion.freshness");
 		expect(events).toEqual([
 			"admit:case_law",
 			"cluster-get",
