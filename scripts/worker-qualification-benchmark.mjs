@@ -8,8 +8,13 @@ import {
 	runWithWorkerQualificationCleanup,
 	terminateChildProcess,
 } from "./worker-qualification-cleanup.mjs";
+import { captureHeapUsageSample, peakHeapUsageSample } from "./worker-qualification-heap.mjs";
+import {
+	WORKER_QUALIFICATION_HARNESS_RECORD_DEADLINE_MS,
+	waitForRecord,
+} from "./worker-qualification-record.mjs";
 const ROOT = process.cwd();
-const MARKER = "WORKER_QUALIFICATION_BENCHMARK=";
+const HEAP_SAMPLE_INTERVAL_MS = 20;
 const TEST_FILE = "test/worker-qualification-benchmark.integration.test.ts";
 const artifactDirectory = resolve(
 	ROOT,
@@ -34,13 +39,15 @@ const artifact = {
 		memoryLimitQualification:
 			"Local workerd does not enforce the production 128MiB memory limit. This harness compares exact core:entry observed peak against the 128MiB gate; Issue #11 confirms deployment enforcement.",
 		workerCpu: "V8 CDP Profiler sampled CPU time on core:entry",
-		workerHeap: "V8 CDP Runtime.getHeapUsage peak observed during the request profile window",
+		workerHeap:
+			"V8 CDP Runtime.getHeapUsage raw samples and peak totalSize + embedderHeapUsedSize + backingStorageSize during the request profile window",
 		workerAllocations:
 			"V8 CDP HeapProfiler sampling allocation bytes during the request profile window",
 		workerWallTime:
 			"Worker performance.now request duration, a conservative bound for single-isolate CPU time",
 	},
 	harness: {
+		recordDeadlineMilliseconds: WORKER_QUALIFICATION_HARNESS_RECORD_DEADLINE_MS,
 		measurementScope:
 			"Each scenario runs its named SELF.fetch integration test through the Worker graph with local D1, R2, and Durable Object bindings.",
 		seam: "Vitest Cloudflare pool SELF.fetch against the normal worker entrypoint.",
@@ -58,6 +65,7 @@ process.stdout.write(`${join(artifactDirectory, "worker-qualification-benchmark.
 if (gates.verdict !== "pass") throw new TypeError("worker qualification resource gate failed");
 
 async function runScenario(scenario, inspectorPort) {
+	const recordDeadline = Date.now() + WORKER_QUALIFICATION_HARNESS_RECORD_DEADLINE_MS;
 	const timingPath = join(artifactDirectory, `${scenario.id}.time.csv`);
 	const child = spawn(
 		"/usr/bin/time",
@@ -102,24 +110,38 @@ async function runScenario(scenario, inspectorPort) {
 				includeObjectsCollectedByMinorGC: true,
 				samplingInterval: 1_024,
 			});
-			const initialHeap = await core.call("Runtime.getHeapUsage");
+			const initialHeap = captureHeapUsageSample(await core.call("Runtime.getHeapUsage"));
 			await core.call("Profiler.start");
 			await core.call("Runtime.runIfWaitingForDebugger");
-			const observedHeaps = [heapBytes(initialHeap)];
+			const observedHeaps = [initialHeap];
+			const samplingRequests = new Set();
 			sampler = setInterval(() => {
-				void core
+				const samplingRequest = core
 					.call("Runtime.getHeapUsage")
-					.then((heap) => observedHeaps.push(heapBytes(heap)))
-					.catch(() => {});
-			}, 20);
-			const record = await waitForRecord(child, scenario.id, () => output);
+					.then(captureHeapUsageSample)
+					.catch(() => captureHeapUsageSample(null))
+					.then((sample) => observedHeaps.push(sample));
+				samplingRequests.add(samplingRequest);
+				void samplingRequest.finally(() => samplingRequests.delete(samplingRequest));
+			}, HEAP_SAMPLE_INTERVAL_MS);
+			const record = await waitForRecord({
+				child,
+				clearTimer: clearTimeout,
+				deadline: recordDeadline,
+				now: Date.now,
+				output: () => output,
+				scenarioId: scenario.id,
+				setTimer: setTimeout,
+			});
 			clearInterval(sampler);
+			await Promise.all(samplingRequests);
 			const [finalHeap, cpuProfile, allocationProfile] = await Promise.all([
 				core.call("Runtime.getHeapUsage"),
 				core.call("Profiler.stop"),
 				core.call("HeapProfiler.stopSampling"),
 			]);
-			observedHeaps.push(heapBytes(finalHeap));
+			observedHeaps.push(captureHeapUsageSample(finalHeap));
+			const peakHeap = peakHeapUsageSample(observedHeaps);
 			const completion = await exit;
 			if (completion !== 0)
 				throw new TypeError(`worker qualification ${scenario.id} failed with status ${completion}`);
@@ -136,7 +158,9 @@ async function runScenario(scenario, inspectorPort) {
 				cdpNonIdleCpuSampleCount: nonIdleCpuSampleCount(cpuProfile),
 				cdpSampledAllocationBytes: sampledAllocationBytes(allocationProfile),
 				cdpSampledCpuMilliseconds: sampledCpuMilliseconds(cpuProfile),
-				cdpPeakObservedHeapBytes: Math.max(...observedHeaps),
+				cdpHeapUsageSamples: observedHeaps,
+				cdpPeakObservedHeap: rawHeapFields(peakHeap),
+				cdpPeakObservedHeapBytes: peakHeap?.conservativeIsolateBytes ?? null,
 				cdpProfileWindow:
 					"core:entry from Runtime.runIfWaitingForDebugger until the sanitized benchmark marker",
 				harnessCpuMilliseconds: (userSeconds + systemSeconds) * 1_000,
@@ -158,28 +182,6 @@ async function waitForCore(port) {
 		await new Promise((resolve) => setTimeout(resolve, 25));
 	}
 	throw new TypeError(`workerd inspector core:entry did not appear on ${port}`);
-}
-
-function waitForRecord(child, scenarioId, output) {
-	return new Promise((resolve, reject) => {
-		const check = () => {
-			const line = output()
-				.split("\n")
-				.find((value) => value.includes(MARKER));
-			if (line === undefined) return;
-			const record = JSON.parse(line.slice(line.indexOf(MARKER) + MARKER.length).trim());
-			if (record.scenario !== scenarioId)
-				reject(new TypeError(`unexpected benchmark record for ${scenarioId}`));
-			else resolve(record);
-		};
-		child.stdout.on("data", check);
-		child.once("exit", () => {
-			check();
-			if (!output().includes(MARKER))
-				reject(new TypeError(`missing benchmark record for ${scenarioId}`));
-		});
-		check();
-	});
 }
 
 function waitForExit(child) {
@@ -213,6 +215,12 @@ function sampledAllocationBytes(profile) {
 	return profile.profile.samples.reduce((total, sample) => total + sample.size, 0);
 }
 
-function heapBytes(heap) {
-	return heap.usedSize + heap.embedderHeapUsedSize + heap.backingStorageSize;
+function rawHeapFields(sample) {
+	const {
+		backingStorageSize = null,
+		embedderHeapUsedSize = null,
+		totalSize = null,
+		usedSize = null,
+	} = sample ?? {};
+	return { backingStorageSize, embedderHeapUsedSize, totalSize, usedSize };
 }

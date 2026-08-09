@@ -67,7 +67,7 @@ The local qualification report is [worker-qualification-benchmark.json](../.omo/
 | --- | --- |
 | Compatibility and protocol | Green: this artifact manifest and the local workerd scenarios above pass. |
 | CPU | Green: exact values are in the machine artifact; sampled core-entry CPU and the conservative single-isolate wall-time bound both remain below the approved 5,000 ms paid budget. |
-| Memory and allocations | Green for local qualification: repeated runs remained below 4 MiB peak observed core-entry heap and 256 KiB sampled allocations, both far below 128 MB. Local workerd does not enforce the deployed limit. |
+| Memory and allocations | Green for local qualification: every 20 ms CDP sample retains `usedSize`, `totalSize`, `embedderHeapUsedSize`, and `backingStorageSize`; the gate records the raw peak fields and fails closed unless its conservative `totalSize + embedderHeapUsedSize + backingStorageSize` sum is finite, non-empty, and at most 128 MiB. Sampled allocations remain in the machine artifact. Local workerd does not enforce the deployed limit. |
 | Completion and outbound bounds | Green: repeated local wall time remained below 2 s; cold scenarios make 103 sequential outbound fixture requests and record zero cancellations. |
 | Production confirmation | Required before promotion: Issue #11 staging canary records Cloudflare production CPU/memory observations for the identical bundle checksum. |
 

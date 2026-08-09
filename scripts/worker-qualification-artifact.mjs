@@ -2,6 +2,7 @@ import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { join, relative } from "node:path";
+import { peakHeapUsageSample } from "./worker-qualification-heap.mjs";
 
 export const RESOURCE_GATES = {
 	coreEntryPeakBytes: 128 * 1024 * 1024,
@@ -48,10 +49,7 @@ export function qualifyWorkerArtifact(root, artifactDirectory) {
 
 export function evaluateResourceGates(measurements) {
 	const scenarios = measurements.map((measurement) => ({
-		coreEntryPeakBytes: verdict(
-			measurement.cdpPeakObservedHeapBytes,
-			RESOURCE_GATES.coreEntryPeakBytes,
-		),
+		coreEntryPeakBytes: heapUsageVerdict(measurement),
 		coreEntrySampledCpuMilliseconds: verdict(
 			measurement.cdpSampledCpuMilliseconds,
 			RESOURCE_GATES.coreEntrySampledCpuMilliseconds,
@@ -105,4 +103,25 @@ function verdict(observed, limit) {
 		observed: finiteObserved,
 		verdict: finiteObserved !== null && finiteObserved <= limit ? "pass" : "fail",
 	};
+}
+
+function heapUsageVerdict(measurement) {
+	const peak = peakHeapUsageSample(measurement.cdpHeapUsageSamples);
+	const observed =
+		peak !== null &&
+		measurement.cdpPeakObservedHeapBytes === peak.conservativeIsolateBytes &&
+		rawPeakMatches(measurement.cdpPeakObservedHeap, peak)
+			? peak.conservativeIsolateBytes
+			: null;
+	return verdict(observed, RESOURCE_GATES.coreEntryPeakBytes);
+}
+
+function rawPeakMatches(observed, peak) {
+	return (
+		observed !== null &&
+		typeof observed === "object" &&
+		["backingStorageSize", "embedderHeapUsedSize", "totalSize", "usedSize"].every(
+			(field) => observed[field] === peak[field],
+		)
+	);
 }
