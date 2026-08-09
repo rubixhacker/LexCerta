@@ -9,6 +9,8 @@ const outdir = resolve(process.argv[2] ?? defaultOutdir);
 const manifestPath = join(outdir, "qualification-manifest.json");
 const metafilePath = join(outdir, "bundle-meta.json");
 
+requireTrackedWorktreeAtHead();
+
 if (existsSync(outdir) && readdirSync(outdir).length > 0) {
 	throw new Error(`Refusing to overwrite a non-empty qualification directory: ${outdir}`);
 }
@@ -72,6 +74,12 @@ function files(directory) {
 
 function output(command, args) {
 	return execFileSync(command, args, { encoding: "utf8" }).trim();
+}
+
+function requireTrackedWorktreeAtHead() {
+	if (output("git", ["status", "--porcelain", "--untracked-files=no"]) !== "") {
+		throw new Error("Refusing qualification because tracked files differ from HEAD.");
+	}
 }
 
 function readConfigValue(file, property) {

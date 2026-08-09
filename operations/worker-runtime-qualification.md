@@ -20,7 +20,7 @@ Recreate the manifest with a new, empty evidence directory before any staging ca
 node scripts/qualify-worker-artifact.mjs .omo/evidence/issue-10/worker-artifact-<candidate>
 ```
 
-The generated manifest records the bundle checksum, all emitted-file checksums, source commit context, lockfile/configuration checksums, and the exact resolved production dependency graph. It refuses to overwrite a directory so a candidate cannot silently inherit a prior bundle.
+The generated manifest records the bundle checksum, all emitted-file checksums, source commit context, lockfile/configuration checksums, and the exact resolved production dependency graph. It refuses to overwrite a directory or build when tracked/indexed files differ from `HEAD`; untracked evidence is allowed. This record qualifies a local artifact only. Issue #11 owns enforcing that the exact qualified checksum is the artifact staged, observed, and promoted.
 
 ## Local workerd conformance
 
@@ -47,6 +47,14 @@ npx vitest run test/worker-request-body.integration.test.ts
 
 Its declared and streamed oversize scenarios return HTTP `413`, `Cache-Control: no-store`, and zero upstream calls. The Worker cancels the bounded reader before dispatch; the observable no-dispatch result is the regression gate for that cancellation constraint.
 
+The release artifact itself is exercised separately, after Wrangler emits `worker.js`:
+
+```sh
+node --test scripts/worker-bundle-conformance.test.mjs
+```
+
+This test loads that immutable bundle directly into Miniflare/workerd, applies every committed D1 migration, and drives modern discovery plus the 10,000-code-point `html_with_citations` verification path through D1, R2, and both Durable Objects. A strict outbound service permits only the four fixture CourtListener URLs; any other URL makes qualification fail. The report records the emitted bundle checksum, binding observations, request sequence, and redaction results without retaining fixture legal text or credentials.
+
 An attempted run of `@modelcontextprotocol/conformance@0.2.0-alpha.11` is retained only as diagnostic evidence in `.omo/evidence/issue-10/official-tools-list-investigation.log`. Its forced `tools-list` request omits the mandatory 2026 per-request envelope and receives the expected strict rejection. It is not recorded as a product conformance result. The direct, envelope-complete workerd result is retained in `.omo/evidence/issue-10/direct-tools-list-after-envelope.json`.
 
 ## Runtime decision
@@ -58,7 +66,7 @@ The local qualification report is [worker-qualification-benchmark.json](../.omo/
 | Gate | Evidence and verdict |
 | --- | --- |
 | Compatibility and protocol | Green: this artifact manifest and the local workerd scenarios above pass. |
-| CPU | Green: exact values are in the machine artifact; repeated qualification runs remained below 250 ms sampled core-entry CPU, below the approved 5,000 ms paid budget. |
+| CPU | Green: exact values are in the machine artifact; sampled core-entry CPU and the conservative single-isolate wall-time bound both remain below the approved 5,000 ms paid budget. |
 | Memory and allocations | Green for local qualification: repeated runs remained below 4 MiB peak observed core-entry heap and 256 KiB sampled allocations, both far below 128 MB. Local workerd does not enforce the deployed limit. |
 | Completion and outbound bounds | Green: repeated local wall time remained below 2 s; cold scenarios make 103 sequential outbound fixture requests and record zero cancellations. |
 | Production confirmation | Required before promotion: Issue #11 staging canary records Cloudflare production CPU/memory observations for the identical bundle checksum. |
