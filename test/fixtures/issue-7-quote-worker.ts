@@ -5,7 +5,6 @@ import {
 	PROTOCOL_VERSION_META_KEY,
 } from "@modelcontextprotocol/server";
 import { vi } from "vitest";
-import opinionCacheMigration from "../../migrations/0005_opinion_source_cache.sql?raw";
 import { initialCourtListenerBudgetState } from "../../src/courtlistener/budget.js";
 import { createLocalAuthFixture } from "./api-key.js";
 import { resetCitationSourceCache } from "./citation-source-cache.js";
@@ -32,7 +31,6 @@ export type QuoteWorkerFixture = {
 export async function setupQuoteWorker(scenario: QuoteWorkerScenario): Promise<QuoteWorkerFixture> {
 	const auth = await createLocalAuthFixture({ publicId: `quote-${crypto.randomUUID()}` });
 	await resetCitationSourceCache(env.DB);
-	await resetOpinionCache();
 	await env.DB.prepare("DROP TABLE IF EXISTS api_key_records").run();
 	await env.DB.prepare(
 		"CREATE TABLE api_key_records (public_id TEXT PRIMARY KEY NOT NULL, environment TEXT NOT NULL, hmac_sha256_hex TEXT NOT NULL, status TEXT NOT NULL, expires_at TEXT NOT NULL, revoked_at TEXT, minute_limit INTEGER NOT NULL DEFAULT 60, day_limit INTEGER NOT NULL DEFAULT 1000, limits_version INTEGER NOT NULL DEFAULT 1)",
@@ -168,19 +166,4 @@ function quoteRequest(token: string, quote: string): Request {
 			},
 		}),
 	});
-}
-
-async function resetOpinionCache(): Promise<void> {
-	for (const table of [
-		"cluster_fetch_leases",
-		"cluster_source_metadata",
-		"opinion_fetch_leases",
-		"opinion_source_metadata",
-	])
-		await env.DB.prepare(`DROP TABLE IF EXISTS ${table}`).run();
-	for (const statement of opinionCacheMigration
-		.split(";")
-		.map((value) => value.trim())
-		.filter(Boolean))
-		await env.DB.prepare(statement).run();
 }

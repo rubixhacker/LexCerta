@@ -11,7 +11,7 @@ describe("Issue 7 quote outcomes through real workerd bindings", () => {
 		// Given: CourtListener returns a complete cluster with zero sub-opinions.
 		const fixture = await setupQuoteWorker({ opinions: [] });
 
-		// When: verify_quote traverses the cached cluster boundary.
+		// When: verify_quote traverses the direct cluster boundary.
 		const body = JSON.stringify(await (await SELF.fetch(fixture.request(MATCH))).json());
 
 		// Then: no opinion request is attempted and the public reason is source_text_unavailable.
@@ -23,7 +23,7 @@ describe("Issue 7 quote outcomes through real workerd bindings", () => {
 		// Given: a two-opinion cluster whose selected sources have no matching canonical text.
 		const fixture = await setupQuoteWorker({ opinions: [{ id: 2201 }, { id: 2202 }] });
 
-		// When: verify_quote traverses the cluster through D1, R2, and the coordinator.
+		// When: verify_quote traverses the cluster through the coordinator.
 		const response = await SELF.fetch(fixture.request(MATCH));
 
 		// Then: no-match is returned only after both source opinions are read once.

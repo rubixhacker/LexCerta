@@ -1,6 +1,4 @@
 import { describe, expect, it } from "vitest";
-import type { ClusterCacheStore } from "../cache/cluster-cache-store.js";
-import type { OpinionCacheStore } from "../cache/opinion-cache-store.js";
 import type { CourtListenerCluster } from "../verification/verify-citation.js";
 import { initialCourtListenerBudgetState } from "./budget.js";
 import type { CourtListenerCaseLawApi } from "./case-law-api.js";
@@ -14,37 +12,12 @@ const CLUSTER: CourtListenerCluster = {
 };
 const OPINION_URL = "https://www.courtlistener.com/api/rest/v4/opinions/456/";
 
-function cache(overrides: Partial<OpinionCacheStore> = {}): OpinionCacheStore {
-	return {
-		acquireLease: async () => ({ kind: "acquired", expiresAt: "2026-08-09T12:00:10.000Z" }),
-		fillLease: async (input) => ({ kind: "stored", opinion: input.opinion }),
-		read: async () => null,
-		releaseLease: async () => ({ kind: "released" }),
-		...overrides,
-	};
-}
-
-function clusters(overrides: Partial<ClusterCacheStore> = {}): ClusterCacheStore {
-	return {
-		acquireClusterLease: async () => ({ kind: "acquired", expiresAt: "2026-08-09T12:00:10.000Z" }),
-		fillClusterLease: async (input) => ({
-			kind: "stored",
-			cluster: { ...input.cluster, freshUntil: new Date(NOW.getTime() + 60_000), retrievedAt: NOW },
-		}),
-		readCluster: async () => null,
-		releaseClusterLease: async () => ({ kind: "released" }),
-		...overrides,
-	};
-}
-
-const quotaApi = { getUsage: async () => ({ kind: "malformed_response" as const }) };
-
 function coordinator(events: string[]): CourtListenerCoordinatorRpc {
 	const state = initialCourtListenerBudgetState();
 	return {
 		admit: async (input) => {
 			events.push(`admit:${input.endpoint}`);
-			return { kind: "reserved", state, token: "reservation" };
+			return { kind: "reserved", state, token: crypto.randomUUID() };
 		},
 		beginQuotaSync: async () => ({ kind: "not_due", retryAt: NOW, state }),
 		failQuotaSync: async () => ({ kind: "recorded", state }),
@@ -57,80 +30,87 @@ function coordinator(events: string[]): CourtListenerCoordinatorRpc {
 	};
 }
 
+function gateway(api: CourtListenerCaseLawApi, events: string[]) {
+	return createCourtListenerCaseLawGateway({
+		api,
+		coordinator: coordinator(events),
+		now: () => NOW,
+		quotaApi: { getUsage: async () => ({ kind: "malformed_response" }) },
+		token: () => crypto.randomUUID(),
+	});
+}
+
 describe("CourtListener case-law gateway", () => {
-	it("brackets the cluster GET with one case-law reservation and outcome", async () => {
-		// Given: a trusted citation cluster and an admitted upstream cluster response.
+	it("admits and records each direct cluster and opinion GET", async () => {
+		// Given: one complete cluster and one matching opinion source.
 		const events: string[] = [];
-		const api: CourtListenerCaseLawApi = {
-			getCluster: async () => {
-				events.push("cluster");
-				return {
-					kind: "found",
-					cluster: {
-						canonicalUrl: CLUSTER.canonicalUrl,
-						id: 123,
-						subOpinions: [{ id: 456, url: OPINION_URL }],
-					},
-				};
+		const source = gateway(
+			{
+				getCluster: async () => {
+					events.push("cluster-get");
+					return {
+						kind: "found",
+						cluster: {
+							canonicalUrl: CLUSTER.canonicalUrl,
+							id: CLUSTER.id,
+							subOpinions: [{ id: 456, url: OPINION_URL }],
+						},
+					};
+				},
+				getOpinion: async () => {
+					events.push("opinion-get");
+					return {
+						kind: "found",
+						opinion: { clusterId: CLUSTER.id, htmlWithCitations: "<p>source</p>", id: 456 },
+					};
+				},
 			},
-			getOpinion: async () => ({ kind: "malformed_response" }),
-		};
-		const gateway = createCourtListenerCaseLawGateway({
-			api,
-			clusters: clusters(),
-			coordinator: coordinator(events),
-			now: () => NOW,
-			opinions: cache(),
-			quotaApi,
-			token: () => "owner",
-		});
+			events,
+		);
 
-		// When: quote verification requests the cluster primitive.
-		const result = await gateway.readCluster(CLUSTER);
+		// When: quote verification reads both direct primitives.
+		const cluster = await source.readCluster(CLUSTER);
+		if (cluster.kind !== "found") throw new TypeError("expected a complete cluster");
+		const opinion = await source.readOpinion({ cluster: cluster.cluster, opinionUrl: OPINION_URL });
 
-		// Then: exactly the one actual GET is covered by an immediate case-law admission/outcome pair.
-		expect(result).toEqual({
-			kind: "found",
-			cluster: { canonicalUrl: CLUSTER.canonicalUrl, id: 123, opinionUrls: [OPINION_URL] },
-		});
-		expect(events).toEqual(["admit:case_law", "cluster", "record:success"]);
+		// Then: every actual GET has its own immediate reservation and recorded outcome.
+		expect(opinion).toMatchObject({ kind: "found", opinion: { freshness: "fresh", id: 456 } });
+		expect(events).toEqual([
+			"admit:case_law",
+			"cluster-get",
+			"record:success",
+			"admit:case_law",
+			"opinion-get",
+			"record:success",
+		]);
 	});
 
-	it("returns a fresh durable cluster without a reservation or source GET", async () => {
-		// Given: a fresh cluster snapshot in D1 and source adapters that would fail if called.
-		const events: string[] = [];
-		const gateway = createCourtListenerCaseLawGateway({
-			api: {
-				getCluster: async () => {
-					throw new Error("fresh cache must avoid upstream");
-				},
-				getOpinion: async () => ({ kind: "malformed_response" }),
-			},
-			clusters: {
-				...clusters(),
-				readCluster: async () => ({
-					canonicalUrl: CLUSTER.canonicalUrl,
-					clusterId: CLUSTER.id,
-					opinions: [{ id: 456, url: OPINION_URL }],
-					retrievedAt: NOW,
-					freshUntil: new Date(NOW.getTime() + 1),
+	it("rejects cluster and opinion provenance mismatches as incomplete", async () => {
+		// Given: source records that do not belong to the citation cluster.
+		const source = gateway(
+			{
+				getCluster: async () => ({
+					kind: "found",
+					cluster: {
+						canonicalUrl: "https://www.courtlistener.com/opinion/999/",
+						id: 123,
+						subOpinions: [],
+					},
 				}),
+				getOpinion: async () => ({ kind: "found", opinion: { clusterId: 999, id: 456 } }),
 			},
-			coordinator: coordinator(events),
-			now: () => NOW,
-			opinions: cache(),
-			quotaApi,
-			token: () => "owner",
+			[],
+		);
+
+		// When: each mismatched source is read through its public primitive.
+		const cluster = await source.readCluster(CLUSTER);
+		const opinion = await source.readOpinion({
+			cluster: { ...CLUSTER, opinionUrls: [OPINION_URL] },
+			opinionUrl: OPINION_URL,
 		});
 
-		// When: quote verification requests the known cluster.
-		const result = await gateway.readCluster(CLUSTER);
-
-		// Then: the durable snapshot is returned with no CourtListener accounting activity.
-		expect(result).toEqual({
-			kind: "found",
-			cluster: { canonicalUrl: CLUSTER.canonicalUrl, id: 123, opinionUrls: [OPINION_URL] },
-		});
-		expect(events).toEqual([]);
+		// Then: neither mismatch can contribute conclusive quote evidence.
+		expect(cluster).toEqual({ kind: "indeterminate", reason: "incomplete" });
+		expect(opinion).toEqual({ kind: "indeterminate", reason: "incomplete" });
 	});
 });

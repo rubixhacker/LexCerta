@@ -1,4 +1,4 @@
-import { SELF, env } from "cloudflare:test";
+import { SELF } from "cloudflare:test";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { setupQuoteWorker } from "./fixtures/issue-7-quote-worker.js";
 
@@ -56,7 +56,7 @@ describe("Issue 7 quote hardening through real workerd bindings", () => {
 		expect(fixture.outbound).toHaveLength(4);
 	});
 
-	it("keeps raw legal text out of runtime outputs, logs, D1 metadata, and R2 keys", async () => {
+	it("keeps raw legal text out of runtime outputs, logs, and outbound request metadata", async () => {
 		// Given: raw source text with a unique legal-text sentinel and instrumented console methods.
 		const logs = [vi.spyOn(console, "error"), vi.spyOn(console, "log"), vi.spyOn(console, "warn")];
 		const fixture = await setupQuoteWorker({
@@ -65,22 +65,16 @@ describe("Issue 7 quote hardening through real workerd bindings", () => {
 			],
 		});
 
-		// When: the real Worker stores and returns verified quote evidence.
+		// When: the real Worker reads and returns verified quote evidence.
 		const response = JSON.stringify(await (await SELF.fetch(fixture.request(RAW))).json());
-		const metadata = await env.DB.prepare(
-			"SELECT * FROM opinion_source_metadata WHERE opinion_id = ?1",
-		)
-			.bind(2201)
-			.first();
-		const objectKey = String((metadata as { readonly object_key?: string } | null)?.object_key);
-		const object = await env.OPINIONS.get(objectKey);
 
-		// Then: only the R2 object body retains raw text; all other runtime observables are redacted.
+		// Then: the transient source body is absent from every externally observable metadata surface.
 		expect(response).not.toContain(RAW);
-		expect(JSON.stringify(metadata)).not.toContain(RAW);
-		expect(objectKey).not.toContain(RAW);
+		expect(fixture.outbound.map((request) => request.url).join("\n")).not.toContain(RAW);
+		expect(
+			fixture.outbound.map((request) => JSON.stringify([...request.headers])).join("\n"),
+		).not.toContain(RAW);
 		expect(JSON.stringify(logs.flatMap((spy) => spy.mock.calls))).not.toContain(RAW);
-		await expect(object?.text()).resolves.toContain(RAW);
 	});
 
 	it.each([
@@ -98,8 +92,8 @@ describe("Issue 7 quote hardening through real workerd bindings", () => {
 		expect(fixture.outbound).toHaveLength(4);
 	});
 
-	it("coalesces sixteen cold callers behind citation, cluster, and opinion leases", async () => {
-		// Given: sixteen simultaneous callers with one cold matching source.
+	it("completes concurrent cold callers with independent direct source traversals", async () => {
+		// Given: two simultaneous callers with one cold matching source.
 		const fixture = await setupQuoteWorker({
 			opinions: [
 				{ body: { html_with_citations: `<p>${EXACT}</p>`, id: 2201, cluster: CLUSTER }, id: 2201 },
@@ -108,13 +102,18 @@ describe("Issue 7 quote hardening through real workerd bindings", () => {
 
 		// When: every caller uses the same authenticated quote request concurrently.
 		const responses = await Promise.all(
-			Array.from({ length: 16 }, () => SELF.fetch(fixture.request(EXACT))),
+			Array.from({ length: 2 }, () => SELF.fetch(fixture.request(EXACT))),
 		);
 		const payloads = await Promise.all(responses.map((response) => response.json()));
 
-		// Then: all callers verify and CourtListener receives one usage, citation, cluster, and opinion request.
+		// Then: all callers verify and each actual cluster/opinion GET remains independently visible.
 		expect(JSON.stringify(payloads)).not.toContain('"isError":true');
 		expect(JSON.stringify(payloads)).toContain('"outcome":"verified"');
-		expect(fixture.outbound).toHaveLength(4);
+		expect(
+			fixture.outbound.filter((request) => new URL(request.url).pathname.includes("/clusters/")),
+		).toHaveLength(2);
+		expect(
+			fixture.outbound.filter((request) => new URL(request.url).pathname.includes("/opinions/")),
+		).toHaveLength(2);
 	});
 });
