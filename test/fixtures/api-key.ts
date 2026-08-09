@@ -4,7 +4,6 @@ import {
 	createApiKeyPublicId,
 } from "../../src/auth/api-key.js";
 
-const LOCAL_TOKEN = `lc_test_local01_${"A".repeat(43)}`;
 const LOCAL_PEPPER = "local-test-pepper";
 const LOCAL_NOW = new Date("2026-08-08T12:00:00.000Z");
 
@@ -12,6 +11,8 @@ export type LocalFixtureState = "active" | "expired" | "revoked";
 
 export interface LocalAuthFixtureOptions {
 	readonly state?: LocalFixtureState;
+	readonly publicId?: string;
+	readonly limits?: { readonly minute: number; readonly day: number };
 }
 
 export interface LocalAuthFixture {
@@ -25,15 +26,20 @@ export async function createLocalAuthFixture(
 	options: LocalAuthFixtureOptions = {},
 ): Promise<LocalAuthFixture> {
 	const state = options.state ?? "active";
+	const publicId = options.publicId ?? "local01";
+	const token = `lc_test_${publicId}_${"A".repeat(43)}`;
+	const limits = options.limits ?? { minute: 60, day: 1000 };
 	const record: ApiKeyRecord = {
-		public_id: createApiKeyPublicId("local01"),
+		public_id: createApiKeyPublicId(publicId),
 		environment: "test" satisfies KeyEnvironment,
-		hmac_sha256_hex: await hashFixtureToken(LOCAL_PEPPER, LOCAL_TOKEN),
+		hmac_sha256_hex: await hashFixtureToken(LOCAL_PEPPER, token),
 		status: state === "revoked" ? "revoked" : "active",
 		expires_at: state === "expired" ? "2026-08-07T12:00:00.000Z" : "2026-08-09T12:00:00.000Z",
 		revoked_at: state === "revoked" ? "2026-08-07T12:00:00.000Z" : null,
+		minute_limit: limits.minute,
+		day_limit: limits.day,
 	};
-	return { token: LOCAL_TOKEN, pepper: LOCAL_PEPPER, now: LOCAL_NOW, record };
+	return { token, pepper: LOCAL_PEPPER, now: LOCAL_NOW, record };
 }
 
 async function hashFixtureToken(pepper: string, token: string): Promise<string> {

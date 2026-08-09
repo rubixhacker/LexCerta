@@ -16,6 +16,10 @@
 			"migrations_dir": "migrations"
 		}
 	],
+	"durable_objects": {
+		"bindings": [{ "name": "API_KEY_LIMITER", "class_name": "ApiKeyLimiter" }]
+	},
+	"migrations": [{ "tag": "v1", "new_sqlite_classes": ["ApiKeyLimiter"] }],
 	"observability": {
 		"enabled": true
 	},
@@ -34,7 +38,10 @@
 					"database_id": "00000000-0000-0000-0000-000000000002",
 					"migrations_dir": "migrations"
 				}
-			]
+			],
+			"durable_objects": {
+				"bindings": [{ "name": "API_KEY_LIMITER", "class_name": "ApiKeyLimiter" }]
+			}
 		},
 		"local": {
 			"name": "lexcerta-mcp-local",
@@ -50,7 +57,10 @@
 					"database_id": "00000000-0000-0000-0000-000000000003",
 					"migrations_dir": "migrations"
 				}
-			]
+			],
+			"durable_objects": {
+				"bindings": [{ "name": "API_KEY_LIMITER", "class_name": "ApiKeyLimiter" }]
+			}
 		}
 	}
 }

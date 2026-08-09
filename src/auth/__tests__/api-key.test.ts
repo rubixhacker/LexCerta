@@ -70,8 +70,31 @@ describe("authenticateRequest", () => {
 			fixture.now,
 		);
 
-		expect(result).toEqual({ kind: "authenticated", publicId: fixture.record.public_id });
+		expect(result).toEqual({
+			kind: "authenticated",
+			publicId: fixture.record.public_id,
+			limits: { minute: 60, day: 1000 },
+		});
 		expect(JSON.stringify(result)).not.toContain(fixture.token);
+	});
+
+	it("fails closed when authoritative allowance limits are malformed", async () => {
+		const fixture = await createLocalAuthFixture();
+		const database = new FakeDatabase();
+		database.rows.set(fixture.record.public_id, {
+			...fixture.record,
+			minute_limit: 0,
+		});
+
+		const result = await authenticateRequest(
+			new Request("https://mcp.lexcerta.ai/", {
+				headers: { Authorization: `Bearer ${fixture.token}` },
+			}),
+			environment(database, fixture.pepper),
+			fixture.now,
+		);
+
+		expect(result).toEqual({ kind: "unavailable" });
 	});
 
 	it.each(["staging", "development", ""])(

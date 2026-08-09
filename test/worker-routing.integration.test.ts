@@ -10,7 +10,7 @@ import { createLocalAuthFixture } from "./fixtures/api-key.js";
 let authorization = "";
 
 beforeEach(async () => {
-	const fixture = await createLocalAuthFixture();
+	const fixture = await createLocalAuthFixture({ publicId: `routing-${crypto.randomUUID()}` });
 	await env.DB.prepare("DROP TABLE IF EXISTS api_key_records").run();
 	await env.DB.prepare(`CREATE TABLE api_key_records (
 			public_id TEXT PRIMARY KEY NOT NULL,
@@ -18,10 +18,12 @@ beforeEach(async () => {
 			hmac_sha256_hex TEXT NOT NULL,
 			status TEXT NOT NULL,
 			expires_at TEXT NOT NULL,
-			revoked_at TEXT
+			revoked_at TEXT,
+			minute_limit INTEGER NOT NULL DEFAULT 60,
+			day_limit INTEGER NOT NULL DEFAULT 1000
 		)`).run();
 	await env.DB.prepare(
-		"INSERT INTO api_key_records (public_id, environment, hmac_sha256_hex, status, expires_at, revoked_at) VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
+		"INSERT INTO api_key_records (public_id, environment, hmac_sha256_hex, status, expires_at, revoked_at, minute_limit, day_limit) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
 	)
 		.bind(
 			fixture.record.public_id,
@@ -30,6 +32,8 @@ beforeEach(async () => {
 			fixture.record.status,
 			fixture.record.expires_at,
 			fixture.record.revoked_at,
+			fixture.record.minute_limit,
+			fixture.record.day_limit,
 		)
 		.run();
 	authorization = `Bearer ${fixture.token}`;
@@ -247,5 +251,48 @@ describe("Worker HTTP routing", () => {
 
 		// Then: strict modern-only mode refuses the legacy initialization exchange.
 		expect(response.status).toBe(400);
+	});
+
+	it("charges an authenticated POST before protocol validation and returns a JSON-RPC 429", async () => {
+		// Given: the authoritative D1 allowance is one request in both rolling windows.
+		await env.DB.prepare("UPDATE api_key_records SET minute_limit = 1, day_limit = 2").run();
+		const malformed = new Request("https://mcp.lexcerta.ai/", {
+			method: "POST",
+			headers: {
+				authorization,
+				"content-type": "application/json",
+				"mcp-method": "server/discover",
+				"mcp-protocol-version": "2026-07-28",
+			},
+			body: "{",
+		});
+
+		// When: malformed protocol traffic consumes the only admission unit, then another request arrives.
+		const first = await SELF.fetch(malformed);
+		const secondRequest = modernMcpRequest("server/discover");
+		const second = await SELF.fetch(secondRequest);
+
+		// Then: the first request fails at the protocol seam, and the next request is exhausted with its ID.
+		expect(first.status).toBe(400);
+		expect(second.status).toBe(429);
+		expect(second.headers.get("retry-after")).toBe("60");
+		expect(await second.json()).toEqual({
+			jsonrpc: "2.0",
+			id: 1,
+			error: { code: -32029, message: "API key allowance exhausted" },
+		});
+	});
+
+	it("does not charge an unauthenticated health probe", async () => {
+		// Given: a fresh key with one request in each rolling window.
+		await env.DB.prepare("UPDATE api_key_records SET minute_limit = 1, day_limit = 1").run();
+
+		// When: an unauthenticated health probe runs before the authenticated request.
+		const health = await SELF.fetch(new Request("https://mcp.lexcerta.ai/healthz"));
+		const authenticated = await SELF.fetch(modernMcpRequest("server/discover"));
+
+		// Then: health is available and the authenticated request still receives its one admission.
+		expect(health.status).toBe(200);
+		expect(authenticated.status).toBe(200);
 	});
 });
