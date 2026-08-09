@@ -49,6 +49,61 @@ export function createCachedCitationGateway(
 					});
 					return waiterObservation(rechecked, options.now(), decision);
 				}
+				const afterLease = await options.store.read({
+					normalizedCitation: query.normalizedCitation,
+				});
+				let current = readCitationSourceCache({
+					state: afterLease ?? { kind: "empty" },
+					now: options.now(),
+				});
+				retainedFallback = retainedObservation(current) ?? retainedFallback;
+				if (!requiresRevalidation(current)) {
+					await options.store.releaseLease({
+						normalizedCitation: query.normalizedCitation,
+						ownerToken,
+					});
+					return observationFor(current);
+				}
+				if (current.kind === "indeterminate" && current.reason === "stale_negative") {
+					const staleNegative = requireNegative(afterLease);
+					const purge = await options.store.purgeExpiredNegativeLease({
+						normalizedCitation: query.normalizedCitation,
+						ownerToken,
+						now: options.now(),
+						expected: staleNegative,
+					});
+					if (purge.kind === "lease_unavailable") return retainedFallback ?? unavailable();
+					if (purge.kind === "state_changed") {
+						const changed = await options.store.read({
+							normalizedCitation: query.normalizedCitation,
+						});
+						current = readCitationSourceCache({
+							state: changed ?? { kind: "empty" },
+							now: options.now(),
+						});
+						retainedFallback = retainedObservation(current) ?? retainedFallback;
+						if (!requiresRevalidation(current)) {
+							await options.store.releaseLease({
+								normalizedCitation: query.normalizedCitation,
+								ownerToken,
+							});
+							return observationFor(current);
+						}
+						if (current.kind === "indeterminate" && current.reason === "stale_negative") {
+							await options.store.releaseLease({
+								normalizedCitation: query.normalizedCitation,
+								ownerToken,
+							});
+							return unavailable();
+						}
+					} else {
+						current = readCitationSourceCache({
+							state: purge.observation ?? { kind: "empty" },
+							now: options.now(),
+						});
+						retainedFallback = retainedObservation(current) ?? retainedFallback;
+					}
+				}
 
 				const upstream = await options.upstream.lookup(query);
 				if (upstream.kind === "indeterminate") {
@@ -56,7 +111,7 @@ export function createCachedCitationGateway(
 						normalizedCitation: query.normalizedCitation,
 						ownerToken,
 					});
-					return fallbackObservation(decision, upstream);
+					return fallbackObservation(current, upstream);
 				}
 				const fill = await options.store.fillLease({
 					normalizedCitation: query.normalizedCitation,
@@ -71,6 +126,13 @@ export function createCachedCitationGateway(
 			}
 		},
 	};
+}
+
+function requireNegative(
+	state: StoredCitationObservation | null,
+): Extract<StoredCitationObservation, { readonly kind: "negative" }> {
+	if (state?.kind === "negative") return state;
+	throw new TypeError("stale negative decision requires a stored negative state");
 }
 
 function waiterObservation(

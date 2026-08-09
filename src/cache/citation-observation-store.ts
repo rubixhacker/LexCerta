@@ -18,6 +18,11 @@ export type LeaseFillResult =
 	| { readonly kind: "stored"; readonly observation: StoredCitationObservation }
 	| { readonly kind: "lease_unavailable" };
 
+export type LeasePurgeResult =
+	| { readonly kind: "purged"; readonly observation: StoredCitationObservation | null }
+	| { readonly kind: "state_changed" }
+	| { readonly kind: "lease_unavailable" };
+
 export type LeaseReleaseResult =
 	| { readonly kind: "released" }
 	| { readonly kind: "lease_unavailable" };
@@ -37,6 +42,12 @@ export type CitationObservationStore = {
 		readonly now: Date;
 		readonly observation: CitationSourceObservation;
 	}) => Promise<LeaseFillResult>;
+	readonly purgeExpiredNegativeLease: (input: {
+		readonly normalizedCitation: string;
+		readonly ownerToken: string;
+		readonly now: Date;
+		readonly expected: Extract<StoredCitationObservation, { readonly kind: "negative" }>;
+	}) => Promise<LeasePurgeResult>;
 	readonly releaseLease: (input: {
 		readonly normalizedCitation: string;
 		readonly ownerToken: string;

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {
 	initialCitationSourceCacheState,
+	purgeExpiredCitationNegative,
 	recordCitationSourceObservation,
 } from "../verification/citation-source-cache.js";
 import type {
@@ -12,6 +13,7 @@ import type {
 	CitationObservationStore,
 	LeaseAcquireResult,
 	LeaseFillResult,
+	LeasePurgeResult,
 	LeaseReleaseResult,
 	StoredCitationObservation,
 } from "./citation-observation-store.js";
@@ -42,6 +44,7 @@ export function createD1CitationObservationStore(database: D1Database): Citation
 		read: async ({ normalizedCitation }) => readState(database, normalizedCitation),
 		acquireLease: async (input) => acquireLease(database, input),
 		fillLease: async (input) => fillLease(database, input),
+		purgeExpiredNegativeLease: async (input) => purgeExpiredNegativeLease(database, input),
 		releaseLease: async ({ normalizedCitation, ownerToken }) => {
 			const result = await database
 				.prepare(
@@ -52,6 +55,39 @@ export function createD1CitationObservationStore(database: D1Database): Citation
 			return changes(result) === 1 ? { kind: "released" } : { kind: "lease_unavailable" };
 		},
 	};
+}
+
+async function purgeExpiredNegativeLease(
+	database: D1Database,
+	input: {
+		readonly normalizedCitation: string;
+		readonly ownerToken: string;
+		readonly now: Date;
+		readonly expected: Extract<StoredCitationObservation, { readonly kind: "negative" }>;
+	},
+): Promise<LeasePurgeResult> {
+	const next = purgeExpiredCitationNegative({ state: input.expected, now: input.now });
+	const expected = JSON.stringify(input.expected);
+	const now = input.now.toISOString();
+	const result =
+		next.kind === "empty"
+			? await database
+					.prepare(
+						"DELETE FROM citation_source_states WHERE normalized_citation = ?1 AND state_json = ?2 AND EXISTS (SELECT 1 FROM citation_fetch_leases WHERE normalized_citation = ?1 AND owner_token = ?3 AND expires_at > ?4)",
+					)
+					.bind(input.normalizedCitation, expected, input.ownerToken, now)
+					.run()
+			: await database
+					.prepare(
+						"UPDATE citation_source_states SET state_json = ?1, updated_at = ?2 WHERE normalized_citation = ?3 AND state_json = ?4 AND EXISTS (SELECT 1 FROM citation_fetch_leases WHERE normalized_citation = ?3 AND owner_token = ?5 AND expires_at > ?2)",
+					)
+					.bind(JSON.stringify(next), now, input.normalizedCitation, expected, input.ownerToken)
+					.run();
+	if (changes(result) === 1)
+		return { kind: "purged", observation: next.kind === "empty" ? null : next };
+	return (await ownsActiveLease(database, input.normalizedCitation, input.ownerToken, now))
+		? { kind: "state_changed" }
+		: { kind: "lease_unavailable" };
 }
 
 async function acquireLease(
@@ -127,6 +163,21 @@ async function readState(
 	const state = storedStateSchema.safeParse(value);
 	if (!state.success) throw new CitationSourceStateCorruptError();
 	return state.data;
+}
+
+async function ownsActiveLease(
+	database: D1Database,
+	normalizedCitation: string,
+	ownerToken: string,
+	now: string,
+): Promise<boolean> {
+	const lease = await database
+		.prepare(
+			"SELECT 1 FROM citation_fetch_leases WHERE normalized_citation = ?1 AND owner_token = ?2 AND expires_at > ?3",
+		)
+		.bind(normalizedCitation, ownerToken, now)
+		.first<unknown>();
+	return lease !== null;
 }
 
 function positiveSchema() {

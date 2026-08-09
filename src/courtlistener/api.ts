@@ -177,8 +177,13 @@ function citationOutcome(
 	if (response.length === 0) return { kind: "malformed_response" };
 	const item = response[0];
 	if (item === undefined || response.length !== 1) return { kind: "malformed_response" };
+	const isRequestedCitation =
+		item.normalized_citations.length === 1 && item.normalized_citations[0] === input.normalized;
 	switch (item.status) {
 		case 200: {
+			if (!isRequestedCitation) {
+				return { kind: "malformed_response" };
+			}
 			const clusters = clusterMetadata(item.clusters);
 			return clusters.length === 0 || clusters.length !== item.clusters.length
 				? { kind: "malformed_response" }
@@ -189,7 +194,9 @@ function citationOutcome(
 		case 400:
 			return { kind: "unknown_reporter", normalizedCitation: input.normalized };
 		case 404:
-			return { kind: "absent", normalizedCitation: input.normalized };
+			return isRequestedCitation
+				? { kind: "absent", normalizedCitation: input.normalized }
+				: { kind: "malformed_response" };
 		case 429:
 			return { kind: "item_cap", normalizedCitation: input.normalized };
 		default:

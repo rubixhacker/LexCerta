@@ -8,7 +8,12 @@ import { initialCourtListenerBudgetState } from "../../src/courtlistener/budget.
 import { createLocalAuthFixture } from "./api-key.js";
 import { resetCitationSourceCache } from "./citation-source-cache.js";
 
-export type CitationSourceMode = "absent" | "matched" | "server";
+export type CitationSourceMode =
+	| "absent"
+	| "matched"
+	| "mismatched_absent"
+	| "mismatched_matched"
+	| "server";
 
 export type Issue6WorkerFixture = {
 	readonly authorization: string;
@@ -48,8 +53,12 @@ export async function createIssue6WorkerFixture(publicId: string): Promise<Issue
 			switch (sourceMode) {
 				case "matched":
 					return Promise.resolve(citationResponse(200));
+				case "mismatched_matched":
+					return Promise.resolve(citationResponse(200, "1 U.S. 200"));
 				case "absent":
 					return Promise.resolve(citationResponse(404));
+				case "mismatched_absent":
+					return Promise.resolve(citationResponse(404, "1 U.S. 200"));
 				case "server":
 					return Promise.resolve(new Response(null, { status: 503 }));
 				default:
@@ -177,11 +186,11 @@ function usageResponse(): Response {
 	});
 }
 
-function citationResponse(status: 200 | 404): Response {
+function citationResponse(status: 200 | 404, normalizedCitation = NORMALIZED_CITATION): Response {
 	return Response.json([
 		{
 			status,
-			normalized_citations: [NORMALIZED_CITATION],
+			normalized_citations: [normalizedCitation],
 			clusters:
 				status === 200
 					? [{ id: 108713, absolute_url: "/opinion/108713/brown-v-board-of-education/" }]

@@ -25,11 +25,63 @@ function stalePositiveStore(): CitationObservationStore {
 			throw new Error("D1 unavailable");
 		},
 		fillLease: async () => ({ kind: "lease_unavailable" }),
+		purgeExpiredNegativeLease: async () => ({ kind: "lease_unavailable" }),
 		releaseLease: async () => ({ kind: "lease_unavailable" }),
 	};
 }
 
 describe("cached citation gateway", () => {
+	it("rechecks after acquiring a lease before deciding to call upstream", async () => {
+		// Given: another owner filled and released the cache between this caller's first read and lease acquisition.
+		let reads = 0;
+		let releases = 0;
+		const gateway = createCachedCitationGateway({
+			now: () => NOW,
+			ownerToken: () => "late-owner",
+			store: {
+				...stalePositiveStore(),
+				read: async () => {
+					reads += 1;
+					return reads === 1
+						? null
+						: {
+								kind: "positive",
+								positive: {
+									kind: "positive",
+									cluster: {
+										id: 456,
+										canonicalUrl: "https://www.courtlistener.com/opinion/456/example/",
+									},
+									retrievedAt: NOW,
+								},
+							};
+				},
+				acquireLease: async () => ({ kind: "acquired", expiresAt: "2026-08-09T12:00:10.000Z" }),
+				releaseLease: async () => {
+					releases += 1;
+					return { kind: "released" };
+				},
+			},
+			upstream: {
+				lookup: async () => {
+					throw new Error("upstream must not run");
+				},
+			},
+		});
+
+		// When: the caller owns the lease after the first owner has completed its fill.
+		const result = await gateway.lookup({
+			volume: 347,
+			reporter: "U.S.",
+			page: 483,
+			normalizedCitation: "347 U.S. 483",
+		});
+
+		// Then: the durable fill wins and the unnecessary lease is released without an upstream request.
+		expect(result).toMatchObject({ kind: "verified", freshness: "fresh", cluster: { id: 456 } });
+		expect(releases).toBe(1);
+	});
+
 	it("rechecks a durable fill for a held lease without calling upstream", async () => {
 		// Given: a waiter whose second D1 read sees the owner-filled positive state.
 		let reads = 0;

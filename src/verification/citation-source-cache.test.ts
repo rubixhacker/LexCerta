@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
 	DEFAULT_CITATION_SOURCE_CACHE_POLICY,
 	initialCitationSourceCacheState,
+	purgeExpiredCitationNegative,
 	readCitationSourceCache,
 	recordCitationSourceObservation,
 } from "./citation-source-cache.js";
@@ -102,6 +103,20 @@ describe("citation source cache", () => {
 		});
 	});
 
+	it("purges an expired negative at the exact freshness boundary", () => {
+		// Given: a negative that has reached its retention boundary without superseded evidence.
+		const state = negative();
+
+		// When: the owner prepares the durable state for revalidation.
+		const purged = purgeExpiredCitationNegative({
+			state,
+			now: atOffset(START, DEFAULT_CITATION_SOURCE_CACHE_POLICY.negativeFreshnessMs),
+		});
+
+		// Then: no active negative observation remains to support a later result.
+		expect(purged).toEqual({ kind: "empty" });
+	});
+
 	it("requires a refresh for a cache miss", () => {
 		// Given: no durable observation for a normalized citation.
 		const state = initialCitationSourceCacheState();
@@ -169,6 +184,28 @@ describe("citation source cache", () => {
 			kind: "negative",
 			negative: { kind: "negative", retrievedAt: confirmedAt },
 			superseded: { kind: "positive", cluster: CLUSTER, retrievedAt: START },
+		});
+	});
+
+	it("turns an expired confirmed reversal into non-conclusive history", () => {
+		// Given: a confirmed negative that still retains the positive it superseded.
+		const confirmedAt = atOffset(
+			START,
+			DEFAULT_CITATION_SOURCE_CACHE_POLICY.reversalConfirmationMs,
+		);
+		const state = negative(negative(positive(), START), confirmedAt);
+
+		// When: the active negative reaches its freshness boundary.
+		const purged = purgeExpiredCitationNegative({
+			state,
+			now: atOffset(confirmedAt, DEFAULT_CITATION_SOURCE_CACHE_POLICY.negativeFreshnessMs),
+		});
+
+		// Then: the old positive remains superseded and the next negative must reconfirm it.
+		expect(purged).toEqual({
+			kind: "reversal_pending",
+			superseded: { kind: "positive", cluster: CLUSTER, retrievedAt: START },
+			firstNegative: { kind: "negative", retrievedAt: confirmedAt },
 		});
 	});
 
