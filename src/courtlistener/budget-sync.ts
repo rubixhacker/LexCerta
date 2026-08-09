@@ -97,6 +97,9 @@ function startQuotaSync(
 				},
 			],
 			quota: {
+				capturedDataReservationEndpoints: state.pendingReservations.flatMap((reservation) =>
+					reservation.kind === "data" ? [reservation.endpoint] : [],
+				),
 				kind: "sync_in_progress",
 				leaseExpiresAt: after(now, COURTLISTENER_LEASE_MILLISECONDS),
 				prior: quota.prior,

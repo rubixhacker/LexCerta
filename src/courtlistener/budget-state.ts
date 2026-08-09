@@ -36,6 +36,7 @@ export type QuotaState =
 	| { readonly kind: "confirmed"; readonly value: ConfirmedQuota }
 	| {
 			readonly kind: "sync_in_progress";
+			readonly capturedDataReservationEndpoints: readonly CourtListenerDataEndpoint[];
 			readonly leaseExpiresAt: Date;
 			readonly prior: ConfirmedQuota | null;
 			readonly rateLimit: RateLimitState | null;

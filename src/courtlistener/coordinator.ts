@@ -74,6 +74,7 @@ const quotaSchema = z.discriminatedUnion("kind", [
 	z.object({ kind: z.literal("confirmed"), value: confirmedQuotaSchema }).strict(),
 	z
 		.object({
+			capturedDataReservationEndpoints: z.array(endpointSchema).max(100),
 			kind: z.literal("sync_in_progress"),
 			leaseExpiresAt: dateSchema,
 			prior: confirmedQuotaSchema.nullable(),

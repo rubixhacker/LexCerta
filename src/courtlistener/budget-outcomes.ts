@@ -19,6 +19,7 @@ import type {
 	QuotaWindow,
 	Reservation,
 } from "./budget-state.js";
+import { reapplyCapturedDataDebits } from "./budget-sync-reconcile.js";
 
 export function recordQuotaSync(input: {
 	readonly now: Date;
@@ -28,20 +29,24 @@ export function recordQuotaSync(input: {
 }): QuotaSyncCompletion {
 	const state = recoverExpiredLeases(input.state, input.now);
 	const reservation = matchingSyncReservation(state, input.syncToken);
-	if (state.quota.kind !== "sync_in_progress" || reservation === undefined) {
+	const quota = state.quota;
+	if (quota.kind !== "sync_in_progress" || reservation === undefined) {
 		return { kind: "unknown_sync_token", state };
 	}
-	const value = { confirmedAt: input.now, windows: input.windows };
+	const value = {
+		confirmedAt: input.now,
+		windows: reapplyCapturedDataDebits(input.windows, quota.capturedDataReservationEndpoints),
+	};
 	return {
 		kind: "recorded",
 		state: {
 			...state,
 			pendingReservations: withoutReservation(state, reservation),
 			quota:
-				state.quota.rateLimit === null
+				quota.rateLimit === null
 					? { kind: "confirmed", value }
 					: {
-							...state.quota.rateLimit,
+							...quota.rateLimit,
 							immediateSyncRequired: false,
 							kind: "rate_limited",
 							prior: value,

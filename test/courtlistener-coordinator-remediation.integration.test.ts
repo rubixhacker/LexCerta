@@ -150,4 +150,35 @@ describe("CourtListenerCoordinator remediation", () => {
 			state: { pendingReservations: [{ kind: "quota_sync" }] },
 		});
 	});
+
+	it("reapplies a completed data reservation over a stale quota-sync snapshot", async () => {
+		const stub = coordinator();
+		const initial = crypto.randomUUID();
+		const confirmedAt = new Date(NOW.getTime() - 15 * 60_000);
+		await stub.beginQuotaSync({ now: confirmedAt, syncToken: initial });
+		await stub.recordQuotaSync({ now: confirmedAt, syncToken: initial, windows: windows(1) });
+		const dataToken = crypto.randomUUID();
+		await stub.admit({
+			endpoint: "citation",
+			now: new Date(NOW.getTime() - 1),
+			reservationToken: dataToken,
+		});
+		const syncToken = crypto.randomUUID();
+		const sync = await stub.beginQuotaSync({ now: NOW, syncToken });
+		expect(sync).toMatchObject({
+			kind: "started",
+			state: { quota: { capturedDataReservationEndpoints: ["citation"] } },
+		});
+		await stub.recordOutcome({
+			endpoint: "citation",
+			now: NOW,
+			outcome: { kind: "success" },
+			reservationToken: dataToken,
+		});
+		await stub.recordQuotaSync({ now: NOW, syncToken, windows: windows(1) });
+		await evictDurableObject(stub);
+		expect(
+			await stub.admit({ endpoint: "citation", now: NOW, reservationToken: crypto.randomUUID() }),
+		).toMatchObject({ kind: "quota_exhausted" });
+	});
 });
