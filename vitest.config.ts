@@ -18,6 +18,7 @@ export default defineConfig({
 			"src/admission/**/*.test.ts",
 			"src/auth/**/*.test.ts",
 			"src/courtlistener/**/*.test.ts",
+			"src/telemetry/**/*.test.ts",
 			"src/verification/**/*.test.ts",
 			"test/**/*.test.ts",
 		],

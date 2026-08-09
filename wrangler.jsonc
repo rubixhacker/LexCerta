@@ -18,6 +18,7 @@
 		}
 	],
 	"r2_buckets": [{ "binding": "OPINION_CACHE", "bucket_name": "lexcerta-opinion-cache" }],
+	"analytics_engine_datasets": [{ "binding": "TELEMETRY", "dataset": "lexcerta_mcp_production" }],
 	"durable_objects": {
 		"bindings": [
 			{ "name": "API_KEY_LIMITER", "class_name": "ApiKeyLimiter" },
@@ -28,8 +29,11 @@
 		{ "tag": "v1", "new_sqlite_classes": ["ApiKeyLimiter"] },
 		{ "tag": "v2", "new_sqlite_classes": ["CourtListenerCoordinator"] }
 	],
+	"triggers": { "crons": ["0 3 * * *"] },
 	"observability": {
-		"enabled": true
+		"enabled": true,
+		"logs": { "enabled": true, "invocation_logs": false, "persist": true },
+		"traces": { "enabled": true, "persist": true }
 	},
 	"env": {
 		"test": {
@@ -49,6 +53,7 @@
 				}
 			],
 			"r2_buckets": [{ "binding": "OPINION_CACHE", "bucket_name": "lexcerta-test-opinion-cache" }],
+			"analytics_engine_datasets": [{ "binding": "TELEMETRY", "dataset": "lexcerta_mcp_test" }],
 			"durable_objects": {
 				"bindings": [
 					{ "name": "API_KEY_LIMITER", "class_name": "ApiKeyLimiter" },
@@ -73,6 +78,7 @@
 				}
 			],
 			"r2_buckets": [{ "binding": "OPINION_CACHE", "bucket_name": "lexcerta-local-opinion-cache" }],
+			"analytics_engine_datasets": [{ "binding": "TELEMETRY", "dataset": "lexcerta_mcp_local" }],
 			"durable_objects": {
 				"bindings": [
 					{ "name": "API_KEY_LIMITER", "class_name": "ApiKeyLimiter" },

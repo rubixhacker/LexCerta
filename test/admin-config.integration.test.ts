@@ -2,13 +2,28 @@ import { describe, expect, it } from "vitest";
 import adminWranglerConfig from "../wrangler.admin.jsonc?raw";
 
 type AdminWranglerConfig = {
+	readonly observability: ObservabilityConfig;
 	readonly env: {
 		readonly test: {
 			readonly routes: readonly unknown[];
 			readonly vars: { readonly KEY_ENVIRONMENT: string };
+			readonly observability: ObservabilityConfig;
 		};
 	};
 	readonly vars: { readonly KEY_ENVIRONMENT: string };
+};
+
+type ObservabilityConfig = {
+	readonly enabled: boolean;
+	readonly logs: {
+		readonly enabled: boolean;
+		readonly invocation_logs: boolean;
+		readonly persist: boolean;
+	};
+	readonly traces: {
+		readonly enabled: boolean;
+		readonly persist: boolean;
+	};
 };
 
 describe("admin Worker configuration", () => {
@@ -26,6 +41,26 @@ describe("admin Worker configuration", () => {
 		expect(testEnvironment.vars.KEY_ENVIRONMENT).toBe("test");
 		expect(testEnvironment.routes).toEqual([]);
 	});
+
+	it.each([
+		["production", (config: AdminWranglerConfig) => config.observability],
+		["test", (config: AdminWranglerConfig) => config.env.test.observability],
+	] as const)(
+		"disables invocation logs and persists only explicitly configured telemetry for %s",
+		(_environment, readObservability) => {
+			const configuration = JSON.parse(
+				stripJsoncComments(adminWranglerConfig),
+			) as AdminWranglerConfig;
+
+			const observability = readObservability(configuration);
+
+			expect(observability).toEqual({
+				enabled: true,
+				logs: { enabled: true, invocation_logs: false, persist: true },
+				traces: { enabled: true, persist: true },
+			});
+		},
+	);
 });
 
 function stripJsoncComments(value: string): string {

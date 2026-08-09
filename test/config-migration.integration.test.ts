@@ -4,17 +4,48 @@ import apiKeyMigrationSql from "../migrations/0001_api_key_records.sql?raw";
 import adminLifecycleMigrationSql from "../migrations/0002_admin_key_lifecycle.sql?raw";
 import limitsVersionMigrationSql from "../migrations/0003_api_key_limit_version.sql?raw";
 import citationSourceCacheMigrationSql from "../migrations/0004_citation_source_cache.sql?raw";
+import retentionBackfillMigrationSql from "../migrations/0006_backfill_api_key_retention.sql?raw";
+import { runScheduledRetention } from "../src/retention/scheduled-retention.js";
+
+const LEGACY_CUSTOMER_ID = "legacy-retention-customer";
+const LEGACY_KEY_ID = "legacy-retention-key";
+const LEGACY_RETENTION_EXPIRY = "2026-08-09T00:00:00.000Z";
+const LEGACY_REVOKED_KEY_ID = "legacy-retention-revoked-key";
+const LEGACY_REVOKED_RETENTION_EXPIRY = "2026-08-10T00:00:00.000Z";
 
 describe("isolated Worker configuration and D1 migrations", () => {
 	beforeAll(async () => {
-		for (const migration of [
+		await applyMigrations([
 			apiKeyMigrationSql,
 			adminLifecycleMigrationSql,
 			limitsVersionMigrationSql,
 			citationSourceCacheMigrationSql,
-		]) {
-			for (const query of splitMigrationStatements(migration)) await env.DB.prepare(query).run();
-		}
+		]);
+		await env.DB.prepare("INSERT INTO customers (id) VALUES (?1)").bind(LEGACY_CUSTOMER_ID).run();
+		await env.DB.prepare(
+			"INSERT INTO api_key_records (public_id, customer_id, environment, hmac_sha256_hex, issued_at, expires_at, retention_expires_at) VALUES (?1, ?2, 'test', ?3, ?4, ?5, NULL)",
+		)
+			.bind(
+				LEGACY_KEY_ID,
+				LEGACY_CUSTOMER_ID,
+				"0".repeat(64),
+				"2025-08-08T00:00:00.000Z",
+				"2025-08-09T00:00:00.000Z",
+			)
+			.run();
+		await env.DB.prepare(
+			"INSERT INTO api_key_records (public_id, customer_id, environment, hmac_sha256_hex, status, issued_at, expires_at, revoked_at, retention_expires_at) VALUES (?1, ?2, 'test', ?3, 'revoked', ?4, ?5, ?6, NULL)",
+		)
+			.bind(
+				LEGACY_REVOKED_KEY_ID,
+				LEGACY_CUSTOMER_ID,
+				"1".repeat(64),
+				"2020-08-08T00:00:00.000Z",
+				"2020-08-09T00:00:00.000Z",
+				"2025-08-10T00:00:00.000Z",
+			)
+			.run();
+		await applyMigrations([retentionBackfillMigrationSql]);
 	});
 
 	it("uses the non-production key boundary for the test environment", () => {
@@ -166,7 +197,40 @@ describe("isolated Worker configuration and D1 migrations", () => {
 		]);
 		expect(indexes.results).toEqual([{ name: "citation_fetch_leases_expiry_idx" }]);
 	});
+
+	it("backfills and eventually purges legacy keys without retention timestamps", async () => {
+		// Given: records that existed before lifecycle retention metadata was populated.
+		const backfilled = await env.DB.prepare(
+			"SELECT public_id, retention_expires_at FROM api_key_records WHERE public_id IN (?1, ?2) ORDER BY public_id",
+		)
+			.bind(LEGACY_KEY_ID, LEGACY_REVOKED_KEY_ID)
+			.all<{ readonly public_id: string; readonly retention_expires_at: string | null }>();
+
+		// When: the scheduled retention sweep reaches the backfilled one-year deadline.
+		await runScheduledRetention(env.DB, new Date(LEGACY_REVOKED_RETENTION_EXPIRY));
+
+		// Then: the migration-derived timestamp permits lifecycle deletion.
+		expect(backfilled.results).toEqual([
+			{ public_id: LEGACY_KEY_ID, retention_expires_at: LEGACY_RETENTION_EXPIRY },
+			{
+				public_id: LEGACY_REVOKED_KEY_ID,
+				retention_expires_at: LEGACY_REVOKED_RETENTION_EXPIRY,
+			},
+		]);
+		const deleted = await env.DB.prepare(
+			"SELECT public_id FROM api_key_records WHERE public_id IN (?1, ?2)",
+		)
+			.bind(LEGACY_KEY_ID, LEGACY_REVOKED_KEY_ID)
+			.all<{ readonly public_id: string }>();
+		expect(deleted.results).toEqual([]);
+	});
 });
+
+async function applyMigrations(migrations: readonly string[]): Promise<void> {
+	for (const migration of migrations) {
+		for (const query of splitMigrationStatements(migration)) await env.DB.prepare(query).run();
+	}
+}
 
 function splitMigrationStatements(migration: string): readonly string[] {
 	return (migration.match(/\s*CREATE TRIGGER[\s\S]*?END;|[^;]+;/g) ?? [])

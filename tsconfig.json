@@ -19,10 +19,13 @@
 	},
 	"include": [
 		"src/worker.ts",
+		"src/worker-request.ts",
 		"src/admin/**/*.ts",
 		"src/admission/**/*.ts",
 		"src/auth/**/*.ts",
 		"src/courtlistener/**/*.ts",
+		"src/retention/**/*.ts",
+		"src/telemetry/**/*.ts",
 		"src/verification/**/*.ts",
 		"worker-configuration.d.ts"
 	],

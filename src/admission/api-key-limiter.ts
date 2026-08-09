@@ -3,6 +3,7 @@ import { type ApiKeyLimits, MAXIMUM_API_KEY_LIMITS } from "../admin/key-lifecycl
 import { admitRollingWindow } from "./rolling-window.js";
 
 const USAGE_RETENTION_MILLISECONDS = 24 * 60 * 60 * 1_000;
+const BUCKET_RETENTION_MILLISECONDS = 48 * 60 * 60 * 1_000;
 
 export type ApiKeyLimiterAdmission = {
 	readonly admittedAt: number;
@@ -94,7 +95,12 @@ export class ApiKeyLimiter extends DurableObject {
 				}
 			}
 		});
+		if (result.kind === "allowed") await this.scheduleUsageExpiry();
 		return result;
+	}
+
+	async alarm(): Promise<void> {
+		this.ctx.storage.sql.exec("DELETE FROM api_key_admissions");
 	}
 
 	private deleteExpiredUsage(now: number): void {
@@ -102,6 +108,18 @@ export class ApiKeyLimiter extends DurableObject {
 			"DELETE FROM api_key_admissions WHERE admitted_at <= ?1",
 			now - USAGE_RETENTION_MILLISECONDS,
 		);
+	}
+
+	private async scheduleUsageExpiry(): Promise<void> {
+		const newest = this.ctx.storage.sql
+			.exec<{ readonly admitted_at: number | null }>(
+				"SELECT MAX(admitted_at) AS admitted_at FROM api_key_admissions",
+			)
+			.one().admitted_at;
+		if (newest === null) return;
+		const expiresAt = newest + BUCKET_RETENTION_MILLISECONDS;
+		const alarm = await this.ctx.storage.getAlarm();
+		if (alarm === null || alarm < expiresAt) await this.ctx.storage.setAlarm(expiresAt);
 	}
 
 	private async readCanonicalLimits(publicId: string): Promise<CanonicalLimitConfig> {

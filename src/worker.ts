@@ -1,21 +1,14 @@
-import {
-	type AuthEnvironment,
-	authenticateRequest,
-	createAuthenticationFailureResponse,
-} from "./auth/api-key.js";
+import type { AuthEnvironment } from "./auth/api-key.js";
 import type { CourtListenerCoordinatorRpc } from "./courtlistener/coordinator.js";
-import { createLexCertaMcpHandler, protocolBoundaryRejection } from "./mcp.js";
-import { boundedMcpRequest } from "./request-body.js";
-import { createWorkerCitationGateway } from "./verification/worker-citation-gateway.js";
-import { createWorkerQuoteGateway } from "./verification/worker-quote-gateway.js";
+
+import { runScheduledRetention } from "./retention/scheduled-retention.js";
+import { recordResponseTelemetry, telemetryTool } from "./telemetry/runtime.js";
+import { respondToRequest } from "./worker-request.js";
 
 export { ApiKeyLimiter } from "./admission/api-key-limiter.js";
 export { CourtListenerCoordinator } from "./courtlistener/coordinator.js";
 
-type AdmissionInput = {
-	readonly admittedAt: number;
-	readonly publicId: string;
-};
+type AdmissionInput = { readonly admittedAt: number; readonly publicId: string };
 
 type AdmissionResult =
 	| { readonly kind: "allowed" }
@@ -44,188 +37,40 @@ export type Env = {
 	readonly BUILD_ID: string;
 	readonly DB: D1Database;
 	readonly API_KEY_LIMITER: ApiKeyLimiterNamespace;
+	readonly TELEMETRY?: AnalyticsEngineDataset;
 } & AuthEnvironment &
 	CourtListenerEnvironment;
 
 const worker = {
-	async fetch(request: Request, env: Env): Promise<Response> {
+	async fetch(request: Request, env: Env, context?: ExecutionContext): Promise<Response> {
 		const { pathname } = new URL(request.url);
 		if (request.method === "GET" && pathname === "/healthz") {
 			return Response.json({ status: "ok", build: env.BUILD_ID });
 		}
-		if (pathname === "/" && request.method !== "POST") {
-			return new Response(null, { headers: { allow: "POST" }, status: 405 });
+		const startedAt = performance.now();
+		const completion = await respondToRequest(request, env, pathname);
+		const telemetry = env.TELEMETRY;
+		if (
+			pathname === "/" &&
+			request.method === "POST" &&
+			context !== undefined &&
+			telemetry !== undefined
+		) {
+			recordResponseTelemetry({
+				boundaryOutcome: completion.boundaryOutcome,
+				context,
+				environment: { TELEMETRY: telemetry },
+				keyIdentifier: null,
+				response: completion.response,
+				startedAt,
+				tool: telemetryTool(request),
+			});
 		}
-		if (pathname === "/") {
-			const authentication = await authenticateRequest(request, env);
-			switch (authentication.kind) {
-				case "authenticated": {
-					const admission = await admitRequest(env.API_KEY_LIMITER, authentication);
-					if (admission.kind === "unavailable") return createAdmissionUnavailableResponse();
-					if (admission.kind === "exhausted") {
-						return createAdmissionExhaustedResponse(request, admission.retryAfterSeconds);
-					}
-					const rejection = protocolBoundaryRejection(request);
-					if (rejection !== undefined) return rejection;
-					const bounded = await boundedMcpRequest(request);
-					if (bounded === undefined) return createPayloadTooLargeResponse();
-					const citation = createWorkerCitationGateway({
-						coordinator: env.COURTLISTENER_COORDINATOR,
-						credentialId: env.COURTLISTENER_CREDENTIAL_ID,
-						database: env.DB,
-						token: env.COURTLISTENER_API_TOKEN,
-					});
-					return createLexCertaMcpHandler({
-						citation,
-						quote: createWorkerQuoteGateway({
-							coordinator: env.COURTLISTENER_COORDINATOR,
-							credentialId: env.COURTLISTENER_CREDENTIAL_ID,
-							database: env.DB,
-							opinionCache: env.OPINION_CACHE,
-							token: env.COURTLISTENER_API_TOKEN,
-						}),
-					}).fetch(bounded);
-				}
-				case "unauthorized":
-				case "unavailable":
-					return createAuthenticationFailureResponse(authentication);
-				default: {
-					const unreachable: never = authentication;
-					return unreachable;
-				}
-			}
-		}
-		return new Response(null, { status: 404 });
+		return completion.response;
+	},
+	async scheduled(controller: ScheduledController, env: Env): Promise<void> {
+		await runScheduledRetention(env.DB, new Date(controller.scheduledTime));
 	},
 } satisfies ExportedHandler<Env>;
 
 export default worker;
-
-type AdmissionDecision = AdmissionResult | { readonly kind: "unavailable" };
-
-async function admitRequest(
-	namespace: ApiKeyLimiterNamespace,
-	authentication: Extract<
-		Awaited<ReturnType<typeof authenticateRequest>>,
-		{ readonly kind: "authenticated" }
-	>,
-): Promise<AdmissionDecision> {
-	try {
-		return await namespace.getByName(authentication.publicId).admit({
-			admittedAt: Date.now(),
-			publicId: authentication.publicId,
-		});
-	} catch {
-		// no-excuse-ok: catch
-		return { kind: "unavailable" };
-	}
-}
-
-function createAdmissionUnavailableResponse(): Response {
-	return new Response('{"error":"Service Unavailable"}', {
-		status: 503,
-		headers: {
-			"cache-control": "no-store",
-			"content-type": "application/json",
-			"retry-after": "1",
-		},
-	});
-}
-
-function createPayloadTooLargeResponse(): Response {
-	return new Response(null, { headers: { "cache-control": "no-store" }, status: 413 });
-}
-
-async function createAdmissionExhaustedResponse(
-	request: Request,
-	retryAfterSeconds: number,
-): Promise<Response> {
-	const id = await recoverRequestId(request);
-	const body =
-		id === undefined
-			? undefined
-			: JSON.stringify({
-					jsonrpc: "2.0",
-					id,
-					error: { code: -32029, message: "API key allowance exhausted" },
-				});
-	return new Response(body, {
-		status: 429,
-		headers: {
-			"cache-control": "no-store",
-			...(body === undefined ? {} : { "content-type": "application/json" }),
-			"retry-after": String(Math.max(1, Math.ceil(retryAfterSeconds))),
-		},
-	});
-}
-
-const MAX_REQUEST_ID_BYTES = 16_384;
-const MAX_STRING_REQUEST_ID_LENGTH = 256;
-const MAX_REQUEST_ID_CHUNKS = 128;
-const MAX_REQUEST_ID_RECOVERY_MILLISECONDS = 100;
-
-async function recoverRequestId(request: Request): Promise<string | number | null | undefined> {
-	try {
-		const body = request.body;
-		if (body === null) return undefined;
-		const reader = body.getReader();
-		const chunks: Uint8Array[] = [];
-		let totalBytes = 0;
-		let chunkCount = 0;
-		const deadline = Date.now() + MAX_REQUEST_ID_RECOVERY_MILLISECONDS;
-		while (true) {
-			const chunk = await readChunkBeforeDeadline(reader, deadline);
-			if (chunk === "deadline") {
-				void reader.cancel().catch(() => undefined);
-				return undefined;
-			}
-			if (chunk.done) break;
-			if (chunk.value === undefined) return undefined;
-			chunkCount += 1;
-			if (chunkCount > MAX_REQUEST_ID_CHUNKS) {
-				void reader.cancel().catch(() => undefined);
-				return undefined;
-			}
-			totalBytes += chunk.value.byteLength;
-			if (totalBytes > MAX_REQUEST_ID_BYTES) {
-				void reader.cancel().catch(() => undefined);
-				return undefined;
-			}
-			chunks.push(chunk.value);
-		}
-		const bytes = new Uint8Array(totalBytes);
-		let offset = 0;
-		for (const chunk of chunks) {
-			bytes.set(chunk, offset);
-			offset += chunk.byteLength;
-		}
-		const parsed: unknown = JSON.parse(new TextDecoder().decode(bytes));
-		if (typeof parsed !== "object" || parsed === null || !("id" in parsed)) return undefined;
-		const id: unknown = parsed.id;
-		if (id === null) return id;
-		if (typeof id === "number") {
-			return Number.isFinite(id) && Math.abs(id) <= Number.MAX_SAFE_INTEGER ? id : undefined;
-		}
-		return typeof id === "string" && id.length <= MAX_STRING_REQUEST_ID_LENGTH ? id : undefined;
-	} catch {
-		// no-excuse-ok: catch
-		return undefined;
-	}
-}
-
-type TimedReadResult = ReadableStreamReadResult<Uint8Array> | "deadline";
-
-async function readChunkBeforeDeadline(
-	reader: ReadableStreamDefaultReader<Uint8Array>,
-	deadline: number,
-): Promise<TimedReadResult> {
-	let timeoutId: ReturnType<typeof setTimeout> | undefined;
-	try {
-		const timeout = new Promise<"deadline">((resolve) => {
-			timeoutId = setTimeout(() => resolve("deadline"), Math.max(0, deadline - Date.now()));
-		});
-		return await Promise.race([reader.read(), timeout]);
-	} finally {
-		if (timeoutId !== undefined) clearTimeout(timeoutId);
-	}
-}

@@ -18,7 +18,20 @@
 			"migrations_dir": "migrations"
 		}
 	],
-	"observability": { "enabled": true },
+	"observability": {
+		"enabled": true,
+		"logs": {
+			"enabled": true,
+			// Invocation records may include request headers. Keep only the
+			// structured, explicitly redacted events emitted by the Worker.
+			"invocation_logs": false,
+			"persist": true
+		},
+		"traces": {
+			"enabled": true,
+			"persist": true
+		}
+	},
 	"env": {
 		"test": {
 			"name": "lexcerta-admin-test",
@@ -38,6 +51,18 @@
 				"ACCESS_JWKS_URL": "https://access-test.example.invalid/cdn-cgi/access/certs",
 				"ACCESS_OPERATOR_SUBJECT": "operator-subject-test",
 				"KEY_ENVIRONMENT": "test"
+			},
+			"observability": {
+				"enabled": true,
+				"logs": {
+					"enabled": true,
+					"invocation_logs": false,
+					"persist": true
+				},
+				"traces": {
+					"enabled": true,
+					"persist": true
+				}
 			}
 		}
 	}

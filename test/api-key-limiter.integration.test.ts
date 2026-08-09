@@ -1,4 +1,9 @@
-import { env, evictDurableObject, runInDurableObject } from "cloudflare:test";
+import {
+	env,
+	evictDurableObject,
+	runDurableObjectAlarm,
+	runInDurableObject,
+} from "cloudflare:test";
 import { beforeEach, describe, expect, it } from "vitest";
 import {
 	ApiKeyLimitConfigurationError,
@@ -7,6 +12,7 @@ import {
 
 const MINUTE = 60_000;
 const DAY = 24 * 60 * MINUTE;
+const LIMITER_BUCKET_RETENTION = 2 * DAY;
 
 type Admission = {
 	readonly admittedAt: number;
@@ -235,5 +241,34 @@ describe("ApiKeyLimiter Durable Object", () => {
 		// Then: boundary-expired records cannot exhaust either current rolling window.
 		expect(afterMinute).toEqual({ kind: "allowed" });
 		expect(afterRetention).toEqual({ kind: "allowed" });
+	});
+
+	it("clears only usage when its exact 48-hour alarm fires without evicting the instance", async () => {
+		// Given: a limiter that has accepted one admission.
+		const publicId = "retention-alarm";
+		const limiter = limiterFor(publicId);
+		const now = Date.now();
+		await seedCanonicalLimits(publicId, { minute: 1, day: 1 });
+		await limiter.admit(admission(publicId, now));
+
+		// When: workerd dispatches the scheduled alarm through the live object.
+		const scheduledAt = await runInDurableObject(limiter, (_instance, state) =>
+			state.storage.getAlarm(),
+		);
+		const alarmRan = await runDurableObjectAlarm(limiter);
+		const remainingAdmissions = await runInDurableObject(
+			limiter,
+			(_instance, state) =>
+				state.storage.sql
+					.exec<{ readonly count: number }>("SELECT COUNT(*) AS count FROM api_key_admissions")
+					.one().count,
+		);
+		const laterAdmission = await limiter.admit(admission(publicId, now + LIMITER_BUCKET_RETENTION));
+
+		// Then: the exact deadline fired, usage is empty, and the live instance can admit again.
+		expect(scheduledAt).toBe(now + LIMITER_BUCKET_RETENTION);
+		expect(alarmRan).toBe(true);
+		expect(remainingAdmissions).toBe(0);
+		expect(laterAdmission).toEqual({ kind: "allowed" });
 	});
 });
