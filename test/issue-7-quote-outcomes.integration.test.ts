@@ -70,7 +70,7 @@ describe("Issue 7 quote outcomes through real workerd bindings", () => {
 
 	it.each([
 		{
-			expected: "source_text_unavailable",
+			expected: "incomplete",
 			opinion: {
 				body: { id: 2201, cluster: "https://www.courtlistener.com/api/rest/v4/clusters/108713/" },
 				id: 2201,

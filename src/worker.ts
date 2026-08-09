@@ -37,6 +37,7 @@ type CourtListenerEnvironment = {
 	readonly COURTLISTENER_API_TOKEN?: string;
 	readonly COURTLISTENER_COORDINATOR?: CourtListenerCoordinatorNamespace;
 	readonly COURTLISTENER_CREDENTIAL_ID?: string;
+	readonly OPINION_CACHE?: R2Bucket;
 };
 
 export type Env = {
@@ -79,6 +80,8 @@ const worker = {
 						quote: createWorkerQuoteGateway({
 							coordinator: env.COURTLISTENER_COORDINATOR,
 							credentialId: env.COURTLISTENER_CREDENTIAL_ID,
+							database: env.DB,
+							opinionCache: env.OPINION_CACHE,
 							token: env.COURTLISTENER_API_TOKEN,
 						}),
 					}).fetch(bounded);

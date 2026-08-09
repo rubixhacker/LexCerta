@@ -19,6 +19,7 @@ const verified = {
 				canonicalUrl: "https://www.courtlistener.com/opinion/101/example/",
 				representation: "plain_text",
 				retrievedAt: "2026-08-09T12:00:00.000Z",
+				freshness: "fresh",
 			},
 		],
 		matchingOpinion: {
@@ -27,6 +28,7 @@ const verified = {
 		},
 		representation: "plain_text",
 		retrievedAt: "2026-08-09T12:00:00.000Z",
+		freshness: "fresh",
 	},
 };
 

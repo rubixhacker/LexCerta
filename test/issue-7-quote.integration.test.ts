@@ -8,6 +8,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { initialCourtListenerBudgetState } from "../src/courtlistener/budget.js";
 import { createLocalAuthFixture } from "./fixtures/api-key.js";
 import { resetCitationSourceCache } from "./fixtures/citation-source-cache.js";
+import { resetOpinionSourceCache } from "./fixtures/opinion-source-cache.js";
 
 const QUOTE_SENTINEL = "QUOTE_SENTINEL: equal justice under law.";
 const OPINION_SENTINEL = "OPINION_SENTINEL: equal justice under law.";
@@ -22,6 +23,7 @@ afterEach(() => vi.unstubAllGlobals());
 beforeEach(async () => {
 	const fixture = await createLocalAuthFixture({ publicId: `quote-${crypto.randomUUID()}` });
 	await resetCitationSourceCache(env.DB);
+	await resetOpinionSourceCache();
 	await env.DB.prepare("DROP TABLE IF EXISTS api_key_records").run();
 	await env.DB.prepare(`CREATE TABLE api_key_records (
 			public_id TEXT PRIMARY KEY NOT NULL, environment TEXT NOT NULL, hmac_sha256_hex TEXT NOT NULL,
@@ -160,14 +162,14 @@ describe("Issue 7 quote verification", () => {
 		expect(outbound.map((request) => request.method)).toEqual(["GET", "POST", "GET", "GET"]);
 	});
 
-	it("performs a separately admitted direct traversal for a repeated quote verification", async () => {
+	it("reuses a fresh durable opinion across separately constructed requests", async () => {
 		// Given: a completed quote verification whose citation result remains cached.
 		await SELF.fetch(quoteRequest());
 
 		// When: the same authenticated MCP request is made again.
 		const response = await SELF.fetch(quoteRequest());
 
-		// Then: the repeat re-reads the cluster and opinion rather than persisting legal source text.
+		// Then: the repeat re-reads the cluster but serves opinion text from durable R2 evidence.
 		expect(response.status).toBe(200);
 		expect(JSON.stringify(await response.json())).toContain('"outcome":"verified"');
 		expect(outbound.map((request) => new URL(request.url).pathname)).toEqual([
@@ -176,11 +178,10 @@ describe("Issue 7 quote verification", () => {
 			`/api/rest/v4/clusters/${CLUSTER_ID}/`,
 			`/api/rest/v4/opinions/${OPINION_ID}/`,
 			`/api/rest/v4/clusters/${CLUSTER_ID}/`,
-			`/api/rest/v4/opinions/${OPINION_ID}/`,
 		]);
 	});
 
-	it("gives concurrent quote verifications independent direct source traversals", async () => {
+	it("coalesces the opinion fetch for concurrent cold quote verifications", async () => {
 		// Given: two identical cold authenticated quote-verification requests.
 		const first = quoteRequest();
 		const second = quoteRequest();
@@ -188,7 +189,7 @@ describe("Issue 7 quote verification", () => {
 		// When: both requests reach the real Worker concurrently.
 		const responses = await Promise.all([SELF.fetch(first), SELF.fetch(second)]);
 
-		// Then: both callers complete without shared cluster/opinion persistence.
+		// Then: both callers complete after independent cluster reads and one opinion cache fill.
 		await expect(Promise.all(responses.map((response) => response.json()))).resolves.toEqual(
 			expect.arrayContaining([
 				expect.objectContaining({ result: expect.objectContaining({ isError: false }) }),
@@ -200,7 +201,7 @@ describe("Issue 7 quote verification", () => {
 		).toHaveLength(2);
 		expect(
 			outbound.filter((request) => new URL(request.url).pathname.includes("/opinions/")),
-		).toHaveLength(2);
+		).toHaveLength(1);
 	});
 
 	it.each([20, 10_000])("accepts the exact quote length boundary %i", async (length) => {

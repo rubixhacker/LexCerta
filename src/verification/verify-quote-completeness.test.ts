@@ -40,6 +40,7 @@ function quoteGateway(input: {
 					canonicalUrl: "https://www.courtlistener.com/opinion/101/example/",
 					text: { plain_text: input.text ?? "A different sufficiently long judicial opinion." },
 					retrievedAt: "2026-08-09T12:00:00.000Z",
+					freshness: "fresh" as const,
 				},
 			};
 		},

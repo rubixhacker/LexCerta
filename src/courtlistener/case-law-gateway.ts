@@ -1,11 +1,9 @@
+import type { OpinionSourceStore } from "../cache/opinion-source-store.js";
 import type { QuoteVerificationGateway } from "../verification/verify-quote.js";
 import type { CourtListenerApi } from "./api.js";
 import { requestCaseLaw } from "./case-law-admission.js";
-import type {
-	CourtListenerCaseLawApi,
-	CourtListenerCaseLawOpinion,
-	CourtListenerCaseLawOutcome,
-} from "./case-law-api.js";
+import type { CourtListenerCaseLawApi } from "./case-law-api.js";
+import { readCachedCaseLawOpinion } from "./case-law-opinion-source.js";
 import type { CourtListenerCoordinatorRpc } from "./coordinator.js";
 
 type QuoteFailureReason =
@@ -20,6 +18,7 @@ export type CourtListenerCaseLawGatewayOptions = {
 	readonly api: CourtListenerCaseLawApi;
 	readonly coordinator: CourtListenerCoordinatorRpc;
 	readonly now: () => Date;
+	readonly opinions: OpinionSourceStore;
 	readonly quotaApi: Pick<CourtListenerApi, "getUsage">;
 	readonly token: () => string;
 };
@@ -56,59 +55,17 @@ export function createCourtListenerCaseLawGateway(
 					return assertNever(source);
 			}
 		},
-		async readOpinion(input) {
-			const requested = await requestCaseLaw(options, () =>
-				options.api.getOpinion(input.opinionUrl),
-			);
-			if (requested.kind === "indeterminate") return requested;
-			return opinionObservation(
-				requested.source,
-				input.cluster.id,
-				input.cluster.canonicalUrl,
-				options.now(),
-			);
-		},
+		readOpinion: (input) =>
+			readCachedCaseLawOpinion(input, {
+				fetch: async (opinionUrl) => {
+					const requested = await requestCaseLaw(options, () => options.api.getOpinion(opinionUrl));
+					return requested.kind === "source" ? requested.source : requested;
+				},
+				now: options.now,
+				store: options.opinions,
+				token: options.token,
+			}),
 	};
-}
-
-function opinionObservation(
-	source: CourtListenerCaseLawOutcome<{ readonly opinion: CourtListenerCaseLawOpinion }>,
-	clusterId: number,
-	canonicalUrl: string,
-	retrievedAt: Date,
-) {
-	switch (source.kind) {
-		case "found":
-			return source.opinion.clusterId === clusterId
-				? {
-						kind: "found" as const,
-						opinion: {
-							canonicalUrl,
-							clusterId,
-							id: source.opinion.id,
-							retrievedAt: retrievedAt.toISOString(),
-							text: {
-								...(source.opinion.html === undefined ? {} : { html: source.opinion.html }),
-								...(source.opinion.htmlWithCitations === undefined
-									? {}
-									: { html_with_citations: source.opinion.htmlWithCitations }),
-								...(source.opinion.plainText === undefined
-									? {}
-									: { plain_text: source.opinion.plainText }),
-							},
-						},
-					}
-				: indeterminate("incomplete");
-		case "missing":
-		case "malformed_response":
-			return indeterminate("incomplete");
-		case "rate_limited":
-			return indeterminate("rate_limited", source.retryAfterSeconds);
-		case "unavailable":
-			return indeterminate(source.failure === "timeout" ? "timeout" : "upstream_unavailable");
-		default:
-			return assertNever(source);
-	}
 }
 
 function indeterminate(reason: QuoteFailureReason, retryAfterSeconds?: number) {

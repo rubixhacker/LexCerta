@@ -54,6 +54,7 @@ const searchedOpinionSchema = z
 		canonicalUrl: courtListenerUrlSchema,
 		representation: z.enum(OPINION_TEXT_REPRESENTATIONS),
 		retrievedAt: z.iso.datetime(),
+		freshness: z.enum(["fresh", "stale"]),
 	})
 	.strict();
 
@@ -113,6 +114,7 @@ export const verifyQuoteOutputSchema = z.discriminatedUnion("outcome", [
 					.strict(),
 				representation: z.enum(OPINION_TEXT_REPRESENTATIONS),
 				retrievedAt: z.iso.datetime(),
+				freshness: z.enum(["fresh", "stale"]),
 			}),
 		})
 		.strict(),

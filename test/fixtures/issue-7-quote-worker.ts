@@ -8,6 +8,7 @@ import { vi } from "vitest";
 import { initialCourtListenerBudgetState } from "../../src/courtlistener/budget.js";
 import { createLocalAuthFixture } from "./api-key.js";
 import { resetCitationSourceCache } from "./citation-source-cache.js";
+import { resetOpinionSourceCache } from "./opinion-source-cache.js";
 
 const CLUSTER_ID = 108713;
 
@@ -31,6 +32,7 @@ export type QuoteWorkerFixture = {
 export async function setupQuoteWorker(scenario: QuoteWorkerScenario): Promise<QuoteWorkerFixture> {
 	const auth = await createLocalAuthFixture({ publicId: `quote-${crypto.randomUUID()}` });
 	await resetCitationSourceCache(env.DB);
+	await resetOpinionSourceCache();
 	await env.DB.prepare("DROP TABLE IF EXISTS api_key_records").run();
 	await env.DB.prepare(
 		"CREATE TABLE api_key_records (public_id TEXT PRIMARY KEY NOT NULL, environment TEXT NOT NULL, hmac_sha256_hex TEXT NOT NULL, status TEXT NOT NULL, expires_at TEXT NOT NULL, revoked_at TEXT, minute_limit INTEGER NOT NULL DEFAULT 60, day_limit INTEGER NOT NULL DEFAULT 1000, limits_version INTEGER NOT NULL DEFAULT 1)",

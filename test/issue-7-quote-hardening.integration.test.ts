@@ -92,7 +92,7 @@ describe("Issue 7 quote hardening through real workerd bindings", () => {
 		expect(fixture.outbound).toHaveLength(4);
 	});
 
-	it("completes concurrent cold callers with independent direct source traversals", async () => {
+	it("completes concurrent cold callers with a coalesced opinion fetch", async () => {
 		// Given: two simultaneous callers with one cold matching source.
 		const fixture = await setupQuoteWorker({
 			opinions: [
@@ -106,7 +106,7 @@ describe("Issue 7 quote hardening through real workerd bindings", () => {
 		);
 		const payloads = await Promise.all(responses.map((response) => response.json()));
 
-		// Then: all callers verify and each actual cluster/opinion GET remains independently visible.
+		// Then: all callers verify after independent cluster reads and one opinion cache fill.
 		expect(JSON.stringify(payloads)).not.toContain('"isError":true');
 		expect(JSON.stringify(payloads)).toContain('"outcome":"verified"');
 		expect(
@@ -114,6 +114,6 @@ describe("Issue 7 quote hardening through real workerd bindings", () => {
 		).toHaveLength(2);
 		expect(
 			fixture.outbound.filter((request) => new URL(request.url).pathname.includes("/opinions/")),
-		).toHaveLength(2);
+		).toHaveLength(1);
 	});
 });

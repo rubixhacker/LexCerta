@@ -29,6 +29,7 @@ describe("verifyQuote", () => {
 					canonicalUrl: "https://www.courtlistener.com/opinion/101/example/",
 					text: { html_with_citations: "<p>The Court holds that due process applies.</p>" },
 					retrievedAt: "2026-08-09T12:00:00.000Z",
+					freshness: "fresh" as const,
 				},
 			}),
 		};
@@ -57,6 +58,7 @@ describe("verifyQuote", () => {
 				},
 				representation: "html_with_citations",
 				retrievedAt: "2026-08-09T12:00:00.000Z",
+				freshness: "fresh",
 				searchedOpinionCount: 1,
 				requiredOpinionCount: 1,
 				searchComplete: true,
@@ -66,6 +68,7 @@ describe("verifyQuote", () => {
 						canonicalUrl: "https://www.courtlistener.com/opinion/101/example/",
 						representation: "html_with_citations",
 						retrievedAt: "2026-08-09T12:00:00.000Z",
+						freshness: "fresh",
 					},
 				],
 			},
@@ -150,6 +153,7 @@ describe("verifyQuote", () => {
 								: "A different long opinion without a match.",
 						},
 						retrievedAt: "2026-08-09T12:00:00.000Z",
+						freshness: "fresh" as const,
 					},
 				};
 			},

@@ -1,4 +1,10 @@
 import { describe, expect, it } from "vitest";
+import type { OpinionSourceStore } from "../cache/opinion-source-store.js";
+import {
+	type OpinionSourceCacheState,
+	initialOpinionSourceCacheState,
+	recordOpinionSourceObservation,
+} from "../verification/opinion-source-cache.js";
 import type { CourtListenerCluster } from "../verification/verify-citation.js";
 import { initialCourtListenerBudgetState } from "./budget.js";
 import type { CourtListenerCaseLawApi } from "./case-law-api.js";
@@ -35,9 +41,45 @@ function gateway(api: CourtListenerCaseLawApi, events: string[]) {
 		api,
 		coordinator: coordinator(events),
 		now: () => NOW,
+		opinions: opinionStore(),
 		quotaApi: { getUsage: async () => ({ kind: "malformed_response" }) },
 		token: () => crypto.randomUUID(),
 	});
+}
+
+function opinionStore(): OpinionSourceStore {
+	let state: OpinionSourceCacheState = initialOpinionSourceCacheState();
+	let sourceText = "";
+	return {
+		read: async () =>
+			state.kind === "empty"
+				? null
+				: state.kind === "positive"
+					? { kind: "positive", state, sourceText }
+					: { kind: "state", state },
+		acquireLease: async () => ({ kind: "acquired", expiresAt: "2026-08-09T12:00:10.000Z" }),
+		fillLease: async (input) => {
+			if (input.observation.kind === "positive") sourceText = input.observation.sourceText;
+			state = recordOpinionSourceObservation({
+				now: input.now,
+				state,
+				observation:
+					input.observation.kind === "negative"
+						? input.observation
+						: {
+								kind: "positive",
+								provenance: input.observation.provenance,
+								representation: input.observation.representation,
+								contentHash: `sha256:${"a".repeat(64)}`,
+								objectKey: `opinions/${input.observation.provenance.opinionId}/fixture`,
+							},
+			});
+			if (state.kind === "empty") return { kind: "lease_unavailable" };
+			return { kind: "stored", state };
+		},
+		purgeExpiredNegativeLease: async () => ({ kind: "lease_unavailable" }),
+		releaseLease: async () => ({ kind: "released" }),
+	};
 }
 
 describe("CourtListener case-law gateway", () => {
@@ -75,7 +117,7 @@ describe("CourtListener case-law gateway", () => {
 
 		// Then: every actual GET has its own immediate reservation and recorded outcome.
 		expect(opinion).toMatchObject({ kind: "found", opinion: { id: 456 } });
-		expect(opinion).not.toHaveProperty("opinion.freshness");
+		expect(opinion).toHaveProperty("opinion.freshness", "fresh");
 		expect(events).toEqual([
 			"admit:case_law",
 			"cluster-get",
