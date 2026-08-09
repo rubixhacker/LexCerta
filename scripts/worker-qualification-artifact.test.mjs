@@ -4,43 +4,63 @@ import { appendFileSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "n
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
-import {
-	RESOURCE_GATES,
-	evaluateResourceGates,
-	qualifyWorkerArtifact,
-} from "./worker-qualification-artifact.mjs";
+import { evaluateResourceGates, qualifyWorkerArtifact } from "./worker-qualification-artifact.mjs";
 import { captureHeapUsageSample } from "./worker-qualification-heap.mjs";
 
+const APPROVED_RUNNER_PEAK_BYTES = 128 * 1024 * 1024;
+const APPROVED_RUNNER_SAMPLED_CPU_MILLISECONDS = 5_000;
+const APPROVED_RUNNER_WALL_MILLISECONDS = 5_000;
+
 test("passes exact resource limits and fails an exceeded runner measurement", () => {
-	const atLimit = evaluateResourceGates([
-		{
-			...heapMeasurement(RESOURCE_GATES.runnerPeakBytes),
-			cdpControlTargetId: "core:entry",
-			cdpMeasurementTargetId: "core:user:vitest-pool-workers-runner-",
-			cdpNonIdleCpuSampleCount: 1,
-			cdpPeakObservedHeapBytes: RESOURCE_GATES.runnerPeakBytes,
-			cdpSampledCpuMilliseconds: RESOURCE_GATES.runnerSampledCpuMilliseconds,
-			scenario: "at_limit",
-			wallMilliseconds: RESOURCE_GATES.runnerWallMilliseconds,
-		},
-	]);
-	const overLimit = evaluateResourceGates([
-		{
-			...heapMeasurement(RESOURCE_GATES.runnerPeakBytes + 1),
-			cdpControlTargetId: "core:entry",
-			cdpMeasurementTargetId: "core:user:vitest-pool-workers-runner-",
-			cdpNonIdleCpuSampleCount: 1,
-			cdpPeakObservedHeapBytes: RESOURCE_GATES.runnerPeakBytes + 1,
-			cdpSampledCpuMilliseconds: RESOURCE_GATES.runnerSampledCpuMilliseconds + 1,
-			scenario: "over_limit",
-			wallMilliseconds: RESOURCE_GATES.runnerWallMilliseconds + 1,
-		},
-	]);
+	const atLimit = evaluateResourceGates(
+		qualificationMeasurements().map((measurement) => ({
+			...measurement,
+			...heapMeasurement(APPROVED_RUNNER_PEAK_BYTES),
+			cdpPeakObservedHeapBytes: APPROVED_RUNNER_PEAK_BYTES,
+			cdpSampledCpuMilliseconds: APPROVED_RUNNER_SAMPLED_CPU_MILLISECONDS,
+			wallMilliseconds: APPROVED_RUNNER_WALL_MILLISECONDS,
+		})),
+	);
+	const overLimit = evaluateResourceGates(
+		qualificationMeasurements().map((measurement) => ({
+			...measurement,
+			...heapMeasurement(APPROVED_RUNNER_PEAK_BYTES + 1),
+			cdpPeakObservedHeapBytes: APPROVED_RUNNER_PEAK_BYTES + 1,
+			cdpSampledCpuMilliseconds: APPROVED_RUNNER_SAMPLED_CPU_MILLISECONDS + 1,
+			wallMilliseconds: APPROVED_RUNNER_WALL_MILLISECONDS + 1,
+		})),
+	);
 	assert.equal(atLimit.verdict, "pass");
 	assert.equal(overLimit.verdict, "fail");
 	assert.equal(overLimit.scenarios[0]?.runnerPeakBytes.verdict, "fail");
 	assert.equal(overLimit.scenarios[0]?.runnerSampledCpuMilliseconds.verdict, "fail");
 	assert.equal(overLimit.scenarios[0]?.runnerWallMilliseconds.verdict, "fail");
+});
+
+test("fails a weakened maximum-workload benchmark record", () => {
+	for (const field of [
+		"codePoints",
+		"opinionOutboundCount",
+		"totalOutboundCount",
+		"d1StateRows",
+		"r2ObjectCount",
+		"cancelledOutboundCount",
+	]) {
+		const measurements = qualificationMeasurements();
+		measurements[0][field] = field === "cancelledOutboundCount" ? 1 : 9_999;
+		const result = evaluateResourceGates(measurements);
+		assert.equal(result.verdict, "fail", field);
+		assert.equal(result.scenarios[0]?.workloadSemantics.verdict, "fail", field);
+	}
+});
+
+test("fails a missing or duplicated canonical workload scenario", () => {
+	const measurements = qualificationMeasurements();
+	assert.equal(evaluateResourceGates(measurements.slice(0, 2)).verdict, "fail");
+	assert.equal(
+		evaluateResourceGates([...measurements.slice(0, 2), measurements[0]]).verdict,
+		"fail",
+	);
 });
 
 test("fails empty, invalid, or mismatched raw heap observations", () => {
@@ -157,6 +177,28 @@ function resourceMeasurement() {
 		cdpSampledCpuMilliseconds: 1,
 		scenario: "valid",
 		wallMilliseconds: 1,
+	};
+}
+
+function qualificationMeasurements() {
+	return [
+		qualificationMeasurement("cold_no_match_10000cp_100op", "not_found", 100, 103),
+		qualificationMeasurement("cold_late_match_10000cp_100op", "verified", 100, 103),
+		qualificationMeasurement("warm_reuse_late_match_10000cp_100op", "verified", 0, 1),
+	];
+}
+
+function qualificationMeasurement(scenario, behavior, opinionOutboundCount, totalOutboundCount) {
+	return {
+		...resourceMeasurement(),
+		behavior,
+		codePoints: 10_000,
+		d1StateRows: 100,
+		opinionOutboundCount,
+		r2ObjectCount: 100,
+		scenario,
+		totalOutboundCount,
+		cancelledOutboundCount: 0,
 	};
 }
 

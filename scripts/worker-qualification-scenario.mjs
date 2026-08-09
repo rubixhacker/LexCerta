@@ -42,7 +42,7 @@ export async function runWorkerQualificationScenario(input) {
 			"--no-file-parallelism",
 			"--reporter=verbose",
 		],
-		{ cwd: input.root, detached: true, stdio: ["ignore", "pipe", "pipe"] },
+		{ cwd: input.root, detached: true, stdio: ["pipe", "pipe", "pipe"] },
 	);
 	const deadline = Date.now() + WORKER_QUALIFICATION_HARNESS_RECORD_DEADLINE_MS;
 	let output = "";
@@ -106,6 +106,7 @@ export async function runWorkerQualificationScenario(input) {
 						measurement.call("Profiler.stop"),
 						measurement.call("HeapProfiler.stopSampling"),
 					]);
+					await acknowledgeChildCompletion(child);
 					const nonIdleSamples = nonIdleCpuSampleCount(cpuProfile);
 					if (nonIdleSamples === 0)
 						throw new TypeError(
@@ -147,6 +148,20 @@ export async function runWorkerQualificationScenario(input) {
 				setTimer: setTimeout,
 			}),
 		terminateChild: () => terminateChildProcess(child, exit),
+	});
+}
+
+function acknowledgeChildCompletion(child) {
+	return new Promise((resolve, reject) => {
+		const onError = (error) => {
+			child.stdin.off("error", onError);
+			reject(error);
+		};
+		child.stdin.once("error", onError);
+		child.stdin.end(() => {
+			child.stdin.off("error", onError);
+			resolve();
+		});
 	});
 }
 

@@ -9,6 +9,7 @@ const BENCHMARK_MARKER = "WORKER_QUALIFICATION_BENCHMARK=";
 const CLUSTER_URL = "https://www.courtlistener.com/api/rest/v4/clusters/108713/";
 const MAX_RESPONSE_PREFIX = "<p>";
 const MAX_RESPONSE_SUFFIX = "</p>";
+const PARENT_ACKNOWLEDGEMENT_DEADLINE_MS = 60_000;
 
 type BenchmarkRecord = {
 	readonly behavior: "not_found" | "verified";
@@ -22,6 +23,15 @@ type BenchmarkRecord = {
 	readonly totalOutboundCount: number;
 	readonly wallMilliseconds: number;
 };
+
+type ParentAcknowledgementStdin = {
+	readonly isTTY?: boolean;
+	off(event: "end" | "error", listener: (() => void) | ((error: Error) => void)): void;
+	once(event: "end" | "error", listener: (() => void) | ((error: Error) => void)): void;
+	resume(): void;
+};
+
+declare const process: { readonly stdin: ParentAcknowledgementStdin };
 
 afterEach(() => vi.unstubAllGlobals());
 
@@ -146,7 +156,34 @@ async function emitRecord(input: {
 		wallMilliseconds: input.wallMilliseconds,
 	};
 	console.log(`${BENCHMARK_MARKER}${JSON.stringify(record)}`);
-	await new Promise<void>((resolve) => setTimeout(resolve, 100));
+	await waitForParentAcknowledgement();
+}
+
+async function waitForParentAcknowledgement(): Promise<void> {
+	if (process.stdin.isTTY) return;
+	await new Promise<void>((resolve, reject) => {
+		let settled = false;
+		const finish = (completion: () => void) => {
+			if (settled) return;
+			settled = true;
+			clearTimeout(timer);
+			process.stdin.off("end", onEnd);
+			process.stdin.off("error", onError);
+			completion();
+		};
+		const onEnd = () => finish(resolve);
+		const onError = (error: Error) => finish(() => reject(error));
+		const timer = setTimeout(
+			() =>
+				finish(() =>
+					reject(new TypeError("worker qualification parent acknowledgement timed out")),
+				),
+			PARENT_ACKNOWLEDGEMENT_DEADLINE_MS,
+		);
+		process.stdin.once("end", onEnd);
+		process.stdin.once("error", onError);
+		process.stdin.resume();
+	});
 }
 
 async function countRows(table: "opinion_source_states"): Promise<number> {

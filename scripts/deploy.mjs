@@ -1,44 +1,46 @@
-import { spawnSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 
-const suppliedArguments = process.argv.slice(2);
-const explicitEnvironmentArguments = extractEnvironmentArguments(suppliedArguments);
-const deploymentEnvironmentArguments = explicitEnvironmentArguments.length === 0 ? ["--env="] : [];
-const migrationEnvironmentArguments =
-	explicitEnvironmentArguments.length === 0 ? ["--env="] : explicitEnvironmentArguments;
-const wranglerCommand = process.platform === "win32" ? "wrangler.cmd" : "wrangler";
-const traceDeployment = [
-	"deploy",
-	"--config",
-	"wrangler.telemetry.jsonc",
-	...deploymentEnvironmentArguments,
-	...suppliedArguments,
-];
-const migration = [
-	"d1",
-	"migrations",
-	"apply",
-	"DB",
-	"--remote",
-	"--config",
-	"wrangler.jsonc",
-	...migrationEnvironmentArguments,
-];
-const publicDeployment = ["deploy", ...deploymentEnvironmentArguments, ...suppliedArguments];
+const rejectedWorkerDeploymentMessage =
+	"Cloudflare Worker deployment is disabled after Issue #10 rejected its memory qualification. " +
+	"Deploy only after Cloud Run delivery in Issue #11 replaces this command.";
 
-if (run(traceDeployment) && (!isDryRun(suppliedArguments) ? run(migration) : skipMigration())) {
-	run(publicDeployment);
+if (isDeployEntrypoint()) {
+	console.error(rejectedWorkerDeploymentMessage);
+	process.exitCode = 1;
 }
 
-function run(argumentsForWrangler) {
-	const result = spawnSync(wranglerCommand, argumentsForWrangler, { stdio: "inherit" });
-	if (result.status === 0) return true;
-	process.exitCode = result.status ?? 1;
-	return false;
+export function createWorkerDeploymentPlan(suppliedArguments) {
+	const explicitEnvironmentArguments = extractEnvironmentArguments(suppliedArguments);
+	const deploymentEnvironmentArguments =
+		explicitEnvironmentArguments.length === 0 ? ["--env="] : [];
+	const migrationEnvironmentArguments =
+		explicitEnvironmentArguments.length === 0 ? ["--env="] : explicitEnvironmentArguments;
+
+	return {
+		publicDeployment: ["deploy", ...deploymentEnvironmentArguments, ...suppliedArguments],
+		remoteMigration: [
+			"d1",
+			"migrations",
+			"apply",
+			"DB",
+			"--remote",
+			"--config",
+			"wrangler.jsonc",
+			...migrationEnvironmentArguments,
+		],
+		skipRemoteMigration: isDryRun(suppliedArguments),
+		telemetryDeployment: [
+			"deploy",
+			"--config",
+			"wrangler.telemetry.jsonc",
+			...deploymentEnvironmentArguments,
+			...suppliedArguments,
+		],
+	};
 }
 
-function skipMigration() {
-	console.log("Skipping remote D1 migrations during --dry-run.");
-	return true;
+function isDeployEntrypoint() {
+	return process.argv[1] === fileURLToPath(import.meta.url);
 }
 
 function extractEnvironmentArguments(argumentsToInspect) {

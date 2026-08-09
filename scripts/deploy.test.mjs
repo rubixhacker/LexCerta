@@ -1,77 +1,86 @@
 import assert from "node:assert/strict";
-import { execFileSync, spawnSync } from "node:child_process";
-import { chmodSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { chmodSync, existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { delimiter, join } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
+import { createWorkerDeploymentPlan } from "./deploy.mjs";
 
 const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 
-test("deploy dry-run forwards the top-level environment to both Workers", () => {
-	const output = runDeploy("--dry-run");
+test("deploy fails closed before invoking the rejected Worker deployment", () => {
+	const result = runDeployCommand();
 
-	assert.equal(dryRunCount(output), 2);
-	assert.match(output, /env\.TELEMETRY_TRACES \(lexcerta-telemetry-traces\)/);
-	assert.match(output, /Skipping remote D1 migrations during --dry-run\./);
+	assert.equal(result.status, 1);
+	assert.match(result.stderr, /Cloud Run delivery in Issue #11/);
 });
 
-test("deploy dry-run forwards an explicit test environment to both Workers", () => {
-	const output = runDeploy("--env", "test", "--dry-run");
-
-	assert.equal(dryRunCount(output), 2);
-	assert.match(output, /env\.TELEMETRY_TRACES \(lexcerta-telemetry-traces-test\)/);
-	assert.match(output, /Skipping remote D1 migrations during --dry-run\./);
-});
-
-test("deploys trace, remote migrations, and public Worker in order", () => {
+test("blocked deployment invokes no legacy Worker command", () => {
 	withFakeWrangler((environment, logPath) => {
 		const result = runDeployScript(environment);
 
-		assert.equal(result.status, 0);
-		assert.deepEqual(readCommands(logPath), [
-			["deploy", "--config", "wrangler.telemetry.jsonc", "--env="],
-			["d1", "migrations", "apply", "DB", "--remote", "--config", "wrangler.jsonc", "--env="],
-			["deploy", "--env="],
-		]);
+		assert.equal(result.status, 1);
+		assert.match(result.stderr, /Cloud Run delivery in Issue #11/);
+		assert.equal(existsSync(logPath), false);
 	});
 });
 
-test("stops before public deployment when remote migrations fail", () => {
-	withFakeWrangler((environment, logPath) => {
-		const result = runDeployScript(
-			{ ...environment, WRANGLER_FAIL_COMMAND: "d1" },
-			"--env",
-			"test",
-		);
+test("Worker deployment plan preserves the telemetry, migration, and public command order", () => {
+	const plan = createWorkerDeploymentPlan([]);
 
-		assert.equal(result.status, 23);
-		assert.deepEqual(readCommands(logPath), [
-			["deploy", "--config", "wrangler.telemetry.jsonc", "--env", "test"],
-			[
-				"d1",
-				"migrations",
-				"apply",
-				"DB",
-				"--remote",
-				"--config",
-				"wrangler.jsonc",
-				"--env",
-				"test",
-			],
-		]);
-	});
+	assert.deepEqual(plan.telemetryDeployment, [
+		"deploy",
+		"--config",
+		"wrangler.telemetry.jsonc",
+		"--env=",
+	]);
+	assert.deepEqual(plan.remoteMigration, [
+		"d1",
+		"migrations",
+		"apply",
+		"DB",
+		"--remote",
+		"--config",
+		"wrangler.jsonc",
+		"--env=",
+	]);
+	assert.deepEqual(plan.publicDeployment, ["deploy", "--env="]);
+	assert.equal(plan.skipRemoteMigration, false);
 });
 
-function runDeploy(...argumentsToForward) {
-	return execFileSync(npmCommand, ["run", "deploy", "--", ...argumentsToForward], {
+test("Worker deployment plan skips remote migrations during a dry run", () => {
+	const plan = createWorkerDeploymentPlan(["--env", "test", "--dry-run"]);
+
+	assert.deepEqual(plan.telemetryDeployment, [
+		"deploy",
+		"--config",
+		"wrangler.telemetry.jsonc",
+		"--env",
+		"test",
+		"--dry-run",
+	]);
+	assert.deepEqual(plan.remoteMigration, [
+		"d1",
+		"migrations",
+		"apply",
+		"DB",
+		"--remote",
+		"--config",
+		"wrangler.jsonc",
+		"--env",
+		"test",
+	]);
+	assert.deepEqual(plan.publicDeployment, ["deploy", "--env", "test", "--dry-run"]);
+	assert.equal(plan.skipRemoteMigration, true);
+});
+
+function runDeployCommand(...argumentsToForward) {
+	return spawnSync(npmCommand, ["run", "deploy", "--", ...argumentsToForward], {
 		cwd: new URL("..", import.meta.url),
 		encoding: "utf8",
+		stdio: "pipe",
 	});
-}
-
-function dryRunCount(output) {
-	return output.match(/--dry-run: exiting now\./g)?.length ?? 0;
 }
 
 function runDeployScript(environment, ...argumentsToForward) {
@@ -89,22 +98,20 @@ function runDeployScript(environment, ...argumentsToForward) {
 
 function withFakeWrangler(callback) {
 	const root = mkdtempSync(join(tmpdir(), "lexcerta-deploy-"));
-	const bin = join(root, "node_modules", ".bin");
-	const logPath = join(root, "commands.jsonl");
+	const bin = join(root, "bin");
+	const logPath = join(root, "commands.log");
 	mkdirSync(bin, { recursive: true });
-	writeFileSync(join(bin, "fake-wrangler.cjs"), FAKE_WRANGLER);
 	writeFileSync(
 		join(bin, "wrangler"),
-		'#!/bin/sh\nexec node "$(dirname "$0")/fake-wrangler.cjs" "$@"\n',
+		`#!/bin/sh\nprintf deploy >> "$LEXCERTA_FAKE_WRANGLER_LOG"\n`,
 	);
 	chmodSync(join(bin, "wrangler"), 0o755);
-	writeFileSync(join(bin, "wrangler.cmd"), '@echo off\r\nnode "%~dp0fake-wrangler.cjs" %*\r\n');
 	try {
 		callback(
 			{
 				...process.env,
+				LEXCERTA_FAKE_WRANGLER_LOG: logPath,
 				PATH: `${bin}${delimiter}${process.env.PATH ?? ""}`,
-				WRANGLER_LOG: logPath,
 			},
 			logPath,
 		);
@@ -112,16 +119,3 @@ function withFakeWrangler(callback) {
 		rmSync(root, { force: true, recursive: true });
 	}
 }
-
-function readCommands(logPath) {
-	return readFileSync(logPath, "utf8")
-		.trim()
-		.split("\n")
-		.map((line) => JSON.parse(line));
-}
-
-const FAKE_WRANGLER = `const { appendFileSync } = require("node:fs");
-const argumentsForWrangler = process.argv.slice(2);
-appendFileSync(process.env.WRANGLER_LOG, JSON.stringify(argumentsForWrangler) + "\\n");
-if (argumentsForWrangler[0] === process.env.WRANGLER_FAIL_COMMAND) process.exit(23);
-`;
