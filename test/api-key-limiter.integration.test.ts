@@ -259,14 +259,17 @@ describe("ApiKeyLimiter Durable Object", () => {
 		);
 		expect(scheduledAt).toBe(now + LIMITER_BUCKET_RETENTION);
 
-		// Then: the original deadline clears usage while preserving live configuration for a later admission.
+		// Then: the original deadline clears only its own admission and preserves the younger one.
 		const alarmRan = await runDurableObjectAlarm(limiter);
-		const remainingAdmissions = await runInDurableObject(
-			limiter,
-			(_instance, state) =>
-				state.storage.sql
-					.exec<{ readonly count: number }>("SELECT COUNT(*) AS count FROM api_key_admissions")
-					.one().count,
+		const remainingAdmissions = await runInDurableObject(limiter, (_instance, state) =>
+			state.storage.sql
+				.exec<{ readonly admitted_at: number }>(
+					"SELECT admitted_at FROM api_key_admissions ORDER BY admitted_at",
+				)
+				.toArray(),
+		);
+		const nextScheduledAt = await runInDurableObject(limiter, (_instance, state) =>
+			state.storage.getAlarm(),
 		);
 		const configurations = await runInDurableObject(
 			limiter,
@@ -275,11 +278,10 @@ describe("ApiKeyLimiter Durable Object", () => {
 					.exec<{ readonly count: number }>("SELECT COUNT(*) AS count FROM api_key_limit_config")
 					.one().count,
 		);
-		const laterAdmission = await limiter.admit(admission(publicId, now + LIMITER_BUCKET_RETENTION));
 
 		expect(alarmRan).toBe(true);
-		expect(remainingAdmissions).toBe(0);
+		expect(remainingAdmissions).toEqual([{ admitted_at: now + TWENTY_THREE_HOURS }]);
+		expect(nextScheduledAt).toBe(now + TWENTY_THREE_HOURS + LIMITER_BUCKET_RETENTION);
 		expect(configurations).toBe(1);
-		expect(laterAdmission).toEqual({ kind: "allowed" });
 	});
 });

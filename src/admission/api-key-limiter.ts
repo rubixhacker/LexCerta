@@ -2,7 +2,6 @@ import { DurableObject } from "cloudflare:workers";
 import { type ApiKeyLimits, MAXIMUM_API_KEY_LIMITS } from "../admin/key-lifecycle.js";
 import { admitRollingWindow } from "./rolling-window.js";
 
-const USAGE_RETENTION_MILLISECONDS = 24 * 60 * 60 * 1_000;
 const BUCKET_RETENTION_MILLISECONDS = 48 * 60 * 60 * 1_000;
 
 export type ApiKeyLimiterAdmission = {
@@ -20,6 +19,7 @@ type StoredLimitConfig = {
 	readonly limits_version: number;
 	readonly minute_limit: number;
 };
+type StoredCleanupSchedule = { readonly cleanup_at: number };
 
 type CanonicalLimitConfig = {
 	readonly limits: ApiKeyLimits;
@@ -62,6 +62,9 @@ export class ApiKeyLimiter extends DurableObject {
 			this.ctx.storage.sql.exec(
 				"CREATE TABLE IF NOT EXISTS api_key_limit_config (singleton INTEGER PRIMARY KEY CHECK (singleton = 1), limits_version INTEGER NOT NULL, minute_limit INTEGER NOT NULL, day_limit INTEGER NOT NULL)",
 			);
+			this.ctx.storage.sql.exec(
+				"CREATE TABLE IF NOT EXISTS api_key_cleanup_schedule (singleton INTEGER PRIMARY KEY CHECK (singleton = 1), cleanup_at INTEGER NOT NULL)",
+			);
 		});
 	}
 
@@ -100,26 +103,49 @@ export class ApiKeyLimiter extends DurableObject {
 	}
 
 	async alarm(): Promise<void> {
-		this.ctx.storage.sql.exec("DELETE FROM api_key_admissions");
+		const scheduled = this.readCleanupSchedule();
+		if (scheduled === undefined) return;
+		const cutoff = Math.max(Date.now(), scheduled);
+		this.ctx.storage.transactionSync(() => {
+			this.ctx.storage.sql.exec(
+				"DELETE FROM api_key_admissions WHERE admitted_at <= ?1",
+				cutoff - BUCKET_RETENTION_MILLISECONDS,
+			);
+		});
+		await this.scheduleUsageExpiry();
 	}
 
 	private deleteExpiredUsage(now: number): void {
 		this.ctx.storage.sql.exec(
 			"DELETE FROM api_key_admissions WHERE admitted_at <= ?1",
-			now - USAGE_RETENTION_MILLISECONDS,
+			now - BUCKET_RETENTION_MILLISECONDS,
 		);
 	}
 
 	private async scheduleUsageExpiry(): Promise<void> {
-		const newest = this.ctx.storage.sql
+		const oldest = this.ctx.storage.sql
 			.exec<{ readonly admitted_at: number | null }>(
-				"SELECT MAX(admitted_at) AS admitted_at FROM api_key_admissions",
+				"SELECT MIN(admitted_at) AS admitted_at FROM api_key_admissions",
 			)
 			.one().admitted_at;
-		if (newest === null) return;
-		const expiresAt = newest + BUCKET_RETENTION_MILLISECONDS;
-		const alarm = await this.ctx.storage.getAlarm();
-		if (alarm === null || expiresAt < alarm) await this.ctx.storage.setAlarm(expiresAt);
+		if (oldest === null) {
+			this.ctx.storage.sql.exec("DELETE FROM api_key_cleanup_schedule");
+			return;
+		}
+		const cleanupAt = oldest + BUCKET_RETENTION_MILLISECONDS;
+		this.ctx.storage.sql.exec(
+			"INSERT INTO api_key_cleanup_schedule (singleton, cleanup_at) VALUES (1, ?1) ON CONFLICT(singleton) DO UPDATE SET cleanup_at = excluded.cleanup_at",
+			cleanupAt,
+		);
+		await this.ctx.storage.setAlarm(cleanupAt);
+	}
+
+	private readCleanupSchedule(): number | undefined {
+		return this.ctx.storage.sql
+			.exec<StoredCleanupSchedule>(
+				"SELECT cleanup_at FROM api_key_cleanup_schedule WHERE singleton = 1",
+			)
+			.toArray()[0]?.cleanup_at;
 	}
 
 	private async readCanonicalLimits(publicId: string): Promise<CanonicalLimitConfig> {
@@ -175,7 +201,7 @@ export class ApiKeyLimiter extends DurableObject {
 		const rows = this.ctx.storage.sql
 			.exec<AdmissionRow>(
 				"SELECT admitted_at FROM api_key_admissions WHERE admitted_at > ?1 ORDER BY admitted_at",
-				now - USAGE_RETENTION_MILLISECONDS,
+				now - BUCKET_RETENTION_MILLISECONDS,
 			)
 			.toArray();
 		return rows.map((row) => new Date(row.admitted_at));

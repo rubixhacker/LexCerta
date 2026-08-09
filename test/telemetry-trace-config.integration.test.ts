@@ -42,7 +42,7 @@ describe("telemetry trace isolation configuration", () => {
 			'wrangler deploy --config wrangler.telemetry.jsonc --env=""',
 		);
 		expect(packageConfig.scripts.deploy).toBe(
-			'npm run deploy:telemetry && wrangler deploy --env=""',
+			'sh -c \'npm run deploy:telemetry -- "$@" && wrangler deploy --env="" "$@"\' --',
 		);
 	});
 
