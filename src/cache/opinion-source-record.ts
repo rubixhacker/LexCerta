@@ -12,11 +12,12 @@ const provenanceSchema = z
 		opinionId: z.number().int().positive(),
 	})
 	.strict();
+const representationSchema = z.enum(["html_with_citations", "html", "plain_text"]);
 const positiveSchema = z
 	.object({
 		kind: z.literal("positive"),
 		provenance: provenanceSchema,
-		representation: z.enum(["html_with_citations", "html", "plain_text"]),
+		representation: representationSchema,
 		contentHash: z.string().regex(/^sha256:[0-9a-f]{64}$/),
 		objectKey: z.string().min(1).max(1_024),
 		retrievedAt: z
@@ -57,6 +58,7 @@ const versionRowSchema = z
 	.object({
 		metadata_json: z.string().min(1).max(4_096),
 		object_key: z.string().min(1).max(1_024),
+		representation: representationSchema,
 	})
 	.strict();
 
@@ -77,7 +79,11 @@ export function parseOpinionSourceVersion(row: unknown): {
 	const parsedRow = versionRowSchema.safeParse(row);
 	if (!parsedRow.success) throw new OpinionSourceCacheCorruptError();
 	const metadata = positiveSchema.safeParse(jsonValue(parsedRow.data.metadata_json));
-	if (!metadata.success || metadata.data.objectKey !== parsedRow.data.object_key)
+	if (
+		!metadata.success ||
+		metadata.data.objectKey !== parsedRow.data.object_key ||
+		metadata.data.representation !== parsedRow.data.representation
+	)
 		throw new OpinionSourceCacheCorruptError();
 	return { metadata: metadata.data, objectKey: parsedRow.data.object_key };
 }

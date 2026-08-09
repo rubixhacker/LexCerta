@@ -122,11 +122,12 @@ async function fillLease(
 		const results = await input.database.batch([
 			input.database
 				.prepare(
-					"INSERT OR IGNORE INTO opinion_source_object_versions (opinion_id, content_sha256_hex, object_key, metadata_json, stored_at) SELECT ?1, ?2, ?3, ?4, ?5 WHERE ?6 IS NOT NULL AND EXISTS (SELECT 1 FROM opinion_source_fetch_leases WHERE opinion_id = ?1 AND owner_token = ?7 AND expires_at > ?5)",
+					"INSERT OR IGNORE INTO opinion_source_object_versions (opinion_id, content_sha256_hex, representation, object_key, metadata_json, stored_at) SELECT ?1, ?2, ?3, ?4, ?5, ?6 WHERE ?7 IS NOT NULL AND EXISTS (SELECT 1 FROM opinion_source_fetch_leases WHERE opinion_id = ?1 AND owner_token = ?8 AND expires_at > ?6)",
 				)
 				.bind(
 					opinionId,
 					activePositive === null ? "" : hashHex(activePositive),
+					activePositive?.representation ?? "",
 					activePositive?.objectKey ?? "",
 					activePositive === null ? "" : JSON.stringify(activePositive),
 					now,
@@ -171,9 +172,9 @@ async function validateVersion(
 ): Promise<void> {
 	const row = await database
 		.prepare(
-			"SELECT object_key, metadata_json FROM opinion_source_object_versions WHERE opinion_id = ?1 AND content_sha256_hex = ?2",
+			"SELECT object_key, metadata_json, representation FROM opinion_source_object_versions WHERE opinion_id = ?1 AND content_sha256_hex = ?2 AND representation = ?3",
 		)
-		.bind(positive.provenance.opinionId, hashHex(positive))
+		.bind(positive.provenance.opinionId, hashHex(positive), positive.representation)
 		.first<unknown>();
 	if (row === null) throw new OpinionSourceCacheCorruptError();
 	const version = parseOpinionSourceVersion(row);

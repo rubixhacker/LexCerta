@@ -7,10 +7,11 @@ CREATE TABLE IF NOT EXISTS opinion_source_states (
 CREATE TABLE IF NOT EXISTS opinion_source_object_versions (
 	opinion_id INTEGER NOT NULL CHECK (opinion_id BETWEEN 1 AND 2147483647),
 	content_sha256_hex TEXT NOT NULL CHECK (length(content_sha256_hex) = 64 AND content_sha256_hex NOT GLOB '*[^0-9a-f]*'),
+	representation TEXT NOT NULL CHECK (representation IN ('html_with_citations', 'html', 'plain_text')),
 	object_key TEXT NOT NULL CHECK (length(object_key) BETWEEN 1 AND 1024),
 	metadata_json TEXT NOT NULL CHECK (length(metadata_json) BETWEEN 1 AND 4096 AND json_valid(metadata_json)),
 	stored_at TEXT NOT NULL,
-	PRIMARY KEY (opinion_id, content_sha256_hex)
+	PRIMARY KEY (opinion_id, content_sha256_hex, representation)
 );
 
 CREATE TABLE IF NOT EXISTS opinion_source_fetch_leases (

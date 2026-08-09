@@ -137,6 +137,70 @@ describe("D1 and R2 opinion source store", () => {
 		await expect(fill).rejects.toBeInstanceOf(OpinionSourceCacheCorruptError);
 	});
 
+	it("refreshes a stale same-byte representation without duplicating R2", async () => {
+		// Given: a stale HTML version whose later selected representation has identical source bytes.
+		const staleAt = new Date(NOW.getTime() - 30 * 24 * 60 * 60 * 1_000 - 1);
+		let commitNow = staleAt;
+		const store = createD1R2OpinionSourceStore({
+			bucket: env.OPINION_CACHE,
+			clock: { now: () => commitNow },
+			database: env.DB,
+		});
+		await store.acquireLease({
+			now: staleAt,
+			opinionId: PROVENANCE.opinionId,
+			ownerToken: "stale-owner",
+		});
+		await store.fillLease({
+			now: staleAt,
+			ownerToken: "stale-owner",
+			observation: {
+				kind: "positive",
+				provenance: PROVENANCE,
+				representation: "html",
+				sourceText: SOURCE,
+			},
+		});
+		commitNow = NOW;
+		await store.acquireLease({
+			now: NOW,
+			opinionId: PROVENANCE.opinionId,
+			ownerToken: "fresh-owner",
+		});
+
+		// When: revalidation selects html_with_citations without changing canonical bytes.
+		const fresh = store.fillLease({
+			now: NOW,
+			ownerToken: "fresh-owner",
+			observation: {
+				kind: "positive",
+				provenance: PROVENANCE,
+				representation: "html_with_citations",
+				sourceText: SOURCE,
+			},
+		});
+
+		// Then: D1 retains two representation records while R2 retains one verified content object.
+		await expect(fresh).resolves.toMatchObject({
+			kind: "stored",
+			state: { kind: "positive", positive: { representation: "html_with_citations" } },
+		});
+		const versions = await env.DB.prepare(
+			"SELECT metadata_json, object_key FROM opinion_source_object_versions WHERE opinion_id = ?1",
+		)
+			.bind(PROVENANCE.opinionId)
+			.all<{ readonly metadata_json: string; readonly object_key: string }>();
+		expect(versions.results).toHaveLength(2);
+		expect(versions.results.map(({ metadata_json }) => metadata_json)).toEqual(
+			expect.arrayContaining([
+				expect.stringContaining('"representation":"html"'),
+				expect.stringContaining('"representation":"html_with_citations"'),
+			]),
+		);
+		expect(new Set(versions.results.map(({ object_key }) => object_key))).toHaveLength(1);
+		expect((await env.OPINION_CACHE.list()).objects).toHaveLength(1);
+	});
+
 	it("keeps old content versions after a later active positive fill", async () => {
 		// Given: a first durable selected representation.
 		const store = await filledStore();

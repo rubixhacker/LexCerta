@@ -31,7 +31,6 @@ export async function prepareOpinionSourceObject(input: {
 		if (
 			existing.metadata.provenance.canonicalUrl !== input.observation.provenance.canonicalUrl ||
 			existing.metadata.provenance.clusterId !== input.observation.provenance.clusterId ||
-			existing.metadata.representation !== input.observation.representation ||
 			object === null ||
 			storedContentHash !== calculatedHash ||
 			(await contentHash(await object.text())) !== calculatedHash
@@ -90,7 +89,7 @@ async function versionFor(
 } | null> {
 	const row = await database
 		.prepare(
-			"SELECT object_key, metadata_json FROM opinion_source_object_versions WHERE opinion_id = ?1 AND content_sha256_hex = ?2",
+			"SELECT object_key, metadata_json, representation FROM opinion_source_object_versions WHERE opinion_id = ?1 AND content_sha256_hex = ?2",
 		)
 		.bind(opinionId, hashHex(contentHash))
 		.first<unknown>();
