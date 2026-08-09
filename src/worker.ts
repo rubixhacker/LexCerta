@@ -153,7 +153,9 @@ async function recoverRequestId(request: Request): Promise<string | number | nul
 		if (typeof parsed !== "object" || parsed === null || !("id" in parsed)) return undefined;
 		const id: unknown = parsed.id;
 		if (id === null) return id;
-		if (typeof id === "number") return Number.isSafeInteger(id) ? id : undefined;
+		if (typeof id === "number") {
+			return Number.isFinite(id) && Math.abs(id) <= Number.MAX_SAFE_INTEGER ? id : undefined;
+		}
 		return typeof id === "string" && id.length <= MAX_STRING_REQUEST_ID_LENGTH ? id : undefined;
 	} catch {
 		// no-excuse-ok: catch
