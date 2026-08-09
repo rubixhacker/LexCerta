@@ -1,0 +1,282 @@
+import {
+	CLIENT_CAPABILITIES_META_KEY,
+	CLIENT_INFO_META_KEY,
+	PROTOCOL_VERSION_META_KEY,
+} from "@modelcontextprotocol/server";
+import { env, SELF } from "cloudflare:test";
+import { beforeEach, describe, expect, it } from "vitest";
+import { createLocalAuthFixture } from "./fixtures/api-key.js";
+
+let authorization = "";
+
+beforeEach(async () => {
+	const fixture = await createLocalAuthFixture();
+	await env.DB.prepare("DROP TABLE IF EXISTS api_key_records").run();
+	await env.DB.prepare(`CREATE TABLE api_key_records (
+			public_id TEXT PRIMARY KEY NOT NULL,
+			environment TEXT NOT NULL,
+			hmac_sha256_hex TEXT NOT NULL,
+			status TEXT NOT NULL,
+			expires_at TEXT NOT NULL,
+			revoked_at TEXT
+		)`).run();
+	await env.DB.prepare(
+		"INSERT INTO api_key_records (public_id, environment, hmac_sha256_hex, status, expires_at, revoked_at) VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
+	)
+		.bind(
+			fixture.record.public_id,
+			fixture.record.environment,
+			fixture.record.hmac_sha256_hex,
+			fixture.record.status,
+			fixture.record.expires_at,
+			fixture.record.revoked_at,
+		)
+		.run();
+	authorization = `Bearer ${fixture.token}`;
+});
+
+type ModernMcpRequestOptions = {
+	readonly arguments?: Readonly<Record<string, string>>;
+	readonly name?: string;
+	readonly protocolVersion?: string;
+};
+
+function modernMcpRequest(method: string, options: ModernMcpRequestOptions = {}): Request {
+	const protocolVersion = options.protocolVersion ?? "2026-07-28";
+	const headers = new Headers({
+		authorization,
+		"content-type": "application/json",
+		"mcp-method": method,
+		"mcp-protocol-version": protocolVersion,
+	});
+	if (options.name !== undefined) headers.set("mcp-name", options.name);
+	return new Request("https://mcp.lexcerta.ai/", {
+		method: "POST",
+		headers,
+		body: JSON.stringify({
+			jsonrpc: "2.0",
+			id: 1,
+			method,
+			params: {
+				...(options.name === undefined ? {} : { name: options.name }),
+				...(options.arguments === undefined ? {} : { arguments: options.arguments }),
+				_meta: {
+					[PROTOCOL_VERSION_META_KEY]: protocolVersion,
+					[CLIENT_INFO_META_KEY]: { name: "workerd-integration", version: "1.0.0" },
+					[CLIENT_CAPABILITIES_META_KEY]: {},
+				},
+			},
+		}),
+	});
+}
+
+describe("Worker HTTP routing", () => {
+	it("returns unauthenticated process status when GET targets healthz", async () => {
+		// Given: a Worker with no dependency access.
+		const request = new Request("https://mcp.lexcerta.ai/healthz");
+
+		// When: an unauthenticated health probe reaches the public endpoint.
+		const response = await SELF.fetch(request);
+
+		// Then: it exposes only basic status and a non-sensitive build identifier.
+		expect(response.status).toBe(200);
+		expect(await response.json()).toEqual({ status: "ok", build: "local" });
+	});
+
+	it("rejects a non-POST root request with method not allowed", async () => {
+		// Given: the canonical MCP root endpoint.
+		const request = new Request("https://mcp.lexcerta.ai/");
+
+		// When: it receives a GET request.
+		const response = await SELF.fetch(request);
+
+		// Then: the Worker does not expose a stream or browser-oriented endpoint.
+		expect(response.status).toBe(405);
+		expect(response.headers.get("allow")).toBe("POST");
+	});
+
+	it("returns the generic authentication failure when POST has no Bearer credential", async () => {
+		// Given: an MCP-shaped POST without an Authorization header.
+		const request = new Request("https://mcp.lexcerta.ai/", {
+			method: "POST",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "server/discover" }),
+		});
+
+		// When: it reaches the public MCP endpoint.
+		const response = await SELF.fetch(request);
+
+		// Then: missing credentials are rejected before protocol dispatch.
+		expect(response.status).toBe(401);
+		expect(await response.text()).toBe('{"error":"Unauthorized"}');
+	});
+
+	it("discovers only the modern protocol and tools capability when headers and metadata agree", async () => {
+		// Given: a valid Bearer credential and a self-contained modern discovery request.
+		const request = modernMcpRequest("server/discover");
+
+		// When: it reaches the authenticated MCP root.
+		const response = await SELF.fetch(request);
+
+		// Then: the SDK advertises the 2026-only tools server without initialization state.
+		expect(response.status).toBe(200);
+		expect(await response.json()).toMatchObject({
+			jsonrpc: "2.0",
+			id: 1,
+			result: {
+				supportedVersions: ["2026-07-28"],
+				capabilities: { tools: {} },
+			},
+		});
+	});
+
+	it("rejects a conflicting Mcp-Method header before MCP dispatch", async () => {
+		// Given: a modern discovery request whose routing header names a different method.
+		const request = modernMcpRequest("server/discover");
+		request.headers.set("mcp-method", "tools/list");
+
+		// When: it reaches the authenticated MCP root.
+		const response = await SELF.fetch(request);
+
+		// Then: header and body disagreement is an HTTP bad request.
+		expect(response.status).toBe(400);
+	});
+
+	it("rejects a modern request without the required protocol version header", async () => {
+		// Given: an authenticated discovery request missing its modern protocol routing header.
+		const request = modernMcpRequest("server/discover");
+		request.headers.delete("mcp-protocol-version");
+
+		// When: it reaches the authenticated MCP endpoint.
+		const response = await SELF.fetch(request);
+
+		// Then: the Worker refuses the request before SDK dispatch.
+		expect(response.status).toBe(400);
+	});
+
+	it("delegates unsupported protocol versions to the official JSON-RPC handler", async () => {
+		// Given: an authenticated discovery request that presents an unsupported protocol header.
+		const request = modernMcpRequest("server/discover", {
+			protocolVersion: "2025-06-18",
+		});
+
+		// When: it reaches the modern MCP endpoint.
+		const response = await SELF.fetch(request);
+
+		// Then: the SDK preserves its protocol error contract instead of an empty boundary response.
+		expect(response.status).toBe(400);
+		expect(await response.json()).toMatchObject({
+			error: { code: -32022 },
+			id: 1,
+			jsonrpc: "2.0",
+		});
+	});
+
+	it("rejects a modern request carrying a session identifier", async () => {
+		// Given: an authenticated otherwise-valid discovery request attempting to resume session state.
+		const request = modernMcpRequest("server/discover");
+		request.headers.set("mcp-session-id", "forbidden-session");
+
+		// When: it reaches the stateless MCP endpoint.
+		const response = await SELF.fetch(request);
+
+		// Then: session-oriented protocol traffic is not accepted.
+		expect(response.status).toBe(400);
+	});
+
+	it("keeps protocol-boundary validation behind generic authentication", async () => {
+		// Given: an unauthenticated POST with both malformed protocol routing and a session header.
+		const request = new Request("https://mcp.lexcerta.ai/", {
+			method: "POST",
+			headers: {
+				"content-type": "application/json",
+				"mcp-session-id": "forbidden-session",
+			},
+			body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "server/discover" }),
+		});
+
+		// When: it reaches the public Worker endpoint.
+		const response = await SELF.fetch(request);
+
+		// Then: the client receives the same generic unauthorized response before protocol details.
+		expect(response.status).toBe(401);
+		expect(await response.text()).toBe('{"error":"Unauthorized"}');
+	});
+
+	it("lists the static tool catalog with the public five-minute cache hint", async () => {
+		// Given: a valid authenticated modern tools/list request.
+		const request = modernMcpRequest("tools/list");
+
+		// When: it reaches the Worker.
+		const response = await SELF.fetch(request);
+
+		// Then: the cacheable catalog is deterministic and safe to share across Customers.
+		expect(response.status).toBe(200);
+		expect(await response.json()).toMatchObject({
+			result: {
+				tools: [{ name: "parse_citation" }],
+				ttlMs: 300000,
+				cacheScope: "public",
+			},
+		});
+	});
+
+	it("rejects a legacy initialize request instead of creating session state", async () => {
+		// Given: a valid credential with a 2025-style initialize body and no modern envelope headers.
+		const request = new Request("https://mcp.lexcerta.ai/", {
+			method: "POST",
+			headers: { authorization, "content-type": "application/json" },
+			body: JSON.stringify({
+				jsonrpc: "2.0",
+				id: 1,
+				method: "initialize",
+				params: { protocolVersion: "2025-06-18", capabilities: {} },
+			}),
+		});
+
+		// When: the request reaches the sole MCP endpoint.
+		const response = await SELF.fetch(request);
+
+		// Then: strict modern-only mode refuses the legacy initialization exchange.
+		expect(response.status).toBe(400);
+	});
+
+	it("requires an Mcp-Name header that agrees with a tool call body", async () => {
+		// Given: a valid tool call whose header identifies a different tool than the JSON-RPC body.
+		const request = modernMcpRequest("tools/call", {
+			arguments: { citation: "347 U.S. 483" },
+			name: "parse_citation",
+		});
+		request.headers.set("mcp-name", "other_tool");
+
+		// When: the authenticated request enters the SDK handler.
+		const response = await SELF.fetch(request);
+
+		// Then: routing metadata inconsistency is rejected before tool execution.
+		expect(response.status).toBe(400);
+	});
+
+	it("executes a header-complete modern tool call without session initialization", async () => {
+		// Given: a complete stateless request for the sole registered tool.
+		const request = modernMcpRequest("tools/call", {
+			arguments: { citation: "347 U.S. 483" },
+			name: "parse_citation",
+		});
+
+		// When: the Worker dispatches it after D1-backed authentication.
+		const response = await SELF.fetch(request);
+
+		// Then: the official v2 handler returns the versioned structured result directly.
+		expect(response.status).toBe(200);
+		expect(await response.json()).toMatchObject({
+			id: 1,
+			result: {
+				structuredContent: {
+					citation: { normalized: "347 U.S. 483" },
+					contractVersion: "1",
+					outcome: "parsed",
+				},
+			},
+		});
+	});
+});

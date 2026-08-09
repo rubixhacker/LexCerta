@@ -1,0 +1,44 @@
+import { createMcpHandler, McpServer, preloadSchemas } from "@modelcontextprotocol/server";
+import { registerParseCitationTool } from "./verification/citation.js";
+
+const PROTOCOL_VERSION = "2026-07-28";
+const CACHE_TTL_MILLISECONDS = 5 * 60 * 1000;
+
+preloadSchemas();
+
+function createServer(): McpServer {
+	const server = new McpServer(
+		{ name: "lexcerta", version: "1.0.0" },
+		{
+			capabilities: { tools: {} },
+			cacheHints: {
+				"server/discover": {
+					cacheScope: "public",
+					ttlMs: CACHE_TTL_MILLISECONDS,
+				},
+				"tools/list": {
+					cacheScope: "public",
+					ttlMs: CACHE_TTL_MILLISECONDS,
+				},
+			},
+			supportedProtocolVersions: [PROTOCOL_VERSION],
+		},
+	);
+	registerParseCitationTool(server);
+	return server;
+}
+
+export const mcpHandler = createMcpHandler(createServer, {
+	legacy: "reject",
+	responseMode: "json",
+});
+
+export function protocolBoundaryRejection(request: Request): Response | undefined {
+	if (!request.headers.has("mcp-protocol-version")) {
+		return new Response(null, { status: 400 });
+	}
+	if (request.headers.has("mcp-session-id")) {
+		return new Response(null, { status: 400 });
+	}
+	return undefined;
+}

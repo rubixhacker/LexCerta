@@ -1,41 +1,36 @@
 {
-  "name": "lexcerta",
-  "version": "0.1.0",
-  "description": "MCP server for legal citation verification via CourtListener",
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "dev:mcp": "tsx src/index.ts",
-    "test": "vitest",
-    "lint": "biome check src/ app/",
-    "format": "biome format --write src/ app/"
-  },
-  "dependencies": {
-    "@modelcontextprotocol/sdk": "1.25.2",
-    "cockatiel": "^3.2.1",
-    "fuzzball": "^2.2.3",
-    "lru-cache": "^11.2.6",
-    "mcp-handler": "^1.0.7",
-    "next": "^15.5.12",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
-    "zod": "^3.25"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^1",
-    "@types/express": "^5",
-    "@types/node": "^22",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
-    "tsx": "^4",
-    "typescript": "^5.7",
-    "vitest": "^4"
-  },
-  "engines": {
-    "node": ">=20"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+	"name": "lexcerta",
+	"version": "0.1.0",
+	"type": "module",
+	"description": "MCP server for legal citation verification via CourtListener",
+	"scripts": {
+		"dev": "wrangler dev",
+		"deploy": "wrangler deploy",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"types": "wrangler types worker-configuration.d.ts",
+		"types:check": "wrangler types worker-configuration.d.ts --check",
+		"typecheck": "npm run types:check && tsc --noEmit && tsc --project test/tsconfig.json --noEmit",
+		"lint": "biome lint src/worker.ts src/mcp.ts src/auth src/verification test vitest.config.ts",
+		"format": "biome format --write package.json tsconfig.json test/tsconfig.json vitest.config.ts wrangler.jsonc src/worker.ts src/mcp.ts src/auth src/verification test",
+		"format:check": "biome format package.json tsconfig.json test/tsconfig.json vitest.config.ts wrangler.jsonc src/worker.ts src/mcp.ts src/auth src/verification test",
+		"check": "npm run format:check && npm run lint && npm run typecheck && npm run test"
+	},
+	"dependencies": {
+		"@modelcontextprotocol/server": "2.0.0",
+		"zod": "4.4.1"
+	},
+	"devDependencies": {
+		"@cloudflare/vitest-pool-workers": "0.20.3",
+		"@biomejs/biome": "^1",
+		"typescript": "6.0.3",
+		"vitest": "4.1.10",
+		"wrangler": "4.120.0"
+	},
+	"engines": {
+		"node": ">=22"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC"
 }

@@ -4,4 +4,6 @@ build/
 *.tgz
 .DS_Store
 .next
+.wrangler/
+*.tsbuildinfo
 next-env.d.ts
