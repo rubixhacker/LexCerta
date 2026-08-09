@@ -10,6 +10,7 @@ import {
 	type ApiKeyLifecycleRecord,
 } from "./key-lifecycle.js";
 import { AdminKeyNotFoundError, createAdminKeyStore } from "./key-store.js";
+import { AdminKeyRotationConflictError } from "./key-store.js";
 
 const ADMIN_ACTION_SCHEMA = z.enum(["rotate", "revoke", "limits"]);
 const ISSUE_REQUEST_SCHEMA = z.object({
@@ -116,8 +117,10 @@ async function rotate(publicId: string, env: Env, identity: AccessIdentity): Pro
 			audit: decision.auditEvent,
 		});
 		return credentialResponse(decision.newKey, decision.plaintextCredential.token);
-	} catch {
-		return internalErrorResponse();
+	} catch (error) {
+		return error instanceof AdminKeyRotationConflictError
+			? conflictResponse()
+			: internalErrorResponse();
 	}
 }
 

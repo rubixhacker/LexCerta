@@ -4,6 +4,11 @@
 	"main": "src/admin/worker.ts",
 	"compatibility_date": "2026-08-01",
 	"workers_dev": false,
+	// Provision ACCESS_AUDIENCE, ACCESS_ISSUER, ACCESS_JWKS_URL, ACCESS_OPERATOR_SUBJECT, and API_KEY_PEPPER for production outside this file.
+	// Missing Access bindings fail closed with 401; a missing pepper fails closed with 500 before D1 mutation.
+	"vars": {
+		"KEY_ENVIRONMENT": "production"
+	},
 	"routes": [{ "pattern": "admin.lexcerta.ai", "custom_domain": true }],
 	"d1_databases": [
 		{

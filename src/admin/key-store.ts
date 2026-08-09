@@ -33,7 +33,6 @@ export interface AdminKeyStore {
 	revoke(input: AdminKeyRevocation): Promise<void>;
 	changeLimits(input: AdminKeyLimitChange): Promise<void>;
 	find(publicId: ApiKeyPublicId): Promise<StoredAdminKey | null>;
-	purgeExpired(retainedAt: Date): Promise<void>;
 }
 
 export function createAdminKeyStore(database: D1Database): AdminKeyStore {
@@ -54,7 +53,7 @@ export function createAdminKeyStore(database: D1Database): AdminKeyStore {
 			const results = await database.batch([
 				database
 					.prepare(
-						"INSERT INTO api_key_records (public_id, customer_id, environment, hmac_sha256_hex, status, issued_at, expires_at, rotation_parent_id, rotation_overlap_until, minute_limit, day_limit, retention_expires_at) SELECT ?1, ?2, ?3, ?4, 'active', ?5, ?6, ?7, NULL, ?8, ?9, ?10 WHERE EXISTS (SELECT 1 FROM api_key_records WHERE public_id = ?7 AND customer_id = ?2 AND environment = ?3 AND status = 'active')",
+						"INSERT INTO api_key_records (public_id, customer_id, environment, hmac_sha256_hex, status, issued_at, expires_at, rotation_parent_id, rotation_overlap_until, minute_limit, day_limit, retention_expires_at) SELECT ?1, ?2, ?3, ?4, 'active', ?5, ?6, ?7, NULL, ?8, ?9, ?10 WHERE EXISTS (SELECT 1 FROM api_key_records WHERE public_id = ?7 AND customer_id = ?2 AND environment = ?3 AND status = 'active' AND rotation_overlap_until IS NULL)",
 					)
 					.bind(
 						child.publicId,
@@ -74,7 +73,8 @@ export function createAdminKeyStore(database: D1Database): AdminKeyStore {
 					publicId: child.publicId,
 				}),
 			]);
-			if ((results[0]?.meta.changes ?? 0) !== 1) throw new AdminKeyNotFoundError(parent.publicId);
+			if ((results[0]?.meta.changes ?? 0) !== 1)
+				throw new AdminKeyRotationConflictError(parent.publicId);
 		},
 		revoke: async (input) => {
 			const key = input.key;
@@ -117,18 +117,15 @@ export function createAdminKeyStore(database: D1Database): AdminKeyStore {
 				.first<StoredKeyRow>();
 			return row === null ? null : fromStoredRow(row);
 		},
-		purgeExpired: async (retainedAt) => {
-			const timestamp = retainedAt.toISOString();
-			await database.batch([
-				database
-					.prepare("DELETE FROM admin_audit_events WHERE retention_expires_at <= ?1")
-					.bind(timestamp),
-				database
-					.prepare("DELETE FROM api_key_records WHERE retention_expires_at <= ?1")
-					.bind(timestamp),
-			]);
-		},
 	};
+}
+
+export class AdminKeyRotationConflictError extends Error {
+	readonly name = "AdminKeyRotationConflictError";
+
+	constructor(readonly publicId: ApiKeyPublicId) {
+		super(`api key ${publicId} has already been rotated`);
+	}
 }
 
 export class AdminKeyNotFoundError extends Error {
@@ -172,7 +169,7 @@ function parentUpdateStatement(
 	const expiresAt = overlap ?? parent.expiresAt;
 	return database
 		.prepare(
-			"UPDATE api_key_records SET expires_at = ?1, rotation_overlap_until = ?2, retention_expires_at = ?3 WHERE public_id = ?4 AND customer_id = ?5 AND environment = ?6 AND status = 'active'",
+			"UPDATE api_key_records SET expires_at = ?1, rotation_overlap_until = ?2, retention_expires_at = ?3 WHERE public_id = ?4 AND customer_id = ?5 AND environment = ?6 AND status = 'active' AND rotation_overlap_until IS NULL",
 		)
 		.bind(
 			expiresAt,

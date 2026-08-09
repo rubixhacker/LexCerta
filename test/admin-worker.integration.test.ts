@@ -21,7 +21,6 @@ const PRIVATE_JWK: JsonWebKey = {
 const PUBLIC_JWK = {
 	alg: "RS256",
 	e: "AQAB",
-	ext: true,
 	kid: "access-test-key",
 	kty: "RSA",
 	n: "uREgDtm8lyX0HhR5NT-pLnwmBIxAqLr0jkEVAEc52UKVj4Ftrrk2umpbG1Et73Wnc4PBXpgQbXhwQVJYmucgh9YunefFKswlinOdxwSNFFjgyaOTBFVXFGkrWsKwf1aONvJn8iARqmL5Bo6D_afOftx71SCxbZYWchC8lNLXuNeftOYKyO2ka6gydMMMOTaViuZGk8dDOAA0mJbKwtdNseIHKLfhngsEZJ0OA4FTVUIyB2bH5D_DmuzAmZKwDovi-ErepLa4JHhihr_eeckFpzWR3sZSkipxaF26DMoHiBaz4zPLTdlMcebG5LVSyEMZFcCzbNKRT0GuyR7z-GQLGw",
@@ -124,6 +123,33 @@ describe("Access-protected admin Worker", () => {
 			}>();
 		expect(replacement).toMatchObject({ day_limit: 3_000, minute_limit: 90, status: "revoked" });
 		expect(replacement?.revoked_at).not.toBeNull();
+	});
+
+	it("permits one concurrent rotation and rejects the CAS loser without a child or audit", async () => {
+		// Given: one active operator-issued key and two independently authenticated rotation requests.
+		const issued = await issueKey("customer-rotation-race");
+		const [firstRequest, secondRequest] = await Promise.all([
+			operatorRequest(`/v1/keys/${issued.key.publicId}/rotate`),
+			operatorRequest(`/v1/keys/${issued.key.publicId}/rotate`),
+		]);
+
+		// When: both rotations reach the real workerd D1 surface concurrently.
+		const responses = await Promise.all([SELF.fetch(firstRequest), SELF.fetch(secondRequest)]);
+
+		// Then: compare-and-swap creates exactly one replacement and one sanitized rotation audit.
+		expect(responses.map((response) => response.status).sort()).toEqual([201, 409]);
+		const children = await env.DB.prepare(
+			"SELECT COUNT(*) AS count FROM api_key_records WHERE rotation_parent_id = ?1",
+		)
+			.bind(issued.key.publicId)
+			.first<{ readonly count: number }>();
+		const audits = await env.DB.prepare(
+			"SELECT COUNT(*) AS count FROM admin_audit_events WHERE action = 'key_rotated' AND customer_id = ?1",
+		)
+			.bind("customer-rotation-race")
+			.first<{ readonly count: number }>();
+		expect(children?.count).toBe(1);
+		expect(audits?.count).toBe(1);
 	});
 
 	it.each([
