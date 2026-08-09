@@ -13,14 +13,15 @@ import type {
 	CitationVerificationObservation,
 } from "./verify-citation.js";
 
-const WAITER_RECHECK_DELAY_MS = 50;
+const WAITER_INITIAL_RECHECK_DELAY_MS = 50;
+const WAITER_MAX_RECHECK_DELAY_MS = 1_000;
 
 export type CachedCitationGatewayOptions = {
 	readonly now: () => Date;
 	readonly ownerToken: () => string;
 	readonly store: CitationObservationStore;
 	readonly upstream: CitationVerificationGateway;
-	readonly waitForFill?: () => Promise<void>;
+	readonly waitForFill?: (delayMilliseconds: number) => Promise<void>;
 };
 
 export function createCachedCitationGateway(
@@ -43,11 +44,29 @@ export function createCachedCitationGateway(
 					now,
 				});
 				if (lease.kind === "held") {
-					await (options.waitForFill ?? waitForFill)();
-					const rechecked = await options.store.read({
-						normalizedCitation: query.normalizedCitation,
-					});
-					return waiterObservation(rechecked, options.now(), decision);
+					const deadline = new Date(lease.expiresAt).getTime();
+					let delayMilliseconds = WAITER_INITIAL_RECHECK_DELAY_MS;
+					while (Number.isFinite(deadline)) {
+						const beforeWait = options.now().getTime();
+						const remainingMilliseconds = deadline - beforeWait;
+						if (remainingMilliseconds <= 0) break;
+						await (options.waitForFill ?? waitForFill)(
+							Math.min(delayMilliseconds, remainingMilliseconds),
+						);
+						const rechecked = await options.store.read({
+							normalizedCitation: query.normalizedCitation,
+						});
+						const recheckedDecision = readCitationSourceCache({
+							state: rechecked ?? { kind: "empty" },
+							now: options.now(),
+						});
+						const observation = waiterObservation(rechecked, options.now(), recheckedDecision);
+						if (observation.kind !== "indeterminate") return observation;
+						if (observation.reason === "source_changed") return observation;
+						if (options.now().getTime() <= beforeWait) break;
+						delayMilliseconds = Math.min(delayMilliseconds * 2, WAITER_MAX_RECHECK_DELAY_MS);
+					}
+					return waiterObservation(null, options.now(), decision);
 				}
 				const afterLease = await options.store.read({
 					normalizedCitation: query.normalizedCitation,
@@ -229,9 +248,9 @@ function unavailable(): CitationVerificationObservation {
 	return { kind: "indeterminate", reason: "upstream_unavailable" };
 }
 
-function waitForFill(): Promise<void> {
+function waitForFill(delayMilliseconds: number): Promise<void> {
 	return new Promise((resolve) => {
-		setTimeout(resolve, WAITER_RECHECK_DELAY_MS);
+		setTimeout(resolve, delayMilliseconds);
 	});
 }
 
