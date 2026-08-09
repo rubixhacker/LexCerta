@@ -21,10 +21,13 @@ async function cancel(
 	}
 }
 
-export async function boundedJsonBody(response: Response): Promise<unknown | undefined> {
+export async function boundedJsonBody(
+	response: Response,
+	maxBytes = MAX_RESPONSE_BODY_BYTES,
+): Promise<unknown | undefined> {
 	const declared = declaredLength(response);
 	const stream = response.body;
-	if (declared !== undefined && declared > MAX_RESPONSE_BODY_BYTES) {
+	if (declared !== undefined && declared > maxBytes) {
 		if (stream !== null) await cancel(stream);
 		return undefined;
 	}
@@ -38,7 +41,7 @@ export async function boundedJsonBody(response: Response): Promise<unknown | und
 			const chunk = await reader.read();
 			if (chunk.done) break;
 			length += chunk.value.byteLength;
-			if (length > MAX_RESPONSE_BODY_BYTES) {
+			if (length > maxBytes) {
 				await cancel(reader);
 				return undefined;
 			}

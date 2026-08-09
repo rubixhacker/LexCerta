@@ -171,12 +171,12 @@ describe("Worker request body boundary", () => {
 		// When: the Worker buffers and rebuilds the complete Unicode payload.
 		const response = await SELF.fetch(request);
 
-		// Then: the SDK receives it and retains the quote tool's operational placeholder behavior.
+		// Then: the SDK receives it and reaches the functional quote-verification failure boundary.
 		expect(response.status).toBe(200);
 		expect(await response.json()).toMatchObject({
 			result: {
 				isError: true,
-				structuredContent: { outcome: "indeterminate", reason: "verification_not_available" },
+				structuredContent: { outcome: "indeterminate", reason: "upstream_unavailable" },
 			},
 		});
 		expect(upstreamCalls).toBe(0);

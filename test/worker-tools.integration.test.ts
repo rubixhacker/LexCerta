@@ -201,7 +201,7 @@ describe("Worker tool routing", () => {
 		});
 	});
 
-	it("returns the contract-v1 indeterminate result for quote verification", async () => {
+	it("returns upstream unavailability when functional quote verification has no source response", async () => {
 		// Given: a complete modern request for quote verification.
 		const request = modernMcpRequest("tools/call", {
 			arguments: {
@@ -211,10 +211,10 @@ describe("Worker tool routing", () => {
 			name: "verify_quote",
 		});
 
-		// When: it reaches the current pre-evidence implementation.
+		// When: it reaches the functional quote-verification path without a fixture source.
 		const response = await SELF.fetch(request);
 
-		// Then: it is an explicit operational indeterminate result without echoed quote text.
+		// Then: it is a sanitized operational result without echoed quote text.
 		expect(response.status).toBe(200);
 		expect(await response.json()).toMatchObject({
 			id: 1,
@@ -223,7 +223,7 @@ describe("Worker tool routing", () => {
 				structuredContent: {
 					contractVersion: "1",
 					outcome: "indeterminate",
-					reason: "verification_not_available",
+					reason: "upstream_unavailable",
 				},
 			},
 		});

@@ -17,6 +17,7 @@
 			"migrations_dir": "migrations"
 		}
 	],
+	"r2_buckets": [{ "binding": "OPINIONS", "bucket_name": "lexcerta-opinions-production" }],
 	"durable_objects": {
 		"bindings": [
 			{ "name": "API_KEY_LIMITER", "class_name": "ApiKeyLimiter" },
@@ -47,6 +48,7 @@
 					"migrations_dir": "migrations"
 				}
 			],
+			"r2_buckets": [{ "binding": "OPINIONS", "bucket_name": "lexcerta-opinions-test" }],
 			"durable_objects": {
 				"bindings": [
 					{ "name": "API_KEY_LIMITER", "class_name": "ApiKeyLimiter" },
@@ -70,6 +72,7 @@
 					"migrations_dir": "migrations"
 				}
 			],
+			"r2_buckets": [{ "binding": "OPINIONS", "bucket_name": "lexcerta-opinions-local" }],
 			"durable_objects": {
 				"bindings": [
 					{ "name": "API_KEY_LIMITER", "class_name": "ApiKeyLimiter" },

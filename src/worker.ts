@@ -3,14 +3,11 @@ import {
 	authenticateRequest,
 	createAuthenticationFailureResponse,
 } from "./auth/api-key.js";
-import { createD1CitationObservationStore } from "./cache/d1-citation-observation-store.js";
-import { createCourtListenerApi } from "./courtlistener/api.js";
 import type { CourtListenerCoordinatorRpc } from "./courtlistener/coordinator.js";
-import { createCourtListenerCitationGateway } from "./courtlistener/gateway.js";
 import { createLexCertaMcpHandler, protocolBoundaryRejection } from "./mcp.js";
 import { boundedMcpRequest } from "./request-body.js";
-import { createCachedCitationGateway } from "./verification/cached-citation-gateway.js";
-import type { CitationVerificationGateway } from "./verification/verify-citation.js";
+import { createWorkerCitationGateway } from "./verification/worker-citation-gateway.js";
+import { createWorkerQuoteGateway } from "./verification/worker-quote-gateway.js";
 
 export { ApiKeyLimiter } from "./admission/api-key-limiter.js";
 export { CourtListenerCoordinator } from "./courtlistener/coordinator.js";
@@ -40,6 +37,7 @@ type CourtListenerEnvironment = {
 	readonly COURTLISTENER_API_TOKEN?: string;
 	readonly COURTLISTENER_COORDINATOR?: CourtListenerCoordinatorNamespace;
 	readonly COURTLISTENER_CREDENTIAL_ID?: string;
+	readonly OPINIONS?: R2Bucket;
 };
 
 export type Env = {
@@ -71,7 +69,22 @@ const worker = {
 					if (rejection !== undefined) return rejection;
 					const bounded = await boundedMcpRequest(request);
 					if (bounded === undefined) return createPayloadTooLargeResponse();
-					return createLexCertaMcpHandler(citationGateway(env)).fetch(bounded);
+					const citation = createWorkerCitationGateway({
+						coordinator: env.COURTLISTENER_COORDINATOR,
+						credentialId: env.COURTLISTENER_CREDENTIAL_ID,
+						database: env.DB,
+						token: env.COURTLISTENER_API_TOKEN,
+					});
+					return createLexCertaMcpHandler({
+						citation,
+						quote: createWorkerQuoteGateway({
+							coordinator: env.COURTLISTENER_COORDINATOR,
+							credentialId: env.COURTLISTENER_CREDENTIAL_ID,
+							database: env.DB,
+							opinions: env.OPINIONS,
+							token: env.COURTLISTENER_API_TOKEN,
+						}),
+					}).fetch(bounded);
 				}
 				case "unauthorized":
 				case "unavailable":
@@ -87,47 +100,6 @@ const worker = {
 } satisfies ExportedHandler<Env>;
 
 export default worker;
-
-function unavailableCitationGateway(): CitationVerificationGateway {
-	return {
-		lookup: async () => ({ kind: "indeterminate", reason: "upstream_unavailable" }),
-	};
-}
-
-function citationGateway(env: Env): CitationVerificationGateway {
-	return createCachedCitationGateway({
-		now: () => new Date(),
-		ownerToken: () => crypto.randomUUID(),
-		store: createD1CitationObservationStore(env.DB),
-		upstream: upstreamCitationGateway(env),
-	});
-}
-
-function upstreamCitationGateway(env: Env): CitationVerificationGateway {
-	const token = env.COURTLISTENER_API_TOKEN;
-	const credentialId = env.COURTLISTENER_CREDENTIAL_ID;
-	const coordinator = env.COURTLISTENER_COORDINATOR;
-	if (
-		token === undefined ||
-		token.trim().length === 0 ||
-		credentialId === undefined ||
-		credentialId.length === 0 ||
-		coordinator === undefined
-	) {
-		return unavailableCitationGateway();
-	}
-	try {
-		return createCourtListenerCitationGateway({
-			api: createCourtListenerApi({ token, transport: (request) => fetch(request) }),
-			coordinator: coordinator.getByName(credentialId),
-			now: () => new Date(),
-			token: () => crypto.randomUUID(),
-		});
-	} catch {
-		// no-excuse-ok: catch
-		return unavailableCitationGateway();
-	}
-}
 
 type AdmissionDecision = AdmissionResult | { readonly kind: "unavailable" };
 

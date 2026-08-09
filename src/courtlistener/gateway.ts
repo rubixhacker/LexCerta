@@ -1,7 +1,8 @@
 import type * as Verification from "../verification/verify-citation.js";
-import type { CitationLookupOutcome, CourtListenerApi, CourtListenerUsage } from "./api.js";
-import type { BudgetDecision, CourtListenerOutcome, QuotaWindow } from "./budget.js";
+import type { CitationLookupOutcome, CourtListenerApi } from "./api.js";
+import type { BudgetDecision, CourtListenerOutcome } from "./budget.js";
 import type { CourtListenerCoordinatorRpc } from "./coordinator.js";
+import { synchronizeCourtListenerQuota } from "./quota-sync.js";
 
 const FALLBACK_RETRY_SECONDS = 15 * 60;
 const OUTCOME_FOR_FAILURE = {
@@ -9,10 +10,6 @@ const OUTCOME_FOR_FAILURE = {
 	timeout: { kind: "timeout" },
 	transport: { kind: "transport_error" },
 } satisfies Record<"server" | "timeout" | "transport", CourtListenerOutcome>;
-
-type SyncResult =
-	| { readonly kind: "failed" | "ready" }
-	| { readonly kind: "rate_limited"; readonly retryAt: Date };
 
 export type CourtListenerCitationGatewayOptions = {
 	readonly api: CourtListenerApi;
@@ -70,7 +67,7 @@ async function synchronizeAndAdmit(
 	query: Verification.CitationLookup,
 	options: CourtListenerCitationGatewayOptions,
 ): Promise<Verification.CitationVerificationObservation> {
-	const sync = await synchronize(options);
+	const sync = await synchronizeCourtListenerQuota(options);
 	if (sync.kind === "rate_limited") return delayed("rate_limited", options.now(), sync.retryAt);
 	if (sync.kind === "failed") return indeterminate("quota_unknown");
 	const admission = await value(() =>
@@ -82,33 +79,6 @@ async function synchronizeAndAdmit(
 	);
 	if (admission === null) return indeterminate("quota_unknown");
 	return admit(admission, query, options, false);
-}
-
-async function synchronize(options: CourtListenerCitationGatewayOptions): Promise<SyncResult> {
-	const syncToken = options.token();
-	const started = await value(() =>
-		options.coordinator.beginQuotaSync({ now: options.now(), syncToken }),
-	);
-	if (started?.kind !== "started") return { kind: "failed" };
-	const usage = await value(() => options.api.getUsage());
-	if (usage?.kind === "usage") {
-		const windows = quotaWindows(usage.currentUsage);
-		if (windows !== null) {
-			const completed = await value(() =>
-				options.coordinator.recordQuotaSync({ now: options.now(), syncToken, windows }),
-			);
-			return completed?.kind === "recorded" ? { kind: "ready" } : { kind: "failed" };
-		}
-	} else if (usage?.kind === "rate_limited") {
-		const now = options.now();
-		const retryAt = retryDeadline(now, usage.retryAfterSeconds);
-		const recorded = await value(() =>
-			options.coordinator.recordQuotaSyncRateLimited({ now, retryAt, syncToken }),
-		);
-		return recorded?.kind === "recorded" ? { kind: "rate_limited", retryAt } : { kind: "failed" };
-	}
-	await value(() => options.coordinator.failQuotaSync({ now: options.now(), syncToken }));
-	return { kind: "failed" };
 }
 
 async function lookupReserved(
@@ -159,7 +129,7 @@ async function lookupReserved(
 				options,
 			);
 			if (recorded.kind === "indeterminate" && recorded.reason === "quota_unknown") return recorded;
-			const sync = await synchronize(options);
+			const sync = await synchronizeCourtListenerQuota(options);
 			return sync.kind === "rate_limited"
 				? delayed("rate_limited", now, sync.retryAt)
 				: observation;
@@ -191,29 +161,6 @@ async function record(
 		}),
 	);
 	return recorded?.kind === "recorded" ? observation : indeterminate("quota_unknown");
-}
-
-function quotaWindows(usage: readonly CourtListenerUsage[]): readonly QuotaWindow[] | null {
-	const windows = usage.flatMap((row) => {
-		if (row.scope !== "user" && row.scope !== "citations" && row.scope !== "api_usage") return [];
-		const resetAt = row.resetAt === null ? null : new Date(row.resetAt);
-		if (resetAt !== null && Number.isNaN(resetAt.getTime())) return [];
-		return [
-			{
-				limit: row.limit,
-				rate: row.rate,
-				remaining: row.blocked ? 0 : row.remaining,
-				resetAt,
-				scope: row.scope,
-				windowSeconds: row.windowSeconds,
-			},
-		];
-	});
-	return windows.some((window) => window.scope === "user") &&
-		windows.some((window) => window.scope === "citations") &&
-		windows.some((window) => window.scope === "api_usage")
-		? windows
-		: null;
 }
 
 function trustedCluster(source: Extract<CitationLookupOutcome, { readonly kind: "matched" }>) {

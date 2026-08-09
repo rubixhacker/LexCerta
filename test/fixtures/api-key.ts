@@ -36,7 +36,7 @@ export async function createLocalAuthFixture(
 		environment: "test" satisfies KeyEnvironment,
 		hmac_sha256_hex: await hashFixtureToken(LOCAL_PEPPER, token),
 		status: state === "revoked" ? "revoked" : "active",
-		expires_at: state === "expired" ? "2026-08-07T12:00:00.000Z" : "2026-08-09T12:00:00.000Z",
+		expires_at: state === "expired" ? "2026-08-07T12:00:00.000Z" : "2099-01-01T00:00:00.000Z",
 		revoked_at: state === "revoked" ? "2026-08-07T12:00:00.000Z" : null,
 		minute_limit: limits.minute,
 		day_limit: limits.day,
