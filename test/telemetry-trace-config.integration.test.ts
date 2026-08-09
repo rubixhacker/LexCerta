@@ -28,7 +28,11 @@ const traceConfigSchema = z.object({
 	env: z.object({ local: traceEnvironmentSchema, test: traceEnvironmentSchema }),
 });
 const packageSchema = z.object({
-	scripts: z.object({ deploy: z.string(), "deploy:telemetry": z.string() }),
+	scripts: z.object({
+		deploy: z.string(),
+		"deploy:telemetry": z.string(),
+		"test:deployment": z.string(),
+	}),
 });
 
 const automaticTracesDisabled = { enabled: false, persist: false };
@@ -41,9 +45,8 @@ describe("telemetry trace isolation configuration", () => {
 		expect(packageConfig.scripts["deploy:telemetry"]).toBe(
 			'wrangler deploy --config wrangler.telemetry.jsonc --env=""',
 		);
-		expect(packageConfig.scripts.deploy).toBe(
-			'sh -c \'npm run deploy:telemetry -- "$@" && wrangler deploy --env="" "$@"\' --',
-		);
+		expect(packageConfig.scripts.deploy).toBe("node scripts/deploy.mjs");
+		expect(packageConfig.scripts["test:deployment"]).toBe("node --test scripts/deploy.test.mjs");
 	});
 
 	it("disables persisted automatic public traces in every main Worker environment", () => {

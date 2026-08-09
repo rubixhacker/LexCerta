@@ -255,7 +255,9 @@ function fromStoredRow(row: StoredKeyRow): StoredAdminKey {
 }
 
 function retentionAt(value: string): string {
-	return new Date(Date.parse(value) + 365 * 24 * 60 * 60 * 1_000).toISOString();
+	const retention = new Date(value);
+	retention.setUTCFullYear(retention.getUTCFullYear() + 1);
+	return retention.toISOString();
 }
 
 function sanitizeActor(value: string): string {

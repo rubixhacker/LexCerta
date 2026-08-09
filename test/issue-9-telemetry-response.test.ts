@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
 	MAX_TELEMETRY_RESPONSE_BYTES,
 	summarizeTelemetryPayload,
@@ -227,5 +227,37 @@ describe("telemetry response mapping", () => {
 
 		expect(summary).toMatchObject({ outcome: "verified", responseBytes: 0 });
 		expect(performance.now() - started).toBeLessThan(2_000);
+	});
+
+	it("enforces one total deadline across a slow-drip response", async () => {
+		vi.useFakeTimers();
+		try {
+			const encoder = new TextEncoder();
+			const response = new Response(
+				new ReadableStream<Uint8Array>({
+					pull(controller) {
+						return new Promise<void>((resolve) => {
+							setTimeout(() => {
+								controller.enqueue(encoder.encode("{}"));
+								resolve();
+							}, 400);
+						});
+					},
+				}),
+				{ headers: { "content-type": "application/json" } },
+			);
+			let settled = false;
+			const summaryPromise = summarizeTelemetryResponse(response, "verify_quote");
+			void summaryPromise.then(() => {
+				settled = true;
+			});
+
+			await vi.advanceTimersByTimeAsync(1_001);
+			if (!settled) await vi.advanceTimersByTimeAsync(5_000);
+			expect(settled).toBe(true);
+			expect((await summaryPromise).responseBytes).toBe(4);
+		} finally {
+			vi.useRealTimers();
+		}
 	});
 });

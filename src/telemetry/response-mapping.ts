@@ -57,13 +57,15 @@ function abandon(reader: ReadableStreamDefaultReader<Uint8Array>): void {
 	void reader.cancel().catch(() => undefined);
 }
 
-async function readWithDeadline(reader: ReadableStreamDefaultReader<Uint8Array>) {
+async function readWithDeadline(reader: ReadableStreamDefaultReader<Uint8Array>, deadline: number) {
+	const remaining = deadline - performance.now();
+	if (remaining <= 0) return undefined;
 	let timer: ReturnType<typeof setTimeout> | undefined;
-	const deadline = new Promise<undefined>((resolve) => {
-		timer = setTimeout(() => resolve(undefined), RESPONSE_READ_DEADLINE_MS);
+	const expired = new Promise<undefined>((resolve) => {
+		timer = setTimeout(() => resolve(undefined), remaining);
 	});
 	try {
-		return await Promise.race([reader.read(), deadline]);
+		return await Promise.race([reader.read(), expired]);
 	} finally {
 		if (timer !== undefined) clearTimeout(timer);
 	}
@@ -81,11 +83,12 @@ async function boundedResponseBody(response: Response, decodeJson: boolean): Pro
 
 	const reader = stream.getReader();
 	const decoder = decodeJson ? new TextDecoder() : undefined;
+	const deadline = performance.now() + RESPONSE_READ_DEADLINE_MS;
 	let bytes = 0;
 	let text = "";
 	try {
 		while (true) {
-			const chunk = await readWithDeadline(reader);
+			const chunk = await readWithDeadline(reader, deadline);
 			if (chunk === undefined) {
 				abandon(reader);
 				return { bytes, text: "" };
