@@ -1,9 +1,15 @@
 import { z } from "zod";
+import {
+	type CourtListenerAttemptFailure,
+	type CourtListenerAttemptTiming,
+	type CourtListenerAttemptTransport,
+	sendCourtListenerRequest,
+} from "./attempt-timing.js";
 
 const MAX_RETRY_AFTER_SECONDS = 604_800;
 
-export type CaseLawTransport = (request: Request) => Promise<Response>;
-export type CaseLawTransportFailure = "timeout" | "transport";
+export type CaseLawTransport = CourtListenerAttemptTransport;
+export type CaseLawTransportFailure = CourtListenerAttemptFailure;
 
 export function retryAfterSeconds(value: string | null, now: () => Date): number | undefined {
 	if (value === null) return undefined;
@@ -29,10 +35,7 @@ export function signalFor(timeoutMs: number, signal: AbortSignal | undefined): A
 export async function send(
 	transport: CaseLawTransport,
 	request: Request,
+	timing?: CourtListenerAttemptTiming,
 ): Promise<Response | CaseLawTransportFailure> {
-	try {
-		return await transport(request);
-	} catch {
-		return request.signal.aborted ? "timeout" : "transport";
-	}
+	return sendCourtListenerRequest(transport, request, timing);
 }

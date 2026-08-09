@@ -17,6 +17,9 @@ export function toTelemetrySpanAttributes(event: TelemetryEvent): TelemetrySpanA
 		"lexcerta.response_bytes": event.responseBytes,
 		"lexcerta.tool": event.tool,
 		"lexcerta.trace_id": event.correlation.traceId,
+		...(event.upstreamLatencyMs === null
+			? {}
+			: { "lexcerta.upstream_latency_ms": event.upstreamLatencyMs }),
 		"lexcerta.upstream_status": event.upstreamStatus,
 	};
 }

@@ -17,6 +17,7 @@ const approvedEvent = {
 	outcome: "verified",
 	responseBytes: 384,
 	tool: "verify_quote",
+	upstreamLatencyMs: 27,
 	upstreamStatus: "success",
 };
 const prohibitedFields = [
@@ -43,10 +44,18 @@ describe("telemetry contract", () => {
 
 		expect(metric).toEqual({
 			blobs: ["verify_quote", "verified", "hit", "fresh", "closed", "success", "none"],
-			doubles: [42, 384, 1],
+			doubles: [42, 384, 1, 27],
 		});
 		expect(JSON.stringify(metric)).not.toContain("key-01");
 		expect(JSON.stringify(metric)).not.toContain(correlation.requestId);
 		expect(JSON.stringify(metric)).not.toContain(correlation.traceId);
+	});
+
+	it("omits the optional upstream-attempt measurement when no request was sent", () => {
+		const metric = toAnalyticsMetric(
+			createTelemetryEvent({ ...approvedEvent, upstreamLatencyMs: null }),
+		);
+
+		expect(metric.doubles).toEqual([42, 384, 1]);
 	});
 });

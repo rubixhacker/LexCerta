@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { CourtListenerAttemptTiming } from "./attempt-timing.js";
 import { type CaseLawTransport, retryAfterSeconds, send, signalFor } from "./case-law-request.js";
 import { MAX_RESPONSE_BODY_BYTES, boundedJsonBody } from "./response-body.js";
 
@@ -78,6 +79,7 @@ export type CourtListenerCaseLawApi = {
 };
 
 export type CourtListenerCaseLawApiOptions = {
+	readonly attemptTiming?: CourtListenerAttemptTiming;
 	readonly maxResponseBytes?: number;
 	readonly maxSourceCharacters?: number;
 	readonly maxOpinionsPerCluster?: number;
@@ -205,6 +207,7 @@ export function createCourtListenerCaseLawApi(
 				method: "GET",
 				signal: signalFor(timeoutMs, signal),
 			}),
+			options.attemptTiming,
 		);
 		if (typeof response === "string") return { kind: "unavailable", failure: response };
 		if (response.status === 404) return { kind: "missing" };

@@ -3,7 +3,10 @@ import { createCourtListenerApi } from "../courtlistener/api.js";
 import { createCourtListenerCaseLawApi } from "../courtlistener/case-law-api.js";
 import { createCourtListenerCaseLawGateway } from "../courtlistener/case-law-gateway.js";
 import type { CourtListenerCoordinatorRpc } from "../courtlistener/coordinator.js";
-import type { ExecutionFactObserver } from "../telemetry/execution-facts.js";
+import {
+	type ExecutionFactObserver,
+	createCourtListenerAttemptTiming,
+} from "../telemetry/execution-facts.js";
 import type { QuoteVerificationGateway } from "./verify-quote.js";
 
 type CoordinatorNamespace = {
@@ -30,10 +33,12 @@ export function createWorkerQuoteGateway(input: WorkerQuoteGatewayInput): QuoteV
 	) {
 		return unavailableQuoteGateway(input.executionFacts);
 	}
+	const attemptTiming = createCourtListenerAttemptTiming(input.executionFacts);
 	try {
 		return createCourtListenerCaseLawGateway({
 			...(input.executionFacts === undefined ? {} : { executionFacts: input.executionFacts }),
 			api: createCourtListenerCaseLawApi({
+				...(attemptTiming === undefined ? {} : { attemptTiming }),
 				token: input.token,
 				transport: (request) => fetch(request),
 			}),
@@ -44,6 +49,7 @@ export function createWorkerQuoteGateway(input: WorkerQuoteGatewayInput): QuoteV
 				database: input.database,
 			}),
 			quotaApi: createCourtListenerApi({
+				...(attemptTiming === undefined ? {} : { attemptTiming }),
 				token: input.token,
 				transport: (request) => fetch(request),
 			}),

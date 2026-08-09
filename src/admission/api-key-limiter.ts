@@ -119,7 +119,7 @@ export class ApiKeyLimiter extends DurableObject {
 		if (newest === null) return;
 		const expiresAt = newest + BUCKET_RETENTION_MILLISECONDS;
 		const alarm = await this.ctx.storage.getAlarm();
-		if (alarm === null || alarm < expiresAt) await this.ctx.storage.setAlarm(expiresAt);
+		if (alarm === null || expiresAt < alarm) await this.ctx.storage.setAlarm(expiresAt);
 	}
 
 	private async readCanonicalLimits(publicId: string): Promise<CanonicalLimitConfig> {

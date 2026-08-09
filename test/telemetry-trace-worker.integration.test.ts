@@ -27,6 +27,7 @@ describe("telemetry trace Worker", () => {
 				"lexcerta.key_identifier": "key-01",
 				"lexcerta.outcome": "verified",
 				"lexcerta.tool": "verify_quote",
+				"lexcerta.upstream_latency_ms": 27,
 			}),
 		);
 		expect(JSON.stringify(log.mock.calls)).not.toContain("LEGAL_CONTENT_CANARY");
@@ -66,6 +67,7 @@ function validEvent(): Readonly<Record<string, unknown>> {
 		outcome: "verified",
 		responseBytes: 384,
 		tool: "verify_quote",
+		upstreamLatencyMs: 27,
 		upstreamStatus: "success",
 	};
 }

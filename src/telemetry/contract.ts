@@ -67,6 +67,7 @@ const telemetryEventSchema = z
 		outcome: z.enum(TELEMETRY_OUTCOMES),
 		responseBytes: nonnegativeSafeInteger,
 		tool: z.enum(TELEMETRY_TOOLS),
+		upstreamLatencyMs: nonnegativeSafeInteger.nullable(),
 		upstreamStatus: z.enum(UPSTREAM_STATUSES),
 	})
 	.strict();
@@ -94,7 +95,9 @@ export type AnalyticsMetric = {
 		TelemetryUpstreamStatus,
 		TelemetryErrorCategory,
 	];
-	readonly doubles: readonly [latencyMs: number, responseBytes: number, eventCount: 1];
+	readonly doubles:
+		| readonly [latencyMs: number, responseBytes: number, eventCount: 1]
+		| readonly [latencyMs: number, responseBytes: number, eventCount: 1, upstreamLatencyMs: number];
 };
 
 export interface TelemetryEventSink {
@@ -114,16 +117,23 @@ export function createTelemetryEvent(input: unknown): TelemetryEvent {
 }
 
 export function toAnalyticsMetric(event: TelemetryEvent): AnalyticsMetric {
+	const blobs = [
+		event.tool,
+		event.outcome,
+		event.cacheStatus,
+		event.freshness,
+		event.circuitStatus,
+		event.upstreamStatus,
+		event.errorCategory,
+	] as const satisfies AnalyticsMetric["blobs"];
+	if (event.upstreamLatencyMs === null) {
+		return {
+			blobs,
+			doubles: [event.latencyMs, event.responseBytes, 1],
+		};
+	}
 	return {
-		blobs: [
-			event.tool,
-			event.outcome,
-			event.cacheStatus,
-			event.freshness,
-			event.circuitStatus,
-			event.upstreamStatus,
-			event.errorCategory,
-		],
-		doubles: [event.latencyMs, event.responseBytes, 1],
+		blobs,
+		doubles: [event.latencyMs, event.responseBytes, 1, event.upstreamLatencyMs],
 	};
 }

@@ -1,3 +1,4 @@
+import type { CourtListenerAttemptTiming } from "../courtlistener/attempt-timing.js";
 import type { CourtListenerOutcome } from "../courtlistener/budget.js";
 import type { CitationSourceCacheDecision } from "../verification/citation-source-cache.js";
 import type { OpinionSourceCacheDecision } from "../verification/opinion-source-cache.js";
@@ -13,6 +14,7 @@ export type ExecutionFacts = {
 	readonly circuitStatus: TelemetryCircuitStatus;
 	readonly freshness: TelemetryFreshnessStatus;
 	readonly upstreamStatus: TelemetryUpstreamStatus;
+	readonly upstreamLatencyMs: number | undefined;
 };
 
 export type ExecutionFact =
@@ -38,6 +40,10 @@ export type ExecutionFact =
 	| {
 			readonly kind: "upstream";
 			readonly status: Exclude<TelemetryUpstreamStatus, "not_called">;
+	  }
+	| {
+			readonly kind: "upstream_latency";
+			readonly milliseconds: number;
 	  };
 
 export interface ExecutionFactObserver {
@@ -53,6 +59,7 @@ const INITIAL_EXECUTION_FACTS = {
 	circuitStatus: "not_called",
 	freshness: "not_applicable",
 	upstreamStatus: "not_called",
+	upstreamLatencyMs: undefined,
 } as const satisfies ExecutionFacts;
 
 export function createExecutionFactCollector(): ExecutionFactCollector {
@@ -69,12 +76,50 @@ export function createExecutionFactCollector(): ExecutionFactCollector {
 				case "upstream":
 					facts = { ...facts, upstreamStatus: fact.status };
 					return;
+				case "upstream_latency":
+					facts = recordUpstreamLatency(facts, fact.milliseconds);
+					return;
 				default:
 					return assertNever(fact);
 			}
 		},
-		snapshot: () => facts,
+		snapshot: () => finalizedFacts(facts),
 	};
+}
+
+function recordUpstreamLatency(facts: ExecutionFacts, milliseconds: number): ExecutionFacts {
+	if (!Number.isFinite(milliseconds) || milliseconds < 0) return facts;
+	return {
+		...facts,
+		upstreamLatencyMs: (facts.upstreamLatencyMs ?? 0) + milliseconds,
+	};
+}
+
+function finalizedFacts(facts: ExecutionFacts): ExecutionFacts {
+	return facts.upstreamLatencyMs === undefined
+		? facts
+		: { ...facts, upstreamLatencyMs: Math.round(facts.upstreamLatencyMs) };
+}
+
+export function createCourtListenerAttemptTiming(
+	observer: ExecutionFactObserver,
+	monotonicNow?: () => number,
+): CourtListenerAttemptTiming;
+export function createCourtListenerAttemptTiming(
+	observer: ExecutionFactObserver | undefined,
+	monotonicNow?: () => number,
+): CourtListenerAttemptTiming | undefined;
+export function createCourtListenerAttemptTiming(
+	observer: ExecutionFactObserver | undefined,
+	monotonicNow: () => number = () => performance.now(),
+): CourtListenerAttemptTiming | undefined {
+	return observer === undefined
+		? undefined
+		: {
+				monotonicNow,
+				recordDuration: (milliseconds) =>
+					observer.observe({ kind: "upstream_latency", milliseconds }),
+			};
 }
 
 function recordCacheFact(

@@ -5,7 +5,8 @@
 	"description": "MCP server for legal citation verification via CourtListener",
 	"scripts": {
 		"dev": "wrangler dev --env local",
-		"deploy": "wrangler deploy --env=\"\"",
+		"deploy": "npm run deploy:telemetry && wrangler deploy --env=\"\"",
+		"deploy:telemetry": "wrangler deploy --config wrangler.telemetry.jsonc --env=\"\"",
 		"test": "vitest run && npm run test:telemetry && npm run test:admin",
 		"test:admin": "vitest run --config vitest.admin.config.ts",
 		"test:telemetry": "vitest run --config vitest.telemetry.config.ts",

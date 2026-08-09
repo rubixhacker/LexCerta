@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { type CourtListenerAttemptTiming, sendCourtListenerRequest } from "./attempt-timing.js";
 import { boundedJsonBody } from "./response-body.js";
 
 const COURTLISTENER_ORIGIN = "https://www.courtlistener.com";
@@ -93,6 +94,7 @@ export type CourtListenerApi = {
 };
 
 export type CourtListenerApiOptions = {
+	readonly attemptTiming?: CourtListenerAttemptTiming;
 	readonly token: string;
 	readonly transport: CourtListenerTransport;
 	readonly timeoutMs?: number;
@@ -159,17 +161,6 @@ function signalFor(timeoutMs: number, signal: AbortSignal | undefined): AbortSig
 	return signal === undefined ? timeout : AbortSignal.any([signal, timeout]);
 }
 
-async function send(
-	transport: CourtListenerTransport,
-	request: Request,
-): Promise<Response | Exclude<CourtListenerFailure, "server">> {
-	try {
-		return await transport(request);
-	} catch {
-		return request.signal.aborted ? "timeout" : "transport";
-	}
-}
-
 function citationOutcome(
 	input: CitationLookupInput,
 	response: z.infer<typeof citationItemSchema>[],
@@ -224,7 +215,7 @@ export function createCourtListenerApi(options: CourtListenerApiOptions): CourtL
 	return {
 		async lookupCitation(input, signal) {
 			const form = new URLSearchParams({ text: input.normalized });
-			const response = await send(
+			const response = await sendCourtListenerRequest(
 				options.transport,
 				new Request(`${API_ROOT}citation-lookup/`, {
 					method: "POST",
@@ -236,6 +227,7 @@ export function createCourtListenerApi(options: CourtListenerApiOptions): CourtL
 					body: form,
 					signal: signalFor(timeoutMs, signal),
 				}),
+				options.attemptTiming,
 			);
 			if (typeof response === "string") return { kind: "unavailable", failure: response };
 			if (response.status >= 500 && response.status <= 599) {
@@ -250,13 +242,14 @@ export function createCourtListenerApi(options: CourtListenerApiOptions): CourtL
 			return parsed.success ? citationOutcome(input, parsed.data) : { kind: "malformed_response" };
 		},
 		async getUsage(signal) {
-			const response = await send(
+			const response = await sendCourtListenerRequest(
 				options.transport,
 				new Request(`${API_ROOT}api-usage/`, {
 					method: "GET",
 					headers: { accept: "application/json", authorization },
 					signal: signalFor(timeoutMs, signal),
 				}),
+				options.attemptTiming,
 			);
 			if (typeof response === "string" || response.status >= 500) return { kind: "unavailable" };
 			if (response.status === 429) return rateLimited(response, now);

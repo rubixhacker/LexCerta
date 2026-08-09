@@ -65,6 +65,7 @@ async function record(input: RecordTelemetryInput): Promise<void> {
 			keyIdentifier: input.keyIdentifier,
 			latencyMs: Math.max(0, Math.round(performance.now() - input.startedAt)),
 			tool: input.tool,
+			upstreamLatencyMs: input.executionFacts?.upstreamLatencyMs ?? null,
 		});
 		await recordEvent(input.environment, event);
 	} catch {

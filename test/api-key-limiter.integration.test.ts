@@ -13,6 +13,7 @@ import {
 const MINUTE = 60_000;
 const DAY = 24 * 60 * MINUTE;
 const LIMITER_BUCKET_RETENTION = 2 * DAY;
+const TWENTY_THREE_HOURS = 23 * 60 * MINUTE;
 
 type Admission = {
 	readonly admittedAt: number;
@@ -243,18 +244,22 @@ describe("ApiKeyLimiter Durable Object", () => {
 		expect(afterRetention).toEqual({ kind: "allowed" });
 	});
 
-	it("clears only usage when its exact 48-hour alarm fires without evicting the instance", async () => {
-		// Given: a limiter that has accepted one admission.
+	it("does not postpone the first admission's 48-hour cleanup alarm", async () => {
+		// Given: a limiter that accepts one request at T0 and another at T0 plus 23 hours.
 		const publicId = "retention-alarm";
 		const limiter = limiterFor(publicId);
 		const now = Date.now();
-		await seedCanonicalLimits(publicId, { minute: 1, day: 1 });
+		await seedCanonicalLimits(publicId, { minute: 2, day: 2 });
 		await limiter.admit(admission(publicId, now));
+		await limiter.admit(admission(publicId, now + TWENTY_THREE_HOURS));
 
-		// When: workerd dispatches the scheduled alarm through the live object.
+		// When: the later admission tries to schedule its own cleanup.
 		const scheduledAt = await runInDurableObject(limiter, (_instance, state) =>
 			state.storage.getAlarm(),
 		);
+		expect(scheduledAt).toBe(now + LIMITER_BUCKET_RETENTION);
+
+		// Then: the original deadline clears usage while preserving live configuration for a later admission.
 		const alarmRan = await runDurableObjectAlarm(limiter);
 		const remainingAdmissions = await runInDurableObject(
 			limiter,
@@ -263,12 +268,18 @@ describe("ApiKeyLimiter Durable Object", () => {
 					.exec<{ readonly count: number }>("SELECT COUNT(*) AS count FROM api_key_admissions")
 					.one().count,
 		);
+		const configurations = await runInDurableObject(
+			limiter,
+			(_instance, state) =>
+				state.storage.sql
+					.exec<{ readonly count: number }>("SELECT COUNT(*) AS count FROM api_key_limit_config")
+					.one().count,
+		);
 		const laterAdmission = await limiter.admit(admission(publicId, now + LIMITER_BUCKET_RETENTION));
 
-		// Then: the exact deadline fired, usage is empty, and the live instance can admit again.
-		expect(scheduledAt).toBe(now + LIMITER_BUCKET_RETENTION);
 		expect(alarmRan).toBe(true);
 		expect(remainingAdmissions).toBe(0);
+		expect(configurations).toBe(1);
 		expect(laterAdmission).toEqual({ kind: "allowed" });
 	});
 });

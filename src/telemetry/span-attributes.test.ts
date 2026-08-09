@@ -20,6 +20,7 @@ describe("telemetry span attributes", () => {
 			outcome: "verified",
 			responseBytes: 384,
 			tool: "verify_quote",
+			upstreamLatencyMs: 27,
 			upstreamStatus: "success",
 		});
 
@@ -40,7 +41,36 @@ describe("telemetry span attributes", () => {
 			"lexcerta.response_bytes": 384,
 			"lexcerta.tool": "verify_quote",
 			"lexcerta.trace_id": "0af7651916cd43dd8448eb211c80319c",
+			"lexcerta.upstream_latency_ms": 27,
 			"lexcerta.upstream_status": "success",
 		});
+	});
+
+	it("omits upstream latency when the request made no outbound attempt", () => {
+		// Given: a cache-only completion that did not await CourtListener.
+		const event = createTelemetryEvent({
+			cacheStatus: "hit",
+			circuitStatus: "closed",
+			correlation: {
+				requestId: "2f1b5a06-b4d1-4f13-8e3f-98f7a2980d23",
+				traceId: "0af7651916cd43dd8448eb211c80319c",
+			},
+			errorCategory: "none",
+			event: "mcp.request.completed",
+			freshness: "fresh",
+			keyIdentifier: null,
+			latencyMs: 42,
+			outcome: "verified",
+			responseBytes: 384,
+			tool: "verify_quote",
+			upstreamLatencyMs: null,
+			upstreamStatus: "not_called",
+		});
+
+		// When: the trace Worker projects the allow-listed attributes.
+		const attributes = toTelemetrySpanAttributes(event);
+
+		// Then: no synthetic upstream-latency value is persisted.
+		expect(attributes["lexcerta.upstream_latency_ms"]).toBeUndefined();
 	});
 });

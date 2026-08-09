@@ -2,9 +2,12 @@ import { createD1CitationObservationStore } from "../cache/d1-citation-observati
 import { createCourtListenerApi } from "../courtlistener/api.js";
 import type { CourtListenerCoordinatorRpc } from "../courtlistener/coordinator.js";
 import { createCourtListenerCitationGateway } from "../courtlistener/gateway.js";
+import {
+	type ExecutionFactObserver,
+	createCourtListenerAttemptTiming,
+} from "../telemetry/execution-facts.js";
 import { createCachedCitationGateway } from "./cached-citation-gateway.js";
 import type { CitationVerificationGateway } from "./verify-citation.js";
-import type { ExecutionFactObserver } from "../telemetry/execution-facts.js";
 
 type CoordinatorNamespace = {
 	readonly getByName: (name: string) => CourtListenerCoordinatorRpc;
@@ -42,10 +45,15 @@ function createUpstreamCitationGateway(
 	) {
 		return unavailableCitationGateway(input.executionFacts);
 	}
+	const attemptTiming = createCourtListenerAttemptTiming(input.executionFacts);
 	try {
 		return createCourtListenerCitationGateway({
 			...(input.executionFacts === undefined ? {} : { executionFacts: input.executionFacts }),
-			api: createCourtListenerApi({ token: input.token, transport: (request) => fetch(request) }),
+			api: createCourtListenerApi({
+				...(attemptTiming === undefined ? {} : { attemptTiming }),
+				token: input.token,
+				transport: (request) => fetch(request),
+			}),
 			coordinator: input.coordinator.getByName(input.credentialId),
 			now: () => new Date(),
 			token: () => crypto.randomUUID(),
