@@ -127,7 +127,7 @@ const MAX_STRING_REQUEST_ID_LENGTH = 256;
 
 async function recoverRequestId(request: Request): Promise<string | number | null | undefined> {
 	try {
-		const body = request.clone().body;
+		const body = request.body;
 		if (body === null) return undefined;
 		const reader = body.getReader();
 		const chunks: Uint8Array[] = [];

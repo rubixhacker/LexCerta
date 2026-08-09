@@ -108,16 +108,16 @@ describe("Worker admission adapter boundaries", () => {
 		expect(await response.text()).toBe('{"error":"Service Unavailable"}');
 	});
 
-	it("returns an ID-unrecoverable 429 when request cloning fails", async () => {
-		// Given: an exhausted limiter and a request whose body clone unexpectedly throws.
+	it("returns an ID-unrecoverable 429 when request body access fails", async () => {
+		// Given: an exhausted limiter and a request whose body access unexpectedly throws.
 		workerEnvironment = {
 			...workerEnvironment,
 			API_KEY_LIMITER: {
 				getByName: () => ({ admit: async () => ({ kind: "exhausted", retryAfterSeconds: 12 }) }),
 			},
 		};
-		Object.defineProperty(request, "clone", {
-			value: () => {
+		Object.defineProperty(request, "body", {
+			get: () => {
 				throw new RangeError("clone failed");
 			},
 		});
@@ -166,6 +166,44 @@ describe("Worker admission adapter boundaries", () => {
 		expect(response.headers.get("retry-after")).toBe("9");
 		expect(await response.text()).toBe("");
 	});
+
+	it("cancels a never-closing oversized stream promptly", async () => {
+		// Given: an exhausted limiter and a stream that emits over the cap but never closes.
+		workerEnvironment = {
+			...workerEnvironment,
+			API_KEY_LIMITER: {
+				getByName: () => ({ admit: async () => ({ kind: "exhausted", retryAfterSeconds: 10 }) }),
+			},
+		};
+		let canceled = false;
+		const payload = new TextEncoder().encode(`{"jsonrpc":"2.0","id":"${"x".repeat(20_000)}"}`);
+		const authorization = request.headers.get("authorization") ?? "";
+		request = new Request("https://mcp.lexcerta.ai/", {
+			method: "POST",
+			headers: {
+				authorization,
+				"content-type": "application/json",
+				"mcp-method": "server/discover",
+				"mcp-protocol-version": "2026-07-28",
+			},
+			body: new ReadableStream({
+				start(controller) {
+					controller.enqueue(payload);
+				},
+				cancel() {
+					canceled = true;
+				},
+			}),
+		});
+
+		// When: the Worker recovers an ID from the stream with a one-second test bound.
+		const response = await worker.fetch(request, workerEnvironment);
+
+		// Then: direct cancellation completes promptly and the response does not reflect the oversized ID.
+		expect(canceled).toBe(true);
+		expect(response.status).toBe(429);
+		expect(await response.text()).toBe("");
+	}, 1_000);
 
 	it("does not reflect an oversized string request ID", async () => {
 		// Given: an exhausted limiter and a valid JSON envelope with a 257-character string ID.
