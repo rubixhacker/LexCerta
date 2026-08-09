@@ -1,7 +1,5 @@
-export {
-	admitCourtListenerRequest,
-	beginQuotaSync,
-} from "./budget-admission.js";
+export { admitCourtListenerRequest } from "./budget-admission.js";
+export { beginQuotaSync } from "./budget-sync.js";
 export {
 	failQuotaSync,
 	recordCourtListenerOutcome,

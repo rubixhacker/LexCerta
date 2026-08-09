@@ -95,7 +95,7 @@ describe("CourtListener quota-sync reservations", () => {
 			now: at(2),
 			state: started.state,
 			syncToken: "reconcile",
-			windows: [window("user"), window("citations")],
+			windows: [window("user"), window("citations"), window("api_usage")],
 		});
 
 		// Then: exactly one sync lease exists, data remains denied, and Retry-After makes a new sync due.
@@ -191,7 +191,7 @@ function confirmedState(
 		now: NOW,
 		state: started.state,
 		syncToken: "initial",
-		windows: [window("user"), window("citations")],
+		windows: [window("user"), window("citations"), window("api_usage")],
 	});
 	if (completed.kind !== "recorded") throw new RangeError("quota sync must be recorded");
 	return { ...completed.state, ...override };

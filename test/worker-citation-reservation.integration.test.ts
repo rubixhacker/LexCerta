@@ -113,7 +113,7 @@ function citationResponse(): Response {
 
 function usageResponse(): Response {
 	return Response.json({
-		current_usage: ["user", "citations"].map((scope) => ({
+		current_usage: ["user", "citations", "api_usage"].map((scope) => ({
 			scope,
 			rate: "minute",
 			used: 0,

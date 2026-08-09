@@ -7,6 +7,7 @@ import { createCourtListenerApi } from "./courtlistener/api.js";
 import type { CourtListenerCoordinatorRpc } from "./courtlistener/coordinator.js";
 import { createCourtListenerCitationGateway } from "./courtlistener/gateway.js";
 import { createLexCertaMcpHandler, protocolBoundaryRejection } from "./mcp.js";
+import { boundedMcpRequest } from "./request-body.js";
 import type { CitationVerificationGateway } from "./verification/verify-citation.js";
 
 export { ApiKeyLimiter } from "./admission/api-key-limiter.js";
@@ -65,7 +66,9 @@ const worker = {
 					}
 					const rejection = protocolBoundaryRejection(request);
 					if (rejection !== undefined) return rejection;
-					return createLexCertaMcpHandler(citationGateway(env)).fetch(request);
+					const bounded = await boundedMcpRequest(request);
+					if (bounded === undefined) return createPayloadTooLargeResponse();
+					return createLexCertaMcpHandler(citationGateway(env)).fetch(bounded);
 				}
 				case "unauthorized":
 				case "unavailable":
@@ -143,6 +146,10 @@ function createAdmissionUnavailableResponse(): Response {
 			"retry-after": "1",
 		},
 	});
+}
+
+function createPayloadTooLargeResponse(): Response {
+	return new Response(null, { headers: { "cache-control": "no-store" }, status: 413 });
 }
 
 async function createAdmissionExhaustedResponse(

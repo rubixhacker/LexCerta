@@ -7,13 +7,13 @@ function coordinator() {
 	return env.COURTLISTENER_COORDINATOR.getByName(crypto.randomUUID());
 }
 
-function windows(remaining: number) {
+function windows(remaining: number, resetMilliseconds = 60_000) {
 	return [
 		{
 			limit: 200,
 			rate: "minute",
 			remaining,
-			resetAt: new Date(NOW.getTime() + 60_000),
+			resetAt: new Date(NOW.getTime() + resetMilliseconds),
 			scope: "user",
 			windowSeconds: 60,
 		},
@@ -21,7 +21,15 @@ function windows(remaining: number) {
 			limit: 200,
 			rate: "minute",
 			remaining,
-			resetAt: new Date(NOW.getTime() + 60_000),
+			resetAt: new Date(NOW.getTime() + resetMilliseconds),
+			scope: "api_usage",
+			windowSeconds: 60,
+		},
+		{
+			limit: 200,
+			rate: "minute",
+			remaining,
+			resetAt: new Date(NOW.getTime() + resetMilliseconds),
 			scope: "citations",
 			windowSeconds: 60,
 		},
@@ -93,5 +101,53 @@ describe("CourtListenerCoordinator remediation", () => {
 		expect(
 			await stub.admit({ endpoint: "citation", now: NOW, reservationToken: crypto.randomUUID() }),
 		).toMatchObject({ kind: "reservation_capacity_exhausted" });
+	});
+
+	it("persists exhausted api-usage sync capacity across eviction until its reset", async () => {
+		// Given: confirmed data and a final one-request api_usage allowance.
+		const stub = coordinator();
+		const initial = crypto.randomUUID();
+		const confirmedAt = new Date(NOW.getTime() - 15 * 60_000);
+		await stub.beginQuotaSync({ now: confirmedAt, syncToken: initial });
+		await stub.recordQuotaSync({
+			now: confirmedAt,
+			syncToken: initial,
+			windows: windows(1, 60 * 60_000),
+		});
+		const finalToken = crypto.randomUUID();
+		const started = await stub.beginQuotaSync({ now: NOW, syncToken: finalToken });
+		expect(started.kind).toBe("started");
+		if (started.state.quota.kind !== "sync_in_progress") throw new Error("expected a sync lease");
+		expect(
+			started.state.quota.prior?.windows.find((window) => window.scope === "api_usage")?.remaining,
+		).toBe(0);
+
+		// When: the upstream sync fails, workerd evicts state, and callers arrive before and at reset.
+		await stub.failQuotaSync({ now: NOW, syncToken: finalToken });
+		await evictDurableObject(stub);
+		const backoff = await stub.beginQuotaSync({
+			now: new Date(NOW.getTime() + 15 * 60_000 - 1),
+			syncToken: crypto.randomUUID(),
+		});
+		const exhausted = await stub.beginQuotaSync({
+			now: new Date(NOW.getTime() + 15 * 60_000),
+			syncToken: crypto.randomUUID(),
+		});
+		await evictDurableObject(stub);
+		const boundary = await stub.beginQuotaSync({
+			now: new Date(NOW.getTime() + 60 * 60_000),
+			syncToken: crypto.randomUUID(),
+		});
+
+		// Then: exhausted api_usage fails closed until exact reset permits one new reservation.
+		expect(backoff).toMatchObject({ kind: "not_due" });
+		expect(exhausted).toMatchObject({
+			kind: "quota_sync_quota_exhausted",
+			retryAt: new Date(NOW.getTime() + 60 * 60_000),
+		});
+		expect(boundary).toMatchObject({
+			kind: "started",
+			state: { pendingReservations: [{ kind: "quota_sync" }] },
+		});
 	});
 });

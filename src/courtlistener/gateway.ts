@@ -195,7 +195,7 @@ async function record(
 
 function quotaWindows(usage: readonly CourtListenerUsage[]): readonly QuotaWindow[] | null {
 	const windows = usage.flatMap((row) => {
-		if (row.scope !== "user" && row.scope !== "citations") return [];
+		if (row.scope !== "user" && row.scope !== "citations" && row.scope !== "api_usage") return [];
 		const resetAt = row.resetAt === null ? null : new Date(row.resetAt);
 		if (resetAt !== null && Number.isNaN(resetAt.getTime())) return [];
 		return [
@@ -210,7 +210,8 @@ function quotaWindows(usage: readonly CourtListenerUsage[]): readonly QuotaWindo
 		];
 	});
 	return windows.some((window) => window.scope === "user") &&
-		windows.some((window) => window.scope === "citations")
+		windows.some((window) => window.scope === "citations") &&
+		windows.some((window) => window.scope === "api_usage")
 		? windows
 		: null;
 }

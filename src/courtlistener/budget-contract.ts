@@ -37,6 +37,11 @@ export type QuotaSyncStart =
 	| { readonly kind: "already_in_progress"; readonly state: CourtListenerBudgetState }
 	| { readonly kind: "reservation_capacity_exhausted"; readonly state: CourtListenerBudgetState }
 	| {
+			readonly kind: "quota_sync_quota_exhausted";
+			readonly retryAt: Date | null;
+			readonly state: CourtListenerBudgetState;
+	  }
+	| {
 			readonly kind: "not_due";
 			readonly retryAt: Date;
 			readonly state: CourtListenerBudgetState;

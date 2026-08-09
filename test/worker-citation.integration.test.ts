@@ -89,28 +89,16 @@ function citationFixtureResponse(): Promise<Response> {
 
 function usageResponse(): Response {
 	return Response.json({
-		current_usage: [
-			{
-				scope: "user",
-				rate: "minute",
-				used: 0,
-				limit: 5,
-				remaining: 5,
-				window_seconds: 60,
-				reset_at: "2026-08-09T12:01:00.000Z",
-				blocked: false,
-			},
-			{
-				scope: "citations",
-				rate: "minute",
-				used: 0,
-				limit: 5,
-				remaining: 5,
-				window_seconds: 60,
-				reset_at: "2026-08-09T12:01:00.000Z",
-				blocked: false,
-			},
-		],
+		current_usage: ["user", "citations", "api_usage"].map((scope) => ({
+			scope,
+			rate: "minute",
+			used: 0,
+			limit: 5,
+			remaining: 5,
+			window_seconds: 60,
+			reset_at: "2026-08-09T12:01:00.000Z",
+			blocked: false,
+		})),
 	});
 }
 
