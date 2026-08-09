@@ -11,30 +11,36 @@ import {
 } from "./worker-qualification-artifact.mjs";
 import { captureHeapUsageSample } from "./worker-qualification-heap.mjs";
 
-test("passes exact resource limits and fails either exceeded core-entry measurement", () => {
+test("passes exact resource limits and fails an exceeded runner measurement", () => {
 	const atLimit = evaluateResourceGates([
 		{
-			...heapMeasurement(RESOURCE_GATES.coreEntryPeakBytes),
-			cdpPeakObservedHeapBytes: RESOURCE_GATES.coreEntryPeakBytes,
-			cdpSampledCpuMilliseconds: RESOURCE_GATES.coreEntrySampledCpuMilliseconds,
+			...heapMeasurement(RESOURCE_GATES.runnerPeakBytes),
+			cdpControlTargetId: "core:entry",
+			cdpMeasurementTargetId: "core:user:vitest-pool-workers-runner-",
+			cdpNonIdleCpuSampleCount: 1,
+			cdpPeakObservedHeapBytes: RESOURCE_GATES.runnerPeakBytes,
+			cdpSampledCpuMilliseconds: RESOURCE_GATES.runnerSampledCpuMilliseconds,
 			scenario: "at_limit",
-			wallMilliseconds: RESOURCE_GATES.coreEntryWallMilliseconds,
+			wallMilliseconds: RESOURCE_GATES.runnerWallMilliseconds,
 		},
 	]);
 	const overLimit = evaluateResourceGates([
 		{
-			...heapMeasurement(RESOURCE_GATES.coreEntryPeakBytes + 1),
-			cdpPeakObservedHeapBytes: RESOURCE_GATES.coreEntryPeakBytes + 1,
-			cdpSampledCpuMilliseconds: RESOURCE_GATES.coreEntrySampledCpuMilliseconds + 1,
+			...heapMeasurement(RESOURCE_GATES.runnerPeakBytes + 1),
+			cdpControlTargetId: "core:entry",
+			cdpMeasurementTargetId: "core:user:vitest-pool-workers-runner-",
+			cdpNonIdleCpuSampleCount: 1,
+			cdpPeakObservedHeapBytes: RESOURCE_GATES.runnerPeakBytes + 1,
+			cdpSampledCpuMilliseconds: RESOURCE_GATES.runnerSampledCpuMilliseconds + 1,
 			scenario: "over_limit",
-			wallMilliseconds: RESOURCE_GATES.coreEntryWallMilliseconds + 1,
+			wallMilliseconds: RESOURCE_GATES.runnerWallMilliseconds + 1,
 		},
 	]);
 	assert.equal(atLimit.verdict, "pass");
 	assert.equal(overLimit.verdict, "fail");
-	assert.equal(overLimit.scenarios[0]?.coreEntryPeakBytes.verdict, "fail");
-	assert.equal(overLimit.scenarios[0]?.coreEntrySampledCpuMilliseconds.verdict, "fail");
-	assert.equal(overLimit.scenarios[0]?.coreEntryWallMilliseconds.verdict, "fail");
+	assert.equal(overLimit.scenarios[0]?.runnerPeakBytes.verdict, "fail");
+	assert.equal(overLimit.scenarios[0]?.runnerSampledCpuMilliseconds.verdict, "fail");
+	assert.equal(overLimit.scenarios[0]?.runnerWallMilliseconds.verdict, "fail");
 });
 
 test("fails empty, invalid, or mismatched raw heap observations", () => {
@@ -63,11 +69,11 @@ test("fails empty, invalid, or mismatched raw heap observations", () => {
 	// Then: no absent, nonfinite, or tampered observation can pass qualification.
 	for (const result of results) {
 		assert.equal(result.verdict, "fail");
-		assert.equal(result.scenarios[0]?.coreEntryPeakBytes.verdict, "fail");
+		assert.equal(result.scenarios[0]?.runnerPeakBytes.verdict, "fail");
 	}
 });
 
-test("fails a missing or nonfinite core-entry measurement", () => {
+test("fails a missing or nonfinite runner measurement", () => {
 	for (const observed of [undefined, Number.NaN, Number.POSITIVE_INFINITY]) {
 		const result = evaluateResourceGates([
 			{
@@ -79,11 +85,29 @@ test("fails a missing or nonfinite core-entry measurement", () => {
 			},
 		]);
 		assert.equal(result.verdict, "fail");
-		assert.equal(result.scenarios[0]?.coreEntryPeakBytes.observed, null);
+		assert.equal(result.scenarios[0]?.runnerPeakBytes.observed, null);
 	}
 });
 
-test("fails when no core-entry measurement is emitted", () => {
+test("fails a measurement from the wrong target or without non-idle CPU samples", () => {
+	// Given: otherwise valid resource measurements with an invalid target identity or idle-only CPU profile.
+	const invalidMeasurements = [
+		{ ...resourceMeasurement(), cdpMeasurementTargetId: "core:entry", cdpNonIdleCpuSampleCount: 1 },
+		{
+			...resourceMeasurement(),
+			cdpMeasurementTargetId: "core:user:vitest-pool-workers-runner-",
+			cdpNonIdleCpuSampleCount: 0,
+		},
+	];
+
+	// When: the Worker resource qualification gate evaluates the measurements.
+	const results = invalidMeasurements.map((measurement) => evaluateResourceGates([measurement]));
+
+	// Then: only an exact runner profile containing useful CPU samples can qualify.
+	for (const result of results) assert.equal(result.verdict, "fail");
+});
+
+test("fails when no runner measurement is emitted", () => {
 	assert.equal(evaluateResourceGates([]).verdict, "fail");
 });
 
@@ -127,6 +151,9 @@ function runGit(cwd, args) {
 function resourceMeasurement() {
 	return {
 		...heapMeasurement(1),
+		cdpControlTargetId: "core:entry",
+		cdpMeasurementTargetId: "core:user:vitest-pool-workers-runner-",
+		cdpNonIdleCpuSampleCount: 1,
 		cdpSampledCpuMilliseconds: 1,
 		scenario: "valid",
 		wallMilliseconds: 1,

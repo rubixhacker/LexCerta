@@ -66,11 +66,11 @@ The local qualification report is [worker-qualification-benchmark.json](../.omo/
 | Gate | Evidence and verdict |
 | --- | --- |
 | Compatibility and protocol | Green: this artifact manifest and the local workerd scenarios above pass. |
-| CPU | Green: exact values are in the machine artifact; sampled core-entry CPU and the conservative single-isolate wall-time bound both remain below the approved 5,000 ms paid budget. |
+| CPU | Green: exact values are in the machine artifact; sampled CPU from the exact Vitest runner isolate executing `SELF.fetch` and the conservative single-isolate wall-time bound both remain below the approved 5,000 ms paid budget. `core:entry` is recorded separately as the paused control target. |
 | Memory and allocations | Green for local qualification: every 20 ms CDP sample retains `usedSize`, `totalSize`, `embedderHeapUsedSize`, and `backingStorageSize`; the gate records the raw peak fields and fails closed unless its conservative `totalSize + embedderHeapUsedSize + backingStorageSize` sum is finite, non-empty, and at most 128 MiB. Sampled allocations remain in the machine artifact. Local workerd does not enforce the deployed limit. |
 | Completion and outbound bounds | Green: repeated local wall time remained below 2 s; cold scenarios make 103 sequential outbound fixture requests and record zero cancellations. |
 | Production confirmation | Required before promotion: Issue #11 staging canary records Cloudflare production CPU/memory observations for the identical bundle checksum. |
 
-Current decision: **Cloudflare Workers approved**. No optimization pass is needed. Issue #11 must confirm the same bundle checksum and the committed `limits.cpu_ms: 5000` budget in staging production telemetry before promotion.
+Current decision: **Cloudflare Workers approved**. The single measurement-calibration pass replaced eager retention of all 100 synthetic maximum-size upstream bodies with per-request generation; every response remains exactly 65,536 bytes and product code is unchanged. Issue #11 must confirm the same bundle checksum and the committed `limits.cpu_ms: 5000` budget in staging production telemetry before promotion.
 
 If a compatibility, memory, or CPU gate fails, make exactly one bounded optimization attempt against the same scenario. Record before/after bundle checksums and measurements. If the failed gate remains failed after that one attempt, select the unchanged TypeScript verification module on Cloud Run. Do not introduce Kotlin as a fallback.

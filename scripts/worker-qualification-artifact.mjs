@@ -3,11 +3,12 @@ import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { join, relative } from "node:path";
 import { peakHeapUsageSample } from "./worker-qualification-heap.mjs";
+import { CONTROL_TARGET_ID, RUNNER_TARGET_ID } from "./worker-qualification-runner.mjs";
 
 export const RESOURCE_GATES = {
-	coreEntryPeakBytes: 128 * 1024 * 1024,
-	coreEntrySampledCpuMilliseconds: 5_000,
-	coreEntryWallMilliseconds: 5_000,
+	runnerPeakBytes: 128 * 1024 * 1024,
+	runnerSampledCpuMilliseconds: 5_000,
+	runnerWallMilliseconds: 5_000,
 };
 
 export function qualifyWorkerArtifact(root, artifactDirectory) {
@@ -49,14 +50,16 @@ export function qualifyWorkerArtifact(root, artifactDirectory) {
 
 export function evaluateResourceGates(measurements) {
 	const scenarios = measurements.map((measurement) => ({
-		coreEntryPeakBytes: heapUsageVerdict(measurement),
-		coreEntrySampledCpuMilliseconds: verdict(
+		cdpNonIdleCpuSamples: positive(measurement.cdpNonIdleCpuSampleCount),
+		cdpTargetIdentity: targetIdentity(measurement),
+		runnerPeakBytes: heapUsageVerdict(measurement),
+		runnerSampledCpuMilliseconds: verdict(
 			measurement.cdpSampledCpuMilliseconds,
-			RESOURCE_GATES.coreEntrySampledCpuMilliseconds,
+			RESOURCE_GATES.runnerSampledCpuMilliseconds,
 		),
-		coreEntryWallMilliseconds: verdict(
+		runnerWallMilliseconds: verdict(
 			measurement.wallMilliseconds,
-			RESOURCE_GATES.coreEntryWallMilliseconds,
+			RESOURCE_GATES.runnerWallMilliseconds,
 		),
 		scenario: measurement.scenario,
 	}));
@@ -67,9 +70,11 @@ export function evaluateResourceGates(measurements) {
 			scenarios.length > 0 &&
 			scenarios.every(
 				(scenario) =>
-					scenario.coreEntryPeakBytes.verdict === "pass" &&
-					scenario.coreEntrySampledCpuMilliseconds.verdict === "pass" &&
-					scenario.coreEntryWallMilliseconds.verdict === "pass",
+					scenario.runnerPeakBytes.verdict === "pass" &&
+					scenario.runnerSampledCpuMilliseconds.verdict === "pass" &&
+					scenario.runnerWallMilliseconds.verdict === "pass" &&
+					scenario.cdpNonIdleCpuSamples.verdict === "pass" &&
+					scenario.cdpTargetIdentity.verdict === "pass",
 			)
 				? "pass"
 				: "fail",
@@ -105,6 +110,29 @@ function verdict(observed, limit) {
 	};
 }
 
+function positive(observed) {
+	const finiteObserved = Number.isFinite(observed) ? observed : null;
+	return {
+		observed: finiteObserved,
+		verdict: finiteObserved !== null && finiteObserved > 0 ? "pass" : "fail",
+	};
+}
+
+function targetIdentity(measurement) {
+	const observed = {
+		control: measurement.cdpControlTargetId ?? null,
+		measurement: measurement.cdpMeasurementTargetId ?? null,
+	};
+	return {
+		expected: { control: CONTROL_TARGET_ID, measurement: RUNNER_TARGET_ID },
+		observed,
+		verdict:
+			observed.control === CONTROL_TARGET_ID && observed.measurement === RUNNER_TARGET_ID
+				? "pass"
+				: "fail",
+	};
+}
+
 function heapUsageVerdict(measurement) {
 	const peak = peakHeapUsageSample(measurement.cdpHeapUsageSamples);
 	const observed =
@@ -113,7 +141,7 @@ function heapUsageVerdict(measurement) {
 		rawPeakMatches(measurement.cdpPeakObservedHeap, peak)
 			? peak.conservativeIsolateBytes
 			: null;
-	return verdict(observed, RESOURCE_GATES.coreEntryPeakBytes);
+	return verdict(observed, RESOURCE_GATES.runnerPeakBytes);
 }
 
 function rawPeakMatches(observed, peak) {

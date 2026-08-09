@@ -29,7 +29,7 @@ describe("workerd worker qualification benchmark", () => {
 	it("qualifies a cold 10,000-code-point no-match against the complete 100-opinion cluster", async () => {
 		// Given: a synthetic 100-opinion cluster with no source text matching the boundary quotation.
 		const opinions = maximalOpinionFixtures(10_000);
-		expect(opinionResponseBytes(opinions[0]?.body)).toBe(MAX_RESPONSE_BODY_BYTES);
+		expect(opinionResponseBytes(opinions[0]?.bodyFactory?.())).toBe(MAX_RESPONSE_BODY_BYTES);
 		const fixture = await setupQuoteWorker({ opinions, usage: "high" });
 
 		// When: the real workerd Worker receives the largest valid quote-verification request cold.
@@ -56,7 +56,7 @@ describe("workerd worker qualification benchmark", () => {
 	it("qualifies a cold D1/R2 fill for a 10,000-code-point late match in the complete 100-opinion cluster", async () => {
 		// Given: a synthetic 100-opinion cluster whose final source is the only exact match.
 		const opinions = maximalOpinionFixtures(20_000, QUOTE_10K);
-		expect(opinionResponseBytes(opinions[MAX_CLUSTER_OPINIONS - 1]?.body)).toBe(
+		expect(opinionResponseBytes(opinions[MAX_CLUSTER_OPINIONS - 1]?.bodyFactory?.())).toBe(
 			MAX_RESPONSE_BODY_BYTES,
 		);
 		const fixture = await setupQuoteWorker({ opinions, usage: "high" });
@@ -85,7 +85,7 @@ describe("workerd worker qualification benchmark", () => {
 	it("qualifies warm D1/R2 reuse for a 10,000-code-point late match in the complete 100-opinion cluster", async () => {
 		// Given: synthetic durable evidence filled by a first late-match request over the maximum cluster.
 		const opinions = maximalOpinionFixtures(30_000, QUOTE_10K);
-		expect(opinionResponseBytes(opinions[MAX_CLUSTER_OPINIONS - 1]?.body)).toBe(
+		expect(opinionResponseBytes(opinions[MAX_CLUSTER_OPINIONS - 1]?.bodyFactory?.())).toBe(
 			MAX_RESPONSE_BODY_BYTES,
 		);
 		const fixture = await setupQuoteWorker({ opinions, usage: "high" });
@@ -161,13 +161,14 @@ function maximalOpinionFixtures(
 	firstId: number,
 	finalQuote = "",
 ): readonly {
-	readonly body: Record<string, unknown>;
+	readonly bodyFactory: () => Record<string, unknown>;
 	readonly id: number;
 }[] {
 	return Array.from({ length: MAX_CLUSTER_OPINIONS }, (_, index) => {
 		const id = firstId + index;
 		return {
-			body: maximalOpinionBody(id, index === MAX_CLUSTER_OPINIONS - 1 ? finalQuote : ""),
+			bodyFactory: () =>
+				maximalOpinionBody(id, index === MAX_CLUSTER_OPINIONS - 1 ? finalQuote : ""),
 			id,
 		};
 	});

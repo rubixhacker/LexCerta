@@ -1,21 +1,11 @@
-import { spawn } from "node:child_process";
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { evaluateResourceGates, qualifyWorkerArtifact } from "./worker-qualification-artifact.mjs";
-import { connectCdp } from "./worker-qualification-cdp.mjs";
-import {
-	availableInspectorPort,
-	runWithWorkerQualificationCleanup,
-	terminateChildProcess,
-} from "./worker-qualification-cleanup.mjs";
-import { captureHeapUsageSample, peakHeapUsageSample } from "./worker-qualification-heap.mjs";
-import {
-	WORKER_QUALIFICATION_HARNESS_RECORD_DEADLINE_MS,
-	waitForRecord,
-} from "./worker-qualification-record.mjs";
+import { availableInspectorPort } from "./worker-qualification-cleanup.mjs";
+import { WORKER_QUALIFICATION_HARNESS_RECORD_DEADLINE_MS } from "./worker-qualification-record.mjs";
+import { runWorkerQualificationScenario } from "./worker-qualification-scenario.mjs";
+
 const ROOT = process.cwd();
-const HEAP_SAMPLE_INTERVAL_MS = 20;
-const TEST_FILE = "test/worker-qualification-benchmark.integration.test.ts";
 const artifactDirectory = resolve(
 	ROOT,
 	process.env.WORKER_QUALIFICATION_ARTIFACT_DIR ??
@@ -30,15 +20,23 @@ const scenarios = [
 mkdirSync(artifactDirectory, { recursive: true });
 const qualification = qualifyWorkerArtifact(ROOT, artifactDirectory);
 const measurements = [];
-for (const scenario of scenarios)
-	measurements.push(await runScenario(scenario, await availableInspectorPort()));
+for (const scenario of scenarios) {
+	measurements.push(
+		await runWorkerQualificationScenario({
+			artifactDirectory,
+			inspectorPort: await availableInspectorPort(),
+			root: ROOT,
+			scenario,
+		}),
+	);
+}
 const gates = evaluateResourceGates(measurements);
 const artifact = {
 	qualification,
 	capabilities: {
 		memoryLimitQualification:
-			"Local workerd does not enforce the production 128MiB memory limit. This harness compares exact core:entry observed peak against the 128MiB gate; Issue #11 confirms deployment enforcement.",
-		workerCpu: "V8 CDP Profiler sampled CPU time on core:entry",
+			"Local workerd does not enforce the production 128MiB memory limit. This harness compares the exact Vitest runner observed peak against the 128MiB gate; Issue #11 confirms deployment enforcement.",
+		workerCpu: "V8 CDP Profiler sampled CPU time on the exact Vitest runner target",
 		workerHeap:
 			"V8 CDP Runtime.getHeapUsage raw samples and peak totalSize + embedderHeapUsedSize + backingStorageSize during the request profile window",
 		workerAllocations:
@@ -55,7 +53,7 @@ const artifact = {
 	},
 	gates,
 	measurements,
-	schemaVersion: 1,
+	schemaVersion: 2,
 };
 writeFileSync(
 	join(artifactDirectory, "worker-qualification-benchmark.json"),
@@ -63,164 +61,3 @@ writeFileSync(
 );
 process.stdout.write(`${join(artifactDirectory, "worker-qualification-benchmark.json")}\n`);
 if (gates.verdict !== "pass") throw new TypeError("worker qualification resource gate failed");
-
-async function runScenario(scenario, inspectorPort) {
-	const recordDeadline = Date.now() + WORKER_QUALIFICATION_HARNESS_RECORD_DEADLINE_MS;
-	const timingPath = join(artifactDirectory, `${scenario.id}.time.csv`);
-	const child = spawn(
-		"/usr/bin/time",
-		[
-			"-o",
-			timingPath,
-			"-f",
-			"%U,%S,%e,%M",
-			"npm",
-			"exec",
-			"--",
-			"vitest",
-			"run",
-			TEST_FILE,
-			"--testNamePattern",
-			scenario.pattern,
-			"--inspectBrk",
-			String(inspectorPort),
-			"--no-file-parallelism",
-			"--reporter=verbose",
-		],
-		{ cwd: ROOT, detached: true, stdio: ["ignore", "pipe", "pipe"] },
-	);
-	let output = "";
-	let core;
-	let sampler;
-	const exit = waitForExit(child);
-	child.stdout.setEncoding("utf8");
-	child.stdout.on("data", (chunk) => {
-		output += chunk;
-	});
-	return runWithWorkerQualificationCleanup({
-		clearSampler: () => sampler !== undefined && clearInterval(sampler),
-		closeInspector: () => core?.close(),
-		run: async () => {
-			core = await connectCdp(await waitForCore(inspectorPort));
-			await core.call("Profiler.enable");
-			await core.call("Profiler.setSamplingInterval", { interval: 100 });
-			await core.call("HeapProfiler.enable");
-			await core.call("HeapProfiler.startSampling", {
-				includeObjectsCollectedByMajorGC: true,
-				includeObjectsCollectedByMinorGC: true,
-				samplingInterval: 1_024,
-			});
-			const initialHeap = captureHeapUsageSample(await core.call("Runtime.getHeapUsage"));
-			await core.call("Profiler.start");
-			await core.call("Runtime.runIfWaitingForDebugger");
-			const observedHeaps = [initialHeap];
-			const samplingRequests = new Set();
-			sampler = setInterval(() => {
-				const samplingRequest = core
-					.call("Runtime.getHeapUsage")
-					.then(captureHeapUsageSample)
-					.catch(() => captureHeapUsageSample(null))
-					.then((sample) => observedHeaps.push(sample));
-				samplingRequests.add(samplingRequest);
-				void samplingRequest.finally(() => samplingRequests.delete(samplingRequest));
-			}, HEAP_SAMPLE_INTERVAL_MS);
-			const record = await waitForRecord({
-				child,
-				clearTimer: clearTimeout,
-				deadline: recordDeadline,
-				now: Date.now,
-				output: () => output,
-				scenarioId: scenario.id,
-				setTimer: setTimeout,
-			});
-			clearInterval(sampler);
-			await Promise.all(samplingRequests);
-			const [finalHeap, cpuProfile, allocationProfile] = await Promise.all([
-				core.call("Runtime.getHeapUsage"),
-				core.call("Profiler.stop"),
-				core.call("HeapProfiler.stopSampling"),
-			]);
-			observedHeaps.push(captureHeapUsageSample(finalHeap));
-			const peakHeap = peakHeapUsageSample(observedHeaps);
-			const completion = await exit;
-			if (completion !== 0)
-				throw new TypeError(`worker qualification ${scenario.id} failed with status ${completion}`);
-			const [userSeconds, systemSeconds, elapsedSeconds, maxResidentSetKiB] = readFileSync(
-				timingPath,
-				"utf8",
-			)
-				.trim()
-				.split(",")
-				.map(Number);
-			return {
-				...record,
-				cdpInspectorPort: inspectorPort,
-				cdpNonIdleCpuSampleCount: nonIdleCpuSampleCount(cpuProfile),
-				cdpSampledAllocationBytes: sampledAllocationBytes(allocationProfile),
-				cdpSampledCpuMilliseconds: sampledCpuMilliseconds(cpuProfile),
-				cdpHeapUsageSamples: observedHeaps,
-				cdpPeakObservedHeap: rawHeapFields(peakHeap),
-				cdpPeakObservedHeapBytes: peakHeap?.conservativeIsolateBytes ?? null,
-				cdpProfileWindow:
-					"core:entry from Runtime.runIfWaitingForDebugger until the sanitized benchmark marker",
-				harnessCpuMilliseconds: (userSeconds + systemSeconds) * 1_000,
-				harnessElapsedMilliseconds: elapsedSeconds * 1_000,
-				harnessMaxResidentSetKiB: maxResidentSetKiB,
-			};
-		},
-		terminateChild: () => terminateChildProcess(child, exit),
-	});
-}
-
-async function waitForCore(port) {
-	for (let attempt = 0; attempt < 100; attempt += 1) {
-		try {
-			const targets = await (await fetch(`http://127.0.0.1:${port}/json`)).json();
-			const core = targets.find((target) => target.id === "core:entry");
-			if (core !== undefined) return core.webSocketDebuggerUrl;
-		} catch {}
-		await new Promise((resolve) => setTimeout(resolve, 25));
-	}
-	throw new TypeError(`workerd inspector core:entry did not appear on ${port}`);
-}
-
-function waitForExit(child) {
-	return new Promise((resolve, reject) => {
-		child.once("error", reject);
-		child.once("exit", (code) => resolve(code ?? 1));
-	});
-}
-
-function sampledCpuMilliseconds(profile) {
-	const names = profileNodeNames(profile);
-	return (
-		profile.profile.timeDeltas.reduce(
-			(total, delta, index) =>
-				names.get(profile.profile.samples[index]) === "(idle)" ? total : total + delta,
-			0,
-		) / 1_000
-	);
-}
-
-function nonIdleCpuSampleCount(profile) {
-	const names = profileNodeNames(profile);
-	return profile.profile.samples.filter((id) => names.get(id) !== "(idle)").length;
-}
-
-function profileNodeNames(profile) {
-	return new Map(profile.profile.nodes.map((node) => [node.id, node.callFrame.functionName]));
-}
-
-function sampledAllocationBytes(profile) {
-	return profile.profile.samples.reduce((total, sample) => total + sample.size, 0);
-}
-
-function rawHeapFields(sample) {
-	const {
-		backingStorageSize = null,
-		embedderHeapUsedSize = null,
-		totalSize = null,
-		usedSize = null,
-	} = sample ?? {};
-	return { backingStorageSize, embedderHeapUsedSize, totalSize, usedSize };
-}

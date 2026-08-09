@@ -1,5 +1,5 @@
 // This supervisory cap allows local workerd and Vitest startup while remaining bounded.
-// It is intentionally separate from the 5,000 ms core-entry worker wall-time resource gate.
+// It is intentionally separate from the 5,000 ms runner-isolate wall-time resource gate.
 export const WORKER_QUALIFICATION_HARNESS_RECORD_DEADLINE_MS = 60_000;
 const MARKER = "WORKER_QUALIFICATION_BENCHMARK=";
 

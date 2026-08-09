@@ -15,6 +15,7 @@ const CLUSTER_ID = 108713;
 type OpinionFixture = {
 	readonly id: number;
 	readonly body?: Record<string, unknown>;
+	readonly bodyFactory?: () => Record<string, unknown>;
 	readonly failure?: "throw" | "timeout";
 	readonly status?: number;
 };
@@ -91,7 +92,7 @@ function sourceResponse(request: Request, scenario: QuoteWorkerScenario): Promis
 	if (opinion.failure === "timeout") return waitForAbort(request.signal);
 	return Promise.resolve(
 		opinion.status === undefined
-			? Response.json(opinion.body ?? opinionBody(opinion.id))
+			? Response.json(opinion.bodyFactory?.() ?? opinion.body ?? opinionBody(opinion.id))
 			: new Response(null, { status: opinion.status, headers: { "retry-after": "3" } }),
 	);
 }
