@@ -1,6 +1,6 @@
 # Worker runtime qualification
 
-Status: **approved for Cloudflare Workers**. The deploy configuration sets the paid CPU budget to `limits.cpu_ms: 5000`. Issue #11 remains the deployed-canary confirmation gate.
+Status: **Cloudflare Workers rejected; select the unchanged TypeScript Cloud Run fallback**. The exact Worker artifact is compatible and stays within the approved `limits.cpu_ms: 5000` CPU budget, but repeated maximum-workload runs do not reliably remain below the fixed 128 MiB memory limit. Issue #11 must deliver and promote the Cloud Run artifact instead of this Worker artifact.
 
 ## Exact artifact
 
@@ -20,7 +20,7 @@ Recreate the manifest with a new, empty evidence directory before any staging ca
 node scripts/qualify-worker-artifact.mjs .omo/evidence/issue-10/worker-artifact-<candidate>
 ```
 
-The generated manifest records the bundle checksum, all emitted-file checksums, source commit context, lockfile/configuration checksums, and the exact resolved production dependency graph. It refuses to overwrite a directory or build when tracked/indexed files differ from `HEAD`; untracked evidence is allowed. This record qualifies a local artifact only. Issue #11 owns enforcing that the exact qualified checksum is the artifact staged, observed, and promoted.
+The generated manifest records the bundle checksum, all emitted-file checksums, source commit context, lockfile/configuration checksums, and the exact resolved production dependency graph. It refuses to overwrite a directory or build when tracked/indexed files differ from `HEAD`; untracked evidence is allowed. This record proves compatibility and the rejected Worker candidate's identity; it is not eligible for production promotion.
 
 ## Local workerd conformance
 
@@ -67,10 +67,10 @@ The local qualification report is [worker-qualification-benchmark.json](../.omo/
 | --- | --- |
 | Compatibility and protocol | Green: this artifact manifest and the local workerd scenarios above pass. |
 | CPU | Green: exact values are in the machine artifact; sampled CPU from the exact Vitest runner isolate executing `SELF.fetch` and the conservative single-isolate wall-time bound both remain below the approved 5,000 ms paid budget. `core:entry` is recorded separately as the paused control target. |
-| Memory and allocations | Green for local qualification: every 20 ms CDP sample retains `usedSize`, `totalSize`, `embedderHeapUsedSize`, and `backingStorageSize`; the gate records the raw peak fields and fails closed unless its conservative `totalSize + embedderHeapUsedSize + backingStorageSize` sum is finite, non-empty, and at most 128 MiB. Sampled allocations remain in the machine artifact. Local workerd does not enforce the deployed limit. |
+| Memory and allocations | **Failed for reliable Worker qualification.** Every 20 ms CDP sample retains `usedSize`, `totalSize`, `embedderHeapUsedSize`, and `backingStorageSize`; the fail-closed gate uses `totalSize + embedderHeapUsedSize + backingStorageSize`. Two post-calibration runs peaked at 132,149,536 to 132,411,680 bytes, but an independent exact-SHA run peaked at 135,459,674 bytes, exceeding 134,217,728. The narrow passing margin is therefore not reliable evidence of compliance. Sampled allocations remain in each machine artifact. |
 | Completion and outbound bounds | Green: repeated local wall time remained below 2 s; cold scenarios make 103 sequential outbound fixture requests and record zero cancellations. |
-| Production confirmation | Required before promotion: Issue #11 staging canary records Cloudflare production CPU/memory observations for the identical bundle checksum. |
+| Production confirmation | The Worker artifact is not eligible. Issue #11 must stage the same TypeScript verification contract on Cloud Run and bind promotion to that immutable container artifact. |
 
-Current decision: **Cloudflare Workers approved**. The single measurement-calibration pass replaced eager retention of all 100 synthetic maximum-size upstream bodies with per-request generation; every response remains exactly 65,536 bytes and product code is unchanged. Issue #11 must confirm the same bundle checksum and the committed `limits.cpu_ms: 5000` budget in staging production telemetry before promotion.
+Current decision: **Google Cloud Run selected with the unchanged TypeScript verification contract**. The single bounded pass replaced eager retention of all 100 synthetic maximum-size upstream bodies with per-request generation; every response remained exactly 65,536 bytes and product code stayed unchanged. Because a fresh exact-SHA run still exceeded the fixed Worker limit, no second optimization is permitted. Kotlin/Ktor remains deferred.
 
-If a compatibility, memory, or CPU gate fails, make exactly one bounded optimization attempt against the same scenario. Record before/after bundle checksums and measurements. If the failed gate remains failed after that one attempt, select the unchanged TypeScript verification module on Cloud Run. Do not introduce Kotlin as a fallback.
+Issue #11 must retain the failed Worker evidence, build the framework-neutral TypeScript service for Cloud Run, and prove its staging artifact before production eligibility. Do not deploy the rejected Worker artifact or introduce Kotlin as a fallback.
