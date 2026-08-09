@@ -34,6 +34,7 @@ describe("verifyCitation", () => {
 				id: 12345,
 				canonicalUrl: "https://www.courtlistener.com/opinion/12345/example/",
 			},
+			freshness: "fresh",
 			retrievedAt: retrievalTime,
 		});
 
@@ -75,6 +76,28 @@ describe("verifyCitation", () => {
 		expect(calls).toHaveLength(1);
 	});
 
+	it("discloses retained positive evidence as stale after failed revalidation", async () => {
+		// Given: a cache gateway that retained positive evidence beyond its freshness window.
+		const { gateway } = gatewayThat({
+			kind: "verified",
+			cluster: {
+				id: 12345,
+				canonicalUrl: "https://www.courtlistener.com/opinion/12345/example/",
+			},
+			freshness: "stale",
+			retrievedAt: retrievalTime,
+		});
+
+		// When: a supported citation is verified from that retained evidence.
+		const result = await verifyCitation({ citation: "347 U.S. 483" }, gateway);
+
+		// Then: the original retrieval time is disclosed without a silent fresh claim.
+		expect(result).toMatchObject({
+			outcome: "verified",
+			evidence: { freshness: "stale", retrievedAt: retrievalTime },
+		});
+	});
+
 	it("returns unsupported_citation locally without contacting the gateway", async () => {
 		const { gateway, calls } = gatewayThat({ kind: "not_found", retrievedAt: retrievalTime });
 
@@ -94,6 +117,7 @@ describe("verifyCitation", () => {
 		["timeout", undefined],
 		["upstream_unavailable", undefined],
 		["quota_unknown", undefined],
+		["source_changed", undefined],
 		["rate_limited", 60],
 		["circuit_open", 30],
 	] as const)("maps %s to sanitized retry guidance", async (reason, retryAfterSeconds) => {
@@ -137,6 +161,30 @@ describe("verify_citation contract schemas", () => {
 						canonicalUrl: "https://www.courtlistener.com/opinion/12345/example/",
 					},
 				},
+			}).success,
+		).toBe(true);
+		expect(
+			verifyCitationOutputSchema.safeParse({
+				outcome: "verified",
+				contractVersion: CONTRACT_VERSION,
+				evidence: {
+					source: "courtlistener",
+					normalizedCitation: "347 U.S. 483",
+					retrievedAt: retrievalTime,
+					freshness: "stale",
+					cluster: {
+						id: 12345,
+						canonicalUrl: "https://www.courtlistener.com/opinion/12345/example/",
+					},
+				},
+			}).success,
+		).toBe(true);
+		expect(
+			verifyCitationOutputSchema.safeParse({
+				outcome: "indeterminate",
+				contractVersion: CONTRACT_VERSION,
+				reason: "source_changed",
+				retry: { action: "retry_later" },
 			}).success,
 		).toBe(true);
 		expect(

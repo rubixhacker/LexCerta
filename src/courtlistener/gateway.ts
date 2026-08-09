@@ -132,7 +132,7 @@ async function lookupReserved(
 				: record(
 						reservationToken,
 						{ kind: "success" },
-						{ kind: "verified", cluster, retrievedAt },
+						{ kind: "verified", cluster, freshness: "fresh", retrievedAt },
 						options,
 					);
 		}

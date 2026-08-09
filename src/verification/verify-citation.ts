@@ -16,7 +16,7 @@ const evidenceSchema = z
 		source: z.literal("courtlistener"),
 		normalizedCitation: z.string().min(1),
 		retrievedAt: z.iso.datetime(),
-		freshness: z.literal("fresh"),
+		freshness: z.enum(["fresh", "stale"]),
 	})
 	.strict();
 
@@ -66,7 +66,13 @@ const retryableCitationResultSchema = z
 	.object({
 		outcome: z.literal("indeterminate"),
 		contractVersion: z.literal(CONTRACT_VERSION),
-		reason: z.enum(["incomplete", "timeout", "upstream_unavailable", "quota_unknown"]),
+		reason: z.enum([
+			"incomplete",
+			"timeout",
+			"upstream_unavailable",
+			"quota_unknown",
+			"source_changed",
+		]),
 		retry: retryLaterSchema,
 	})
 	.strict();
@@ -104,16 +110,24 @@ export type CourtListenerCluster = {
 	readonly canonicalUrl: string;
 };
 
+type RetryableCitationReason =
+	| "incomplete"
+	| "timeout"
+	| "upstream_unavailable"
+	| "quota_unknown"
+	| "source_changed";
+
 export type CitationVerificationObservation =
 	| {
 			readonly kind: "verified";
 			readonly cluster: CourtListenerCluster;
+			readonly freshness: "fresh" | "stale";
 			readonly retrievedAt: string;
 	  }
 	| { readonly kind: "not_found"; readonly retrievedAt: string }
 	| {
 			readonly kind: "indeterminate";
-			readonly reason: "incomplete" | "timeout" | "upstream_unavailable" | "quota_unknown";
+			readonly reason: RetryableCitationReason;
 	  }
 	| {
 			readonly kind: "indeterminate";
@@ -129,7 +143,7 @@ type EvidenceProvenance = {
 	readonly source: "courtlistener";
 	readonly normalizedCitation: string;
 	readonly retrievedAt: string;
-	readonly freshness: "fresh";
+	readonly freshness: "fresh" | "stale";
 };
 
 export type VerifyCitationResult =
@@ -152,7 +166,7 @@ export type VerifyCitationResult =
 	| {
 			readonly outcome: "indeterminate";
 			readonly contractVersion: typeof CONTRACT_VERSION;
-			readonly reason: "incomplete" | "timeout" | "upstream_unavailable" | "quota_unknown";
+			readonly reason: RetryableCitationReason;
 			readonly retry: { readonly action: "retry_later" };
 	  }
 	| {
@@ -176,13 +190,12 @@ export const verifyCitationToolDefinition = {
 	},
 } as const;
 
-function freshEvidence(normalizedCitation: string, retrievedAt: string): EvidenceProvenance {
-	return {
-		source: "courtlistener",
-		normalizedCitation,
-		retrievedAt,
-		freshness: "fresh",
-	};
+function evidenceProvenance(
+	normalizedCitation: string,
+	retrievedAt: string,
+	freshness: EvidenceProvenance["freshness"],
+): EvidenceProvenance {
+	return { source: "courtlistener", normalizedCitation, retrievedAt, freshness };
 }
 
 export async function verifyCitation(
@@ -212,7 +225,11 @@ export async function verifyCitation(
 				outcome: "verified",
 				contractVersion: CONTRACT_VERSION,
 				evidence: {
-					...freshEvidence(parsed.citation.normalized, observation.retrievedAt),
+					...evidenceProvenance(
+						parsed.citation.normalized,
+						observation.retrievedAt,
+						observation.freshness,
+					),
 					cluster: observation.cluster,
 				},
 			};
@@ -221,7 +238,7 @@ export async function verifyCitation(
 				outcome: "not_found",
 				contractVersion: CONTRACT_VERSION,
 				evidence: {
-					...freshEvidence(parsed.citation.normalized, observation.retrievedAt),
+					...evidenceProvenance(parsed.citation.normalized, observation.retrievedAt, "fresh"),
 					searchComplete: true,
 				},
 			};
@@ -244,6 +261,7 @@ export async function verifyCitation(
 				case "timeout":
 				case "upstream_unavailable":
 				case "quota_unknown":
+				case "source_changed":
 					return {
 						outcome: "indeterminate",
 						contractVersion: CONTRACT_VERSION,

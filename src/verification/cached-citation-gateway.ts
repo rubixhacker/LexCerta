@@ -1,0 +1,178 @@
+import type {
+	CitationObservationStore,
+	LeaseFillResult,
+	StoredCitationObservation,
+} from "../cache/citation-observation-store.js";
+import {
+	readCitationSourceCache,
+	type CitationSourceCacheDecision,
+	type CitationSourceObservation,
+} from "./citation-source-cache.js";
+import type {
+	CitationVerificationGateway,
+	CitationVerificationObservation,
+} from "./verify-citation.js";
+
+const WAITER_RECHECK_DELAY_MS = 50;
+
+export type CachedCitationGatewayOptions = {
+	readonly now: () => Date;
+	readonly ownerToken: () => string;
+	readonly store: CitationObservationStore;
+	readonly upstream: CitationVerificationGateway;
+	readonly waitForFill?: () => Promise<void>;
+};
+
+export function createCachedCitationGateway(
+	options: CachedCitationGatewayOptions,
+): CitationVerificationGateway {
+	return {
+		async lookup(query): Promise<CitationVerificationObservation> {
+			let retainedFallback: CitationVerificationObservation | undefined;
+			try {
+				const cached = await options.store.read({ normalizedCitation: query.normalizedCitation });
+				const now = options.now();
+				const decision = readCitationSourceCache({ state: cached ?? { kind: "empty" }, now });
+				retainedFallback = retainedObservation(decision);
+				if (!requiresRevalidation(decision)) return observationFor(decision);
+
+				const ownerToken = options.ownerToken();
+				const lease = await options.store.acquireLease({
+					normalizedCitation: query.normalizedCitation,
+					ownerToken,
+					now,
+				});
+				if (lease.kind === "held") {
+					await (options.waitForFill ?? waitForFill)();
+					const rechecked = await options.store.read({
+						normalizedCitation: query.normalizedCitation,
+					});
+					return waiterObservation(rechecked, options.now(), decision);
+				}
+
+				const upstream = await options.upstream.lookup(query);
+				if (upstream.kind === "indeterminate") {
+					await options.store.releaseLease({
+						normalizedCitation: query.normalizedCitation,
+						ownerToken,
+					});
+					return fallbackObservation(decision, upstream);
+				}
+				const fill = await options.store.fillLease({
+					normalizedCitation: query.normalizedCitation,
+					ownerToken,
+					now: options.now(),
+					observation: sourceObservation(upstream),
+				});
+				return filledObservation(fill, options.now(), retainedFallback);
+			} catch (error) {
+				if (error instanceof Error) return retainedFallback ?? unavailable();
+				throw error;
+			}
+		},
+	};
+}
+
+function waiterObservation(
+	state: StoredCitationObservation | null,
+	now: Date,
+	prior: CitationSourceCacheDecision,
+): CitationVerificationObservation {
+	const decision = readCitationSourceCache({ state: state ?? { kind: "empty" }, now });
+	return requiresRevalidation(decision)
+		? fallbackObservation(prior, unavailable())
+		: observationFor(decision);
+}
+
+function filledObservation(
+	fill: LeaseFillResult,
+	now: Date,
+	retainedFallback: CitationVerificationObservation | undefined,
+): CitationVerificationObservation {
+	if (fill.kind === "lease_unavailable") return retainedFallback ?? unavailable();
+	return observationFor(readCitationSourceCache({ state: fill.observation, now }));
+}
+
+function fallbackObservation(
+	decision: CitationSourceCacheDecision,
+	upstream: CitationVerificationObservation,
+): CitationVerificationObservation {
+	return retainedObservation(decision) ?? upstream;
+}
+
+function retainedObservation(
+	decision: CitationSourceCacheDecision,
+): CitationVerificationObservation | undefined {
+	if (decision.kind === "verified" && decision.freshness === "stale")
+		return observationFor(decision);
+	if (decision.kind === "indeterminate" && decision.reason === "source_changed") {
+		return { kind: "indeterminate", reason: "source_changed" };
+	}
+	return undefined;
+}
+
+function observationFor(decision: CitationSourceCacheDecision): CitationVerificationObservation {
+	switch (decision.kind) {
+		case "verified":
+			return {
+				kind: "verified",
+				cluster: decision.positive.cluster,
+				freshness: decision.freshness,
+				retrievedAt: decision.positive.retrievedAt.toISOString(),
+			};
+		case "not_found":
+			return { kind: "not_found", retrievedAt: decision.negative.retrievedAt.toISOString() };
+		case "indeterminate":
+			switch (decision.reason) {
+				case "source_changed":
+					return { kind: "indeterminate", reason: "source_changed" };
+				case "cache_miss":
+				case "stale_negative":
+					return unavailable();
+				default:
+					return assertNever(decision.reason);
+			}
+		default:
+			return assertNever(decision);
+	}
+}
+
+function requiresRevalidation(decision: CitationSourceCacheDecision): boolean {
+	switch (decision.kind) {
+		case "verified":
+			return decision.requiresRevalidation;
+		case "not_found":
+			return false;
+		case "indeterminate":
+			return true;
+		default:
+			return assertNever(decision);
+	}
+}
+
+function sourceObservation(
+	observation: Exclude<CitationVerificationObservation, { readonly kind: "indeterminate" }>,
+): CitationSourceObservation {
+	switch (observation.kind) {
+		case "verified":
+			return { kind: "positive", cluster: observation.cluster };
+		case "not_found":
+			return { kind: "negative" };
+		default:
+			return assertNever(observation);
+	}
+}
+
+function unavailable(): CitationVerificationObservation {
+	return { kind: "indeterminate", reason: "upstream_unavailable" };
+}
+
+function waitForFill(): Promise<void> {
+	return new Promise((resolve) => {
+		setTimeout(resolve, WAITER_RECHECK_DELAY_MS);
+	});
+}
+
+function assertNever(value: never): never {
+	throw new TypeError(`Unexpected cached citation value: ${String(value)}`);
+}

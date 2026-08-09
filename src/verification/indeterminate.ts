@@ -73,6 +73,7 @@ function citationText(result: VerifyCitationResult): string {
 				case "timeout":
 				case "upstream_unavailable":
 				case "quota_unknown":
+				case "source_changed":
 				case "rate_limited":
 				case "circuit_open":
 					return "Citation verification is temporarily unavailable.";

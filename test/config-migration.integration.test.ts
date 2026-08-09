@@ -3,6 +3,7 @@ import { beforeAll, describe, expect, it } from "vitest";
 import apiKeyMigrationSql from "../migrations/0001_api_key_records.sql?raw";
 import adminLifecycleMigrationSql from "../migrations/0002_admin_key_lifecycle.sql?raw";
 import limitsVersionMigrationSql from "../migrations/0003_api_key_limit_version.sql?raw";
+import citationSourceCacheMigrationSql from "../migrations/0004_citation_source_cache.sql?raw";
 
 describe("isolated Worker configuration and D1 migrations", () => {
 	beforeAll(async () => {
@@ -10,6 +11,7 @@ describe("isolated Worker configuration and D1 migrations", () => {
 			apiKeyMigrationSql,
 			adminLifecycleMigrationSql,
 			limitsVersionMigrationSql,
+			citationSourceCacheMigrationSql,
 		]) {
 			for (const query of splitMigrationStatements(migration)) await env.DB.prepare(query).run();
 		}
@@ -137,6 +139,32 @@ describe("isolated Worker configuration and D1 migrations", () => {
 				.bind(validPublicId)
 				.run(),
 		).rejects.toThrow();
+	});
+
+	it("applies metadata-only source states and expiring fetch leases in workerd D1", async () => {
+		// Given: every committed migration applied to the test D1 binding.
+		const tables = await env.DB.prepare(
+			"SELECT name FROM sqlite_master WHERE type = 'table' AND name IN ('citation_source_states', 'citation_fetch_leases') ORDER BY name",
+		).all<{ readonly name: string }>();
+		const indexes = await env.DB.prepare(
+			"SELECT name FROM sqlite_master WHERE type = 'index' AND name = 'citation_fetch_leases_expiry_idx'",
+		).all<{ readonly name: string }>();
+
+		// When: the source-cache schema is inspected and rejects malformed state storage.
+		await expect(
+			env.DB.prepare(
+				"INSERT INTO citation_source_states (normalized_citation, state_json, updated_at) VALUES (?1, ?2, ?3)",
+			)
+				.bind("", "not-json", "2026-08-09T00:00:00.000Z")
+				.run(),
+		).rejects.toThrow();
+
+		// Then: D1 contains only keyed metadata state plus the expiry index used for short leases.
+		expect(tables.results).toEqual([
+			{ name: "citation_fetch_leases" },
+			{ name: "citation_source_states" },
+		]);
+		expect(indexes.results).toEqual([{ name: "citation_fetch_leases_expiry_idx" }]);
 	});
 });
 
