@@ -22,6 +22,7 @@
 		"src/admin/**/*.ts",
 		"src/admission/**/*.ts",
 		"src/auth/**/*.ts",
+		"src/courtlistener/**/*.ts",
 		"src/verification/**/*.ts",
 		"worker-configuration.d.ts"
 	],

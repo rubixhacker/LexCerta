@@ -12,9 +12,9 @@
 		"types": "wrangler types worker-configuration.d.ts",
 		"types:check": "wrangler types worker-configuration.d.ts --check",
 		"typecheck": "npm run types:check && tsc --noEmit && tsc --project test/tsconfig.json --noEmit",
-		"lint": "biome lint src/admin src/admission src/worker.ts src/mcp.ts src/auth src/verification test vitest.config.ts vitest.admin.config.ts",
-		"format": "biome format --write package.json tsconfig.json test/tsconfig.json vitest.config.ts vitest.admin.config.ts wrangler.jsonc wrangler.admin.jsonc src/admin src/admission src/worker.ts src/mcp.ts src/auth src/verification test",
-		"format:check": "biome format package.json tsconfig.json test/tsconfig.json vitest.config.ts vitest.admin.config.ts wrangler.jsonc wrangler.admin.jsonc src/admin src/admission src/worker.ts src/mcp.ts src/auth src/verification test",
+		"lint": "biome lint src/admin src/admission src/courtlistener src/worker.ts src/mcp.ts src/auth src/verification test vitest.config.ts vitest.admin.config.ts",
+		"format": "biome format --write package.json tsconfig.json test/tsconfig.json vitest.config.ts vitest.admin.config.ts wrangler.jsonc wrangler.admin.jsonc src/admin src/admission src/courtlistener src/worker.ts src/mcp.ts src/auth src/verification test",
+		"format:check": "biome format package.json tsconfig.json test/tsconfig.json vitest.config.ts vitest.admin.config.ts wrangler.jsonc wrangler.admin.jsonc src/admin src/admission src/courtlistener src/worker.ts src/mcp.ts src/auth src/verification test",
 		"check": "npm run format:check && npm run lint && npm run typecheck && npm run test"
 	},
 	"dependencies": {

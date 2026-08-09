@@ -1,14 +1,18 @@
 import type { McpServer } from "@modelcontextprotocol/server";
 import { z } from "zod";
 import { CONTRACT_VERSION } from "./citation.js";
+import {
+	type CitationVerificationGateway,
+	type VerifyCitationResult,
+	verifyCitation,
+	verifyCitationToolDefinition,
+} from "./verify-citation.js";
 
 const citationInput = z
 	.string()
 	.min(1)
 	.max(256)
 	.describe("Case-law citation in volume reporter page form.");
-
-export const verifyCitationInputSchema = z.object({ citation: citationInput }).strict();
 
 export const verifyQuoteInputSchema = z
 	.object({
@@ -31,19 +35,11 @@ export const verificationIndeterminateOutputSchema = z
 
 export type IndeterminateVerificationResult = z.infer<typeof verificationIndeterminateOutputSchema>;
 
-const toolAnnotations = {
+const quoteToolAnnotations = {
 	readOnlyHint: true,
 	destructiveHint: false,
 	idempotentHint: true,
 	openWorldHint: false,
-} as const;
-
-export const verifyCitationToolDefinition = {
-	title: "Verify citation",
-	description: "Verify a supported case-law citation against LexCerta's evidence source.",
-	inputSchema: verifyCitationInputSchema,
-	outputSchema: verificationIndeterminateOutputSchema,
-	annotations: { title: "Verify citation", ...toolAnnotations },
 } as const;
 
 export const verifyQuoteToolDefinition = {
@@ -51,10 +47,48 @@ export const verifyQuoteToolDefinition = {
 	description: "Verify quoted judicial text against evidence for a supported case-law citation.",
 	inputSchema: verifyQuoteInputSchema,
 	outputSchema: verificationIndeterminateOutputSchema,
-	annotations: { title: "Verify quote", ...toolAnnotations },
+	annotations: { title: "Verify quote", ...quoteToolAnnotations },
 } as const;
 
-function indeterminateVerification(): IndeterminateVerificationResult {
+function unavailableCitation(): VerifyCitationResult {
+	return {
+		outcome: "indeterminate",
+		contractVersion: CONTRACT_VERSION,
+		reason: "upstream_unavailable",
+		retry: { action: "retry_later" },
+	};
+}
+
+function citationText(result: VerifyCitationResult): string {
+	switch (result.outcome) {
+		case "verified":
+			return "Citation verification completed.";
+		case "not_found":
+			return "No supporting citation was found in CourtListener.";
+		case "indeterminate":
+			switch (result.reason) {
+				case "unsupported_citation":
+					return "Citation syntax is not supported by LexCerta.";
+				case "incomplete":
+				case "timeout":
+				case "upstream_unavailable":
+				case "quota_unknown":
+				case "rate_limited":
+				case "circuit_open":
+					return "Citation verification is temporarily unavailable.";
+			}
+	}
+}
+
+function citationToolResponse(result: VerifyCitationResult) {
+	return {
+		content: [{ type: "text" as const, text: citationText(result) }],
+		structuredContent: result,
+		isError: result.outcome === "indeterminate" && result.reason !== "unsupported_citation",
+	};
+}
+
+function quoteIndeterminate(): IndeterminateVerificationResult {
 	return {
 		outcome: "indeterminate",
 		contractVersion: CONTRACT_VERSION,
@@ -62,22 +96,25 @@ function indeterminateVerification(): IndeterminateVerificationResult {
 	};
 }
 
-function indeterminateToolResponse() {
+function quoteToolResponse() {
 	return {
-		content: [
-			{
-				type: "text" as const,
-				text: "Verification is not yet available.",
-			},
-		],
-		structuredContent: indeterminateVerification(),
+		content: [{ type: "text" as const, text: "Verification is not yet available." }],
+		structuredContent: quoteIndeterminate(),
 		isError: true,
 	};
 }
 
-export function registerIndeterminateVerificationTools(server: McpServer): void {
-	server.registerTool("verify_citation", verifyCitationToolDefinition, () =>
-		indeterminateToolResponse(),
-	);
-	server.registerTool("verify_quote", verifyQuoteToolDefinition, () => indeterminateToolResponse());
+export function registerVerificationTools(
+	server: McpServer,
+	gateway: CitationVerificationGateway,
+): void {
+	server.registerTool("verify_citation", verifyCitationToolDefinition, async ({ citation }) => {
+		try {
+			return citationToolResponse(await verifyCitation({ citation }, gateway));
+		} catch {
+			// no-excuse-ok: catch
+			return citationToolResponse(unavailableCitation());
+		}
+	});
+	server.registerTool("verify_quote", verifyQuoteToolDefinition, () => quoteToolResponse());
 }

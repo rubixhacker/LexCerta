@@ -6,6 +6,7 @@
 	"workers_dev": false,
 	"vars": {
 		"BUILD_ID": "production",
+		"COURTLISTENER_CREDENTIAL_ID": "courtlistener-production",
 		"KEY_ENVIRONMENT": "production"
 	},
 	"d1_databases": [
@@ -17,9 +18,15 @@
 		}
 	],
 	"durable_objects": {
-		"bindings": [{ "name": "API_KEY_LIMITER", "class_name": "ApiKeyLimiter" }]
+		"bindings": [
+			{ "name": "API_KEY_LIMITER", "class_name": "ApiKeyLimiter" },
+			{ "name": "COURTLISTENER_COORDINATOR", "class_name": "CourtListenerCoordinator" }
+		]
 	},
-	"migrations": [{ "tag": "v1", "new_sqlite_classes": ["ApiKeyLimiter"] }],
+	"migrations": [
+		{ "tag": "v1", "new_sqlite_classes": ["ApiKeyLimiter"] },
+		{ "tag": "v2", "new_sqlite_classes": ["CourtListenerCoordinator"] }
+	],
 	"observability": {
 		"enabled": true
 	},
@@ -29,6 +36,7 @@
 			"workers_dev": true,
 			"vars": {
 				"BUILD_ID": "local",
+				"COURTLISTENER_CREDENTIAL_ID": "courtlistener-test",
 				"KEY_ENVIRONMENT": "test"
 			},
 			"d1_databases": [
@@ -40,7 +48,10 @@
 				}
 			],
 			"durable_objects": {
-				"bindings": [{ "name": "API_KEY_LIMITER", "class_name": "ApiKeyLimiter" }]
+				"bindings": [
+					{ "name": "API_KEY_LIMITER", "class_name": "ApiKeyLimiter" },
+					{ "name": "COURTLISTENER_COORDINATOR", "class_name": "CourtListenerCoordinator" }
+				]
 			}
 		},
 		"local": {
@@ -48,6 +59,7 @@
 			"workers_dev": true,
 			"vars": {
 				"BUILD_ID": "local",
+				"COURTLISTENER_CREDENTIAL_ID": "courtlistener-local",
 				"KEY_ENVIRONMENT": "test"
 			},
 			"d1_databases": [
@@ -59,7 +71,10 @@
 				}
 			],
 			"durable_objects": {
-				"bindings": [{ "name": "API_KEY_LIMITER", "class_name": "ApiKeyLimiter" }]
+				"bindings": [
+					{ "name": "API_KEY_LIMITER", "class_name": "ApiKeyLimiter" },
+					{ "name": "COURTLISTENER_COORDINATOR", "class_name": "CourtListenerCoordinator" }
+				]
 			}
 		}
 	}

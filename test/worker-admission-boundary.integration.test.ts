@@ -1,5 +1,10 @@
 import { env } from "cloudflare:test";
-import { beforeEach, describe, expect, it } from "vitest";
+import {
+	CLIENT_CAPABILITIES_META_KEY,
+	CLIENT_INFO_META_KEY,
+	PROTOCOL_VERSION_META_KEY,
+} from "@modelcontextprotocol/server";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import worker, { type Env } from "../src/worker.js";
 import { createLocalAuthFixture } from "./fixtures/api-key.js";
 
@@ -69,6 +74,8 @@ beforeEach(async () => {
 		KEY_ENVIRONMENT: "test",
 	};
 });
+
+afterEach(() => vi.unstubAllGlobals());
 
 describe("Worker admission adapter boundaries", () => {
 	it("fails closed for a non-Error limiter rejection", async () => {
@@ -206,5 +213,57 @@ describe("Worker admission adapter boundaries", () => {
 			id: 1.5,
 			error: { code: -32029, message: "API key allowance exhausted" },
 		});
+	});
+
+	it("fails citation verification closed without a CourtListener token or fetch", async () => {
+		// Given: an authenticated supported citation and an environment without the optional secret.
+		let fetched = false;
+		vi.stubGlobal("fetch", () => {
+			fetched = true;
+			return Promise.resolve(new Response(null, { status: 500 }));
+		});
+		request = new Request("https://mcp.lexcerta.ai/", {
+			method: "POST",
+			headers: {
+				authorization: request.headers.get("authorization") ?? "",
+				"content-type": "application/json",
+				"mcp-method": "tools/call",
+				"mcp-name": "verify_citation",
+				"mcp-protocol-version": "2026-07-28",
+			},
+			body: JSON.stringify({
+				jsonrpc: "2.0",
+				id: 9,
+				method: "tools/call",
+				params: {
+					name: "verify_citation",
+					arguments: { citation: "347 U.S. 483" },
+					_meta: {
+						[PROTOCOL_VERSION_META_KEY]: "2026-07-28",
+						[CLIENT_INFO_META_KEY]: { name: "workerd-integration", version: "1.0.0" },
+						[CLIENT_CAPABILITIES_META_KEY]: {},
+					},
+				},
+			}),
+		});
+
+		// When: the request reaches the full Worker path after authentication and admission.
+		const response = await worker.fetch(request, workerEnvironment);
+
+		// Then: the operational result is sanitized and no upstream request is attempted.
+		expect(response.status).toBe(200);
+		expect(await response.json()).toMatchObject({
+			id: 9,
+			result: {
+				isError: true,
+				structuredContent: {
+					contractVersion: "1",
+					outcome: "indeterminate",
+					reason: "upstream_unavailable",
+					retry: { action: "retry_later" },
+				},
+			},
+		});
+		expect(fetched).toBe(false);
 	});
 });

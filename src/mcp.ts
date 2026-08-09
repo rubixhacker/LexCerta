@@ -1,13 +1,14 @@
 import { McpServer, createMcpHandler, preloadSchemas } from "@modelcontextprotocol/server";
 import { registerParseCitationTool } from "./verification/citation.js";
-import { registerIndeterminateVerificationTools } from "./verification/indeterminate.js";
+import { registerVerificationTools } from "./verification/indeterminate.js";
+import type { CitationVerificationGateway } from "./verification/verify-citation.js";
 
 const PROTOCOL_VERSION = "2026-07-28";
 const CACHE_TTL_MILLISECONDS = 5 * 60 * 1000;
 
 preloadSchemas();
 
-function createServer(): McpServer {
+function createServer(gateway: CitationVerificationGateway): McpServer {
 	const server = new McpServer(
 		{ name: "lexcerta", version: "1.0.0" },
 		{
@@ -28,14 +29,13 @@ function createServer(): McpServer {
 		},
 	);
 	registerParseCitationTool(server);
-	registerIndeterminateVerificationTools(server);
+	registerVerificationTools(server, gateway);
 	return server;
 }
 
-export const mcpHandler = createMcpHandler(createServer, {
-	legacy: "reject",
-	responseMode: "json",
-});
+export function createLexCertaMcpHandler(gateway: CitationVerificationGateway) {
+	return createMcpHandler(() => createServer(gateway), { legacy: "reject", responseMode: "json" });
+}
 
 export function protocolBoundaryRejection(request: Request): Response | undefined {
 	if (!request.headers.has("mcp-protocol-version")) {

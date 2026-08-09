@@ -3,9 +3,14 @@ import {
 	authenticateRequest,
 	createAuthenticationFailureResponse,
 } from "./auth/api-key.js";
-import { mcpHandler, protocolBoundaryRejection } from "./mcp.js";
+import { createCourtListenerApi } from "./courtlistener/api.js";
+import type { CourtListenerCoordinatorRpc } from "./courtlistener/coordinator.js";
+import { createCourtListenerCitationGateway } from "./courtlistener/gateway.js";
+import { createLexCertaMcpHandler, protocolBoundaryRejection } from "./mcp.js";
+import type { CitationVerificationGateway } from "./verification/verify-citation.js";
 
 export { ApiKeyLimiter } from "./admission/api-key-limiter.js";
+export { CourtListenerCoordinator } from "./courtlistener/coordinator.js";
 
 type AdmissionInput = {
 	readonly admittedAt: number;
@@ -24,10 +29,21 @@ interface ApiKeyLimiterNamespace {
 	getByName(name: string): ApiKeyLimiterStub;
 }
 
+interface CourtListenerCoordinatorNamespace {
+	getByName(name: string): CourtListenerCoordinatorRpc;
+}
+
+type CourtListenerEnvironment = {
+	readonly COURTLISTENER_API_TOKEN?: string;
+	readonly COURTLISTENER_COORDINATOR?: CourtListenerCoordinatorNamespace;
+	readonly COURTLISTENER_CREDENTIAL_ID?: string;
+};
+
 export type Env = {
 	readonly BUILD_ID: string;
 	readonly API_KEY_LIMITER: ApiKeyLimiterNamespace;
-} & AuthEnvironment;
+} & AuthEnvironment &
+	CourtListenerEnvironment;
 
 const worker = {
 	async fetch(request: Request, env: Env): Promise<Response> {
@@ -49,7 +65,7 @@ const worker = {
 					}
 					const rejection = protocolBoundaryRejection(request);
 					if (rejection !== undefined) return rejection;
-					return mcpHandler.fetch(request);
+					return createLexCertaMcpHandler(citationGateway(env)).fetch(request);
 				}
 				case "unauthorized":
 				case "unavailable":
@@ -65,6 +81,38 @@ const worker = {
 } satisfies ExportedHandler<Env>;
 
 export default worker;
+
+function unavailableCitationGateway(): CitationVerificationGateway {
+	return {
+		lookup: async () => ({ kind: "indeterminate", reason: "upstream_unavailable" }),
+	};
+}
+
+function citationGateway(env: Env): CitationVerificationGateway {
+	const token = env.COURTLISTENER_API_TOKEN;
+	const credentialId = env.COURTLISTENER_CREDENTIAL_ID;
+	const coordinator = env.COURTLISTENER_COORDINATOR;
+	if (
+		token === undefined ||
+		token.trim().length === 0 ||
+		credentialId === undefined ||
+		credentialId.length === 0 ||
+		coordinator === undefined
+	) {
+		return unavailableCitationGateway();
+	}
+	try {
+		return createCourtListenerCitationGateway({
+			api: createCourtListenerApi({ token, transport: (request) => fetch(request) }),
+			coordinator: coordinator.getByName(credentialId),
+			now: () => new Date(),
+			token: () => crypto.randomUUID(),
+		});
+	} catch {
+		// no-excuse-ok: catch
+		return unavailableCitationGateway();
+	}
+}
 
 type AdmissionDecision = AdmissionResult | { readonly kind: "unavailable" };
 

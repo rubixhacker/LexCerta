@@ -175,26 +175,27 @@ describe("Worker tool routing", () => {
 		});
 	});
 
-	it("returns the contract-v1 indeterminate result for citation verification", async () => {
-		// Given: a complete modern request for citation verification.
+	it("completes unsupported citation verification without upstream evidence", async () => {
+		// Given: a complete modern request for citation syntax outside the supported reporter set.
 		const request = modernMcpRequest("tools/call", {
-			arguments: { citation: "347 U.S. 483" },
+			arguments: { citation: "not a reporter citation" },
 			name: "verify_citation",
 		});
 
-		// When: it reaches the current pre-evidence implementation.
+		// When: it reaches the Worker verification surface.
 		const response = await SELF.fetch(request);
 
-		// Then: it is an explicit operational indeterminate result, not a source claim.
+		// Then: it returns the local contract outcome without treating syntax as an operational error.
 		expect(response.status).toBe(200);
 		expect(await response.json()).toMatchObject({
 			id: 1,
 			result: {
-				isError: true,
+				isError: false,
 				structuredContent: {
 					contractVersion: "1",
 					outcome: "indeterminate",
-					reason: "verification_not_available",
+					reason: "unsupported_citation",
+					retry: { action: "use_supported_citation" },
 				},
 			},
 		});
