@@ -17,7 +17,11 @@ async function seed(input: {
 	readonly observedAt: Date;
 	readonly sourceText?: string;
 }) {
-	const store = createD1R2OpinionSourceStore({ bucket: env.OPINION_CACHE, database: env.DB });
+	const store = createD1R2OpinionSourceStore({
+		bucket: env.OPINION_CACHE,
+		clock: { now: () => input.observedAt },
+		database: env.DB,
+	});
 	await store.acquireLease({
 		now: input.observedAt,
 		opinionId: OPINION_ID,

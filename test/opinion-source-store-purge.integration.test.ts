@@ -10,6 +10,7 @@ const PROVENANCE = {
 	clusterId: 123,
 	opinionId: 456,
 } as const;
+let commitNow = NOW;
 
 function at(milliseconds: number): Date {
 	return new Date(NOW.getTime() + milliseconds);
@@ -34,6 +35,7 @@ function storedNegative(state: OpinionSourceCacheState) {
 }
 
 async function reset(): Promise<void> {
+	commitNow = NOW;
 	await env.OPINION_CACHE.delete((await env.OPINION_CACHE.list()).objects.map(({ key }) => key));
 	for (const table of [
 		"opinion_source_fetch_leases",
@@ -51,7 +53,11 @@ async function reset(): Promise<void> {
 }
 
 function store() {
-	return createD1R2OpinionSourceStore({ bucket: env.OPINION_CACHE, database: env.DB });
+	return createD1R2OpinionSourceStore({
+		bucket: env.OPINION_CACHE,
+		clock: { now: () => commitNow },
+		database: env.DB,
+	});
 }
 
 async function fill(
@@ -60,6 +66,7 @@ async function fill(
 	now: Date,
 	observation: ReturnType<typeof positive> | ReturnType<typeof negative>,
 ) {
+	commitNow = now;
 	await item.acquireLease({ now, opinionId: PROVENANCE.opinionId, ownerToken });
 	return item.fillLease({ now, ownerToken, observation });
 }

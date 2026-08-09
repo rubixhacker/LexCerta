@@ -32,15 +32,19 @@ import type {
 import { z } from "zod";
 
 const leaseRowSchema = z.object({ expires_at: z.string().datetime({ offset: true }) }).strict();
+const wallClock = { now: () => new Date() };
+
+type OpinionSourceCommitClock = { readonly now: () => Date };
 
 export function createD1R2OpinionSourceStore(input: {
 	readonly bucket: R2Bucket;
+	readonly clock?: OpinionSourceCommitClock;
 	readonly database: D1Database;
 }): OpinionSourceStore {
 	return {
 		read: async ({ provenance }) => read(input, provenance),
 		acquireLease: async (lease) => acquireLease(input.database, lease),
-		fillLease: async (fill) => fillLease(input, fill),
+		fillLease: async (fill) => fillLease(input, fill, input.clock ?? wallClock),
 		purgeExpiredNegativeLease: async (purge) => purgeExpiredNegativeLease(input.database, purge),
 		releaseLease: async ({ now, opinionId, ownerToken }) =>
 			releaseLease(input.database, opinionId, ownerToken, now),
@@ -96,6 +100,7 @@ async function fillLease(
 		readonly ownerToken: string;
 		readonly observation: OpinionSourceWriteObservation;
 	},
+	clock: OpinionSourceCommitClock,
 ): Promise<OpinionSourceLeaseFillResult> {
 	const prepared = await prepareOpinionSourceObject({
 		bucket: input.bucket,
@@ -103,19 +108,18 @@ async function fillLease(
 		ownerToken: fill.ownerToken,
 		observation: fill.observation,
 	});
-	const observation = prepared.observation;
-	const existing = await readState(input.database, fill.observation.provenance.opinionId);
-	if (existing !== null) validateOpinionSourceState(existing, fill.observation.provenance);
-	const current = existing ?? initialOpinionSourceCacheState();
-	const state = recordOpinionSourceObservation({ now: fill.now, observation, state: current });
-	const storedState = requireStoredState(state);
-	const activePositive = storedState.kind === "positive" ? storedState.positive : null;
-	const serialized = JSON.stringify(state);
-	const now = fill.now.toISOString();
-	const opinionId = fill.observation.provenance.opinionId;
-	let results: readonly D1Result<unknown>[];
 	try {
-		results = await input.database.batch([
+		const observation = prepared.observation;
+		const existing = await readState(input.database, fill.observation.provenance.opinionId);
+		if (existing !== null) validateOpinionSourceState(existing, fill.observation.provenance);
+		const current = existing ?? initialOpinionSourceCacheState();
+		const state = recordOpinionSourceObservation({ now: fill.now, observation, state: current });
+		const storedState = requireStoredState(state);
+		const activePositive = storedState.kind === "positive" ? storedState.positive : null;
+		const serialized = JSON.stringify(state);
+		const opinionId = fill.observation.provenance.opinionId;
+		const now = clock.now().toISOString();
+		const results = await input.database.batch([
 			input.database
 				.prepare(
 					"INSERT OR IGNORE INTO opinion_source_object_versions (opinion_id, content_sha256_hex, object_key, metadata_json, stored_at) SELECT ?1, ?2, ?3, ?4, ?5 WHERE ?6 IS NOT NULL AND EXISTS (SELECT 1 FROM opinion_source_fetch_leases WHERE opinion_id = ?1 AND owner_token = ?7 AND expires_at > ?5)",
@@ -140,13 +144,13 @@ async function fillLease(
 				)
 				.bind(opinionId, fill.ownerToken, now),
 		]);
+		return changes(results[1]) === 1
+			? { kind: "stored", state: storedState }
+			: await lostLease(input.bucket, prepared);
 	} catch (error) {
 		await deleteStagedOpinionSourceObject(input.bucket, prepared);
 		throw error;
 	}
-	return changes(results[1]) === 1
-		? { kind: "stored", state: storedState }
-		: await lostLease(input.bucket, prepared);
 }
 
 async function readState(

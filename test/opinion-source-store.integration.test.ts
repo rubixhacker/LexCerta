@@ -32,7 +32,11 @@ async function reset(): Promise<void> {
 }
 
 async function filledStore() {
-	const store = createD1R2OpinionSourceStore({ bucket: env.OPINION_CACHE, database: env.DB });
+	const store = createD1R2OpinionSourceStore({
+		bucket: env.OPINION_CACHE,
+		clock: { now: () => NOW },
+		database: env.DB,
+	});
 	await store.acquireLease({ now: NOW, opinionId: PROVENANCE.opinionId, ownerToken: "owner-a" });
 	await store.fillLease({
 		now: NOW,

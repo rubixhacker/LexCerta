@@ -13,6 +13,7 @@ const PROVENANCE = {
 	clusterId: 123,
 	opinionId: 456,
 } as const;
+const testClock = { now: () => NOW };
 
 function at(milliseconds: number): Date {
 	return new Date(NOW.getTime() + milliseconds);
@@ -44,8 +45,38 @@ async function reset(): Promise<void> {
 	}
 }
 
-function store() {
-	return createD1R2OpinionSourceStore({ bucket: env.OPINION_CACHE, database: env.DB });
+function store(
+	input: {
+		readonly bucket?: R2Bucket;
+		readonly clock?: { readonly now: () => Date };
+	} = {},
+) {
+	return createD1R2OpinionSourceStore({
+		bucket: input.bucket ?? env.OPINION_CACHE,
+		clock: input.clock ?? testClock,
+		database: env.DB,
+	});
+}
+
+function delayedBucket(input: {
+	readonly continueUpload: Promise<void>;
+	readonly uploaded: () => void;
+}): R2Bucket {
+	return new Proxy(env.OPINION_CACHE, {
+		get(target, property, receiver) {
+			if (property !== "put") {
+				const value = Reflect.get(target, property, receiver);
+				return typeof value === "function" ? value.bind(target) : value;
+			}
+			const put: R2Bucket["put"] = async (key, value, options) => {
+				const result = await target.put(key, value, options);
+				input.uploaded();
+				await input.continueUpload;
+				return result;
+			};
+			return put;
+		},
+	});
 }
 
 describe("D1 and R2 opinion source leases", () => {
@@ -110,6 +141,55 @@ describe("D1 and R2 opinion source leases", () => {
 			.all<{ readonly metadata_json: string }>();
 		expect(versions.results).toHaveLength(1);
 		expect(versions.results[0]?.metadata_json).not.toContain("former owner source");
+	});
+
+	it("does not publish when an upload completes after its lease expires", async () => {
+		// Given: an R2 put reaches a barrier before an injected clock advances to expiry.
+		const upload = Promise.withResolvers<void>();
+		const resume = Promise.withResolvers<void>();
+		let commitNow = NOW;
+		const first = store({
+			bucket: delayedBucket({ continueUpload: resume.promise, uploaded: upload.resolve }),
+			clock: { now: () => commitNow },
+		});
+		await first.acquireLease({ now: NOW, opinionId: PROVENANCE.opinionId, ownerToken: "first" });
+
+		// When: the staged R2 upload completes and the commit time reaches lease expiry.
+		const fill = first.fillLease({
+			now: NOW,
+			ownerToken: "first",
+			observation: positive("delayed owner source"),
+		});
+		await upload.promise;
+		commitNow = at(OPINION_SOURCE_FETCH_LEASE_MS);
+		resume.resolve();
+
+		// Then: stale observation time cannot authorize a post-expiry D1 publication.
+		await expect(fill).resolves.toEqual({ kind: "lease_unavailable" });
+		expect(await first.read({ provenance: PROVENANCE })).toBeNull();
+		expect((await env.OPINION_CACHE.list()).objects).toHaveLength(0);
+	});
+
+	it("removes a staged R2 object when current D1 state is corrupt", async () => {
+		// Given: a valid lease but a corrupt current-state payload detected after the R2 upload.
+		await env.DB.prepare(
+			"INSERT INTO opinion_source_states (opinion_id, state_json, updated_at) VALUES (?1, ?2, ?3)",
+		)
+			.bind(PROVENANCE.opinionId, "{}", NOW.toISOString())
+			.run();
+		const first = store({ clock: { now: () => NOW } });
+		await first.acquireLease({ now: NOW, opinionId: PROVENANCE.opinionId, ownerToken: "first" });
+
+		// When: post-upload current-state parsing rejects the D1 row.
+		const fill = first.fillLease({
+			now: NOW,
+			ownerToken: "first",
+			observation: positive("corrupt state source"),
+		});
+
+		// Then: the owner-unique staged representation is removed before the error escapes.
+		await expect(fill).rejects.toBeInstanceOf(OpinionSourceCacheCorruptError);
+		expect((await env.OPINION_CACHE.list()).objects).toHaveLength(0);
 	});
 
 	it("does not delete a same-content object already published by the winner", async () => {
