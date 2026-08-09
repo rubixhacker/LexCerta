@@ -7,6 +7,7 @@
 		"dev": "wrangler dev --env local",
 		"deploy": "node scripts/deploy.mjs",
 		"deploy:telemetry": "wrangler deploy --config wrangler.telemetry.jsonc --env=\"\"",
+		"benchmark:worker-qualification": "node scripts/worker-qualification-benchmark.mjs",
 		"test": "vitest run && npm run test:telemetry && npm run test:admin && npm run test:deployment",
 		"test:admin": "vitest run --config vitest.admin.config.ts",
 		"test:deployment": "node --test scripts/deploy.test.mjs",

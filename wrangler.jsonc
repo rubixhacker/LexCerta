@@ -4,6 +4,7 @@
 	"main": "src/worker.ts",
 	"compatibility_date": "2026-08-01",
 	"workers_dev": false,
+	"limits": { "cpu_ms": 5000 },
 	"vars": {
 		"BUILD_ID": "production",
 		"COURTLISTENER_CREDENTIAL_ID": "courtlistener-production",

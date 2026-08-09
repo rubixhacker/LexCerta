@@ -25,6 +25,7 @@ export type QuoteWorkerScenario = {
 };
 
 export type QuoteWorkerFixture = {
+	readonly cancelledOutboundCount: () => number;
 	readonly outbound: readonly Request[];
 	readonly request: (quote?: string) => Request;
 };
@@ -60,12 +61,17 @@ export async function setupQuoteWorker(scenario: QuoteWorkerScenario): Promise<Q
 		);
 	});
 	const outbound: Request[] = [];
+	let cancelledOutboundCount = 0;
 	vi.stubGlobal("fetch", async (input: RequestInfo | URL, init?: RequestInit) => {
 		const source = input instanceof Request ? input : new Request(input, init);
 		outbound.push(source);
+		source.signal.addEventListener("abort", () => {
+			cancelledOutboundCount += 1;
+		});
 		return sourceResponse(source, scenario);
 	});
 	return {
+		cancelledOutboundCount: () => cancelledOutboundCount,
 		outbound,
 		request: (quote = "QUOTE_SENTINEL: equal justice under law.") =>
 			quoteRequest(auth.token, quote),
