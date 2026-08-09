@@ -35,7 +35,7 @@ describe("Worker telemetry", () => {
 		expect(log).toHaveBeenCalledWith(
 			expect.objectContaining({
 				event: "mcp.request.completed",
-				keyIdentifier: null,
+				keyIdentifier: fixture.record.public_id,
 				outcome: "parsed",
 				tool: "parse_citation",
 			}),

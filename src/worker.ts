@@ -33,11 +33,16 @@ type CourtListenerEnvironment = {
 	readonly OPINION_CACHE?: R2Bucket;
 };
 
+type TelemetryTraceService = {
+	readonly fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
+};
+
 export type Env = {
 	readonly BUILD_ID: string;
 	readonly DB: D1Database;
 	readonly API_KEY_LIMITER: ApiKeyLimiterNamespace;
 	readonly TELEMETRY?: AnalyticsEngineDataset;
+	readonly TELEMETRY_TRACES?: TelemetryTraceService;
 } & AuthEnvironment &
 	CourtListenerEnvironment;
 
@@ -54,13 +59,15 @@ const worker = {
 			pathname === "/" &&
 			request.method === "POST" &&
 			context !== undefined &&
-			telemetry !== undefined
+			telemetry !== undefined &&
+			env.TELEMETRY_TRACES !== undefined
 		) {
 			recordResponseTelemetry({
 				boundaryOutcome: completion.boundaryOutcome,
 				context,
-				environment: { TELEMETRY: telemetry },
-				keyIdentifier: null,
+				environment: { TELEMETRY: telemetry, TELEMETRY_TRACES: env.TELEMETRY_TRACES },
+				executionFacts: completion.executionFacts,
+				keyIdentifier: completion.keyIdentifier,
 				response: completion.response,
 				startedAt,
 				tool: telemetryTool(request),

@@ -26,20 +26,87 @@ const EMPTY_SUMMARY = {
 	upstreamStatus: "not_called",
 } as const satisfies Omit<TelemetryResponseSummary, "outcome" | "responseBytes">;
 
+export const MAX_TELEMETRY_RESPONSE_BYTES = 65_536;
+const RESPONSE_READ_DEADLINE_MS = 1_000;
+
+type ResponseBody = { readonly bytes: number; readonly text: string };
+
 export async function summarizeTelemetryResponse(
 	response: Response,
 	tool: TelemetryTool,
 	boundaryOutcome?: TelemetryOutcome,
 ): Promise<TelemetryResponseSummary> {
-	const body = response.body === null ? new ArrayBuffer(0) : await response.clone().arrayBuffer();
-	const text = isJsonResponse(response) ? new TextDecoder().decode(body) : "";
+	const body = await boundedResponseBody(response, isJsonResponse(response));
 	return summarizeTelemetryPayload(
-		parseTelemetryPayload(text),
+		parseTelemetryPayload(body.text),
 		response.status,
 		tool,
-		body.byteLength,
+		body.bytes,
 		boundaryOutcome,
 	);
+}
+
+function declaredLength(response: Response): number | undefined {
+	const value = response.headers.get("content-length");
+	if (value === null || !/^\d+$/.test(value.trim())) return undefined;
+	const length = Number(value);
+	return Number.isSafeInteger(length) ? length : undefined;
+}
+
+function abandon(reader: ReadableStreamDefaultReader<Uint8Array>): void {
+	void reader.cancel().catch(() => undefined);
+}
+
+async function readWithDeadline(reader: ReadableStreamDefaultReader<Uint8Array>) {
+	let timer: ReturnType<typeof setTimeout> | undefined;
+	const deadline = new Promise<undefined>((resolve) => {
+		timer = setTimeout(() => resolve(undefined), RESPONSE_READ_DEADLINE_MS);
+	});
+	try {
+		return await Promise.race([reader.read(), deadline]);
+	} finally {
+		if (timer !== undefined) clearTimeout(timer);
+	}
+}
+
+async function boundedResponseBody(response: Response, decodeJson: boolean): Promise<ResponseBody> {
+	if (response.body === null) return { bytes: 0, text: "" };
+	const declared = declaredLength(response);
+	if (declared !== undefined && declared > MAX_TELEMETRY_RESPONSE_BYTES) {
+		return { bytes: MAX_TELEMETRY_RESPONSE_BYTES, text: "" };
+	}
+	const clone = response.clone();
+	const stream = clone.body;
+	if (stream === null) return { bytes: 0, text: "" };
+
+	const reader = stream.getReader();
+	const decoder = decodeJson ? new TextDecoder() : undefined;
+	let bytes = 0;
+	let text = "";
+	try {
+		while (true) {
+			const chunk = await readWithDeadline(reader);
+			if (chunk === undefined) {
+				abandon(reader);
+				return { bytes, text: "" };
+			}
+			if (chunk.done) {
+				if (decoder !== undefined) text += decoder.decode();
+				return { bytes, text };
+			}
+			bytes += chunk.value.byteLength;
+			if (bytes > MAX_TELEMETRY_RESPONSE_BYTES) {
+				abandon(reader);
+				return { bytes: MAX_TELEMETRY_RESPONSE_BYTES, text: "" };
+			}
+			if (decoder !== undefined) text += decoder.decode(chunk.value, { stream: true });
+		}
+	} catch {
+		abandon(reader);
+		return { bytes, text: "" };
+	} finally {
+		reader.releaseLock();
+	}
 }
 
 function isJsonResponse(response: Response): boolean {
@@ -143,6 +210,14 @@ function freshnessFor(
 	}
 }
 
+const UPSTREAM_REASON_STATUS = new Map<string, TelemetryUpstreamStatus>([
+	["rate_limited", "rate_limited"],
+	["quota_unknown", "quota_unknown"],
+	["quota_limited", "quota_limited"],
+	["timeout", "timeout"],
+	["upstream_unavailable", "unavailable"],
+]);
+
 function dimensionsFor(
 	reason: string | undefined,
 	outcome: TelemetryOutcome,
@@ -166,44 +241,13 @@ function dimensionsFor(
 			upstreamStatus: "not_called",
 		};
 	}
-	if (reason === "rate_limited") {
+	const upstreamStatus = UPSTREAM_REASON_STATUS.get(reason ?? "");
+	if (upstreamStatus !== undefined) {
 		return {
 			cacheStatus: "miss",
 			circuitStatus: "closed",
 			errorCategory: "upstream",
-			upstreamStatus: "rate_limited",
-		};
-	}
-	if (reason === "quota_unknown") {
-		return {
-			cacheStatus: "miss",
-			circuitStatus: "closed",
-			errorCategory: "upstream",
-			upstreamStatus: "quota_unknown",
-		};
-	}
-	if (reason === "quota_limited") {
-		return {
-			cacheStatus: "miss",
-			circuitStatus: "closed",
-			errorCategory: "upstream",
-			upstreamStatus: "quota_limited",
-		};
-	}
-	if (reason === "timeout") {
-		return {
-			cacheStatus: "miss",
-			circuitStatus: "closed",
-			errorCategory: "upstream",
-			upstreamStatus: "timeout",
-		};
-	}
-	if (reason === "upstream_unavailable") {
-		return {
-			cacheStatus: "miss",
-			circuitStatus: "closed",
-			errorCategory: "upstream",
-			upstreamStatus: "unavailable",
+			upstreamStatus,
 		};
 	}
 	switch (outcome) {

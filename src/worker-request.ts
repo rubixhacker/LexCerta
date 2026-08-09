@@ -1,15 +1,30 @@
-import { authenticateRequest, createAuthenticationFailureResponse } from "./auth/api-key.js";
+import {
+	type ApiKeyPublicId,
+	authenticateRequest,
+	createAuthenticationFailureResponse,
+} from "./auth/api-key.js";
 import { createLexCertaMcpHandler, protocolBoundaryRejection } from "./mcp.js";
 import { boundedMcpRequest } from "./request-body.js";
 import type { TelemetryOutcome } from "./telemetry/contract.js";
+import { type ExecutionFacts, createExecutionFactCollector } from "./telemetry/execution-facts.js";
 import { createWorkerCitationGateway } from "./verification/worker-citation-gateway.js";
 import { createWorkerQuoteGateway } from "./verification/worker-quote-gateway.js";
 import type { Env } from "./worker.js";
 
 export type RequestCompletion = {
 	readonly boundaryOutcome: TelemetryOutcome | undefined;
+	readonly executionFacts: ExecutionFacts | undefined;
+	readonly keyIdentifier: ApiKeyPublicId | null;
 	readonly response: Response;
 };
+
+type CompletionTelemetry = Omit<RequestCompletion, "response">;
+
+const ANONYMOUS_COMPLETION = {
+	boundaryOutcome: undefined,
+	executionFacts: undefined,
+	keyIdentifier: null,
+} as const satisfies CompletionTelemetry;
 
 export async function respondToRequest(
 	request: Request,
@@ -25,45 +40,73 @@ export async function respondToRequest(
 			case "authenticated": {
 				const admission = await admitRequest(env.API_KEY_LIMITER, authentication);
 				if (admission.kind === "unavailable") {
-					return completed(createAdmissionUnavailableResponse(), "admission_unavailable");
+					return completed(
+						createAdmissionUnavailableResponse(),
+						authenticatedCompletion(authentication.publicId, "admission_unavailable"),
+					);
 				}
 				if (admission.kind === "exhausted") {
 					return completed(
 						await createAdmissionExhaustedResponse(request, admission.retryAfterSeconds),
-						"admission_exhausted",
+						authenticatedCompletion(authentication.publicId, "admission_exhausted"),
 					);
 				}
+				const executionFacts = createExecutionFactCollector();
 				const rejection = protocolBoundaryRejection(request);
-				if (rejection !== undefined) return completed(rejection, "protocol_rejected");
+				if (rejection !== undefined) {
+					return completed(
+						rejection,
+						authenticatedCompletion(
+							authentication.publicId,
+							"protocol_rejected",
+							executionFacts.snapshot(),
+						),
+					);
+				}
 				const bounded = await boundedMcpRequest(request);
-				if (bounded === undefined)
-					return completed(createPayloadTooLargeResponse(), "payload_too_large");
+				if (bounded === undefined) {
+					return completed(
+						createPayloadTooLargeResponse(),
+						authenticatedCompletion(
+							authentication.publicId,
+							"payload_too_large",
+							executionFacts.snapshot(),
+						),
+					);
+				}
 				const citation = createWorkerCitationGateway({
 					coordinator: env.COURTLISTENER_COORDINATOR,
 					credentialId: env.COURTLISTENER_CREDENTIAL_ID,
 					database: env.DB,
+					executionFacts,
 					token: env.COURTLISTENER_API_TOKEN,
 				});
+				const response = await createLexCertaMcpHandler({
+					citation,
+					quote: createWorkerQuoteGateway({
+						coordinator: env.COURTLISTENER_COORDINATOR,
+						credentialId: env.COURTLISTENER_CREDENTIAL_ID,
+						database: env.DB,
+						executionFacts,
+						opinionCache: env.OPINION_CACHE,
+						token: env.COURTLISTENER_API_TOKEN,
+					}),
+				}).fetch(bounded);
 				return completed(
-					await createLexCertaMcpHandler({
-						citation,
-						quote: createWorkerQuoteGateway({
-							coordinator: env.COURTLISTENER_COORDINATOR,
-							credentialId: env.COURTLISTENER_CREDENTIAL_ID,
-							database: env.DB,
-							opinionCache: env.OPINION_CACHE,
-							token: env.COURTLISTENER_API_TOKEN,
-						}),
-					}).fetch(bounded),
+					response,
+					authenticatedCompletion(authentication.publicId, undefined, executionFacts.snapshot()),
 				);
 			}
 			case "unauthorized":
-				return completed(createAuthenticationFailureResponse(authentication), "unauthorized");
+				return completed(createAuthenticationFailureResponse(authentication), {
+					...ANONYMOUS_COMPLETION,
+					boundaryOutcome: "unauthorized",
+				});
 			case "unavailable":
-				return completed(
-					createAuthenticationFailureResponse(authentication),
-					"authentication_unavailable",
-				);
+				return completed(createAuthenticationFailureResponse(authentication), {
+					...ANONYMOUS_COMPLETION,
+					boundaryOutcome: "authentication_unavailable",
+				});
 			default: {
 				const unreachable: never = authentication;
 				return unreachable;
@@ -96,8 +139,19 @@ async function admitRequest(
 	}
 }
 
-function completed(response: Response, boundaryOutcome?: TelemetryOutcome): RequestCompletion {
-	return { boundaryOutcome, response };
+function completed(
+	response: Response,
+	telemetry: CompletionTelemetry = ANONYMOUS_COMPLETION,
+): RequestCompletion {
+	return { ...telemetry, response };
+}
+
+function authenticatedCompletion(
+	keyIdentifier: ApiKeyPublicId,
+	boundaryOutcome: TelemetryOutcome | undefined,
+	executionFacts: ExecutionFacts | undefined = undefined,
+): CompletionTelemetry {
+	return { boundaryOutcome, executionFacts, keyIdentifier };
 }
 
 function createAdmissionUnavailableResponse(): Response {

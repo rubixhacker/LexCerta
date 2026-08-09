@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+	MAX_TELEMETRY_RESPONSE_BYTES,
 	summarizeTelemetryPayload,
 	summarizeTelemetryResponse,
 } from "../src/telemetry/response-mapping.js";
@@ -127,5 +128,104 @@ describe("telemetry response mapping", () => {
 			responseBytes: 86,
 			upstreamStatus: "not_called",
 		});
+	});
+
+	it("rejects a declared oversized JSON body before reading it", async () => {
+		const response = new Response(
+			new ReadableStream<Uint8Array>({
+				start(controller) {
+					controller.enqueue(new TextEncoder().encode("oversized-body"));
+					controller.close();
+				},
+			}),
+			{
+				headers: {
+					"content-length": String(MAX_TELEMETRY_RESPONSE_BYTES + 1),
+					"content-type": "application/json",
+				},
+			},
+		);
+
+		const summary = await summarizeTelemetryResponse(response, "verify_quote");
+
+		expect(summary).toMatchObject({
+			outcome: "verified",
+			responseBytes: MAX_TELEMETRY_RESPONSE_BYTES,
+		});
+		expect(await response.text()).toBe("oversized-body");
+	});
+
+	it("cancels a lying-length JSON stream at the byte cap and preserves the response", async () => {
+		const encoder = new TextEncoder();
+		let cancelled = false;
+		const chunks = [
+			encoder.encode('{"result":{"structuredContent":{"outcome":"verified"}}}'),
+			encoder.encode("x".repeat(MAX_TELEMETRY_RESPONSE_BYTES)),
+		];
+		const response = new Response(
+			new ReadableStream<Uint8Array>({
+				start(controller) {
+					controller.enqueue(chunks[0]);
+				},
+				pull(controller) {
+					controller.enqueue(chunks[1]);
+				},
+				cancel() {
+					cancelled = true;
+				},
+			}),
+			{
+				headers: {
+					"content-length": "1",
+					"content-type": "application/json",
+				},
+			},
+		);
+
+		const summary = await summarizeTelemetryResponse(response, "verify_quote");
+
+		expect(summary).toMatchObject({
+			outcome: "verified",
+			responseBytes: MAX_TELEMETRY_RESPONSE_BYTES,
+		});
+		const originalBody = response.body;
+		if (originalBody !== null) await originalBody.cancel();
+		expect(cancelled).toBe(true);
+	});
+
+	it("counts a large non-JSON chunk without decoding or retaining its content", async () => {
+		const response = new Response(
+			new ReadableStream<Uint8Array>({
+				start(controller) {
+					controller.enqueue(new Uint8Array(MAX_TELEMETRY_RESPONSE_BYTES + 1));
+					controller.close();
+				},
+			}),
+			{ headers: { "content-type": "text/plain" } },
+		);
+
+		const summary = await summarizeTelemetryResponse(response, "verify_quote");
+
+		expect(summary).toMatchObject({
+			outcome: "verified",
+			responseBytes: MAX_TELEMETRY_RESPONSE_BYTES,
+		});
+	});
+
+	it("abandons a never-resolving response read by its deadline", async () => {
+		const response = new Response(
+			new ReadableStream<Uint8Array>({
+				pull() {
+					return new Promise<void>(() => undefined);
+				},
+			}),
+			{ headers: { "content-type": "application/json" } },
+		);
+
+		const started = performance.now();
+		const summary = await summarizeTelemetryResponse(response, "verify_quote");
+
+		expect(summary).toMatchObject({ outcome: "verified", responseBytes: 0 });
+		expect(performance.now() - started).toBeLessThan(2_000);
 	});
 });

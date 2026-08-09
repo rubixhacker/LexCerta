@@ -4,9 +4,15 @@ import type { CourtListenerOutcome } from "./budget.js";
 import type { CourtListenerCaseLawOutcome } from "./case-law-api.js";
 import type { CourtListenerCoordinatorRpc } from "./coordinator.js";
 import { synchronizeCourtListenerQuota } from "./quota-sync.js";
+import {
+	observeCircuitStatus,
+	observeCourtListenerOutcome,
+	type ExecutionFactObserver,
+} from "../telemetry/execution-facts.js";
 
 export type CaseLawAdmissionOptions = {
 	readonly coordinator: CourtListenerCoordinatorRpc;
+	readonly executionFacts?: ExecutionFactObserver;
 	readonly now: () => Date;
 	readonly quotaApi: Pick<CourtListenerApi, "getUsage">;
 	readonly token: () => string;
@@ -39,9 +45,11 @@ export async function requestCaseLaw<Value extends object>(
 			reservationToken: options.token(),
 		}),
 	);
-	return initial === undefined
-		? indeterminate("quota_unknown")
-		: decide(initial, options, request, true);
+	if (initial === undefined) {
+		options.executionFacts?.observe({ kind: "upstream", status: "quota_unknown" });
+		return indeterminate("quota_unknown");
+	}
+	return decide(initial, options, request, true);
 }
 
 async function decide<Value extends object>(
@@ -50,23 +58,28 @@ async function decide<Value extends object>(
 	request: () => Promise<CourtListenerCaseLawOutcome<Value>>,
 	maySynchronize: boolean,
 ): Promise<CaseLawRequestResult<Value>> {
+	observeCircuitStatus(options.executionFacts, decision.state.circuits.case_law.kind);
 	switch (decision.kind) {
 		case "reserved":
 			return requestReserved(decision.token, options, request);
 		case "sync_required":
-			return maySynchronize
-				? synchronizeAndReadmit(options, request)
-				: indeterminate("quota_unknown");
+			if (maySynchronize) return synchronizeAndReadmit(options, request);
+			options.executionFacts?.observe({ kind: "upstream", status: "quota_unknown" });
+			return indeterminate("quota_unknown");
 		case "quota_limited":
+			options.executionFacts?.observe({ kind: "upstream", status: "quota_limited" });
 			return delayed("rate_limited", options.now(), decision.retryAt);
 		case "circuit_open":
 			return delayed("circuit_open", options.now(), decision.retryAt);
 		case "sync_in_progress":
 		case "sync_unavailable":
 		case "quota_exhausted":
+			options.executionFacts?.observe({ kind: "upstream", status: "quota_limited" });
+			return indeterminate("quota_unknown");
 		case "probe_in_flight":
 		case "reservation_conflict":
 		case "reservation_capacity_exhausted":
+			options.executionFacts?.observe({ kind: "upstream", status: "quota_unknown" });
 			return indeterminate("quota_unknown");
 		default:
 			return assertNever(decision);
@@ -83,8 +96,14 @@ async function synchronizeAndReadmit<Value extends object>(
 		now: options.now,
 		token: options.token,
 	});
-	if (sync.kind === "rate_limited") return delayed("rate_limited", options.now(), sync.retryAt);
-	if (sync.kind === "failed") return indeterminate("quota_unknown");
+	if (sync.kind === "rate_limited") {
+		options.executionFacts?.observe({ kind: "upstream", status: "rate_limited" });
+		return delayed("rate_limited", options.now(), sync.retryAt);
+	}
+	if (sync.kind === "failed") {
+		options.executionFacts?.observe({ kind: "upstream", status: "quota_unknown" });
+		return indeterminate("quota_unknown");
+	}
 	const next = await value(() =>
 		options.coordinator.admit({
 			endpoint: "case_law",
@@ -92,9 +111,11 @@ async function synchronizeAndReadmit<Value extends object>(
 			reservationToken: options.token(),
 		}),
 	);
-	return next === undefined
-		? indeterminate("quota_unknown")
-		: decide(next, options, request, false);
+	if (next === undefined) {
+		options.executionFacts?.observe({ kind: "upstream", status: "quota_unknown" });
+		return indeterminate("quota_unknown");
+	}
+	return decide(next, options, request, false);
 }
 
 async function requestReserved<Value extends object>(
@@ -105,6 +126,7 @@ async function requestReserved<Value extends object>(
 	const source = await value(request);
 	const outcome: CourtListenerOutcome =
 		source === undefined ? { kind: "transport_error" } : outcomeFor(source, options.now());
+	observeCourtListenerOutcome(options.executionFacts, outcome);
 	const recorded = await value(() =>
 		options.coordinator.recordOutcome({
 			endpoint: "case_law",

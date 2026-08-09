@@ -28,8 +28,8 @@
 			"persist": true
 		},
 		"traces": {
-			"enabled": true,
-			"persist": true
+			"enabled": false,
+			"persist": false
 		}
 	},
 	"env": {
@@ -60,8 +60,8 @@
 					"persist": true
 				},
 				"traces": {
-					"enabled": true,
-					"persist": true
+					"enabled": false,
+					"persist": false
 				}
 			}
 		}

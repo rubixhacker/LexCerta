@@ -69,7 +69,7 @@ describe("D1 lifecycle retention", () => {
 		// When: the scheduled retention sweep runs at the exact one-year boundary.
 		await runScheduledRetention(env.DB, NOW);
 
-		// Then: only due records and their now-orphaned Customers are removed.
+		// Then: only due child records are removed; orphaned Customers become tombstones.
 		const survivingKeys = await env.DB.prepare(
 			"SELECT public_id FROM api_key_records WHERE public_id IN (?1, ?2, ?3) ORDER BY public_id",
 		)
@@ -87,7 +87,70 @@ describe("D1 lifecycle retention", () => {
 		)
 			.bind(expiredCustomerId, revokedCustomerId, futureCustomerId)
 			.all<{ readonly id: string }>();
-		expect(survivingCustomers.results).toEqual([{ id: futureCustomerId }]);
+		expect(survivingCustomers.results).toEqual([
+			{ id: expiredCustomerId },
+			{ id: futureCustomerId },
+			{ id: revokedCustomerId },
+		]);
+		const retiredCustomers = await env.DB.prepare(
+			"SELECT id, retired_at, retention_expires_at FROM customers WHERE id IN (?1, ?2) ORDER BY id",
+		)
+			.bind(expiredCustomerId, revokedCustomerId)
+			.all<{
+				readonly id: string;
+				readonly retired_at: string;
+				readonly retention_expires_at: string;
+			}>();
+		expect(retiredCustomers.results).toEqual([
+			{
+				id: expiredCustomerId,
+				retired_at: NOW.toISOString(),
+				retention_expires_at: "2028-08-08T00:00:00.000Z",
+			},
+			{
+				id: revokedCustomerId,
+				retired_at: NOW.toISOString(),
+				retention_expires_at: "2028-08-08T00:00:00.000Z",
+			},
+		]);
+	});
+
+	it("deletes a Customer tombstone exactly one year after its last lifecycle deadline", async () => {
+		// Given: all Customer-linked lifecycle records reach their retention deadline together.
+		const suffix = crypto.randomUUID();
+		const customerId = `tombstone-${suffix}`;
+		const keyId = `tombstone-${suffix}`;
+		await env.DB.prepare("INSERT INTO customers (id) VALUES (?1)").bind(customerId).run();
+		await insertKey({
+			customerId,
+			expiresAt: "2026-08-09T00:00:00.000Z",
+			keyId,
+			retentionExpiresAt: "2027-08-08T00:00:00.000Z",
+			status: "active",
+		});
+		await env.DB.prepare(
+			"INSERT INTO admin_audit_events (id, action, actor_subject, customer_id, public_id, environment, occurred_at, retention_expires_at, metadata_json) VALUES (?1, 'key_issued', 'operator', ?2, ?3, 'test', ?4, ?5, '{}')",
+		)
+			.bind(`audit-tombstone-${suffix}`, customerId, keyId, NOW.toISOString(), NOW.toISOString())
+			.run();
+
+		// When: the child records expire, then the tombstone reaches its own boundary.
+		await runScheduledRetention(env.DB, NOW);
+		const beforeTombstoneExpiry = new Date("2028-08-07T23:59:59.999Z");
+		await runScheduledRetention(env.DB, beforeTombstoneExpiry);
+		const retained = await env.DB.prepare("SELECT id FROM customers WHERE id = ?1")
+			.bind(customerId)
+			.first<{ readonly id: string }>();
+		expect(retained).toEqual({ id: customerId });
+
+		await runScheduledRetention(env.DB, new Date("2028-08-08T00:00:00.000Z"));
+		const deleted = await env.DB.prepare("SELECT id FROM customers WHERE id = ?1")
+			.bind(customerId)
+			.first();
+		expect(deleted).toBeNull();
+		await expect(
+			runScheduledRetention(env.DB, new Date("2028-08-08T00:00:00.000Z")),
+		).resolves.toBeUndefined();
 	});
 
 	it("deletes a due parent while preserving its non-due rotation successor", async () => {

@@ -12,11 +12,16 @@ import type {
 	CitationVerificationGateway,
 	CitationVerificationObservation,
 } from "./verify-citation.js";
+import {
+	observeCitationCacheDecision,
+	type ExecutionFactObserver,
+} from "../telemetry/execution-facts.js";
 
 const WAITER_INITIAL_RECHECK_DELAY_MS = 50;
 const WAITER_MAX_RECHECK_DELAY_MS = 1_000;
 
 export type CachedCitationGatewayOptions = {
+	readonly executionFacts?: ExecutionFactObserver;
 	readonly now: () => Date;
 	readonly ownerToken: () => string;
 	readonly store: CitationObservationStore;
@@ -33,7 +38,7 @@ export function createCachedCitationGateway(
 			try {
 				const cached = await options.store.read({ normalizedCitation: query.normalizedCitation });
 				const now = options.now();
-				const decision = readCitationSourceCache({ state: cached ?? { kind: "empty" }, now });
+				const decision = cacheDecision(options, cached, now);
 				retainedFallback = retainedObservation(decision);
 				if (!requiresRevalidation(decision)) return observationFor(decision);
 
@@ -56,25 +61,24 @@ export function createCachedCitationGateway(
 						const rechecked = await options.store.read({
 							normalizedCitation: query.normalizedCitation,
 						});
-						const recheckedDecision = readCitationSourceCache({
-							state: rechecked ?? { kind: "empty" },
-							now: options.now(),
-						});
-						const observation = waiterObservation(rechecked, options.now(), recheckedDecision);
+						const recheckedDecision = cacheDecision(options, rechecked, options.now());
+						const observation = waiterObservation(
+							options,
+							rechecked,
+							options.now(),
+							recheckedDecision,
+						);
 						if (observation.kind !== "indeterminate") return observation;
 						if (observation.reason === "source_changed") return observation;
 						if (options.now().getTime() <= beforeWait) break;
 						delayMilliseconds = Math.min(delayMilliseconds * 2, WAITER_MAX_RECHECK_DELAY_MS);
 					}
-					return waiterObservation(null, options.now(), decision);
+					return waiterObservation(options, null, options.now(), decision);
 				}
 				const afterLease = await options.store.read({
 					normalizedCitation: query.normalizedCitation,
 				});
-				let current = readCitationSourceCache({
-					state: afterLease ?? { kind: "empty" },
-					now: options.now(),
-				});
+				let current = cacheDecision(options, afterLease, options.now());
 				retainedFallback = retainedObservation(current) ?? retainedFallback;
 				if (!requiresRevalidation(current)) {
 					await options.store.releaseLease({
@@ -96,10 +100,7 @@ export function createCachedCitationGateway(
 						const changed = await options.store.read({
 							normalizedCitation: query.normalizedCitation,
 						});
-						current = readCitationSourceCache({
-							state: changed ?? { kind: "empty" },
-							now: options.now(),
-						});
+						current = cacheDecision(options, changed, options.now());
 						retainedFallback = retainedObservation(current) ?? retainedFallback;
 						if (!requiresRevalidation(current)) {
 							await options.store.releaseLease({
@@ -116,10 +117,7 @@ export function createCachedCitationGateway(
 							return unavailable();
 						}
 					} else {
-						current = readCitationSourceCache({
-							state: purge.observation ?? { kind: "empty" },
-							now: options.now(),
-						});
+						current = cacheDecision(options, purge.observation, options.now());
 						retainedFallback = retainedObservation(current) ?? retainedFallback;
 					}
 				}
@@ -138,7 +136,8 @@ export function createCachedCitationGateway(
 					now: options.now(),
 					observation: sourceObservation(upstream),
 				});
-				return filledObservation(fill, options.now(), retainedFallback);
+				if (fill.kind === "lease_unavailable") return retainedFallback ?? unavailable();
+				return observationFor(cacheDecision(options, fill.observation, options.now()));
 			} catch (error) {
 				if (error instanceof Error) return retainedFallback ?? unavailable();
 				throw error;
@@ -155,23 +154,25 @@ function requireNegative(
 }
 
 function waiterObservation(
+	options: CachedCitationGatewayOptions,
 	state: StoredCitationObservation | null,
 	now: Date,
 	prior: CitationSourceCacheDecision,
 ): CitationVerificationObservation {
-	const decision = readCitationSourceCache({ state: state ?? { kind: "empty" }, now });
+	const decision = cacheDecision(options, state, now);
 	return requiresRevalidation(decision)
 		? fallbackObservation(prior, unavailable())
 		: observationFor(decision);
 }
 
-function filledObservation(
-	fill: LeaseFillResult,
+function cacheDecision(
+	options: CachedCitationGatewayOptions,
+	state: StoredCitationObservation | null,
 	now: Date,
-	retainedFallback: CitationVerificationObservation | undefined,
-): CitationVerificationObservation {
-	if (fill.kind === "lease_unavailable") return retainedFallback ?? unavailable();
-	return observationFor(readCitationSourceCache({ state: fill.observation, now }));
+): CitationSourceCacheDecision {
+	const decision = readCitationSourceCache({ state: state ?? { kind: "empty" }, now });
+	observeCitationCacheDecision(options.executionFacts, decision);
+	return decision;
 }
 
 function fallbackObservation(

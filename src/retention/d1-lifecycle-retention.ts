@@ -12,6 +12,11 @@ export async function purgeExpiredLifecycleRecords(
 ): Promise<LifecycleRetentionPurge> {
 	const dueAt = now.toISOString();
 	const result = await database.batch([
+		database
+			.prepare(
+				"UPDATE customers SET retired_at = ?1, retention_expires_at = strftime('%Y-%m-%dT%H:%M:%fZ', MAX(COALESCE((SELECT MAX(retention_expires_at) FROM api_key_records WHERE api_key_records.customer_id = customers.id), ?1), COALESCE((SELECT MAX(retention_expires_at) FROM admin_audit_events WHERE admin_audit_events.customer_id = customers.id), ?1)), '+365 days') WHERE retention_expires_at IS NULL AND NOT EXISTS (SELECT 1 FROM api_key_records WHERE api_key_records.customer_id = customers.id AND (api_key_records.retention_expires_at IS NULL OR api_key_records.retention_expires_at > ?1 OR (api_key_records.revoked_at IS NULL AND api_key_records.expires_at > ?1))) AND NOT EXISTS (SELECT 1 FROM admin_audit_events WHERE admin_audit_events.customer_id = customers.id AND admin_audit_events.retention_expires_at > ?1)",
+			)
+			.bind(dueAt),
 		database.prepare("DELETE FROM admin_audit_events WHERE retention_expires_at <= ?1").bind(dueAt),
 		database
 			.prepare(
@@ -25,11 +30,6 @@ export async function purgeExpiredLifecycleRecords(
 			.bind(dueAt),
 		database
 			.prepare(
-				"UPDATE customers SET retired_at = ?1, retention_expires_at = ?1 WHERE retention_expires_at IS NULL AND NOT EXISTS (SELECT 1 FROM api_key_records WHERE api_key_records.customer_id = customers.id) AND NOT EXISTS (SELECT 1 FROM admin_audit_events WHERE admin_audit_events.customer_id = customers.id)",
-			)
-			.bind(dueAt),
-		database
-			.prepare(
 				"DELETE FROM customers WHERE retention_expires_at <= ?1 AND NOT EXISTS (SELECT 1 FROM api_key_records WHERE api_key_records.customer_id = customers.id) AND NOT EXISTS (SELECT 1 FROM admin_audit_events WHERE admin_audit_events.customer_id = customers.id)",
 			)
 			.bind(dueAt),
@@ -38,8 +38,8 @@ export async function purgeExpiredLifecycleRecords(
 		throw new LifecycleRetentionPurgeError(result.length);
 	}
 	return {
-		adminAuditEvents: result[0]?.meta.changes ?? 0,
-		apiKeyRecords: result[2]?.meta.changes ?? 0,
+		adminAuditEvents: result[1]?.meta.changes ?? 0,
+		apiKeyRecords: result[3]?.meta.changes ?? 0,
 		customers: result[4]?.meta.changes ?? 0,
 	};
 }

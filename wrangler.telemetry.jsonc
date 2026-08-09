@@ -1,0 +1,34 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "lexcerta-telemetry-traces",
+	"main": "src/telemetry/trace-worker.ts",
+	"compatibility_date": "2026-08-01",
+	"workers_dev": false,
+	"observability": {
+		"enabled": true,
+		"logs": { "enabled": true, "invocation_logs": false, "persist": true },
+		"traces": { "enabled": true, "persist": true }
+	},
+	"env": {
+		"test": {
+			"name": "lexcerta-telemetry-traces-test",
+			"workers_dev": false,
+			"routes": [],
+			"observability": {
+				"enabled": true,
+				"logs": { "enabled": true, "invocation_logs": false, "persist": true },
+				"traces": { "enabled": true, "persist": true }
+			}
+		},
+		"local": {
+			"name": "lexcerta-telemetry-traces-local",
+			"workers_dev": false,
+			"routes": [],
+			"observability": {
+				"enabled": true,
+				"logs": { "enabled": true, "invocation_logs": false, "persist": true },
+				"traces": { "enabled": true, "persist": true }
+			}
+		}
+	}
+}

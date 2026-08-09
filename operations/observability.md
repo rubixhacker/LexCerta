@@ -1,6 +1,8 @@
 # Operational telemetry
 
-Workers Logs retain events for seven days on the paid Workers plan. Invocation logs remain disabled because they can capture request authorization material. Structured `mcp.request.completed` events and persisted traces are enabled; their only correlation values are service-generated request and trace IDs.
+Workers Logs retain events for seven days on the paid Workers plan. Invocation logs remain disabled because they can capture request authorization material. The public MCP and admin Workers disable persisted automatic traces because Cloudflare request-root spans can retain attacker-controlled URL and header attributes.
+
+The public MCP Worker emits a strict `mcp.request.completed` event to its internal-only `TELEMETRY_TRACES` service binding. The isolated telemetry Worker runtime-parses that event, creates the persisted custom span, and sets only allow-listed attributes: tool, outcome, latency, response bytes, cache/freshness, circuit, upstream status, error category, non-sensitive request/trace correlation IDs, and the authenticated API-key public identifier. It has no public route. The authenticated public identifier is non-reversible but never enters Analytics Engine.
 
 Analytics Engine has separate production, test, and local datasets. The production dataset is `lexcerta_mcp_production`; tests use `lexcerta_mcp_test`; local development uses `lexcerta_mcp_local`. It receives only fixed dimensions and measurements:
 

@@ -46,7 +46,7 @@ describe("admin Worker configuration", () => {
 		["production", (config: AdminWranglerConfig) => config.observability],
 		["test", (config: AdminWranglerConfig) => config.env.test.observability],
 	] as const)(
-		"disables invocation logs and persists only explicitly configured telemetry for %s",
+		"disables invocation logs and automatic traces for %s",
 		(_environment, readObservability) => {
 			const configuration = JSON.parse(
 				stripJsoncComments(adminWranglerConfig),
@@ -57,7 +57,7 @@ describe("admin Worker configuration", () => {
 			expect(observability).toEqual({
 				enabled: true,
 				logs: { enabled: true, invocation_logs: false, persist: true },
-				traces: { enabled: true, persist: true },
+				traces: { enabled: false, persist: false },
 			});
 		},
 	);

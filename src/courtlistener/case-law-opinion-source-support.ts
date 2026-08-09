@@ -8,6 +8,10 @@ import {
 import type { OpinionTextSource } from "../verification/quote-contract.js";
 import type { QuoteOpinion } from "../verification/verify-quote.js";
 import type { CourtListenerCaseLawOpinion } from "./case-law-api.js";
+import {
+	observeOpinionCacheDecision,
+	type ExecutionFactObserver,
+} from "../telemetry/execution-facts.js";
 
 const INITIAL_WAIT_MS = 50;
 const MAX_WAIT_MS = 1_000;
@@ -30,6 +34,7 @@ export type OpinionResult =
 	  };
 
 export type OpinionCacheReadOptions = {
+	readonly executionFacts?: ExecutionFactObserver;
 	readonly now: () => Date;
 	readonly store: OpinionSourceStore;
 	readonly waitForFill?: (delayMilliseconds: number) => Promise<void>;
@@ -60,8 +65,8 @@ export async function cached(
 		if (error instanceof Error) return { kind: "failure" };
 		throw error;
 	}
-	if (read === null)
-		return {
+	if (read === null) {
+		const result: Cached = {
 			kind: "decided",
 			read: null,
 			decision: readOpinionSourceCache({
@@ -69,7 +74,11 @@ export async function cached(
 				now: options.now(),
 			}),
 		};
+		observeOpinionCacheDecision(options.executionFacts, result.decision);
+		return result;
+	}
 	const decision = readOpinionSourceCache({ state: read.state, now: options.now() });
+	observeOpinionCacheDecision(options.executionFacts, decision);
 	return read.kind === "positive" && decision.kind === "available"
 		? { kind: "usable", read, decision }
 		: { kind: "decided", decision, read };

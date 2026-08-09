@@ -3,6 +3,7 @@ import { createCourtListenerApi } from "../courtlistener/api.js";
 import { createCourtListenerCaseLawApi } from "../courtlistener/case-law-api.js";
 import { createCourtListenerCaseLawGateway } from "../courtlistener/case-law-gateway.js";
 import type { CourtListenerCoordinatorRpc } from "../courtlistener/coordinator.js";
+import type { ExecutionFactObserver } from "../telemetry/execution-facts.js";
 import type { QuoteVerificationGateway } from "./verify-quote.js";
 
 type CoordinatorNamespace = {
@@ -13,6 +14,7 @@ type WorkerQuoteGatewayInput = {
 	readonly coordinator: CoordinatorNamespace | undefined;
 	readonly credentialId: string | undefined;
 	readonly database: D1Database;
+	readonly executionFacts?: ExecutionFactObserver;
 	readonly opinionCache: R2Bucket | undefined;
 	readonly token: string | undefined;
 };
@@ -26,10 +28,11 @@ export function createWorkerQuoteGateway(input: WorkerQuoteGatewayInput): QuoteV
 		input.coordinator === undefined ||
 		input.opinionCache === undefined
 	) {
-		return unavailableQuoteGateway();
+		return unavailableQuoteGateway(input.executionFacts);
 	}
 	try {
 		return createCourtListenerCaseLawGateway({
+			...(input.executionFacts === undefined ? {} : { executionFacts: input.executionFacts }),
 			api: createCourtListenerCaseLawApi({
 				token: input.token,
 				transport: (request) => fetch(request),
@@ -48,13 +51,21 @@ export function createWorkerQuoteGateway(input: WorkerQuoteGatewayInput): QuoteV
 		});
 	} catch {
 		// no-excuse-ok: catch
-		return unavailableQuoteGateway();
+		return unavailableQuoteGateway(input.executionFacts);
 	}
 }
 
-function unavailableQuoteGateway(): QuoteVerificationGateway {
+function unavailableQuoteGateway(
+	executionFacts: ExecutionFactObserver | undefined,
+): QuoteVerificationGateway {
 	return {
-		readCluster: async () => ({ kind: "indeterminate", reason: "upstream_unavailable" }),
-		readOpinion: async () => ({ kind: "indeterminate", reason: "upstream_unavailable" }),
+		readCluster: async () => {
+			executionFacts?.observe({ kind: "upstream", status: "unavailable" });
+			return { kind: "indeterminate", reason: "upstream_unavailable" };
+		},
+		readOpinion: async () => {
+			executionFacts?.observe({ kind: "upstream", status: "unavailable" });
+			return { kind: "indeterminate", reason: "upstream_unavailable" };
+		},
 	};
 }

@@ -1,3 +1,8 @@
+import {
+	observeCircuitStatus,
+	observeCourtListenerOutcome,
+	type ExecutionFactObserver,
+} from "../telemetry/execution-facts.js";
 import type * as Verification from "../verification/verify-citation.js";
 import type { CitationLookupOutcome, CourtListenerApi } from "./api.js";
 import type { BudgetDecision, CourtListenerOutcome } from "./budget.js";
@@ -14,6 +19,7 @@ const OUTCOME_FOR_FAILURE = {
 export type CourtListenerCitationGatewayOptions = {
 	readonly api: CourtListenerApi;
 	readonly coordinator: CourtListenerCoordinatorRpc;
+	readonly executionFacts?: ExecutionFactObserver;
 	readonly now: () => Date;
 	readonly token: () => string;
 };
@@ -30,7 +36,10 @@ export function createCourtListenerCitationGateway(
 					reservationToken: options.token(),
 				}),
 			);
-			if (admission === null) return indeterminate("quota_unknown");
+			if (admission === null) {
+				options.executionFacts?.observe({ kind: "upstream", status: "quota_unknown" });
+				return indeterminate("quota_unknown");
+			}
 			return admit(admission, query, options, true);
 		},
 	};
@@ -42,21 +51,28 @@ async function admit(
 	options: CourtListenerCitationGatewayOptions,
 	maySynchronize: boolean,
 ): Promise<Verification.CitationVerificationObservation> {
+	observeCircuitStatus(options.executionFacts, admission.state.circuits.citation.kind);
 	switch (admission.kind) {
 		case "reserved":
 			return lookupReserved(admission.token, query, options);
 		case "sync_required":
-			return maySynchronize ? synchronizeAndAdmit(query, options) : indeterminate("quota_unknown");
+			if (maySynchronize) return synchronizeAndAdmit(query, options);
+			options.executionFacts?.observe({ kind: "upstream", status: "quota_unknown" });
+			return indeterminate("quota_unknown");
 		case "quota_limited":
+			options.executionFacts?.observe({ kind: "upstream", status: "quota_limited" });
 			return delayed("rate_limited", options.now(), admission.retryAt);
 		case "circuit_open":
 			return delayed("circuit_open", options.now(), admission.retryAt);
 		case "sync_in_progress":
 		case "sync_unavailable":
 		case "quota_exhausted":
+			options.executionFacts?.observe({ kind: "upstream", status: "quota_limited" });
+			return indeterminate("quota_unknown");
 		case "probe_in_flight":
 		case "reservation_conflict":
 		case "reservation_capacity_exhausted":
+			options.executionFacts?.observe({ kind: "upstream", status: "quota_unknown" });
 			return indeterminate("quota_unknown");
 		default:
 			return assertNever(admission);
@@ -68,8 +84,14 @@ async function synchronizeAndAdmit(
 	options: CourtListenerCitationGatewayOptions,
 ): Promise<Verification.CitationVerificationObservation> {
 	const sync = await synchronizeCourtListenerQuota(options);
-	if (sync.kind === "rate_limited") return delayed("rate_limited", options.now(), sync.retryAt);
-	if (sync.kind === "failed") return indeterminate("quota_unknown");
+	if (sync.kind === "rate_limited") {
+		options.executionFacts?.observe({ kind: "upstream", status: "rate_limited" });
+		return delayed("rate_limited", options.now(), sync.retryAt);
+	}
+	if (sync.kind === "failed") {
+		options.executionFacts?.observe({ kind: "upstream", status: "quota_unknown" });
+		return indeterminate("quota_unknown");
+	}
 	const admission = await value(() =>
 		options.coordinator.admit({
 			endpoint: "citation",
@@ -77,7 +99,10 @@ async function synchronizeAndAdmit(
 			reservationToken: options.token(),
 		}),
 	);
-	if (admission === null) return indeterminate("quota_unknown");
+	if (admission === null) {
+		options.executionFacts?.observe({ kind: "upstream", status: "quota_unknown" });
+		return indeterminate("quota_unknown");
+	}
 	return admit(admission, query, options, false);
 }
 
@@ -152,6 +177,7 @@ async function record(
 	observation: Verification.CitationVerificationObservation,
 	options: CourtListenerCitationGatewayOptions,
 ): Promise<Verification.CitationVerificationObservation> {
+	observeCourtListenerOutcome(options.executionFacts, outcome);
 	const recorded = await value(() =>
 		options.coordinator.recordOutcome({
 			endpoint: "citation",

@@ -4,6 +4,7 @@ import type { CourtListenerCoordinatorRpc } from "../courtlistener/coordinator.j
 import { createCourtListenerCitationGateway } from "../courtlistener/gateway.js";
 import { createCachedCitationGateway } from "./cached-citation-gateway.js";
 import type { CitationVerificationGateway } from "./verify-citation.js";
+import type { ExecutionFactObserver } from "../telemetry/execution-facts.js";
 
 type CoordinatorNamespace = {
 	readonly getByName: (name: string) => CourtListenerCoordinatorRpc;
@@ -13,6 +14,7 @@ type WorkerCitationGatewayInput = {
 	readonly coordinator: CoordinatorNamespace | undefined;
 	readonly credentialId: string | undefined;
 	readonly database: D1Database;
+	readonly executionFacts?: ExecutionFactObserver;
 	readonly token: string | undefined;
 };
 
@@ -20,6 +22,7 @@ export function createWorkerCitationGateway(
 	input: WorkerCitationGatewayInput,
 ): CitationVerificationGateway {
 	return createCachedCitationGateway({
+		...(input.executionFacts === undefined ? {} : { executionFacts: input.executionFacts }),
 		now: () => new Date(),
 		ownerToken: () => crypto.randomUUID(),
 		store: createD1CitationObservationStore(input.database),
@@ -37,10 +40,11 @@ function createUpstreamCitationGateway(
 		input.credentialId.length === 0 ||
 		input.coordinator === undefined
 	) {
-		return unavailableCitationGateway();
+		return unavailableCitationGateway(input.executionFacts);
 	}
 	try {
 		return createCourtListenerCitationGateway({
+			...(input.executionFacts === undefined ? {} : { executionFacts: input.executionFacts }),
 			api: createCourtListenerApi({ token: input.token, transport: (request) => fetch(request) }),
 			coordinator: input.coordinator.getByName(input.credentialId),
 			now: () => new Date(),
@@ -48,10 +52,17 @@ function createUpstreamCitationGateway(
 		});
 	} catch {
 		// no-excuse-ok: catch
-		return unavailableCitationGateway();
+		return unavailableCitationGateway(input.executionFacts);
 	}
 }
 
-function unavailableCitationGateway(): CitationVerificationGateway {
-	return { lookup: async () => ({ kind: "indeterminate", reason: "upstream_unavailable" }) };
+function unavailableCitationGateway(
+	executionFacts: ExecutionFactObserver | undefined,
+): CitationVerificationGateway {
+	return {
+		lookup: async () => {
+			executionFacts?.observe({ kind: "upstream", status: "unavailable" });
+			return { kind: "indeterminate", reason: "upstream_unavailable" };
+		},
+	};
 }

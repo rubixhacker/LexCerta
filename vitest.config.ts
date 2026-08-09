@@ -10,6 +10,9 @@ export default defineConfig({
 					API_KEY_PEPPER: "local-test-pepper",
 					COURTLISTENER_API_TOKEN: "fixture-courtlistener-token",
 				},
+				serviceBindings: {
+					TELEMETRY_TRACES: async () => new Response(null, { status: 204 }),
+				},
 			},
 		}),
 	],
@@ -22,6 +25,6 @@ export default defineConfig({
 			"src/verification/**/*.test.ts",
 			"test/**/*.test.ts",
 		],
-		exclude: ["test/admin-*.test.ts"],
+		exclude: ["test/admin-*.test.ts", "test/telemetry-trace-worker.integration.test.ts"],
 	},
 });

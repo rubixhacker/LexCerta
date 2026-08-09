@@ -4,6 +4,7 @@ import { selectOpinionText } from "../verification/quote-contract.js";
 import type { QuoteCluster } from "../verification/verify-quote.js";
 import type { CaseLawRequestFailure } from "./case-law-admission.js";
 import type { CourtListenerCaseLawOpinion, CourtListenerCaseLawOutcome } from "./case-law-api.js";
+import type { ExecutionFactObserver } from "../telemetry/execution-facts.js";
 import {
 	type OpinionFailureReason,
 	type OpinionResult,
@@ -20,6 +21,7 @@ import {
 } from "./case-law-opinion-source-support.js";
 
 export type CachedCaseLawOpinionOptions = {
+	readonly executionFacts?: ExecutionFactObserver;
 	readonly fetch: (
 		url: string,
 	) => Promise<
