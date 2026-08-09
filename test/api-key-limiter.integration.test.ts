@@ -1,9 +1,4 @@
-import {
-	env,
-	evictDurableObject,
-	runDurableObjectAlarm,
-	runInDurableObject,
-} from "cloudflare:test";
+import { env, evictDurableObject, runInDurableObject } from "cloudflare:test";
 import { beforeEach, describe, expect, it } from "vitest";
 import {
 	ApiKeyLimitConfigurationError,
@@ -206,37 +201,6 @@ describe("ApiKeyLimiter Durable Object", () => {
 
 		// Then: the reconstructed object reads SQLite state instead of resetting the allowance.
 		expect(result).toEqual({ kind: "exhausted", retryAfterSeconds: 59 });
-	});
-
-	it("prunes expired SQLite usage and reschedules its alarm", async () => {
-		// Given: a key object with one current admission and one usage row beyond its retention horizon.
-		const publicId = "alarm";
-		const limiter = limiterFor(publicId);
-		const now = Date.now();
-		await seedCanonicalLimits(publicId);
-		await limiter.admit(admission(publicId, now));
-		await runInDurableObject(limiter, (_instance, state) => {
-			state.storage.sql.exec(
-				"INSERT INTO api_key_admissions (admitted_at) VALUES (?1)",
-				now - DAY - 1,
-			);
-		});
-
-		// When: workerd fires the Durable Object alarm.
-		const alarmRan = await runDurableObjectAlarm(limiter);
-		const remaining = await runInDurableObject(limiter, (_instance, state) => {
-			return state.storage.sql
-				.exec<{ readonly count: number }>("SELECT COUNT(*) AS count FROM api_key_admissions")
-				.one().count;
-		});
-		const nextAlarm = await runInDurableObject(limiter, (_instance, state) => {
-			return state.storage.getAlarm();
-		});
-
-		// Then: cleanup is idempotent, removes expired usage, and leaves a future alarm scheduled.
-		expect(alarmRan).toBe(true);
-		expect(remaining).toBe(1);
-		expect(nextAlarm).toBeGreaterThan(now);
 	});
 
 	it("enforces the rolling-day allowance after minute windows have opened", async () => {

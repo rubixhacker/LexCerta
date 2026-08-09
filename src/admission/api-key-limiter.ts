@@ -14,7 +14,6 @@ export type ApiKeyLimiterResult =
 	| { readonly kind: "exhausted"; readonly retryAfterSeconds: number };
 
 type AdmissionRow = { readonly admitted_at: number };
-type OldestAdmissionRow = { readonly admitted_at: number | null };
 type StoredLimitConfig = {
 	readonly day_limit: number;
 	readonly limits_version: number;
@@ -95,15 +94,7 @@ export class ApiKeyLimiter extends DurableObject {
 				}
 			}
 		});
-		await this.scheduleUsageExpiry();
 		return result;
-	}
-
-	async alarm(): Promise<void> {
-		this.ctx.storage.transactionSync(() => {
-			this.deleteExpiredUsage(Date.now());
-		});
-		await this.scheduleUsageExpiry();
 	}
 
 	private deleteExpiredUsage(now: number): void {
@@ -170,17 +161,6 @@ export class ApiKeyLimiter extends DurableObject {
 			)
 			.toArray();
 		return rows.map((row) => new Date(row.admitted_at));
-	}
-
-	private async scheduleUsageExpiry(): Promise<void> {
-		const row = this.ctx.storage.sql
-			.exec<OldestAdmissionRow>("SELECT MIN(admitted_at) AS admitted_at FROM api_key_admissions")
-			.one();
-		if (row.admitted_at === null) {
-			await this.ctx.storage.deleteAlarm();
-			return;
-		}
-		await this.ctx.storage.setAlarm(row.admitted_at + USAGE_RETENTION_MILLISECONDS);
 	}
 }
 
