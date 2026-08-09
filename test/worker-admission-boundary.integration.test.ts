@@ -189,4 +189,32 @@ describe("Worker admission adapter boundaries", () => {
 		expect(response.status).toBe(429);
 		expect(await response.text()).toBe("");
 	});
+
+	it.each(["1e400", "9007199254740993"])(
+		"does not reflect an unsafe numeric request ID (%s)",
+		async (numericId) => {
+			// Given: an exhausted limiter and a JSON-RPC envelope with an unsafe numeric ID.
+			workerEnvironment = {
+				...workerEnvironment,
+				API_KEY_LIMITER: {
+					getByName: () => ({
+						admit: async () => ({ kind: "exhausted", retryAfterSeconds: 7 }),
+					}),
+				},
+			};
+			const headers = new Headers(request.headers);
+			request = new Request("https://mcp.lexcerta.ai/", {
+				method: "POST",
+				headers,
+				body: `{"jsonrpc":"2.0","id":${numericId},"method":"server/discover"}`,
+			});
+
+			// When: the Worker evaluates the exhausted response's numeric request ID.
+			const response = await worker.fetch(request, workerEnvironment);
+
+			// Then: unsafe numeric values remain bodyless rather than being rounded or serialized as null.
+			expect(response.status).toBe(429);
+			expect(await response.text()).toBe("");
+		},
+	);
 });
