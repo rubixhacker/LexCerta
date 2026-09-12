@@ -2,7 +2,7 @@
 
 LexCerta provides three MCP tools for checking supported U.S. case citations and quoted opinion text against CourtListener. Results distinguish supporting evidence, a source-scoped miss, and an incomplete or unavailable check.
 
-This repository contains a tested service implementation, but the replacement production service is not yet qualified for launch. The recorded runtime decision rejects the Cloudflare Worker candidate and selects TypeScript on Cloud Run. The Cloud Run delivery remains tracked in [#11](https://github.com/rubixhacker/LexCerta/issues/11); production cutover and legacy retirement remain in [#12](https://github.com/rubixhacker/LexCerta/issues/12). `npm run deploy` intentionally fails until that delivery is implemented.
+This repository contains a tested service implementation, but the replacement production service is not yet qualified for launch. The recorded runtime decision rejects the Cloudflare Worker candidate and selects TypeScript on Cloud Run. Follow [Deliver isolated staging and immutable promotion](https://github.com/rubixhacker/LexCerta/issues/11) and [Cut over production and retire the legacy runtime](https://github.com/rubixhacker/LexCerta/issues/12). `npm run deploy` intentionally fails until that delivery is implemented.
 
 ## What the tools establish
 
@@ -20,7 +20,7 @@ The service accepts only stateless MCP `2026-07-28`, with the protocol's request
 
 ## Development and checks
 
-Use Node 24 (see `.nvmrc`; the package requires Node 22 or newer).
+Use Node 24.21.0, pinned in `.nvmrc`. The check command verifies the actual executable version before running the suite.
 
 ```sh
 nvm use
@@ -47,12 +47,12 @@ npx vitest run test/issue-7-quote-hardening.integration.test.ts src/verification
 - `src/telemetry/`, `src/retention/`: sanitized operational facts and record expiry.
 - `src/worker.ts`, `src/worker-request.ts`, `src/mcp.ts`: current Worker transport and dispatch.
 
-The legacy implementation remains in `app/`, `src/server.ts`, `src/index.ts`, `src/transport.ts`, `src/config.ts`, `src/logger.ts`, `src/types.ts`, `src/tools/`, `src/clients/`, `src/parser/`, `src/matching/`, `src/resilience/`, the two old in-memory caches, and their tests. Next.js/Vercel, the old SDK, fuzzy matching, and those tests are not the current runtime or test suite. Their former dependencies are absent from `package.json`. They are retained until the production-verification gate in #12; do not restore them as a fallback.
+The unused Next.js/Express implementation, legacy SDK transports, fuzzy matcher, in-memory authority and their disconnected tests have been removed. The user authorized early obsolete-code removal on September 12, 2026. The active Worker adapter remains a behavioral reference until its Cloud Run replacement is qualified. Vercel Git deployments are disabled in `vercel.json`; existing remote deployments and hostname retirement still require the verified cutover procedure.
 
 ## Delivery records
 
-- [Current PRD (#1)](https://github.com/rubixhacker/LexCerta/issues/1): intended evidence contract and launch gates. Its original Worker delivery plan is superseded by the runtime decision below.
+- [PRD: Ship stateless LexCerta on Cloud Run](https://github.com/rubixhacker/LexCerta/issues/1): evidence contract and launch gates. Its original Worker delivery plan is superseded by the runtime decision below.
 - [Runtime qualification](operations/worker-runtime-qualification.md): recorded failed Worker memory gate and selected Cloud Run fallback. Linked `.omo/evidence/` artifacts are not included in this checkout, so their measurements are historical records rather than independently reproduced evidence here.
 - [Observability and retention](operations/observability.md): operational privacy and lifecycle rules.
 
-The `.planning/` documents describe the earlier Vercel/Supabase/Stripe proposal. Claims there about eliminating hallucinations, fuzzy-score validity, pricing, or shipped production behavior are historical and are not the current contract. Paid onboarding remains gated on the written Free Law Project arrangement specified in #1.
+The [MVP route](docs/mvp-route.md) and its linked decision resolutions govern current implementation. The `.planning/` archive describes the earlier Vercel/Supabase/Stripe proposal and has no authority over current scope or behavior. Paid onboarding requires a written Free Law Project commercial arrangement.
