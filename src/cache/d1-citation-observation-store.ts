@@ -1,13 +1,16 @@
+import {
+	CitationSourceStateCorruptError,
+	parseCitationSourceState,
+	requireStoredState,
+} from "./citation-observation-state.js";
+export { CitationSourceStateCorruptError } from "./citation-observation-state.js";
 import { z } from "zod";
 import {
 	initialCitationSourceCacheState,
 	purgeExpiredCitationNegative,
 	recordCitationSourceObservation,
 } from "../verification/citation-source-cache.js";
-import type {
-	CitationSourceCacheState,
-	CitationSourceObservation,
-} from "../verification/citation-source-cache.js";
+import type { CitationSourceObservation } from "../verification/citation-source-cache.js";
 import { CITATION_FETCH_LEASE_MS } from "./citation-observation-store.js";
 import type {
 	CitationObservationStore,
@@ -16,24 +19,6 @@ import type {
 	LeasePurgeResult,
 	StoredCitationObservation,
 } from "./citation-observation-store.js";
-
-const canonicalUrlSchema = z.string().url().max(2_048).refine(isCourtListenerCanonicalUrl);
-const storedStateSchema = z.discriminatedUnion("kind", [
-	z.object({
-		kind: z.literal("positive"),
-		positive: positiveSchema(),
-	}),
-	z.object({
-		kind: z.literal("negative"),
-		negative: negativeSchema(),
-		superseded: positiveSchema().nullable(),
-	}),
-	z.object({
-		kind: z.literal("reversal_pending"),
-		superseded: positiveSchema(),
-		firstNegative: negativeSchema(),
-	}),
-]);
 
 const stateRowSchema = z.object({ state_json: z.string().min(1).max(4_096) });
 const leaseRowSchema = z.object({ expires_at: z.string().datetime({ offset: true }) });
@@ -158,10 +143,7 @@ async function readState(
 	if (row === null) return null;
 	const parsedRow = stateRowSchema.safeParse(row);
 	if (!parsedRow.success) throw new CitationSourceStateCorruptError();
-	const value = jsonValue(parsedRow.data.state_json);
-	const state = storedStateSchema.safeParse(value);
-	if (!state.success) throw new CitationSourceStateCorruptError();
-	return state.data;
+	return parseCitationSourceState(parsedRow.data.state_json);
 }
 
 async function ownsActiveLease(
@@ -179,65 +161,7 @@ async function ownsActiveLease(
 	return lease !== null;
 }
 
-function positiveSchema() {
-	return z.object({
-		kind: z.literal("positive"),
-		cluster: z.object({
-			id: z.number().int().positive(),
-			canonicalUrl: canonicalUrlSchema,
-		}),
-		retrievedAt: z
-			.string()
-			.datetime({ offset: true })
-			.transform((value) => new Date(value)),
-	});
-}
-
-function negativeSchema() {
-	return z.object({
-		kind: z.literal("negative"),
-		retrievedAt: z
-			.string()
-			.datetime({ offset: true })
-			.transform((value) => new Date(value)),
-	});
-}
-
-function jsonValue(value: string): unknown {
-	try {
-		return JSON.parse(value);
-	} catch (error) {
-		if (error instanceof SyntaxError) throw new CitationSourceStateCorruptError();
-		throw error;
-	}
-}
-
-function requireStoredState(state: CitationSourceCacheState): StoredCitationObservation {
-	if (state.kind === "empty") throw new CitationSourceStateCorruptError();
-	return state;
-}
-
-function isCourtListenerCanonicalUrl(value: string): boolean {
-	try {
-		const url = new URL(value);
-		return (
-			url.protocol === "https:" &&
-			(url.hostname === "courtlistener.com" || url.hostname === "www.courtlistener.com")
-		);
-	} catch {
-		return false;
-	}
-}
-
 function changes(result: D1Result<unknown> | undefined): number {
 	const value = result?.meta.changes;
 	return typeof value === "number" ? value : 0;
-}
-
-export class CitationSourceStateCorruptError extends Error {
-	readonly name = "CitationSourceStateCorruptError";
-
-	constructor() {
-		super("citation source cache state is corrupt");
-	}
 }

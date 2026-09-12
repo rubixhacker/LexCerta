@@ -1,0 +1,14 @@
+{
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"lib": ["ES2024", "DOM", "DOM.Iterable"],
+		"types": ["node"],
+		"noEmit": false,
+		"outDir": "build",
+		"rootDir": "src"
+	},
+	"include": ["src/postgres/**/*.ts"],
+	"exclude": ["node_modules", "test", "src/**/*.test.ts"]
+}
