@@ -8,12 +8,14 @@ import {
 	createCourtListenerAttemptTiming,
 } from "../telemetry/execution-facts.js";
 import type { QuoteVerificationGateway } from "./verify-quote.js";
+import type { EvidenceRequest } from "./evidence-request.js";
 
 type CoordinatorNamespace = {
 	readonly getByName: (name: string) => CourtListenerCoordinatorRpc;
 };
 
 type WorkerQuoteGatewayInput = {
+	readonly request?: EvidenceRequest;
 	readonly coordinator: CoordinatorNamespace | undefined;
 	readonly credentialId: string | undefined;
 	readonly database: D1Database;
@@ -36,8 +38,10 @@ export function createWorkerQuoteGateway(input: WorkerQuoteGatewayInput): QuoteV
 	const attemptTiming = createCourtListenerAttemptTiming(input.executionFacts);
 	try {
 		return createCourtListenerCaseLawGateway({
+			...(input.request === undefined ? {} : { request: input.request }),
 			...(input.executionFacts === undefined ? {} : { executionFacts: input.executionFacts }),
 			api: createCourtListenerCaseLawApi({
+				...(input.request === undefined ? {} : { request: input.request }),
 				...(attemptTiming === undefined ? {} : { attemptTiming }),
 				token: input.token,
 				transport: (request) => fetch(request),
@@ -49,6 +53,7 @@ export function createWorkerQuoteGateway(input: WorkerQuoteGatewayInput): QuoteV
 				database: input.database,
 			}),
 			quotaApi: createCourtListenerApi({
+				...(input.request === undefined ? {} : { request: input.request }),
 				...(attemptTiming === undefined ? {} : { attemptTiming }),
 				token: input.token,
 				transport: (request) => fetch(request),

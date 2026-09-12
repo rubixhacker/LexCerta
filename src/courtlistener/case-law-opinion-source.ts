@@ -1,4 +1,5 @@
 import type { OpinionSourceStore } from "../cache/opinion-source-store.js";
+import type { EvidenceRequest } from "../verification/evidence-request.js";
 import type { OpinionSourceProvenance } from "../verification/opinion-source-cache.js";
 import { selectOpinionText } from "../verification/quote-contract.js";
 import type { QuoteCluster } from "../verification/verify-quote.js";
@@ -21,6 +22,7 @@ import {
 } from "./case-law-opinion-source-support.js";
 
 export type CachedCaseLawOpinionOptions = {
+	readonly request?: EvidenceRequest;
 	readonly executionFacts?: ExecutionFactObserver;
 	readonly fetch: (
 		url: string,
@@ -39,6 +41,7 @@ export async function readCachedCaseLawOpinion(
 	input: { readonly cluster: QuoteCluster; readonly opinionUrl: string },
 	options: CachedCaseLawOpinionOptions,
 ): Promise<OpinionResult> {
+	options.request?.checkpoint();
 	const opinionId = opinionIdFromUrl(input.opinionUrl);
 	if (opinionId === undefined) return indeterminate("incomplete");
 	const provenance = {
@@ -68,6 +71,7 @@ async function acquireAndRead(
 	);
 	if (lease === undefined) return fallback(retained, "upstream_unavailable");
 	while (lease.kind === "held") {
+		options.request?.checkpoint();
 		const waited = await waitForWinner(options, provenance, lease.expiresAt);
 		if (waited.kind === "failure") return fallback(retained, "upstream_unavailable");
 		if (waited.kind === "usable" && !waited.decision.requiresRevalidation)
@@ -131,7 +135,9 @@ async function fetchAndFill(
 	ownerToken: string,
 	retained: UsableCache | undefined,
 ): Promise<OpinionResult> {
+	options.request?.checkpoint();
 	const source = await options.fetch(input.opinionUrl);
+	options.request?.checkpoint();
 	if (source === undefined)
 		return releasedFallback(options, provenance.opinionId, ownerToken, retained, "quota_unknown");
 	if (source.kind === "indeterminate")
@@ -185,6 +191,7 @@ async function fetchAndFill(
 						sourceText: selected.content,
 					};
 	const observedAt = options.now();
+	options.request?.checkpoint();
 	const filled = await value(() =>
 		options.store.fillLease({ now: observedAt, ownerToken, observation }),
 	);

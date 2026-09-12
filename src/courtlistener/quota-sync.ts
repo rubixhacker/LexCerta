@@ -1,6 +1,6 @@
 import type { CourtListenerApi, CourtListenerUsage } from "./api.js";
 import type { QuotaWindow } from "./budget.js";
-import type { CourtListenerCoordinatorRpc } from "./coordinator.js";
+import type { CourtListenerCoordinatorRpc } from "./coordinator-contract.js";
 
 const FALLBACK_RETRY_SECONDS = 15 * 60;
 

@@ -2,6 +2,7 @@ import type {
 	CitationObservationStore,
 	StoredCitationObservation,
 } from "../cache/citation-observation-store.js";
+import type { EvidenceRequest } from "./evidence-request.js";
 import {
 	readCitationSourceCache,
 	type CitationSourceCacheDecision,
@@ -20,6 +21,7 @@ const WAITER_INITIAL_RECHECK_DELAY_MS = 50;
 const WAITER_MAX_RECHECK_DELAY_MS = 1_000;
 
 export type CachedCitationGatewayOptions = {
+	readonly request?: EvidenceRequest;
 	readonly executionFacts?: ExecutionFactObserver;
 	readonly now: () => Date;
 	readonly ownerToken: () => string;
@@ -35,7 +37,9 @@ export function createCachedCitationGateway(
 		async lookup(query): Promise<CitationVerificationObservation> {
 			let retainedFallback: CitationVerificationObservation | undefined;
 			try {
+				options.request?.checkpoint();
 				const cached = await options.store.read({ normalizedCitation: query.normalizedCitation });
+				options.request?.checkpoint();
 				const now = options.now();
 				const decision = cacheDecision(options, cached, now);
 				retainedFallback = retainedObservation(decision);
@@ -51,12 +55,18 @@ export function createCachedCitationGateway(
 					const deadline = new Date(lease.expiresAt).getTime();
 					let delayMilliseconds = WAITER_INITIAL_RECHECK_DELAY_MS;
 					while (Number.isFinite(deadline)) {
+						options.request?.checkpoint();
 						const beforeWait = options.now().getTime();
 						const remainingMilliseconds = deadline - beforeWait;
 						if (remainingMilliseconds <= 0) break;
-						await (options.waitForFill ?? waitForFill)(
-							Math.min(delayMilliseconds, remainingMilliseconds),
-						);
+						const delay = Math.min(delayMilliseconds, remainingMilliseconds);
+						const pause = () =>
+							(
+								options.waitForFill ??
+								((ms: number) => options.request?.wait(ms) ?? waitForFill(ms))
+							)(delay);
+						await (options.request?.run(pause) ?? pause());
+						options.request?.checkpoint();
 						const rechecked = await options.store.read({
 							normalizedCitation: query.normalizedCitation,
 						});
@@ -121,7 +131,9 @@ export function createCachedCitationGateway(
 					}
 				}
 
+				options.request?.checkpoint();
 				const upstream = await options.upstream.lookup(query);
+				options.request?.checkpoint();
 				if (upstream.kind === "indeterminate") {
 					await options.store.releaseLease({
 						normalizedCitation: query.normalizedCitation,

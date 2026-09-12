@@ -113,8 +113,8 @@ describe("Worker runtime conformance", () => {
 		expect(sourceUrls(fixture.outbound)).toEqual([
 			"https://www.courtlistener.com/api/rest/v4/api-usage/",
 			"https://www.courtlistener.com/api/rest/v4/citation-lookup/",
-			`https://www.courtlistener.com/api/rest/v4/clusters/${CLUSTER_ID}/`,
-			`https://www.courtlistener.com/api/rest/v4/opinions/${OPINION_ID}/`,
+			`https://www.courtlistener.com/api/rest/v4/clusters/${CLUSTER_ID}/?fields=id,absolute_url,sub_opinions`,
+			`https://www.courtlistener.com/api/rest/v4/opinions/${OPINION_ID}/?fields=id,cluster,html_with_citations,html,plain_text`,
 		]);
 	});
 

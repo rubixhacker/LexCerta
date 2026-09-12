@@ -47,22 +47,16 @@ describe("Issue 7 quote hardening through real workerd bindings", () => {
 	);
 
 	it("maps an aborted source transport to timeout without a retry", async () => {
-		// Given: case-law request timeout creation immediately yields an aborted signal.
-		const native = AbortSignal;
-		vi.stubGlobal("AbortSignal", {
-			abort: native.abort.bind(native),
-			any: () => native.abort(),
-			timeout: () => native.abort(),
-		});
+		// Given: only the opinion transport stalls; its real five-second deadline applies.
 		const fixture = await setupQuoteWorker({ opinions: [{ failure: "timeout", id: 2201 }] });
 
-		// When: quote verification makes its one source attempt.
+		// When: that source attempt expires after quota and citation reads succeeded.
 		const result = JSON.stringify(await (await SELF.fetch(fixture.request(EXACT))).json());
 
 		// Then: it reports timeout without transmitting a retry.
 		expect(result).toContain('"reason":"timeout"');
 		expect(fixture.outbound).toHaveLength(4);
-	});
+	}, 10_000);
 
 	it("maps a thrown source transport to upstream_unavailable without a retry", async () => {
 		const fixture = await setupQuoteWorker({ opinions: [{ failure: "throw", id: 2201 }] });

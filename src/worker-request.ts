@@ -10,6 +10,7 @@ import { type ExecutionFacts, createExecutionFactCollector } from "./telemetry/e
 import { createWorkerCitationGateway } from "./verification/worker-citation-gateway.js";
 import { createWorkerQuoteGateway } from "./verification/worker-quote-gateway.js";
 import type { Env } from "./worker.js";
+import { EvidenceRequest } from "./verification/evidence-request.js";
 
 export type RequestCompletion = {
 	readonly boundaryOutcome: TelemetryOutcome | undefined;
@@ -30,6 +31,20 @@ export async function respondToRequest(
 	request: Request,
 	env: Env,
 	pathname: string,
+): Promise<RequestCompletion> {
+	const evidence = new EvidenceRequest({ signal: request.signal });
+	try {
+		return await respondWithinRequest(request, env, pathname, evidence);
+	} finally {
+		evidence.close();
+	}
+}
+
+async function respondWithinRequest(
+	request: Request,
+	env: Env,
+	pathname: string,
+	evidence: EvidenceRequest,
 ): Promise<RequestCompletion> {
 	if (pathname === "/" && request.headers.has("origin")) {
 		return completed(
@@ -84,6 +99,7 @@ export async function respondToRequest(
 					);
 				}
 				const citation = createWorkerCitationGateway({
+					request: evidence,
 					coordinator: env.COURTLISTENER_COORDINATOR,
 					credentialId: env.COURTLISTENER_CREDENTIAL_ID,
 					database: env.DB,
@@ -91,8 +107,10 @@ export async function respondToRequest(
 					token: env.COURTLISTENER_API_TOKEN,
 				});
 				const response = await createLexCertaMcpHandler({
+					request: evidence,
 					citation,
 					quote: createWorkerQuoteGateway({
+						request: evidence,
 						coordinator: env.COURTLISTENER_COORDINATOR,
 						credentialId: env.COURTLISTENER_CREDENTIAL_ID,
 						database: env.DB,

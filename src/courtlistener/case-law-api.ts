@@ -1,19 +1,28 @@
 import { z } from "zod";
+import { MAX_SOURCE_BYTES, type EvidenceRequest } from "../verification/evidence-request.js";
 import type { CourtListenerAttemptTiming } from "./attempt-timing.js";
 import { type CaseLawTransport, retryAfterSeconds, send, signalFor } from "./case-law-request.js";
-import { MAX_RESPONSE_BODY_BYTES, boundedJsonBody } from "./response-body.js";
+import { boundedJsonBody, discardResponse } from "./response-body.js";
 
 const COURTLISTENER_ORIGIN = "https://www.courtlistener.com";
 const API_ROOT = `${COURTLISTENER_ORIGIN}/api/rest/v4/`;
 const DEFAULT_TIMEOUT_MS = 5_000;
 const MAX_OPINIONS_PER_CLUSTER = 100;
-const MAX_SOURCE_CHARS = 65_536;
-const responseBytesSchema = z.number().int().min(1_024).max(MAX_RESPONSE_BODY_BYTES);
-const sourceCharactersSchema = z.number().int().min(1).max(MAX_SOURCE_CHARS);
+const responseBytesSchema = z.number().int().min(1_024).max(MAX_SOURCE_BYTES);
+const sourceBytesSchema = z.number().int().min(1).max(MAX_SOURCE_BYTES);
 const opinionCountSchema = z.number().int().min(1).max(MAX_OPINIONS_PER_CLUSTER);
 
 const positiveIdSchema = z.number().int().safe().positive();
-const sourceTextSchema = z.string().max(MAX_SOURCE_CHARS).nullable().optional();
+function sourceTextSchema(maxBytes: number) {
+	return z
+		.string()
+		.max(maxBytes)
+		.refine(
+			(value) => value.isWellFormed() && new TextEncoder().encode(value).byteLength <= maxBytes,
+		)
+		.nullable()
+		.optional();
+}
 const clusterSchema = z
 	.object({
 		absolute_url: z.string().max(2_048).optional(),
@@ -26,10 +35,10 @@ const opinionSchema = z
 	.object({
 		cluster: z.string().max(2_048).optional(),
 		cluster_id: positiveIdSchema.optional(),
-		html: sourceTextSchema,
-		html_with_citations: sourceTextSchema,
+		html: sourceTextSchema(MAX_SOURCE_BYTES),
+		html_with_citations: sourceTextSchema(MAX_SOURCE_BYTES),
 		id: positiveIdSchema,
-		plain_text: sourceTextSchema,
+		plain_text: sourceTextSchema(MAX_SOURCE_BYTES),
 	})
 	.passthrough();
 
@@ -81,7 +90,8 @@ export type CourtListenerCaseLawApi = {
 export type CourtListenerCaseLawApiOptions = {
 	readonly attemptTiming?: CourtListenerAttemptTiming;
 	readonly maxResponseBytes?: number;
-	readonly maxSourceCharacters?: number;
+	readonly maxSourceBytes?: number;
+	readonly request?: EvidenceRequest;
 	readonly maxOpinionsPerCluster?: number;
 	readonly now?: () => Date;
 	readonly token: string;
@@ -186,12 +196,8 @@ export function createCourtListenerCaseLawApi(
 	const authorization = `Token ${options.token}`;
 	const now = options.now ?? (() => new Date());
 	const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
-	const maxResponseBytes = responseBytesSchema.parse(
-		options.maxResponseBytes ?? MAX_RESPONSE_BODY_BYTES,
-	);
-	const maxSourceCharacters = sourceCharactersSchema.parse(
-		options.maxSourceCharacters ?? MAX_SOURCE_CHARS,
-	);
+	const maxResponseBytes = responseBytesSchema.parse(options.maxResponseBytes ?? MAX_SOURCE_BYTES);
+	const maxSourceBytes = sourceBytesSchema.parse(options.maxSourceBytes ?? MAX_SOURCE_BYTES);
 	const maxOpinionsPerCluster = opinionCountSchema.parse(
 		options.maxOpinionsPerCluster ?? MAX_OPINIONS_PER_CLUSTER,
 	);
@@ -200,53 +206,70 @@ export function createCourtListenerCaseLawApi(
 		signal: AbortSignal | undefined,
 		parse: (body: unknown) => Value | undefined,
 	): Promise<CourtListenerCaseLawOutcome<Value>> {
+		const requestSignal = signalFor(timeoutMs, signal, options.request?.signal);
 		const response = await send(
 			options.transport,
 			new Request(url, {
 				headers: { accept: "application/json", authorization },
 				method: "GET",
-				signal: signalFor(timeoutMs, signal),
+				redirect: "manual",
+				signal: requestSignal,
 			}),
 			options.attemptTiming,
 		);
 		if (typeof response === "string") return { kind: "unavailable", failure: response };
+		if (!response.ok) discardResponse(response);
 		if (response.status === 404) return { kind: "missing" };
 		if (response.status === 429) return rateLimited(response, now);
 		if (response.status >= 500 && response.status <= 599)
 			return { kind: "unavailable", failure: "server", status: response.status };
 		if (!response.ok) return { kind: "malformed_response" };
-		const parsed = parse(await boundedJsonBody(response, maxResponseBytes));
+		const body = await boundedJsonBody(response, maxResponseBytes, {
+			signal: requestSignal,
+			...(options.request === undefined ? {} : { request: options.request }),
+		});
+		if (requestSignal.aborted && body === undefined)
+			return { kind: "unavailable", failure: "timeout" };
+		const parsed = parse(body);
 		return parsed === undefined ? { kind: "malformed_response" } : { kind: "found", ...parsed };
 	}
 	return {
 		getCluster(clusterId, signal) {
 			const id = positiveIdSchema.safeParse(clusterId);
 			return id.success
-				? get(`${API_ROOT}clusters/${id.data}/`, signal, (body) => {
-						const parsed = clusterSchema
-							.extend({
-								sub_opinions: z.array(z.string().max(2_048)).max(maxOpinionsPerCluster),
-							})
-							.safeParse(body);
-						const cluster = parsed.success ? clusterFrom(parsed.data) : undefined;
-						return cluster === undefined || cluster.id !== id.data ? undefined : { cluster };
-					})
+				? get(
+						`${API_ROOT}clusters/${id.data}/?fields=id,absolute_url,sub_opinions`,
+						signal,
+						(body) => {
+							const parsed = clusterSchema
+								.extend({
+									sub_opinions: z.array(z.string().max(2_048)).max(maxOpinionsPerCluster),
+								})
+								.safeParse(body);
+							const cluster = parsed.success ? clusterFrom(parsed.data) : undefined;
+							return cluster === undefined || cluster.id !== id.data ? undefined : { cluster };
+						},
+					)
 				: Promise.resolve({ kind: "malformed_response" });
 		},
 		getOpinion(opinionUrl, signal) {
 			const reference = trustedOpinionReference(opinionUrl);
 			if (reference === undefined) return Promise.resolve({ kind: "malformed_response" });
-			return get(opinionUrl, signal, (body) => {
-				const parsed = opinionSchema
-					.extend({
-						html: z.string().max(maxSourceCharacters).nullable().optional(),
-						html_with_citations: z.string().max(maxSourceCharacters).nullable().optional(),
-						plain_text: z.string().max(maxSourceCharacters).nullable().optional(),
-					})
-					.safeParse(body);
-				const opinion = parsed.success ? opinionFrom(parsed.data) : undefined;
-				return opinion === undefined || opinion.id !== reference.id ? undefined : { opinion };
-			});
+			return get(
+				`${opinionUrl}?fields=id,cluster,html_with_citations,html,plain_text`,
+				signal,
+				(body) => {
+					const parsed = opinionSchema
+						.extend({
+							html: sourceTextSchema(maxSourceBytes),
+							html_with_citations: sourceTextSchema(maxSourceBytes),
+							plain_text: sourceTextSchema(maxSourceBytes),
+						})
+						.safeParse(body);
+					const opinion = parsed.success ? opinionFrom(parsed.data) : undefined;
+					return opinion === undefined || opinion.id !== reference.id ? undefined : { opinion };
+				},
+			);
 		},
 	};
 }

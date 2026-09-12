@@ -8,12 +8,14 @@ import {
 } from "../telemetry/execution-facts.js";
 import { createCachedCitationGateway } from "./cached-citation-gateway.js";
 import type { CitationVerificationGateway } from "./verify-citation.js";
+import type { EvidenceRequest } from "./evidence-request.js";
 
 type CoordinatorNamespace = {
 	readonly getByName: (name: string) => CourtListenerCoordinatorRpc;
 };
 
 type WorkerCitationGatewayInput = {
+	readonly request?: EvidenceRequest;
 	readonly coordinator: CoordinatorNamespace | undefined;
 	readonly credentialId: string | undefined;
 	readonly database: D1Database;
@@ -25,6 +27,7 @@ export function createWorkerCitationGateway(
 	input: WorkerCitationGatewayInput,
 ): CitationVerificationGateway {
 	return createCachedCitationGateway({
+		...(input.request === undefined ? {} : { request: input.request }),
 		...(input.executionFacts === undefined ? {} : { executionFacts: input.executionFacts }),
 		now: () => new Date(),
 		ownerToken: () => crypto.randomUUID(),
@@ -50,6 +53,7 @@ function createUpstreamCitationGateway(
 		return createCourtListenerCitationGateway({
 			...(input.executionFacts === undefined ? {} : { executionFacts: input.executionFacts }),
 			api: createCourtListenerApi({
+				...(input.request === undefined ? {} : { request: input.request }),
 				...(attemptTiming === undefined ? {} : { attemptTiming }),
 				token: input.token,
 				transport: (request) => fetch(request),
