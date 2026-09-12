@@ -57,6 +57,7 @@ The unused Next.js/Express implementation, legacy SDK transports, fuzzy matcher,
 - [PRD: Ship stateless LexCerta on Cloud Run](https://github.com/rubixhacker/LexCerta/issues/1): evidence contract and launch gates. Its original Worker delivery plan is superseded by the runtime decision below.
 - [Runtime qualification](operations/worker-runtime-qualification.md): recorded failed Worker memory gate and selected Cloud Run fallback. Linked `.omo/evidence/` artifacts are not included in this checkout, so their measurements are historical records rather than independently reproduced evidence here.
 - [Product assessment](docs/product-assessment.md): current strengths, limits and unresolved product evidence.
+- [Frozen source corpus](operations/qualification/corpus-2026-09-12/README.md): 60 real cases, a 20-case holdout and source-reviewed quote annotations, frozen before tuning. Source-integrity checks do not establish product or live API accuracy.
 - [Observability and retention](operations/observability.md): operational privacy and lifecycle rules.
 
 The [MVP route](docs/mvp-route.md) and its linked decision resolutions govern current implementation. The `.planning/` archive describes the earlier Vercel/Supabase/Stripe proposal and has no authority over current scope or behavior. Paid onboarding requires a written Free Law Project commercial arrangement.

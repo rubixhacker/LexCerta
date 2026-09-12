@@ -1,0 +1,2118 @@
+{
+	"version": 1,
+	"selectionSeed": "lexcerta-mvp-corpus-2026-09-12-v1",
+	"implementationBeforeFreeze": "c0704c9fecffbbc23c808c92735dfe2d8c0bd344",
+	"counts": {
+		"strata": {
+			"scotus": 20,
+			"federal": 20,
+			"state": 20
+		},
+		"attributes": {
+			"ocr": 10,
+			"multipleOpinions": 20,
+			"post2018": 10,
+			"over64KiB": 10
+		}
+	},
+	"holdoutCounts": {
+		"strata": {
+			"scotus": 6,
+			"federal": 7,
+			"state": 7
+		},
+		"attributes": {
+			"ocr": 4,
+			"multipleOpinions": 9,
+			"post2018": 4,
+			"over64KiB": 5
+		}
+	},
+	"eligibleCandidates": 834,
+	"consideredRows": 2100,
+	"textArchive": "cases.jsonl.gz",
+	"uncompressedSha256": "8375df8bb49c95b4cbc7090e375359165c0a2079dd20171d033e5b73ccdf8faa",
+	"uncompressedBytes": 2917566,
+	"cases": [
+		{
+			"id": 76618,
+			"name": "Trustees of the Central Pension Fund of the International Union of Operating Engineers & Participating Employers v. Wolf Crane Service, Inc.",
+			"dateFiled": "2004-06-25",
+			"court": "Court of Appeals for the Eleventh Circuit",
+			"stratum": "federal",
+			"citation": "374 F.3d 1035",
+			"citations": ["374 F.3d 1035"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/76618/trustees-of-the-central-pension-fund-of-the-international-union-of/",
+			"source": {
+				"file": "cold-rows-page-800.json",
+				"row": 879
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "holdout",
+			"opinions": [
+				{
+					"id": 9415865,
+					"type": "020lead",
+					"ocr": false,
+					"utf8Bytes": 16548,
+					"sha256": "4a1753d34ac1b0cc7decdaed50a91e71993ff63b5d612101ad5c54bdd361bd35"
+				},
+				{
+					"id": 9415866,
+					"type": "030concurrence",
+					"ocr": false,
+					"utf8Bytes": 697,
+					"sha256": "63e09a6b1985e0961ac0a2d49a4f76de05a7d9ea754136f4d0b5f688a6b5e407"
+				},
+				{
+					"id": 76618,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 18511,
+					"sha256": "abeae994e1d64fe786c827b32f8f12670eb90691f3e4ea249f5c125047f63f85"
+				}
+			]
+		},
+		{
+			"id": 87675,
+			"name": "Hogan v. Page",
+			"dateFiled": "1865-02-13",
+			"court": "Supreme Court of the United States",
+			"stratum": "scotus",
+			"citation": "69 U.S. 605",
+			"citations": ["69 U.S. 605", "17 L. Ed. 854", "2 Wall. 605", "1864 U.S. LEXIS 455"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/87675/hogan-v-page/",
+			"source": {
+				"file": "cold-rows-page-800.json",
+				"row": 886
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 87675,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 7610,
+					"sha256": "63f79be2b91546bbce9448042531ccde807ef544b3d12b757c30ea4ceeb0a4a6"
+				}
+			]
+		},
+		{
+			"id": 88910,
+			"name": "Aicardi v. State",
+			"dateFiled": "1874-05-18",
+			"court": "Supreme Court of the United States",
+			"stratum": "scotus",
+			"citation": "86 U.S. 635",
+			"citations": ["86 U.S. 635", "22 L. Ed. 215", "19 Wall. 635", "1873 U.S. LEXIS 1475"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/88910/aicardi-v-state/",
+			"source": {
+				"file": "cold-rows-page-900.json",
+				"row": 973
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 88910,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 5808,
+					"sha256": "7f21574d1da45644ddeaaf45b531aa6dc1f8331c42de987e1c2290b33a86d4e3"
+				}
+			]
+		},
+		{
+			"id": 90418,
+			"name": "Smith v. McCullough",
+			"dateFiled": "1881-10-25",
+			"court": "Supreme Court of the United States",
+			"stratum": "scotus",
+			"citation": "104 U.S. 25",
+			"citations": ["104 U.S. 25", "26 L. Ed. 637", "1881 U.S. LEXIS 1964"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/90418/smith-v-mccullough/",
+			"source": {
+				"file": "cold-rows-page-700.json",
+				"row": 757
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 90418,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 8061,
+					"sha256": "c9cd01d0459aab542f59ea1fed01c72636b1d2f5c694282db0ae2d9b78edab67"
+				}
+			]
+		},
+		{
+			"id": 91311,
+			"name": "Richards v. MacKall",
+			"dateFiled": "1884-10-01",
+			"court": "Supreme Court of the United States",
+			"stratum": "scotus",
+			"citation": "113 U.S. 539",
+			"citations": ["113 U.S. 539"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/91311/richards-v-mackall/",
+			"source": {
+				"file": "cold-rows-page-900.json",
+				"row": 965
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "holdout",
+			"opinions": [
+				{
+					"id": 91311,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 5484,
+					"sha256": "07d05e09940c2847291e7bf444954ffae0ac17422d3faaf976cc3a7f432cf1b6"
+				}
+			]
+		},
+		{
+			"id": 91771,
+			"name": "United States v. Rauscher",
+			"dateFiled": "1886-12-06",
+			"court": "Supreme Court of the United States",
+			"stratum": "scotus",
+			"citation": "119 U.S. 407",
+			"citations": ["119 U.S. 407", "7 S. Ct. 234", "30 L. Ed. 425", "1886 U.S. LEXIS 2006"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/91771/united-states-v-rauscher/",
+			"source": {
+				"file": "cold-rows-page-0.json",
+				"row": 6
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "holdout",
+			"opinions": [
+				{
+					"id": 91771,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 62243,
+					"sha256": "c0b27aef1269d112770ef7277628b2e49435d7f44c5add4afb15ad8321f5804d"
+				},
+				{
+					"id": 9841738,
+					"type": "020lead",
+					"ocr": false,
+					"utf8Bytes": 55683,
+					"sha256": "b21c5e00c230b9cd4bf3031b0aba511a553d9c74df9bb9dbb93a34dcf1abce62"
+				},
+				{
+					"id": 9841739,
+					"type": "030concurrence",
+					"ocr": false,
+					"utf8Bytes": 1564,
+					"sha256": "eea09a55ae3199f66f19c6dc459f67d3636aa39b3b097835d1b9cd36c8e8992f"
+				},
+				{
+					"id": 9841740,
+					"type": "040dissent",
+					"ocr": false,
+					"utf8Bytes": 5582,
+					"sha256": "3f3f113f47722dcd7984849c263db9eef257899c9a9793e4f22f0f35e828a461"
+				}
+			]
+		},
+		{
+			"id": 93343,
+			"name": "Brown v. Massachusetts",
+			"dateFiled": "1892-04-18",
+			"court": "Supreme Court of the United States",
+			"stratum": "scotus",
+			"citation": "144 U.S. 573",
+			"citations": ["144 U.S. 573", "12 S. Ct. 757", "36 L. Ed. 546", "1892 U.S. LEXIS 2103"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/93343/brown-v-massachusetts/",
+			"source": {
+				"file": "cold-rows-page-400.json",
+				"row": 481
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 93343,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 3414,
+					"sha256": "d074fc3b36ba83469cf173b090c11c4bd511183e8883fa2555f38249632e8c35"
+				}
+			]
+		},
+		{
+			"id": 94588,
+			"name": "Scott v. Donald",
+			"dateFiled": "1897-01-18",
+			"court": "Supreme Court of the United States",
+			"stratum": "scotus",
+			"citation": "165 U.S. 107",
+			"citations": ["165 U.S. 107", "17 S. Ct. 262", "41 L. Ed. 648", "1897 U.S. LEXIS 1954"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/94588/scott-v-donald/",
+			"source": {
+				"file": "cold-rows-page-900.json",
+				"row": 937
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 94588,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 13982,
+					"sha256": "13aec26692302867c4f4784a7687fd327208e02999689028a49b090042ca43b2"
+				},
+				{
+					"id": 9417748,
+					"type": "020lead",
+					"ocr": false,
+					"utf8Bytes": 13564,
+					"sha256": "d046e25abee12fe65dd0ce5412db5c5a790651bd7ff3676391b40dde57b8e750"
+				},
+				{
+					"id": 9417749,
+					"type": "040dissent",
+					"ocr": false,
+					"utf8Bytes": 196,
+					"sha256": "648f26609443bf54ac369a8869ed49fb3fb32c63122c5d3d18602f582b210faf"
+				}
+			]
+		},
+		{
+			"id": 100081,
+			"name": "Cox v. Hart",
+			"dateFiled": "1923-01-02",
+			"court": "Supreme Court of the United States",
+			"stratum": "scotus",
+			"citation": "260 U.S. 427",
+			"citations": ["260 U.S. 427", "43 S. Ct. 154", "67 L. Ed. 332", "1922 U.S. LEXIS 2383"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/100081/cox-v-hart/",
+			"source": {
+				"file": "cold-rows-page-800.json",
+				"row": 810
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "holdout",
+			"opinions": [
+				{
+					"id": 100081,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 18727,
+					"sha256": "872a98e21235a86c7009af4975a0119bc708f6740ff6f5a41b8e8246bc1e6e4e"
+				}
+			]
+		},
+		{
+			"id": 103106,
+			"name": "Neblett v. Carpenter",
+			"dateFiled": "1939-01-03",
+			"court": "Supreme Court of the United States",
+			"stratum": "scotus",
+			"citation": "305 U.S. 297",
+			"citations": ["305 U.S. 297", "59 S. Ct. 170", "83 L. Ed. 182", "1938 U.S. LEXIS 456"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/103106/neblett-v-carpenter/",
+			"source": {
+				"file": "cold-rows-page-700.json",
+				"row": 732
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 103106,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 13673,
+					"sha256": "a7449b7483a25ca88d15a65ba368eab8243a5dcefa0e0135a5be209921b95915"
+				}
+			]
+		},
+		{
+			"id": 104390,
+			"name": "Aetna Casualty & Surety Co. v. Flowers",
+			"dateFiled": "1947-03-10",
+			"court": "Supreme Court of the United States",
+			"stratum": "scotus",
+			"citation": "330 U.S. 464",
+			"citations": ["67 S. Ct. 798", "330 U.S. 464", "91 L. Ed. 1024", "1947 U.S. LEXIS 2550"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/104390/aetna-casualty-surety-co-v-flowers/",
+			"source": {
+				"file": "cold-rows-page-900.json",
+				"row": 901
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 104390,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 8134,
+					"sha256": "69af605d07e560991709921b61dd2d4d26927efec76bbdc0c5a3aa469ce7c52d"
+				}
+			]
+		},
+		{
+			"id": 104768,
+			"name": "Wong Yang Sung v. McGrath",
+			"dateFiled": "1950-03-13",
+			"court": "Supreme Court of the United States",
+			"stratum": "scotus",
+			"citation": "339 U.S. 33",
+			"citations": ["94 L. Ed. 2d 616", "70 S. Ct. 445", "339 U.S. 33", "1950 U.S. LEXIS 2297"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/104768/wong-yang-sung-v-mcgrath/",
+			"source": {
+				"file": "cold-rows-page-200.json",
+				"row": 214
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 9420439,
+					"type": "020lead",
+					"ocr": false,
+					"utf8Bytes": 34768,
+					"sha256": "d1a954237c251d1f43a9e5fb61cbd0c46e7a7f3f149d13da2f7025a6bf5bc59f"
+				},
+				{
+					"id": 9420440,
+					"type": "040dissent",
+					"ocr": false,
+					"utf8Bytes": 4432,
+					"sha256": "07829adfe5b5981703cd331fffc8f9fa92ab1a7d280b3f01b8c733bae5bd8ec9"
+				},
+				{
+					"id": 104768,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 39884,
+					"sha256": "a731af8084e5c6076c4fa97678c227a74654cc64cb7560bdaa638ed680273d28"
+				}
+			]
+		},
+		{
+			"id": 105415,
+			"name": "Reed v. Pennsylvania Railroad",
+			"dateFiled": "1956-06-11",
+			"court": "Supreme Court of the United States",
+			"stratum": "scotus",
+			"citation": "351 U.S. 502",
+			"citations": ["100 L. Ed. 2d 1366", "76 S. Ct. 958", "351 U.S. 502", "1956 U.S. LEXIS 1641"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/105415/reed-v-pennsylvania-railroad/",
+			"source": {
+				"file": "cold-rows-page-900.json",
+				"row": 902
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 9421324,
+					"type": "020lead",
+					"ocr": false,
+					"utf8Bytes": 10014,
+					"sha256": "0f758ba64d1a513904576273e91d42ee49e493f101236c450b7dc0586374ad6a"
+				},
+				{
+					"id": 9421325,
+					"type": "040dissent",
+					"ocr": false,
+					"utf8Bytes": 7672,
+					"sha256": "0496427b371017f0829235fae4b942cb8a20b7920d09a552c2db1506aadb855c"
+				},
+				{
+					"id": 105415,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 17880,
+					"sha256": "30261e8c91a56971a097507440e81d6b0444916f9d385fec65ca257cc6423068"
+				}
+			]
+		},
+		{
+			"id": 106817,
+			"name": "United States v. Continental Oil Co.",
+			"dateFiled": "1964-05-04",
+			"court": "Supreme Court of the United States",
+			"stratum": "scotus",
+			"citation": "377 U.S. 161",
+			"citations": ["12 L. Ed. 2d 213", "84 S. Ct. 1155", "377 U.S. 161", "1964 U.S. LEXIS 2359"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/106817/united-states-v-continental-oil-co/",
+			"source": {
+				"file": "cold-rows-page-100.json",
+				"row": 198
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 106817,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 2304,
+					"sha256": "8292f4f21f9aed35913e9506d50b2f55e91fbf53e2cb9242dad473166e65c49a"
+				}
+			]
+		},
+		{
+			"id": 107024,
+			"name": "Hanna v. Plumer",
+			"dateFiled": "1965-04-26",
+			"court": "Supreme Court of the United States",
+			"stratum": "scotus",
+			"citation": "380 U.S. 460",
+			"citations": ["14 L. Ed. 2d 8", "85 S. Ct. 1136", "380 U.S. 460", "1965 U.S. LEXIS 1350"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/107024/hanna-v-plumer/",
+			"source": {
+				"file": "cold-rows-page-100.json",
+				"row": 156
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 107024,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 35644,
+					"sha256": "97abd095a2d41df1e51c5a42c0f73c1041dbd96f3d543d6208babf9d52a1daa7"
+				},
+				{
+					"id": 9422999,
+					"type": "020lead",
+					"ocr": false,
+					"utf8Bytes": 26154,
+					"sha256": "14e6f7ab80932bfcca2c7c5a50fe1767d7aead5d90c9ddca5d6b1d084077a82a"
+				},
+				{
+					"id": 9423000,
+					"type": "030concurrence",
+					"ocr": false,
+					"utf8Bytes": 9161,
+					"sha256": "2aa90ac176f3dec087032417d12e88ab3ff14069f592a6a82b445a4179f948a8"
+				}
+			]
+		},
+		{
+			"id": 108428,
+			"name": "Federal Power Commission v. Florida Power & Light Co.",
+			"dateFiled": "1972-02-22",
+			"court": "Supreme Court of the United States",
+			"stratum": "scotus",
+			"citation": "404 U.S. 453",
+			"citations": ["30 L. Ed. 2d 600", "92 S. Ct. 637", "404 U.S. 453", "1972 U.S. LEXIS 119"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/108428/federal-power-commission-v-florida-power-light-co/",
+			"source": {
+				"file": "cold-rows-page-800.json",
+				"row": 865
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "holdout",
+			"opinions": [
+				{
+					"id": 108428,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 46149,
+					"sha256": "8249abe00a52a66400758e76c44d6b92e10d16c69757143801e1e1e71e1fa39d"
+				},
+				{
+					"id": 9424724,
+					"type": "020lead",
+					"ocr": false,
+					"utf8Bytes": 32193,
+					"sha256": "eae27da2b71a7f239f424b6898b40af95ad41bff80222635101ada1cad4991f5"
+				},
+				{
+					"id": 9424725,
+					"type": "040dissent",
+					"ocr": false,
+					"utf8Bytes": 13539,
+					"sha256": "aea522928c4c3d8d4bd527a150fe063c43d5d20c9c3607ff246a7c875bdf3b39"
+				}
+			]
+		},
+		{
+			"id": 109658,
+			"name": "United States v. Wong",
+			"dateFiled": "1977-05-23",
+			"court": "Supreme Court of the United States",
+			"stratum": "scotus",
+			"citation": "431 U.S. 174",
+			"citations": ["52 L. Ed. 2d 231", "97 S. Ct. 1823", "431 U.S. 174", "1977 U.S. LEXIS 88"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/109658/united-states-v-wong/",
+			"source": {
+				"file": "cold-rows-page-0.json",
+				"row": 48
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 109658,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 12731,
+					"sha256": "9e1ea9954df7038ebfa911f9432442c89781621c0c38df2e0a8620cb8bf44e47"
+				}
+			]
+		},
+		{
+			"id": 112265,
+			"name": "Hardin v. Straub",
+			"dateFiled": "1989-05-22",
+			"court": "Supreme Court of the United States",
+			"stratum": "scotus",
+			"citation": "490 U.S. 536",
+			"citations": ["104 L. Ed. 2d 582", "109 S. Ct. 1998", "490 U.S. 536", "1989 U.S. LEXIS 2522"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/112265/hardin-v-straub/",
+			"source": {
+				"file": "cold-sample.jsonl",
+				"row": 111
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 112265,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 19358,
+					"sha256": "cecd5c0bece6b8c2f024db32159b3045ff961c7dfafbc44805757a7b0869719a"
+				}
+			]
+		},
+		{
+			"id": 112353,
+			"name": "Guidry v. Sheet Metal Workers National Pension Fund",
+			"dateFiled": "1990-01-17",
+			"court": "Supreme Court of the United States",
+			"stratum": "scotus",
+			"citation": "493 U.S. 365",
+			"citations": ["107 L. Ed. 2d 782", "110 S. Ct. 680", "493 U.S. 365", "1990 U.S. LEXIS 484"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/112353/guidry-v-sheet-metal-workers-national-pension-fund/",
+			"source": {
+				"file": "cold-rows-page-900.json",
+				"row": 909
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 112353,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 23884,
+					"sha256": "bb02934e2ebe3dfc8d31e851c57ca98d7f9493f3bca32d0b41b81002ce8593a1"
+				}
+			]
+		},
+		{
+			"id": 118076,
+			"name": "Atherton v. Federal Deposit Insurance Corp.",
+			"dateFiled": "1997-01-14",
+			"court": "Supreme Court of the United States",
+			"stratum": "scotus",
+			"citation": "519 U.S. 213",
+			"citations": ["136 L. Ed. 2d 656", "117 S. Ct. 666", "519 U.S. 213", "1997 U.S. LEXIS 461"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/118076/atherton-v-federal-deposit-insurance-corp/",
+			"source": {
+				"file": "cold-rows-page-900.json",
+				"row": 922
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "holdout",
+			"opinions": [
+				{
+					"id": 118076,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 34355,
+					"sha256": "80a869c341c56520d869480539618b54b48b96d7f28d941022ad42a97274d859"
+				},
+				{
+					"id": 9433404,
+					"type": "020lead",
+					"ocr": false,
+					"utf8Bytes": 32543,
+					"sha256": "56bcc87a651110ee2b0c3fd843bfb7f8853676900e296fa7046de7b116295e66"
+				},
+				{
+					"id": 9433405,
+					"type": "030concurrence",
+					"ocr": false,
+					"utf8Bytes": 607,
+					"sha256": "29da08f8fb5a764ebce4836bf84ba95ba2c1798e5e345a6feae6390cff8180ec"
+				}
+			]
+		},
+		{
+			"id": 142898,
+			"name": "Medellin v. Dretke",
+			"dateFiled": "2005-05-23",
+			"court": "Supreme Court of the United States",
+			"stratum": "scotus",
+			"citation": "544 U.S. 660",
+			"citations": ["161 L. Ed. 2d 982", "125 S. Ct. 2088", "544 U.S. 660", "2005 U.S. LEXIS 4344"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/142898/medellin-v-dretke/",
+			"source": {
+				"file": "cold-sample.jsonl",
+				"row": 780
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": true
+			},
+			"split": "holdout",
+			"opinions": [
+				{
+					"id": 9434807,
+					"type": "040dissent",
+					"ocr": false,
+					"utf8Bytes": 37397,
+					"sha256": "8174160b68d8b49bc5e38b3df573888ac17c901add3606a526f794a345be87ba"
+				},
+				{
+					"id": 9434808,
+					"type": "040dissent",
+					"ocr": false,
+					"utf8Bytes": 8628,
+					"sha256": "a6e06f71e2c403d0ea48c8f012272f4ded624b18a31bae7201ed5c9d6b11110b"
+				},
+				{
+					"id": 9434805,
+					"type": "020lead",
+					"ocr": false,
+					"utf8Bytes": 11307,
+					"sha256": "5f6d6f60c881a95faa9e93e5faa3f098a7f2fb9cedf0a8972791155873c9c423"
+				},
+				{
+					"id": 9434806,
+					"type": "030concurrence",
+					"ocr": false,
+					"utf8Bytes": 11997,
+					"sha256": "7aa9bfef4cb037aaffb09404362909da744349e7a0691f31fc954cc5e27b3617"
+				},
+				{
+					"id": 142898,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 71871,
+					"sha256": "07acdcb4a545893daadea8d696915425e878ae1f01e550b05633198a4b465280"
+				}
+			]
+		},
+		{
+			"id": 291045,
+			"name": "The Charles Stores, Inc. v. Aetna Insurance Company, the Charles Stores, Inc. v. Hartford Fire Insurance Company",
+			"dateFiled": "1970-07-01",
+			"court": "Court of Appeals for the Fifth Circuit",
+			"stratum": "federal",
+			"citation": "428 F.2d 989",
+			"citations": ["428 F.2d 989"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/291045/the-charles-stores-inc-v-aetna-insurance-company-the-charles-stores/",
+			"source": {
+				"file": "cold-sample.jsonl",
+				"row": 305
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 291045,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 18195,
+					"sha256": "57740c64f0640e35c70f7a7c834596b7be6b5f97c51fcc583cac09a21a0c3942"
+				}
+			]
+		},
+		{
+			"id": 291427,
+			"name": "Winfield Associates, Inc. v. W. L. Stonecipher",
+			"dateFiled": "1970-07-14",
+			"court": "Court of Appeals for the Tenth Circuit",
+			"stratum": "federal",
+			"citation": "429 F.2d 1087",
+			"citations": ["429 F.2d 1087"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/291427/winfield-associates-inc-v-w-l-stonecipher/",
+			"source": {
+				"file": "cold-rows-page-400.json",
+				"row": 487
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 291427,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 14589,
+					"sha256": "b0cb71974c607926d58294e232a34279a23c609f692ef7dc9c3757ca94dc00d3"
+				}
+			]
+		},
+		{
+			"id": 334531,
+			"name": "United States v. Donald Anderson and Jack Smith",
+			"dateFiled": "1976-03-30",
+			"court": "Court of Appeals for the Ninth Circuit",
+			"stratum": "federal",
+			"citation": "532 F.2d 1218",
+			"citations": ["532 F.2d 1218"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/334531/united-states-v-donald-anderson-and-jack-smith/",
+			"source": {
+				"file": "cold-rows-page-800.json",
+				"row": 837
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "holdout",
+			"opinions": [
+				{
+					"id": 334531,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 49394,
+					"sha256": "3f6f534dbbec00f0304bd25356417fdf4449bd072c0e3e84dbdf15cc9cdef4fd"
+				},
+				{
+					"id": 9462610,
+					"type": "020lead",
+					"ocr": false,
+					"utf8Bytes": 39104,
+					"sha256": "b07acf25d69ab34da1a8d8bcdc8217dd1cc6872c5725e5baba194f5c8f2dc62a"
+				},
+				{
+					"id": 9462611,
+					"type": "040dissent",
+					"ocr": false,
+					"utf8Bytes": 6984,
+					"sha256": "d364e25986603689feb0c546eb740f85ecea309ce1a00c6d1ede8b647992e7c2"
+				}
+			]
+		},
+		{
+			"id": 381885,
+			"name": null,
+			"dateFiled": "1980-08-25",
+			"court": "Court of Appeals for the Second Circuit",
+			"stratum": "federal",
+			"citation": "629 F.2d 817",
+			"citations": ["629 F.2d 817"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/381885/william-yaretsky-ralph-cuevas-and-the-gray-panthers-new-york-chapter/",
+			"source": {
+				"file": "cold-rows-page-300.json",
+				"row": 320
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 381885,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 29613,
+					"sha256": "39135d6d3474d198d7605670d82fc8026bebd67fdbf68be552d8de2c6e012199"
+				}
+			]
+		},
+		{
+			"id": 746481,
+			"name": "United States v. Marco A. Lopez",
+			"dateFiled": "1997-07-07",
+			"court": "Court of Appeals for the Eighth Circuit",
+			"stratum": "federal",
+			"citation": "125 F.3d 597",
+			"citations": ["125 F.3d 597"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/746481/united-states-v-marco-a-lopez/",
+			"source": {
+				"file": "cold-sample.jsonl",
+				"row": 12
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "holdout",
+			"opinions": [
+				{
+					"id": 746481,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 10768,
+					"sha256": "d57e7f5a1ab1db1256b21c0b0e7cb0e1a18dc2d52501100d41ad451d30f6888a"
+				}
+			]
+		},
+		{
+			"id": 1200872,
+			"name": "SAMUEL C. JOHNSON 1988 v. Bayfield County, Wis.",
+			"dateFiled": "2008-04-02",
+			"court": "Court of Appeals for the Seventh Circuit",
+			"stratum": "federal",
+			"citation": "520 F.3d 822",
+			"citations": ["520 F.3d 822"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/1200872/samuel-c-johnson-1988-v-bayfield-county-wis/",
+			"source": {
+				"file": "cold-rows-page-600.json",
+				"row": 603
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 1200872,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 42329,
+					"sha256": "f79ccd54b46bc6d73d7f94e32a44f857dd8270d3a743136bcd967a52c0fbaf26"
+				}
+			]
+		},
+		{
+			"id": 1307975,
+			"name": "Finn v. G. D. Searle & Co.",
+			"dateFiled": "1984-03-29",
+			"court": "California Supreme Court",
+			"stratum": "state",
+			"citation": "677 P.2d 1147",
+			"citations": ["677 P.2d 1147", "35 Cal. 3d 691", "200 Cal. Rptr. 870"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/1307975/finn-v-g-d-searle-co/",
+			"source": {
+				"file": "cold-sample.jsonl",
+				"row": 514
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": true
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 9571675,
+					"type": "020lead",
+					"ocr": false,
+					"utf8Bytes": 30906,
+					"sha256": "ee17a2a3a7a2bb25344e40b1c687ccca36d0c9c15b150641b67aefd29809872f"
+				},
+				{
+					"id": 9571676,
+					"type": "040dissent",
+					"ocr": false,
+					"utf8Bytes": 61301,
+					"sha256": "ef82aa776494f49327809667ed31caf8f71907a5177eca4324f87b9aca0b9f98"
+				},
+				{
+					"id": 1307975,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 92383,
+					"sha256": "06c4ffa1ecfaee47bf2868444bd4d1e2c1a857c1c9a649c815155a108d01bf9b"
+				}
+			]
+		},
+		{
+			"id": 1353414,
+			"name": "Chambers v. McDaniel",
+			"dateFiled": "2008-12-09",
+			"court": "Court of Appeals for the Ninth Circuit",
+			"stratum": "federal",
+			"citation": "549 F.3d 1191",
+			"citations": ["549 F.3d 1191"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/1353414/chambers-v-mcdaniel/",
+			"source": {
+				"file": "cold-sample.jsonl",
+				"row": 699
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 9596468,
+					"type": "020lead",
+					"ocr": false,
+					"utf8Bytes": 31049,
+					"sha256": "7e7222eb47f61943d6ad632470e9ae36e3968075086734d4f44a4cfb23d66c65"
+				},
+				{
+					"id": 9596470,
+					"type": "040dissent",
+					"ocr": false,
+					"utf8Bytes": 11510,
+					"sha256": "724f2e9d0b7464918ab858294e203f675955c7f77bef1bd695c539ca2a99643c"
+				},
+				{
+					"id": 1353414,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 42792,
+					"sha256": "b2c4f2d3313df6e4fe8479712e16bb2810545d9187228b3c2742455c533a9575"
+				}
+			]
+		},
+		{
+			"id": 2145605,
+			"name": "Pass & Seymour, Inc. v. Hubbell Inc.",
+			"dateFiled": "2007-07-23",
+			"court": "District Court, N.D. New York",
+			"stratum": "federal",
+			"citation": "532 F. Supp. 2d 418",
+			"citations": ["532 F. Supp. 2d 418"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/2145605/pass-seymour-inc-v-hubbell-inc/",
+			"source": {
+				"file": "cold-sample.jsonl",
+				"row": 966
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 2145605,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 58704,
+					"sha256": "ed98252537347d7620fb5952eafd1935c6b1b9888cbc8b4611b7b162f61e1ab9"
+				}
+			]
+		},
+		{
+			"id": 2341830,
+			"name": "Cheek v. United Healthcare of the Mid-Atlantic, Inc.",
+			"dateFiled": "2003-11-13",
+			"court": "Court of Appeals of Maryland",
+			"stratum": "state",
+			"citation": "835 A.2d 656",
+			"citations": ["835 A.2d 656", "378 Md. 139"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/2341830/cheek-v-united-healthcare-of-the-mid-atlantic-inc/",
+			"source": {
+				"file": "cold-sample.jsonl",
+				"row": 70
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": true
+			},
+			"split": "holdout",
+			"opinions": [
+				{
+					"id": 9756367,
+					"type": "020lead",
+					"ocr": false,
+					"utf8Bytes": 46332,
+					"sha256": "883ec74c456bddd2d52333a999d581a21c06d6d20de91ad1f96799e091a213e6"
+				},
+				{
+					"id": 9756368,
+					"type": "040dissent",
+					"ocr": false,
+					"utf8Bytes": 28258,
+					"sha256": "e30b91e67418e071695bb08adcc4578739b9e32a88e978835e59bbeb3434ee52"
+				},
+				{
+					"id": 2341830,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 73880,
+					"sha256": "060104ceb3da088a8f1263915fece823877b9a8d5c2108d893ed02486c07d3b1"
+				}
+			]
+		},
+		{
+			"id": 2471989,
+			"name": "In Re Arthrocare Corp. Securities Litigation",
+			"dateFiled": "2010-07-20",
+			"court": "District Court, W.D. Texas",
+			"stratum": "federal",
+			"citation": "726 F. Supp. 2d 696",
+			"citations": ["726 F. Supp. 2d 696"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/2471989/in-re-arthrocare-corp-securities-litigation/",
+			"source": {
+				"file": "cold-sample.jsonl",
+				"row": 562
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": true
+			},
+			"split": "holdout",
+			"opinions": [
+				{
+					"id": 2471989,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 137028,
+					"sha256": "6cf1e5f2ccc1635b71c4b631a12d28c898477e87897cd07b43955213615baaf4"
+				}
+			]
+		},
+		{
+			"id": 2477561,
+			"name": "Starnes Family Office, LLC v. McCullar",
+			"dateFiled": "2011-01-28",
+			"court": "District Court, W.D. Tennessee",
+			"stratum": "federal",
+			"citation": "765 F. Supp. 2d 1036",
+			"citations": ["765 F. Supp. 2d 1036"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/2477561/starnes-family-office-llc-v-mccullar/",
+			"source": {
+				"file": "cold-sample.jsonl",
+				"row": 524
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": true
+			},
+			"split": "holdout",
+			"opinions": [
+				{
+					"id": 2477561,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 65941,
+					"sha256": "32f398b8ab4c0e008f132f2c9713d51ef43efbd8d09cc6092c3f7e122ed21999"
+				}
+			]
+		},
+		{
+			"id": 2579657,
+			"name": "Precision Pay Phones v. Qwest Communications Corp.",
+			"dateFiled": "2002-05-31",
+			"court": "District Court, N.D. California",
+			"stratum": "federal",
+			"citation": "210 F. Supp. 2d 1106",
+			"citations": ["210 F. Supp. 2d 1106"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/2579657/precision-pay-phones-v-qwest-communications-corp/",
+			"source": {
+				"file": "cold-rows-page-100.json",
+				"row": 151
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 2579657,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 41025,
+					"sha256": "d31156e725f8995c23fd75e6571600ae1d3cbaf8fac42a8d859db90ae031fd1a"
+				}
+			]
+		},
+		{
+			"id": 2580690,
+			"name": "SeaChange International, Inc. v. nCUBE Corp.",
+			"dateFiled": "2004-04-07",
+			"court": "District Court, D. Delaware",
+			"stratum": "federal",
+			"citation": "313 F. Supp. 2d 393",
+			"citations": ["313 F. Supp. 2d 393"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/2580690/seachange-international-inc-v-ncube-corp/",
+			"source": {
+				"file": "cold-rows-page-100.json",
+				"row": 187
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 2580690,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 37819,
+					"sha256": "21bd6aa981ef7992d5fe82919a4820c6507fe4107f1810fc47535696d96d78e9"
+				}
+			]
+		},
+		{
+			"id": 2603722,
+			"name": "In Re the Marriage of Larsen",
+			"dateFiled": "1991-01-31",
+			"court": "Colorado Court of Appeals",
+			"stratum": "state",
+			"citation": "805 P.2d 1195",
+			"citations": ["805 P.2d 1195"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/2603722/in-re-the-marriage-of-larsen/",
+			"source": {
+				"file": "cold-rows-page-900.json",
+				"row": 931
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 2603722,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 10457,
+					"sha256": "6f74ec7f3238f162de9c73a77ef1b55a6dcfdca7d3591008b9cc436799ad8550"
+				}
+			]
+		},
+		{
+			"id": 2636710,
+			"name": "Taylor v. STATE EX REL. POLICE PENSION AND RETIREMENT BD.",
+			"dateFiled": "2009-09-18",
+			"court": "Court of Civil Appeals of Oklahoma",
+			"stratum": "state",
+			"citation": "221 P.3d 743",
+			"citations": ["2009 OK CIV APP 87", "221 P.3d 743"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/2636710/taylor-v-state-ex-rel-police-pension-and-retirement-bd/",
+			"source": {
+				"file": "cold-rows-page-200.json",
+				"row": 210
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 2636710,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 14165,
+					"sha256": "5fe74df205fd62782c5edc0bbad31e71657052d02ae8decba481092ef8241e1e"
+				}
+			]
+		},
+		{
+			"id": 2637986,
+			"name": "State v. Culkin",
+			"dateFiled": "2001-12-06",
+			"court": "Hawaii Supreme Court",
+			"stratum": "state",
+			"citation": "35 P.3d 233",
+			"citations": ["35 P.3d 233", "97 Haw. 206"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/2637986/state-v-culkin/",
+			"source": {
+				"file": "cold-sample.jsonl",
+				"row": 776
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": true
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 2637986,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 118256,
+					"sha256": "b531d2e5d8ac8aa4919d6f495fd5f4fb4aa1181e6f9f9393c5f92266b66800e7"
+				},
+				{
+					"id": 9797551,
+					"type": "020lead",
+					"ocr": false,
+					"utf8Bytes": 96542,
+					"sha256": "c4180aa61c25dd7ab4f5f51bee10e62039da02cac6e21ee4894624027f957c0f"
+				},
+				{
+					"id": 9797552,
+					"type": "030concurrence",
+					"ocr": false,
+					"utf8Bytes": 22337,
+					"sha256": "68410b80a47f65d2f00e4a1995edf9561dbb0f38018dc81922e85bdfd700cd3c"
+				}
+			]
+		},
+		{
+			"id": 2639580,
+			"name": "State v. Potts",
+			"dateFiled": "2006-06-09",
+			"court": "Supreme Court of Kansas",
+			"stratum": "state",
+			"citation": "135 P.3d 1054",
+			"citations": ["281 Kan. 863", "135 P.3d 1054"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/2639580/state-v-potts/",
+			"source": {
+				"file": "cold-rows-page-200.json",
+				"row": 261
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "holdout",
+			"opinions": [
+				{
+					"id": 2639580,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 24758,
+					"sha256": "c4ab1c1716c8ff451d81de2277e5325c6fa98ae68fda4a162beaf7d202660f70"
+				}
+			]
+		},
+		{
+			"id": 2641986,
+			"name": "Vincent v. The Money Store",
+			"dateFiled": "2013-11-13",
+			"court": "Court of Appeals for the Second Circuit",
+			"stratum": "federal",
+			"citation": "736 F.3d 88",
+			"citations": ["736 F.3d 88"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/2641986/vincent-v-the-money-store/",
+			"source": {
+				"file": "cold-rows-page-300.json",
+				"row": 367
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": true
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 2641986,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 116986,
+					"sha256": "05e55fd7830faec5610ca4adb503f9aca4f6442c8b66cc0c9f444f0e5f99417b"
+				},
+				{
+					"id": 9798143,
+					"type": "020lead",
+					"ocr": false,
+					"utf8Bytes": 72126,
+					"sha256": "45e70aa6652a589ecfcb3bf3782b5c8668de9295dc873847257a75af1151a858"
+				},
+				{
+					"id": 9798144,
+					"type": "030concurrence",
+					"ocr": false,
+					"utf8Bytes": 3458,
+					"sha256": "2455be0b0d6f17a676247bdde4629401893469032b3f9a4d26c67c590b44a85c"
+				},
+				{
+					"id": 9798145,
+					"type": "035concurrenceinpart",
+					"ocr": false,
+					"utf8Bytes": 31351,
+					"sha256": "f1c28f50047746f7a87de8e6a7389ab95dbd36aba46db059fbc609f8c24b6a1c"
+				}
+			]
+		},
+		{
+			"id": 2661345,
+			"name": "Brink v. Xe Holding, LLC",
+			"dateFiled": "2012-12-21",
+			"court": "District Court, District of Columbia",
+			"stratum": "federal",
+			"citation": "910 F. Supp. 2d 242",
+			"citations": ["910 F. Supp. 2d 242"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/2661345/brink-v-xe-holding-llc/",
+			"source": {
+				"file": "cold-rows-page-600.json",
+				"row": 632
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": true
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 2661345,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 67290,
+					"sha256": "dcdaf11861e6468caabb093e5355d96c2d96658a0b7f79b23a11466174dc358a"
+				}
+			]
+		},
+		{
+			"id": 4579595,
+			"name": "SPV-LS, LLC v. The Estate of Nancy Bergman",
+			"dateFiled": "2019-01-08",
+			"court": "Court of Appeals for the Eighth Circuit",
+			"stratum": "federal",
+			"citation": "912 F.3d 1106",
+			"citations": ["912 F.3d 1106"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/4579595/spv-ls-llc-v-the-estate-of-nancy-bergman/",
+			"source": {
+				"file": "cold-recent-page-0.json",
+				"row": 69802
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": true,
+				"over64KiB": false
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 4356848,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 24628,
+					"sha256": "09cbc0611f4dd13cea71aeb69d196f7c09a58afde16101d02543d629d74404d7"
+				}
+			]
+		},
+		{
+			"id": 4580859,
+			"name": "Rebecca Terrell and Chandrashekhar Thanedar v. Pampa Independent School District",
+			"dateFiled": "2019-01-09",
+			"court": "Court of Appeals of Texas",
+			"stratum": "state",
+			"citation": "572 S.W.3d 294",
+			"citations": ["572 S.W.3d 294"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/4580859/rebecca-terrell-and-chandrashekhar-thanedar-v-pampa-independent-school/",
+			"source": {
+				"file": "cold-recent-page-0.json",
+				"row": 69806
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": true,
+				"over64KiB": false
+			},
+			"split": "holdout",
+			"opinions": [
+				{
+					"id": 4358112,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 25614,
+					"sha256": "65ee15db90cc87c4b38ccb466b4a106f8f98dd25b3c025b414500df6606f1706"
+				}
+			]
+		},
+		{
+			"id": 4587778,
+			"name": "Alvarez-Reyes v. Fernandez-Gil",
+			"dateFiled": "2019-02-06",
+			"court": "District Court of Appeal of Florida",
+			"stratum": "state",
+			"citation": "271 So. 3d 70",
+			"citations": ["271 So. 3d 70"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/4587778/alvarez-reyes-v-fernandez-gil/",
+			"source": {
+				"file": "cold-recent-page-0.json",
+				"row": 69914
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": true,
+				"over64KiB": false
+			},
+			"split": "holdout",
+			"opinions": [
+				{
+					"id": 4365031,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 4449,
+					"sha256": "b971e162d69f731bf953e82ead1770573f77dc447815bf8da6eaa6fa2e1e17e2"
+				}
+			]
+		},
+		{
+			"id": 4593909,
+			"name": "United States v. Orozco",
+			"dateFiled": "2019-02-26",
+			"court": "Court of Appeals for the Tenth Circuit",
+			"stratum": "federal",
+			"citation": "916 F.3d 919",
+			"citations": ["916 F.3d 919"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/4593909/united-states-v-orozco/",
+			"source": {
+				"file": "cold-recent-page-0.json",
+				"row": 69934
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": true,
+				"over64KiB": false
+			},
+			"split": "holdout",
+			"opinions": [
+				{
+					"id": 4371162,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 33935,
+					"sha256": "f036f45eb9ea4619c0f9f42da6bce8f42088402763c5023e8ba7282d9911f262"
+				},
+				{
+					"id": 9888064,
+					"type": "020lead",
+					"ocr": false,
+					"utf8Bytes": 22402,
+					"sha256": "57b4f60adf99b7f772a8b874ad489689dbde151c72c58defecf5b2fef2f81c6e"
+				},
+				{
+					"id": 9888065,
+					"type": "035concurrenceinpart",
+					"ocr": false,
+					"utf8Bytes": 7698,
+					"sha256": "b162f7d462b39222274d988e8e21ba69d42aae7dc93753f32b42ace17e5ce832"
+				}
+			]
+		},
+		{
+			"id": 4594104,
+			"name": "In the Interest of A.P., a Child",
+			"dateFiled": "2019-02-15",
+			"court": "Court of Appeals of Georgia",
+			"stratum": "state",
+			"citation": "824 S.E.2d 94",
+			"citations": ["824 S.E.2d 94", "348 Ga. App. 638"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/4594104/in-the-interest-of-ap-a-child/",
+			"source": {
+				"file": "cold-recent-page-0.json",
+				"row": 69937
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": true,
+				"over64KiB": false
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 4371357,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 15128,
+					"sha256": "15c5471ce7ce25e6a74749ba6dd2b86c78b63ded8d7a48ed47ee0d4c289ee988"
+				}
+			]
+		},
+		{
+			"id": 4598083,
+			"name": "State v. Murrin",
+			"dateFiled": "2019-03-08",
+			"court": "Supreme Court of Kansas",
+			"stratum": "state",
+			"citation": "435 P.3d 1126",
+			"citations": ["435 P.3d 1126", "309 Kan. 385"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/4598083/state-v-murrin/",
+			"source": {
+				"file": "cold-recent-page-0.json",
+				"row": 69955
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": true,
+				"over64KiB": false
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 4375336,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 38780,
+					"sha256": "0ce9ced9f743d3851075187a6567b07d20e924d32d39b0c333de4a09b6b6d69c"
+				}
+			]
+		},
+		{
+			"id": 4598637,
+			"name": "Solano v. Solano (In Re Marriage of Solano)",
+			"dateFiled": "2019-03-08",
+			"court": "Appellate Court of Illinois",
+			"stratum": "state",
+			"citation": "124 N.E.3d 1097",
+			"citations": ["2019 IL App (2d) 180011", "124 N.E.3d 1097", "429 Ill. Dec. 587"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/4598637/solano-v-solano-in-re-marriage-of-solano/",
+			"source": {
+				"file": "cold-recent-page-0.json",
+				"row": 69965
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": true,
+				"over64KiB": false
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 4375890,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 63504,
+					"sha256": "bc04d602c442ee75c6e1f4a200e2ebebd900950b73c53ba3e0ff944da47b90b8"
+				}
+			]
+		},
+		{
+			"id": 4598765,
+			"name": "Porter v. Ford Motor Company",
+			"dateFiled": "2019-03-12",
+			"court": "Court of Appeals for the Tenth Circuit",
+			"stratum": "federal",
+			"citation": "917 F.3d 1246",
+			"citations": ["917 F.3d 1246"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/4598765/porter-v-ford-motor-company/",
+			"source": {
+				"file": "cold-recent-page-0.json",
+				"row": 69967
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": true,
+				"over64KiB": false
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 4376018,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 9953,
+					"sha256": "d819c24a14e4006d1560f1330c1612a2023e6e72b0cea2dd9c15b5a5b5029074"
+				}
+			]
+		},
+		{
+			"id": 4630577,
+			"name": "Marchand v. Barnhill",
+			"dateFiled": "2019-06-18",
+			"court": "Supreme Court of Delaware",
+			"stratum": "state",
+			"citation": "212 A.3d 805",
+			"citations": ["212 A.3d 805"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/4630577/marchand-v-barnhill/",
+			"source": {
+				"file": "cold-sample.jsonl",
+				"row": 572
+			},
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": true,
+				"over64KiB": true
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 4407830,
+					"type": "010combined",
+					"ocr": false,
+					"utf8Bytes": 67800,
+					"sha256": "636691ab1d73a5d65427eacf3fdecfc5f605e6646f72e4e8499855e920654386"
+				}
+			]
+		},
+		{
+			"id": 5202479,
+			"name": "Vincent v. City of Bowling Green",
+			"dateFiled": "1961-09-22",
+			"court": "Court of Appeals of Kentucky",
+			"stratum": "state",
+			"citation": "349 S.W.2d 694",
+			"citations": ["349 S.W.2d 694"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/5202479/vincent-v-city-of-bowling-green/",
+			"source": {
+				"file": "cold-sample.jsonl",
+				"row": 673
+			},
+			"attributes": {
+				"ocr": true,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 5025632,
+					"type": "020lead",
+					"ocr": true,
+					"utf8Bytes": 5003,
+					"sha256": "cb03f01df5869dd610ed3f91b053e49dac3f030e2d35fd73ec23ba833be27abb"
+				}
+			]
+		},
+		{
+			"id": 5330283,
+			"name": "Kern v. Gebhardt",
+			"dateFiled": "1985-12-26",
+			"court": "Colorado Court of Appeals",
+			"stratum": "state",
+			"citation": "717 P.2d 998",
+			"citations": ["717 P.2d 998"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/5330283/kern-v-gebhardt/",
+			"source": {
+				"file": "cold-sample.jsonl",
+				"row": 674
+			},
+			"attributes": {
+				"ocr": true,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "holdout",
+			"opinions": [
+				{
+					"id": 5160745,
+					"type": "020lead",
+					"ocr": true,
+					"utf8Bytes": 5637,
+					"sha256": "6dff84af2d56dfa7c7138faa606835587a642e4c5b88e8d93d24bb8e242e0adc"
+				}
+			]
+		},
+		{
+			"id": 5788242,
+			"name": "In re N. S. M.",
+			"dateFiled": "1987-06-22",
+			"court": "Court of Appeals of Georgia",
+			"stratum": "state",
+			"citation": "359 S.E.2d 185",
+			"citations": ["183 Ga. App. 398", "359 S.E.2d 185"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/5788242/in-re-n-s-m/",
+			"source": {
+				"file": "cold-sample.jsonl",
+				"row": 982
+			},
+			"attributes": {
+				"ocr": true,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "holdout",
+			"opinions": [
+				{
+					"id": 5642650,
+					"type": "020lead",
+					"ocr": true,
+					"utf8Bytes": 8105,
+					"sha256": "d3e9f20f13365161537160f97dbb1c19e81b85863ff44c0f0d578547713d699f"
+				}
+			]
+		},
+		{
+			"id": 6244244,
+			"name": "Ark. State Plant Bd. v. McCarty",
+			"dateFiled": "2019-06-13",
+			"court": "Supreme Court of Arkansas",
+			"stratum": "state",
+			"citation": "576 S.W.3d 473",
+			"citations": ["576 S.W.3d 473", "2019 Ark. 214"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/6244244/ark-state-plant-bd-v-mccarty/",
+			"source": {
+				"file": "cold-sample.jsonl",
+				"row": 985
+			},
+			"attributes": {
+				"ocr": true,
+				"multipleOpinions": true,
+				"post2018": true,
+				"over64KiB": false
+			},
+			"split": "holdout",
+			"opinions": [
+				{
+					"id": 6111404,
+					"type": "020lead",
+					"ocr": true,
+					"utf8Bytes": 11998,
+					"sha256": "66ea83b97f483c33026794ed47e95394c3cf0f34fcfad5ee388dfda71c56671d"
+				},
+				{
+					"id": 6111405,
+					"type": "035concurrenceinpart",
+					"ocr": true,
+					"utf8Bytes": 3329,
+					"sha256": "e26a4e78a2c687d0fa08a0b76b9a43da2e37d88026d59febd7a8621ba68b8d26"
+				}
+			]
+		},
+		{
+			"id": 6848910,
+			"name": "Smith v. Hoff",
+			"dateFiled": "1910-09-21",
+			"court": "North Dakota Supreme Court",
+			"stratum": "state",
+			"citation": "127 N.W. 1047",
+			"citations": ["20 N.D. 419", "127 N.W. 1047"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/6848910/smith-v-hoff/",
+			"source": {
+				"file": "cold-sample.jsonl",
+				"row": 92
+			},
+			"attributes": {
+				"ocr": true,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 6736418,
+					"type": "020lead",
+					"ocr": true,
+					"utf8Bytes": 18072,
+					"sha256": "57a6b94c8cbb5fbbdd4c9e9292b1e83cbf7132207e2e8ba5b5420bc9bd3e8975"
+				}
+			]
+		},
+		{
+			"id": 7589348,
+			"name": "Bracey v. Reynolds",
+			"dateFiled": "1982-04-14",
+			"court": "District Court of Appeal of Florida",
+			"stratum": "state",
+			"citation": "414 So. 2d 1081",
+			"citations": ["414 So. 2d 1081"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/7589348/bracey-v-reynolds/",
+			"source": {
+				"file": "cold-sample.jsonl",
+				"row": 683
+			},
+			"attributes": {
+				"ocr": true,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 7518477,
+					"type": "020lead",
+					"ocr": true,
+					"utf8Bytes": 4193,
+					"sha256": "b5dcdcb6c606c86f034d0cacc15bf7a8279c78fb58db769e27ec665f483e658a"
+				},
+				{
+					"id": 7518478,
+					"type": "030concurrence",
+					"ocr": true,
+					"utf8Bytes": 672,
+					"sha256": "b26284295a1245d2c63b5a4ba511fb83d88c7137cfbd2a394a451781e2688d3c"
+				}
+			]
+		},
+		{
+			"id": 7683189,
+			"name": "Weatherford v. State",
+			"dateFiled": "2017-09-08",
+			"court": "Court of Criminal Appeals of Alabama",
+			"stratum": "state",
+			"citation": "251 So. 3d 70",
+			"citations": ["251 So. 3d 70"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/7683189/weatherford-v-state/",
+			"source": {
+				"file": "cold-sample.jsonl",
+				"row": 416
+			},
+			"attributes": {
+				"ocr": true,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 7618003,
+					"type": "020lead",
+					"ocr": true,
+					"utf8Bytes": 15164,
+					"sha256": "4e5da675e451e90f6cfbdb7a330f57f3f9ce398fdacc9a6c0ec3f7cbe3c27170"
+				},
+				{
+					"id": 7618004,
+					"type": "040dissent",
+					"ocr": true,
+					"utf8Bytes": 4415,
+					"sha256": "7a2d4866b1ac1a0fcf963a4380aa5f375efe43d38a4ae5cc8f73568be56b61e7"
+				}
+			]
+		},
+		{
+			"id": 8218756,
+			"name": "State ex rel. Huffman v. Stephens",
+			"dateFiled": "1999-12-09",
+			"court": "West Virginia Supreme Court",
+			"stratum": "state",
+			"citation": "526 S.E.2d 23",
+			"citations": ["206 W. Va. 501", "526 S.E.2d 23"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/8218756/state-ex-rel-huffman-v-stephens/",
+			"source": {
+				"file": "cold-sample.jsonl",
+				"row": 811
+			},
+			"attributes": {
+				"ocr": true,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 8181922,
+					"type": "020lead",
+					"ocr": true,
+					"utf8Bytes": 13304,
+					"sha256": "6cd29899bb6714864d09e767edc3e57426e9ef8ecc868e141b1153c5993f48f5"
+				},
+				{
+					"id": 8181923,
+					"type": "040dissent",
+					"ocr": true,
+					"utf8Bytes": 3134,
+					"sha256": "a6050b86e41d2814933e7c59281ea14c98f363bd2c77a86b2a77fe0adc28aba6"
+				}
+			]
+		},
+		{
+			"id": 8728443,
+			"name": "Papagolos v. Lafayette County School District",
+			"dateFiled": "2013-09-16",
+			"court": "District Court, N.D. Mississippi",
+			"stratum": "federal",
+			"citation": "972 F. Supp. 2d 912",
+			"citations": ["972 F. Supp. 2d 912"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/8728443/papagolos-v-lafayette-county-school-district/",
+			"source": {
+				"file": "cold-sample.jsonl",
+				"row": 373
+			},
+			"attributes": {
+				"ocr": true,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": true
+			},
+			"split": "holdout",
+			"opinions": [
+				{
+					"id": 8711641,
+					"type": "020lead",
+					"ocr": true,
+					"utf8Bytes": 67623,
+					"sha256": "e18f333b793b8d8f40348a638338b2b7a9edfed956f3535ddc9c8e3965dfd27a"
+				}
+			]
+		},
+		{
+			"id": 8820277,
+			"name": "Safety Car Heating & Lighting Co. v. Gould Coupler Co.",
+			"dateFiled": "1917-09-11",
+			"court": "District Court, W.D. New York",
+			"stratum": "federal",
+			"citation": "245 F. 755",
+			"citations": ["245 F. 755"],
+			"canonicalUrl": "https://www.courtlistener.com/opinion/8820277/safety-car-heating-lighting-co-v-gould-coupler-co/",
+			"source": {
+				"file": "cold-sample.jsonl",
+				"row": 996
+			},
+			"attributes": {
+				"ocr": true,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"split": "development",
+			"opinions": [
+				{
+					"id": 8804906,
+					"type": "020lead",
+					"ocr": true,
+					"utf8Bytes": 24480,
+					"sha256": "19e48989a2a339fd257b8edbc2c9ebc75fa42e2bbac4887a664f941bdb196a9d"
+				}
+			]
+		}
+	]
+}
