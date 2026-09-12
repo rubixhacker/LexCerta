@@ -1,0 +1,1450 @@
+{
+	"version": 1,
+	"reviewer": "Codex root agent, source-only review before product replay; no independent human review claimed",
+	"reviewedAt": "2026-09-12T20:12:29.831568+00:00",
+	"sourceArchiveUncompressedSha256": "8375df8bb49c95b4cbc7090e375359165c0a2079dd20171d033e5b73ccdf8faa",
+	"scope": "60 source-reviewed exact fragments and one-word/number alterations. Citation positives represent membership in the frozen COLD records; current CourtListener resolution and real API envelopes remain unobserved.",
+	"construction": "Candidate quotes used 28 words about one-third through the last substantial listed opinion. The reviewer read each fragment, chose all 60 substitutions, and replaced two citation-heavy fragments with reviewed substantive sentences. No LexCerta result was viewed. Independent Python checks validated raw UTF-8 spans and absence across every normalized opinion.",
+	"cases": [
+		{
+			"clusterId": 76618,
+			"citation": "374 F.3d 1035",
+			"split": "holdout",
+			"sourceOpinionId": 76618,
+			"sourceOpinionSha256": "abeae994e1d64fe786c827b32f8f12670eb90691f3e4ea249f5c125047f63f85",
+			"sourceUtf8Start": 6270,
+			"sourceUtf8End": 6439,
+			"exactQuote": "`clear preponderance of the evidence,'\" a result which \"would be bad enough if it referred to the finder of fact.\" Jos. Schlitz Brewing Co. v. Milwaukee Brewery Workers'",
+			"alteredQuote": "`clear preponderance of the evidence,'\" a result which \"would be good enough if it referred to the finder of fact.\" Jos. Schlitz Brewing Co. v. Milwaukee Brewery Workers'",
+			"alteration": {
+				"before": "bad",
+				"after": "good",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [76618],
+			"completeOpinionIds": [9415865, 9415866, 76618],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'bad' with 'good' changes the quoted words or number; the independently normalized complete set of 3 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 87675,
+			"citation": "69 U.S. 605",
+			"split": "development",
+			"sourceOpinionId": 87675,
+			"sourceOpinionSha256": "63f79be2b91546bbce9448042531ccde807ef544b3d12b757c30ea4ceeb0a4a6",
+			"sourceUtf8Start": 2523,
+			"sourceUtf8End": 2688,
+			"exactQuote": "benefit of Lamonde, so as to invest him with the title; and that, in the absence of the assignment, the confirmation 'to the representatives of Auguste Conde' enured",
+			"alteredQuote": "benefit of Lamonde, so as to invest him with the title; and that, in the presence of the assignment, the confirmation 'to the representatives of Auguste Conde' enured",
+			"alteration": {
+				"before": "absence",
+				"after": "presence",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [87675],
+			"completeOpinionIds": [87675],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'absence' with 'presence' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 88910,
+			"citation": "86 U.S. 635",
+			"split": "development",
+			"sourceOpinionId": 88910,
+			"sourceOpinionSha256": "7f21574d1da45644ddeaaf45b531aa6dc1f8331c42de987e1c2290b33a86d4e3",
+			"sourceUtf8Start": 1977,
+			"sourceUtf8End": 2141,
+			"exactQuote": "time thereafter as if the repealing act had not been passed.\nIt was admitted that the defendant in keeping the gaming-table acted under the authority of Moses &amp;",
+			"alteredQuote": "time thereafter as if the repealing act had not been passed.\nIt was denied that the defendant in keeping the gaming-table acted under the authority of Moses &amp;",
+			"alteration": {
+				"before": "admitted",
+				"after": "denied",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [88910],
+			"completeOpinionIds": [88910],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'admitted' with 'denied' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 90418,
+			"citation": "104 U.S. 25",
+			"split": "development",
+			"sourceOpinionId": 90418,
+			"sourceOpinionSha256": "c9cd01d0459aab542f59ea1fed01c72636b1d2f5c694282db0ae2d9b78edab67",
+			"sourceUtf8Start": 2750,
+			"sourceUtf8End": 2923,
+			"exactQuote": "to include every kind of possession or right. In its literal *28 acceptation it might include such rights, whether legal or equitable, absolute or contingent, as the railway",
+			"alteredQuote": "to include each kind of possession or right. In its literal *28 acceptation it might include such rights, whether legal or equitable, absolute or contingent, as the railway",
+			"alteration": {
+				"before": "every",
+				"after": "each",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [90418],
+			"completeOpinionIds": [90418],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'every' with 'each' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 91311,
+			"citation": "113 U.S. 539",
+			"split": "holdout",
+			"sourceOpinionId": 91311,
+			"sourceOpinionSha256": "07d05e09940c2847291e7bf444954ffae0ac17422d3faaf976cc3a7f432cf1b6",
+			"sourceUtf8Start": 1801,
+			"sourceUtf8End": 1983,
+			"exactQuote": "et al. (8,118, Eq.)\n    \n    \n      4\n      'And now comes the said defendant, Alfred Richards, and      appeals to the supreme court of the United States from the      decree of the",
+			"alteredQuote": "et al. (8,118, Eq.)\n    \n    \n      4\n      'And now comes the said plaintiff, Alfred Richards, and      appeals to the supreme court of the United States from the      decree of the",
+			"alteration": {
+				"before": "defendant",
+				"after": "plaintiff",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [91311],
+			"completeOpinionIds": [91311],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'defendant' with 'plaintiff' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 91771,
+			"citation": "119 U.S. 407",
+			"split": "holdout",
+			"sourceOpinionId": 9841740,
+			"sourceOpinionSha256": "3f3f113f47722dcd7984849c263db9eef257899c9a9793e4f22f0f35e828a461",
+			"sourceUtf8Start": 1790,
+			"sourceUtf8End": 1949,
+			"exactQuote": "taken by the English government during the time of the controversy growing out of the demand made *435for the extradition of Winslow; for, in the debate in the",
+			"alteredQuote": "taken by the French government during the time of the controversy growing out of the demand made *435for the extradition of Winslow; for, in the debate in the",
+			"alteration": {
+				"before": "English",
+				"after": "French",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [9841740],
+			"completeOpinionIds": [91771, 9841738, 9841739, 9841740],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'English' with 'French' changes the quoted words or number; the independently normalized complete set of 4 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 93343,
+			"citation": "144 U.S. 573",
+			"split": "development",
+			"sourceOpinionId": 93343,
+			"sourceOpinionSha256": "d074fc3b36ba83469cf173b090c11c4bd511183e8883fa2555f38249632e8c35",
+			"sourceUtf8Start": 1115,
+			"sourceUtf8End": 1281,
+			"exactQuote": "the plaintiff in error has been deprived of his liberty without due process of law, in violation of the Fourteenth Amendment to the Constitution of the United States,",
+			"alteredQuote": "the plaintiff in error has been deprived of his property without due process of law, in violation of the Fourteenth Amendment to the Constitution of the United States,",
+			"alteration": {
+				"before": "liberty",
+				"after": "property",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [93343],
+			"completeOpinionIds": [93343],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'liberty' with 'property' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 94588,
+			"citation": "165 U.S. 107",
+			"split": "development",
+			"sourceOpinionId": 9417748,
+			"sourceOpinionSha256": "d046e25abee12fe65dd0ce5412db5c5a790651bd7ff3676391b40dde57b8e750",
+			"sourceUtf8Start": 4600,
+			"sourceUtf8End": 4783,
+			"exactQuote": "State, and, under' color of an unconstitutional statute, commit acts of wrong and-injury to the property of the plaintiff, to recover money or property in-their hands unlawfully taken",
+			"alteredQuote": "State, and, under' color of an constitutional statute, commit acts of wrong and-injury to the property of the plaintiff, to recover money or property in-their hands unlawfully taken",
+			"alteration": {
+				"before": "unconstitutional",
+				"after": "constitutional",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [9417748],
+			"completeOpinionIds": [94588, 9417748, 9417749],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'unconstitutional' with 'constitutional' changes the quoted words or number; the independently normalized complete set of 3 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 100081,
+			"citation": "260 U.S. 427",
+			"split": "holdout",
+			"sourceOpinionId": 100081,
+			"sourceOpinionSha256": "872a98e21235a86c7009af4975a0119bc708f6740ff6f5a41b8e8246bc1e6e4e",
+			"sourceUtf8Start": 6202,
+			"sourceUtf8End": 6379,
+			"exactQuote": "a new application and shortly thereafter *432 and within ninety days after the filing of the survey plat, appellee also filed a new application, both applications describing the",
+			"alteredQuote": "a new application and shortly thereafter *432 and within sixty days after the filing of the survey plat, appellee also filed a new application, both applications describing the",
+			"alteration": {
+				"before": "ninety",
+				"after": "sixty",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [100081],
+			"completeOpinionIds": [100081],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'ninety' with 'sixty' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 103106,
+			"citation": "305 U.S. 297",
+			"split": "development",
+			"sourceOpinionId": 103106,
+			"sourceOpinionSha256": "a7449b7483a25ca88d15a65ba368eab8243a5dcefa0e0135a5be209921b95915",
+			"sourceUtf8Start": 4746,
+			"sourceUtf8End": 4910,
+			"exactQuote": "the Commissioner's transfer of assets to a new company pursuant to the approved plan was void and that its illegality could not be cured by subsequent court action.",
+			"alteredQuote": "the Commissioner's transfer of assets to a new company pursuant to the approved plan was valid and that its illegality could not be cured by subsequent court action.",
+			"alteration": {
+				"before": "void",
+				"after": "valid",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [103106],
+			"completeOpinionIds": [103106],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'void' with 'valid' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 104390,
+			"citation": "330 U.S. 464",
+			"split": "development",
+			"sourceOpinionId": 104390,
+			"sourceOpinionSha256": "69af605d07e560991709921b61dd2d4d26927efec76bbdc0c5a3aa469ce7c52d",
+			"sourceUtf8Start": 2765,
+			"sourceUtf8End": 2948,
+			"exactQuote": "certiorari because of an apparent conflict with Brotherhood of Locomotive Firemen v. Pinkston, 293 U.S. 96, as to the jurisdictional minimum requirement.\nFirst. It is suggested that a",
+			"alteredQuote": "certiorari because of an apparent agreement with Brotherhood of Locomotive Firemen v. Pinkston, 293 U.S. 96, as to the jurisdictional minimum requirement.\nFirst. It is suggested that a",
+			"alteration": {
+				"before": "conflict",
+				"after": "agreement",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [104390],
+			"completeOpinionIds": [104390],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'conflict' with 'agreement' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 104768,
+			"citation": "339 U.S. 33",
+			"split": "development",
+			"sourceOpinionId": 104768,
+			"sourceOpinionSha256": "a731af8084e5c6076c4fa97678c227a74654cc64cb7560bdaa638ed680273d28",
+			"sourceUtf8Start": 14042,
+			"sourceUtf8End": 14204,
+			"exactQuote": "while he is today hearing cases investigated by a colleague, tomorrow his investigation of a case may be heard before the inspector whose case he passes on today.",
+			"alteredQuote": "while he is yesterday hearing cases investigated by a colleague, tomorrow his investigation of a case may be heard before the inspector whose case he passes on today.",
+			"alteration": {
+				"before": "today",
+				"after": "yesterday",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [9420439, 104768],
+			"completeOpinionIds": [9420439, 9420440, 104768],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'today' with 'yesterday' changes the quoted words or number; the independently normalized complete set of 3 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 105415,
+			"citation": "351 U.S. 502",
+			"split": "development",
+			"sourceOpinionId": 105415,
+			"sourceOpinionSha256": "30261e8c91a56971a097507440e81d6b0444916f9d385fec65ca257cc6423068",
+			"sourceUtf8Start": 5886,
+			"sourceUtf8End": 6033,
+			"exactQuote": "held covered by the 1939 amendment. See also Lillie v. Thompson, 332 U.S. 459. Nor are the benefits of the *506 Act limited to those exposed to the",
+			"alteredQuote": "held covered by the 1939 amendment. See also Lillie v. Thompson, 332 U.S. 459. Nor are the benefits of the *506 Act extended to those exposed to the",
+			"alteration": {
+				"before": "limited",
+				"after": "extended",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [105415],
+			"completeOpinionIds": [9421324, 9421325, 105415],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'limited' with 'extended' changes the quoted words or number; the independently normalized complete set of 3 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 106817,
+			"citation": "377 U.S. 161",
+			"split": "development",
+			"sourceOpinionId": 106817,
+			"sourceOpinionSha256": "8292f4f21f9aed35913e9506d50b2f55e91fbf53e2cb9242dad473166e65c49a",
+			"sourceUtf8Start": 737,
+			"sourceUtf8End": 905,
+			"exactQuote": "the defendant-appellee without opinion, findings of fact, or conclusions of law of any kind. The case is here on a typewritten record of some 2,000 pages, consisting of",
+			"alteredQuote": "the defendant-appellee with opinion, findings of fact, or conclusions of law of any kind. The case is here on a typewritten record of some 2,000 pages, consisting of",
+			"alteration": {
+				"before": "without",
+				"after": "with",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [106817],
+			"completeOpinionIds": [106817],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'without' with 'with' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 107024,
+			"citation": "380 U.S. 460",
+			"split": "development",
+			"sourceOpinionId": 9423000,
+			"sourceOpinionSha256": "2aa90ac176f3dec087032417d12e88ab3ff14069f592a6a82b445a4179f948a8",
+			"sourceUtf8Start": 3178,
+			"sourceUtf8End": 3362,
+			"exactQuote": "law inviolate.\n“[T]he constitutional provision for a federal court system . . . carries with it congressional power ... to regulate matters which, though falling within the uncertain",
+			"alteredQuote": "law inviolate.\n“[T]he constitutional provision for a state court system . . . carries with it congressional power ... to regulate matters which, though falling within the uncertain",
+			"alteration": {
+				"before": "federal",
+				"after": "state",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [9423000],
+			"completeOpinionIds": [107024, 9422999, 9423000],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'federal' with 'state' changes the quoted words or number; the independently normalized complete set of 3 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 108428,
+			"citation": "404 U.S. 453",
+			"split": "holdout",
+			"sourceOpinionId": 9424725,
+			"sourceOpinionSha256": "aea522928c4c3d8d4bd527a150fe063c43d5d20c9c3607ff246a7c875bdf3b39",
+			"sourceUtf8Start": 4556,
+			"sourceUtf8End": 4747,
+			"exactQuote": "is difficult to perceive what remains of the Jersey Central proposition that “[m]ere connection determines nothing.”\nThese scientific facts are, of course, the basis for the grid systems,",
+			"alteredQuote": "is difficult to perceive what remains of the Jersey Central proposition that “[m]ere connection determines everything.”\nThese scientific facts are, of course, the basis for the grid systems,",
+			"alteration": {
+				"before": "nothing",
+				"after": "everything",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [108428, 9424725],
+			"completeOpinionIds": [108428, 9424724, 9424725],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'nothing' with 'everything' changes the quoted words or number; the independently normalized complete set of 3 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 109658,
+			"citation": "431 U.S. 174",
+			"split": "development",
+			"sourceOpinionId": 109658,
+			"sourceOpinionSha256": "9e1ea9954df7038ebfa911f9432442c89781621c0c38df2e0a8620cb8bf44e47",
+			"sourceUtf8Start": 4342,
+			"sourceUtf8End": 4520,
+			"exactQuote": "having been obtained in violation of the constitutional privilege. With respect to her due process claim, she contends, and the Court of Appeals held,[4] that, absent warnings, a",
+			"alteredQuote": "having been obtained in compliance of the constitutional privilege. With respect to her due process claim, she contends, and the Court of Appeals held,[4] that, absent warnings, a",
+			"alteration": {
+				"before": "violation",
+				"after": "compliance",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [109658],
+			"completeOpinionIds": [109658],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'violation' with 'compliance' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 112265,
+			"citation": "490 U.S. 536",
+			"split": "development",
+			"sourceOpinionId": 112265,
+			"sourceOpinionSha256": "cecd5c0bece6b8c2f024db32159b3045ff961c7dfafbc44805757a7b0869719a",
+			"sourceUtf8Start": 6437,
+			"sourceUtf8End": 6604,
+			"exactQuote": "the tolling provision to inmates' § 1983 suits in this case and in Higley v. Michigan Department of Corrections, 835 F.2d 623 (1987). Although it recognized in Higley",
+			"alteredQuote": "the tolling provision to employees' § 1983 suits in this case and in Higley v. Michigan Department of Corrections, 835 F.2d 623 (1987). Although it recognized in Higley",
+			"alteration": {
+				"before": "inmates'",
+				"after": "employees'",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [112265],
+			"completeOpinionIds": [112265],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of \"inmates'\" with \"employees'\" changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 112353,
+			"citation": "493 U.S. 365",
+			"split": "development",
+			"sourceOpinionId": 112353,
+			"sourceOpinionSha256": "bb02934e2ebe3dfc8d31e851c57ca98d7f9493f3bca32d0b41b81002ce8593a1",
+			"sourceUtf8Start": 8133,
+			"sourceUtf8End": 8289,
+			"exactQuote": "an exception to the anti-alienation provision can be made when a pension plan fiduciary breaches a duty owed to the plan itself. The court *373 relied on §",
+			"alteredQuote": "an amendment to the anti-alienation provision can be made when a pension plan fiduciary breaches a duty owed to the plan itself. The court *373 relied on §",
+			"alteration": {
+				"before": "exception",
+				"after": "amendment",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [112353],
+			"completeOpinionIds": [112353],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'exception' with 'amendment' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 118076,
+			"citation": "519 U.S. 213",
+			"split": "holdout",
+			"sourceOpinionId": 9433404,
+			"sourceOpinionSha256": "56bcc87a651110ee2b0c3fd843bfb7f8853676900e296fa7046de7b116295e66",
+			"sourceUtf8Start": 11036,
+			"sourceUtf8End": 11196,
+			"exactQuote": "follow the corporate governance procedures of the law of the state in which the main office of the bank is located ... [or] the Delaware General Corporation Law",
+			"alteredQuote": "follow the corporate governance procedures of the law of the state in which the main office of the bank is located ... [or] the Nevada General Corporation Law",
+			"alteration": {
+				"before": "Delaware",
+				"after": "Nevada",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [9433404],
+			"completeOpinionIds": [118076, 9433404, 9433405],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'Delaware' with 'Nevada' changes the quoted words or number; the independently normalized complete set of 3 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 142898,
+			"citation": "544 U.S. 660",
+			"split": "holdout",
+			"sourceOpinionId": 142898,
+			"sourceOpinionSha256": "07acdcb4a545893daadea8d696915425e878ae1f01e550b05633198a4b465280",
+			"sourceUtf8Start": 24339,
+			"sourceUtf8End": 24502,
+			"exactQuote": "José Ernesto Medellín told the officers who arrested him in Texas that he was born in Laredo, Mexico. App. JA15. He also told the Harris County Pretrial Services",
+			"alteredQuote": "José Ernesto Medellín told the officers who arrested him in Texas that he was born in Laredo, Canada. App. JA15. He also told the Harris County Pretrial Services",
+			"alteration": {
+				"before": "Mexico",
+				"after": "Canada",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [142898],
+			"completeOpinionIds": [9434807, 9434808, 9434805, 9434806, 142898],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'Mexico' with 'Canada' changes the quoted words or number; the independently normalized complete set of 5 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 291045,
+			"citation": "428 F.2d 989",
+			"split": "development",
+			"sourceOpinionId": 291045,
+			"sourceOpinionSha256": "57740c64f0640e35c70f7a7c834596b7be6b5f97c51fcc583cac09a21a0c3942",
+			"sourceUtf8Start": 6239,
+			"sourceUtf8End": 6395,
+			"exactQuote": "building, and that a workman was sent to make repairs.  Also there was evidence that a sprinkler head was damaged two days before the fire and the sprinkler",
+			"alteredQuote": "building, and that a workman was sent to make repairs.  Also there was evidence that a sprinkler head was repaired two days before the fire and the sprinkler",
+			"alteration": {
+				"before": "damaged",
+				"after": "repaired",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [291045],
+			"completeOpinionIds": [291045],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'damaged' with 'repaired' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 291427,
+			"citation": "429 F.2d 1087",
+			"split": "development",
+			"sourceOpinionId": 291427,
+			"sourceOpinionSha256": "b0cb71974c607926d58294e232a34279a23c609f692ef7dc9c3757ca94dc00d3",
+			"sourceUtf8Start": 4878,
+			"sourceUtf8End": 5034,
+			"exactQuote": "17th \"so as not to make necessary the entry of an order of default judgment.\" Blumenfeld's letter contained no mention of the setting of the case for report",
+			"alteredQuote": "17th \"so as not to make optional the entry of an order of default judgment.\" Blumenfeld's letter contained no mention of the setting of the case for report",
+			"alteration": {
+				"before": "necessary",
+				"after": "optional",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [291427],
+			"completeOpinionIds": [291427],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'necessary' with 'optional' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 334531,
+			"citation": "532 F.2d 1218",
+			"split": "holdout",
+			"sourceOpinionId": 9462611,
+			"sourceOpinionSha256": "d364e25986603689feb0c546eb740f85ecea309ce1a00c6d1ede8b647992e7c2",
+			"sourceUtf8Start": 2228,
+			"sourceUtf8End": 2374,
+			"exactQuote": "8 L.Ed.2d 240. Nor can deficiencies in the indictment be cured by a bill of particulars. Id. at 769-70, 82 S.Ct. 1038.\nIn this case the two counts",
+			"alteredQuote": "8 L.Ed.2d 240. Nor can deficiencies in the indictment be created by a bill of particulars. Id. at 769-70, 82 S.Ct. 1038.\nIn this case the two counts",
+			"alteration": {
+				"before": "cured",
+				"after": "created",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [9462611],
+			"completeOpinionIds": [334531, 9462610, 9462611],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'cured' with 'created' changes the quoted words or number; the independently normalized complete set of 3 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 381885,
+			"citation": "629 F.2d 817",
+			"split": "development",
+			"sourceOpinionId": 381885,
+			"sourceOpinionSha256": "39135d6d3474d198d7605670d82fc8026bebd67fdbf68be552d8de2c6e012199",
+			"sourceUtf8Start": 9835,
+			"sourceUtf8End": 10004,
+			"exactQuote": "or HRF to an adult home providing no medical care, or is simply discharged, a clear property right entitled to constitutional protection is affected.  Where a patient is",
+			"alteredQuote": "or HRF to an adult home providing some medical care, or is simply discharged, a clear property right entitled to constitutional protection is affected.  Where a patient is",
+			"alteration": {
+				"before": "no",
+				"after": "some",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [381885],
+			"completeOpinionIds": [381885],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'no' with 'some' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 746481,
+			"citation": "125 F.3d 597",
+			"split": "holdout",
+			"sourceOpinionId": 746481,
+			"sourceOpinionSha256": "d57e7f5a1ab1db1256b21c0b0e7cb0e1a18dc2d52501100d41ad451d30f6888a",
+			"sourceUtf8Start": 3484,
+			"sourceUtf8End": 3662,
+			"exactQuote": "transaction.  Pimentel informed Rush that he had one pound of methamphetamine and would get the two additional pounds in forty-five minutes.  Officers who had been waiting in the",
+			"alteredQuote": "transaction.  Pimentel informed Rush that he had two pound of methamphetamine and would get the two additional pounds in forty-five minutes.  Officers who had been waiting in the",
+			"alteration": {
+				"before": "one",
+				"after": "two",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [746481],
+			"completeOpinionIds": [746481],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'one' with 'two' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 1200872,
+			"citation": "520 F.3d 822",
+			"split": "development",
+			"sourceOpinionId": 1200872,
+			"sourceOpinionSha256": "f79ccd54b46bc6d73d7f94e32a44f857dd8270d3a743136bcd967a52c0fbaf26",
+			"sourceUtf8Start": 14505,
+			"sourceUtf8End": 14679,
+			"exactQuote": "then rests upon Congress's disposal of this reversionary interest under 43 U.S.C. § 912 and 16 U.S.C. § 1248(c). The centrality of these federal laws' interpretation to the",
+			"alteredQuote": "then rests upon Virginia's disposal of this reversionary interest under 43 U.S.C. § 912 and 16 U.S.C. § 1248(c). The centrality of these federal laws' interpretation to the",
+			"alteration": {
+				"before": "Congress's",
+				"after": "Virginia's",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [1200872],
+			"completeOpinionIds": [1200872],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of \"Congress's\" with \"Virginia's\" changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 1307975,
+			"citation": "677 P.2d 1147",
+			"split": "development",
+			"sourceOpinionId": 1307975,
+			"sourceOpinionSha256": "06c4ffa1ecfaee47bf2868444bd4d1e2c1a857c1c9a649c815155a108d01bf9b",
+			"sourceUtf8Start": 2843,
+			"sourceUtf8End": 2993,
+			"exactQuote": "Plaintiff's health improved dramatically with use of the drug, but periodic attempts to reduce the dosage resulted in reappearance of his AE symptoms.",
+			"alteredQuote": "Plaintiff's health deteriorated dramatically with use of the drug, but periodic attempts to reduce the dosage resulted in reappearance of his AE symptoms.",
+			"alteration": {
+				"before": "improved",
+				"after": "deteriorated",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [9571675, 1307975],
+			"completeOpinionIds": [9571675, 9571676, 1307975],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'improved' with 'deteriorated' changes the quoted words or number; the independently normalized complete set of 3 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 1353414,
+			"citation": "549 F.3d 1191",
+			"split": "development",
+			"sourceOpinionId": 1353414,
+			"sourceOpinionSha256": "b2c4f2d3313df6e4fe8479712e16bb2810545d9187228b3c2742455c533a9575",
+			"sourceUtf8Start": 14348,
+			"sourceUtf8End": 14513,
+			"exactQuote": "the court reiterated in the footnote that it \"had considered\" all the documents filed and received in the matter, and that it \"concluded that the relief requested is",
+			"alteredQuote": "the court reiterated in the footnote that it \"had ignored\" all the documents filed and received in the matter, and that it \"concluded that the relief requested is",
+			"alteration": {
+				"before": "considered",
+				"after": "ignored",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [9596468, 1353414],
+			"completeOpinionIds": [9596468, 9596470, 1353414],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'considered' with 'ignored' changes the quoted words or number; the independently normalized complete set of 3 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 2145605,
+			"citation": "532 F. Supp. 2d 418",
+			"split": "development",
+			"sourceOpinionId": 2145605,
+			"sourceOpinionSha256": "ed98252537347d7620fb5952eafd1935c6b1b9888cbc8b4611b7b162f61e1ab9",
+			"sourceUtf8Start": 19556,
+			"sourceUtf8End": 19726,
+			"exactQuote": "meant to allow the correction of honest mistakes. It is essentially an equitable rule which says that patents should not be invalidated for technical reasons which do not",
+			"alteredQuote": "meant to allow the correction of dishonest mistakes. It is essentially an equitable rule which says that patents should not be invalidated for technical reasons which do not",
+			"alteration": {
+				"before": "honest",
+				"after": "dishonest",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [2145605],
+			"completeOpinionIds": [2145605],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'honest' with 'dishonest' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 2341830,
+			"citation": "835 A.2d 656",
+			"split": "holdout",
+			"sourceOpinionId": 2341830,
+			"sourceOpinionSha256": "060104ceb3da088a8f1263915fece823877b9a8d5c2108d893ed02486c07d3b1",
+			"sourceUtf8Start": 24886,
+			"sourceUtf8End": 25083,
+			"exactQuote": "determine \"whether allegations of fraudulent inducement and violations of the Franchise Act in a franchise agreement containing a broad arbitration clause are sufficient to permit the franchisee to",
+			"alteredQuote": "determine \"whether allegations of fraudulent inducement and violations of the Franchise Act in a franchise agreement containing a narrow arbitration clause are sufficient to permit the franchisee to",
+			"alteration": {
+				"before": "broad",
+				"after": "narrow",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [9756367, 2341830],
+			"completeOpinionIds": [9756367, 9756368, 2341830],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'broad' with 'narrow' changes the quoted words or number; the independently normalized complete set of 3 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 2471989,
+			"citation": "726 F. Supp. 2d 696",
+			"split": "holdout",
+			"sourceOpinionId": 2471989,
+			"sourceOpinionSha256": "6cf1e5f2ccc1635b71c4b631a12d28c898477e87897cd07b43955213615baaf4",
+			"sourceUtf8Start": 46305,
+			"sourceUtf8End": 46477,
+			"exactQuote": "Sports Medicine Division as DiscoCare was offering for the Spine Division, and was run by John Raffle, the Vice President of ArthroCare's Strategic Business Unit. Id. at ¶",
+			"alteredQuote": "Sports Medicine Division as DiscoCare was offering for the Spine Division, and was run by John Raffle, the Deputy President of ArthroCare's Strategic Business Unit. Id. at ¶",
+			"alteration": {
+				"before": "Vice",
+				"after": "Deputy",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [2471989],
+			"completeOpinionIds": [2471989],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'Vice' with 'Deputy' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 2477561,
+			"citation": "765 F. Supp. 2d 1036",
+			"split": "holdout",
+			"sourceOpinionId": 2477561,
+			"sourceOpinionSha256": "32f398b8ab4c0e008f132f2c9713d51ef43efbd8d09cc6092c3f7e122ed21999",
+			"sourceUtf8Start": 3952,
+			"sourceUtf8End": 4103,
+			"exactQuote": "SFO sues to recover from McCullar as co-maker of two promissory notes, but the litigation arises in the context of a business relationship turned sour.",
+			"alteredQuote": "SFO sues to recover from McCullar as co-maker of three promissory notes, but the litigation arises in the context of a business relationship turned sour.",
+			"alteration": {
+				"before": "two",
+				"after": "three",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [2477561],
+			"completeOpinionIds": [2477561],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'two' with 'three' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 2579657,
+			"citation": "210 F. Supp. 2d 1106",
+			"split": "development",
+			"sourceOpinionId": 2579657,
+			"sourceOpinionSha256": "d31156e725f8995c23fd75e6571600ae1d3cbaf8fac42a8d859db90ae031fd1a",
+			"sourceUtf8Start": 13988,
+			"sourceUtf8End": 14158,
+			"exactQuote": "if it paid Plaintiff nothing out of the compensation it received for dial-around calls which were made possible by the use of Plaintiff's payphones.\nThe small claims here",
+			"alteredQuote": "if it paid Plaintiff everything out of the compensation it received for dial-around calls which were made possible by the use of Plaintiff's payphones.\nThe small claims here",
+			"alteration": {
+				"before": "nothing",
+				"after": "everything",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [2579657],
+			"completeOpinionIds": [2579657],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'nothing' with 'everything' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 2580690,
+			"citation": "313 F. Supp. 2d 393",
+			"split": "development",
+			"sourceOpinionId": 2580690,
+			"sourceOpinionSha256": "21bd6aa981ef7992d5fe82919a4820c6507fe4107f1810fc47535696d96d78e9",
+			"sourceUtf8Start": 12568,
+			"sourceUtf8End": 12715,
+			"exactQuote": "thought that I may have again confused you. I just want to repeat that the s on the processor systems means only that the computer system must have",
+			"alteredQuote": "thought that I may have again persuaded you. I just want to repeat that the s on the processor systems means only that the computer system must have",
+			"alteration": {
+				"before": "confused",
+				"after": "persuaded",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [2580690],
+			"completeOpinionIds": [2580690],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'confused' with 'persuaded' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 2603722,
+			"citation": "805 P.2d 1195",
+			"split": "development",
+			"sourceOpinionId": 2603722,
+			"sourceOpinionSha256": "6f74ec7f3238f162de9c73a77ef1b55a6dcfdca7d3591008b9cc436799ad8550",
+			"sourceUtf8Start": 3405,
+			"sourceUtf8End": 3594,
+			"exactQuote": "that the district court nevertheless retains the authority to designate the parent who may claim the federal income tax exemptions. Thus, Beyer confirmed earlier rulings upholding the trial",
+			"alteredQuote": "that the district court nevertheless lacks the authority to designate the parent who may claim the federal income tax exemptions. Thus, Beyer confirmed earlier rulings upholding the trial",
+			"alteration": {
+				"before": "retains",
+				"after": "lacks",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [2603722],
+			"completeOpinionIds": [2603722],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'retains' with 'lacks' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 2636710,
+			"citation": "221 P.3d 743",
+			"split": "development",
+			"sourceOpinionId": 2636710,
+			"sourceOpinionSha256": "5fe74df205fd62782c5edc0bbad31e71657052d02ae8decba481092ef8241e1e",
+			"sourceUtf8Start": 4739,
+			"sourceUtf8End": 4925,
+			"exactQuote": "Additionally, a doctor retained by the City of Glenpool, Dr. J. Mike Banowetz, opined that the disease was degenerative and idiopathic, not relating to Taylor's exposure to chemicals.[3]",
+			"alteredQuote": "Additionally, a doctor retained by the City of Glenpool, Dr. J. Mike Banowetz, opined that the disease was degenerative and traumatic, not relating to Taylor's exposure to chemicals.[3]",
+			"alteration": {
+				"before": "idiopathic",
+				"after": "traumatic",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [2636710],
+			"completeOpinionIds": [2636710],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'idiopathic' with 'traumatic' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 2637986,
+			"citation": "35 P.3d 233",
+			"split": "development",
+			"sourceOpinionId": 9797552,
+			"sourceOpinionSha256": "68410b80a47f65d2f00e4a1995edf9561dbb0f38018dc81922e85bdfd700cd3c",
+			"sourceUtf8Start": 7408,
+			"sourceUtf8End": 7595,
+			"exactQuote": "of juror questions in most cases, because, among other things, jurors may engage in “premature deliberation” and become advocates); United States v. Welliver, 976 F.2d 1148, 1155 (8th",
+			"alteredQuote": "of juror questions in most cases, because, among other things, jurors may engage in “belated deliberation” and become advocates); United States v. Welliver, 976 F.2d 1148, 1155 (8th",
+			"alteration": {
+				"before": "premature",
+				"after": "belated",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [2637986, 9797552],
+			"completeOpinionIds": [2637986, 9797551, 9797552],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": true,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'premature' with 'belated' changes the quoted words or number; the independently normalized complete set of 3 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 2639580,
+			"citation": "135 P.3d 1054",
+			"split": "holdout",
+			"sourceOpinionId": 2639580,
+			"sourceOpinionSha256": "c4ab1c1716c8ff451d81de2277e5325c6fa98ae68fda4a162beaf7d202660f70",
+			"sourceUtf8Start": 7540,
+			"sourceUtf8End": 7679,
+			"exactQuote": "tried to grab them but she kept turning away. He grabbed her by the shoulder, turned her around, and got the pills out of her hand. He went",
+			"alteredQuote": "tried to grab them but she kept turning around. He grabbed her by the shoulder, turned her around, and got the pills out of her hand. He went",
+			"alteration": {
+				"before": "away",
+				"after": "around",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [2639580],
+			"completeOpinionIds": [2639580],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": false,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'away' with 'around' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 2641986,
+			"citation": "736 F.3d 88",
+			"split": "development",
+			"sourceOpinionId": 9798145,
+			"sourceOpinionSha256": "f1c28f50047746f7a87de8e6a7389ab95dbd36aba46db059fbc609f8c24b6a1c",
+			"sourceUtf8Start": 10568,
+			"sourceUtf8End": 10736,
+			"exactQuote": "they owed money to The Money Store and that they should promptly pay that money back. Nor does either party dispute that these letters provided Moss Codilis’s contact",
+			"alteredQuote": "they owed money to The Money Store and that they should eventually pay that money back. Nor does either party dispute that these letters provided Moss Codilis’s contact",
+			"alteration": {
+				"before": "promptly",
+				"after": "eventually",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [9798145],
+			"completeOpinionIds": [2641986, 9798143, 9798144, 9798145],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": false,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'promptly' with 'eventually' changes the quoted words or number; the independently normalized complete set of 4 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 2661345,
+			"citation": "910 F. Supp. 2d 242",
+			"split": "development",
+			"sourceOpinionId": 2661345,
+			"sourceOpinionSha256": "dcdaf11861e6468caabb093e5355d96c2d96658a0b7f79b23a11466174dc358a",
+			"sourceUtf8Start": 23033,
+			"sourceUtf8End": 23227,
+			"exactQuote": "inferences are unsupported by the facts set out in the\n\ncomplaint.”     Id.   In addition, “[t]hreadbare recitals of\n\nelements of a cause of action, supported by mere conclusory\n\nstatements,",
+			"alteredQuote": "inferences are supported by the facts set out in the\n\ncomplaint.”     Id.   In addition, “[t]hreadbare recitals of\n\nelements of a cause of action, supported by mere conclusory\n\nstatements,",
+			"alteration": {
+				"before": "unsupported",
+				"after": "supported",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [2661345],
+			"completeOpinionIds": [2661345],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": false,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'unsupported' with 'supported' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 4579595,
+			"citation": "912 F.3d 1106",
+			"split": "development",
+			"sourceOpinionId": 4356848,
+			"sourceOpinionSha256": "09cbc0611f4dd13cea71aeb69d196f7c09a58afde16101d02543d629d74404d7",
+			"sourceUtf8Start": 9019,
+			"sourceUtf8End": 9182,
+			"exactQuote": "Insurance Co., 940 N.E.2d 535\n(N.Y. 2010), an insured could procure a policy with the intent to immediately assign\nit to stranger investors. See id. at 551-52. The",
+			"alteredQuote": "Insurance Co., 940 N.E.2d 535\n(N.Y. 2010), an insured could procure a policy with the intent to eventually assign\nit to stranger investors. See id. at 551-52. The",
+			"alteration": {
+				"before": "immediately",
+				"after": "eventually",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [4356848],
+			"completeOpinionIds": [4356848],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": false,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'immediately' with 'eventually' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 4580859,
+			"citation": "572 S.W.3d 294",
+			"split": "holdout",
+			"sourceOpinionId": 4358112,
+			"sourceOpinionSha256": "65ee15db90cc87c4b38ccb466b4a106f8f98dd25b3c025b414500df6606f1706",
+			"sourceUtf8Start": 8829,
+			"sourceUtf8End": 9002,
+			"exactQuote": "or employee” or “hear a complaint or charge against an officer or employee.”\n\nId. § 551.074(a) (West 2017). However, the person who is the subject of the deliberation",
+			"alteredQuote": "or employee” or “hear a petition or charge against an officer or employee.”\n\nId. § 551.074(a) (West 2017). However, the person who is the subject of the deliberation",
+			"alteration": {
+				"before": "complaint",
+				"after": "petition",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [4358112],
+			"completeOpinionIds": [4358112],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": false,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'complaint' with 'petition' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 4587778,
+			"citation": "271 So. 3d 70",
+			"split": "holdout",
+			"sourceOpinionId": 4365031,
+			"sourceOpinionSha256": "b971e162d69f731bf953e82ead1770573f77dc447815bf8da6eaa6fa2e1e17e2",
+			"sourceUtf8Start": 1777,
+			"sourceUtf8End": 1970,
+			"exactQuote": "the termination of income was voluntary. Second, ‘the court must\n\ndetermine whether the subsequent unemployment resulted from the spouse’s pursuit\n\nof his own interests or through less than",
+			"alteredQuote": "the termination of income was involuntary. Second, ‘the court must\n\ndetermine whether the subsequent unemployment resulted from the spouse’s pursuit\n\nof his own interests or through less than",
+			"alteration": {
+				"before": "voluntary",
+				"after": "involuntary",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [4365031],
+			"completeOpinionIds": [4365031],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": false,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'voluntary' with 'involuntary' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 4593909,
+			"citation": "916 F.3d 919",
+			"split": "holdout",
+			"sourceOpinionId": 9888065,
+			"sourceOpinionSha256": "b162f7d462b39222274d988e8e21ba69d42aae7dc93753f32b42ace17e5ce832",
+			"sourceUtf8Start": 2693,
+			"sourceUtf8End": 2887,
+			"exactQuote": "with prejudice on [prosecutorial misconduct] grounds is an extraordinary one.\").\nI agree with the majority that the district court did not adequately consider more narrowly tailored remedies and",
+			"alteredQuote": "with prejudice on [prosecutorial misconduct] grounds is an ordinary one.\").\nI agree with the majority that the district court did not adequately consider more narrowly tailored remedies and",
+			"alteration": {
+				"before": "extraordinary",
+				"after": "ordinary",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [4371162, 9888065],
+			"completeOpinionIds": [4371162, 9888064, 9888065],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": false,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'extraordinary' with 'ordinary' changes the quoted words or number; the independently normalized complete set of 3 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 4594104,
+			"citation": "824 S.E.2d 94",
+			"split": "development",
+			"sourceOpinionId": 4371357,
+			"sourceOpinionSha256": "15c5471ce7ce25e6a74749ba6dd2b86c78b63ded8d7a48ed47ee0d4c289ee988",
+			"sourceUtf8Start": 4997,
+			"sourceUtf8End": 5173,
+			"exactQuote": "right to at that time stop the\n\nchild.”\n\n      A. P. argues that the juvenile court erred by denying his motion to suppress\n\nbecause Officer Jones lacked reasonable suspicion",
+			"alteredQuote": "right to at that time stop the\n\nchild.”\n\n      A. P. argues that the juvenile court erred by granting his motion to suppress\n\nbecause Officer Jones lacked reasonable suspicion",
+			"alteration": {
+				"before": "denying",
+				"after": "granting",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [4371357],
+			"completeOpinionIds": [4371357],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": false,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'denying' with 'granting' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 4598083,
+			"citation": "435 P.3d 1126",
+			"split": "development",
+			"sourceOpinionId": 4375336,
+			"sourceOpinionSha256": "0ce9ced9f743d3851075187a6567b07d20e924d32d39b0c333de4a09b6b6d69c",
+			"sourceUtf8Start": 13131,
+			"sourceUtf8End": 13303,
+			"exactQuote": "day of August, 2014, in Clay County,\n      Kansas.\"\n\n\n      In addition, Murrin's jury was told that a verdict of guilt would require the State to\nprove that \"the defendant",
+			"alteredQuote": "day of September, 2014, in Clay County,\n      Kansas.\"\n\n\n      In addition, Murrin's jury was told that a verdict of guilt would require the State to\nprove that \"the defendant",
+			"alteration": {
+				"before": "August",
+				"after": "September",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [4375336],
+			"completeOpinionIds": [4375336],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": false,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'August' with 'September' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 4598637,
+			"citation": "124 N.E.3d 1097",
+			"split": "development",
+			"sourceOpinionId": 4375890,
+			"sourceOpinionSha256": "bc04d602c442ee75c6e1f4a200e2ebebd900950b73c53ba3e0ff944da47b90b8",
+			"sourceUtf8Start": 21500,
+			"sourceUtf8End": 21662,
+			"exactQuote": "it.\n\n              So the Court finds that he had adequate time, which is what the case law usually\n\n       looks at: Was this presented to him the day before, or",
+			"alteredQuote": "it.\n\n              So the Court finds that he had inadequate time, which is what the case law usually\n\n       looks at: Was this presented to him the day before, or",
+			"alteration": {
+				"before": "adequate",
+				"after": "inadequate",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [4375890],
+			"completeOpinionIds": [4375890],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": false,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'adequate' with 'inadequate' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 4598765,
+			"citation": "917 F.3d 1246",
+			"split": "development",
+			"sourceOpinionId": 4376018,
+			"sourceOpinionSha256": "d819c24a14e4006d1560f1330c1612a2023e6e72b0cea2dd9c15b5a5b5029074",
+			"sourceUtf8Start": 3902,
+			"sourceUtf8End": 4082,
+			"exactQuote": "acting as an attorney in the wrongful death suit, could pose ethical\n\nproblems. On April 27, 2017, Porter filed an “Amended Petition/Action for the\n\nAppointment of Wrongful Death",
+			"alteredQuote": "acting as an attorney in the wrongful death suit, could pose financial\n\nproblems. On April 27, 2017, Porter filed an “Amended Petition/Action for the\n\nAppointment of Wrongful Death",
+			"alteration": {
+				"before": "ethical",
+				"after": "financial",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [4376018],
+			"completeOpinionIds": [4376018],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": false,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'ethical' with 'financial' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 4630577,
+			"citation": "212 A.3d 805",
+			"split": "development",
+			"sourceOpinionId": 4407830,
+			"sourceOpinionSha256": "636691ab1d73a5d65427eacf3fdecfc5f605e6646f72e4e8499855e920654386",
+			"sourceUtf8Start": 23492,
+			"sourceUtf8End": 23727,
+			"exactQuote": "at A49–50 (Verified Stockholder Derivative Action Complaint (Aug. 14,\n2017)).\n\n\n\n                                            13\n\fresult appeared in February 2015.49 And by this point, the problem spread to Blue\n\nBell’s products and",
+			"alteredQuote": "at A49–50 (Verified Stockholder Derivative Action Complaint (Aug. 14,\n2017)).\n\n\n\n                                            13\n\fresult appeared in April 2015.49 And by this point, the problem spread to Blue\n\nBell’s products and",
+			"alteration": {
+				"before": "February",
+				"after": "April",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [4407830],
+			"completeOpinionIds": [4407830],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": false,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'February' with 'April' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 5202479,
+			"citation": "349 S.W.2d 694",
+			"split": "development",
+			"sourceOpinionId": 5025632,
+			"sourceOpinionSha256": "cb03f01df5869dd610ed3f91b053e49dac3f030e2d35fd73ec23ba833be27abb",
+			"sourceUtf8Start": 1684,
+			"sourceUtf8End": 1873,
+			"exactQuote": "to supersede all other statutes and parts of statutes containing specialized provisions for particular advertisements, to. the extent that such provisions are in conflict with this Act. KRS",
+			"alteredQuote": "to supersede some other statutes and parts of statutes containing specialized provisions for particular advertisements, to. the extent that such provisions are in conflict with this Act. KRS",
+			"alteration": {
+				"before": "all",
+				"after": "some",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [5025632],
+			"completeOpinionIds": [5025632],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": false,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'all' with 'some' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 5330283,
+			"citation": "717 P.2d 998",
+			"split": "holdout",
+			"sourceOpinionId": 5160745,
+			"sourceOpinionSha256": "6dff84af2d56dfa7c7138faa606835587a642e4c5b88e8d93d24bb8e242e0adc",
+			"sourceUtf8Start": 1814,
+			"sourceUtf8End": 1999,
+			"exactQuote": "indebtedness. The trial court rejected Jacobs Investments v. PRD Holdings, Ltd., 44 Colo.App. 184, 612 P.2d 1149 (1980) as not dispositive.\nThe plaintiffs aver that § 38-38-106, C.R.S.",
+			"alteredQuote": "indebtedness. The trial court accepted Jacobs Investments v. PRD Holdings, Ltd., 44 Colo.App. 184, 612 P.2d 1149 (1980) as not dispositive.\nThe plaintiffs aver that § 38-38-106, C.R.S.",
+			"alteration": {
+				"before": "rejected",
+				"after": "accepted",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [5160745],
+			"completeOpinionIds": [5160745],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": false,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'rejected' with 'accepted' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 5788242,
+			"citation": "359 S.E.2d 185",
+			"split": "holdout",
+			"sourceOpinionId": 5642650,
+			"sourceOpinionSha256": "d3e9f20f13365161537160f97dbb1c19e81b85863ff44c0f0d578547713d699f",
+			"sourceUtf8Start": 2726,
+			"sourceUtf8End": 2889,
+			"exactQuote": "asked during the hearing what he expected to be able to obtain from the attorney, counsel for petitioners stated that he wished to question him concerning the fact",
+			"alteredQuote": "asked during the hearing what he expected to be able to conceal from the attorney, counsel for petitioners stated that he wished to question him concerning the fact",
+			"alteration": {
+				"before": "obtain",
+				"after": "conceal",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [5642650],
+			"completeOpinionIds": [5642650],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": false,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'obtain' with 'conceal' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 6244244,
+			"citation": "576 S.W.3d 473",
+			"split": "holdout",
+			"sourceOpinionId": 6111405,
+			"sourceOpinionSha256": "e26a4e78a2c687d0fa08a0b76b9a43da2e37d88026d59febd7a8621ba68b8d26",
+			"sourceUtf8Start": 1136,
+			"sourceUtf8End": 1293,
+			"exactQuote": "Burcham , 2014 Ark. 61, at 4, 2014 WL 585981 (\"[T]he scope of the exception to sovereign immunity for unconstitutional acts or for acts that are ultra vires,",
+			"alteredQuote": "Burcham , 2014 Ark. 61, at 4, 2014 WL 585981 (\"[T]he scope of the rule to sovereign immunity for unconstitutional acts or for acts that are ultra vires,",
+			"alteration": {
+				"before": "exception",
+				"after": "rule",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [6111405],
+			"completeOpinionIds": [6111404, 6111405],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": false,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'exception' with 'rule' changes the quoted words or number; the independently normalized complete set of 2 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 6848910,
+			"citation": "127 N.W. 1047",
+			"split": "development",
+			"sourceOpinionId": 6736418,
+			"sourceOpinionSha256": "57a6b94c8cbb5fbbdd4c9e9292b1e83cbf7132207e2e8ba5b5420bc9bd3e8975",
+			"sourceUtf8Start": 6069,
+			"sourceUtf8End": 6199,
+			"exactQuote": "then made its award of damages for the taking of the lots in Minot in the sum of $5,500, which sum was entered in a final order of",
+			"alteredQuote": "then made its award of damages for the taking of the lots in Minot in the sum of $6,500, which sum was entered in a final order of",
+			"alteration": {
+				"before": "5,500",
+				"after": "6,500",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [6736418],
+			"completeOpinionIds": [6736418],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": false,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of '5,500' with '6,500' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 7589348,
+			"citation": "414 So. 2d 1081",
+			"split": "development",
+			"sourceOpinionId": 7518477,
+			"sourceOpinionSha256": "b5dcdcb6c606c86f034d0cacc15bf7a8279c78fb58db769e27ec665f483e658a",
+			"sourceUtf8Start": 1454,
+			"sourceUtf8End": 1637,
+			"exactQuote": "the jury awarded Thomas Reynolds and his wife, $225,000. No mention of the mediation finding occurred.\nDefendants’ sole point concerns their contention that the trial court erred in",
+			"alteredQuote": "the jury awarded Thomas Reynolds and his wife, $250,000. No mention of the mediation finding occurred.\nDefendants’ sole point concerns their contention that the trial court erred in",
+			"alteration": {
+				"before": "225,000",
+				"after": "250,000",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [7518477],
+			"completeOpinionIds": [7518477, 7518478],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": false,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of '225,000' with '250,000' changes the quoted words or number; the independently normalized complete set of 2 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 7683189,
+			"citation": "251 So. 3d 70",
+			"split": "development",
+			"sourceOpinionId": 7618004,
+			"sourceOpinionSha256": "7a2d4866b1ac1a0fcf963a4380aa5f375efe43d38a4ae5cc8f73568be56b61e7",
+			"sourceUtf8Start": 1561,
+			"sourceUtf8End": 1709,
+			"exactQuote": "\"I called back and asked again and he sounded-what I would describe as paranoid, asking me how I got that phone number that I called.\n*76\"He said it",
+			"alteredQuote": "\"I called back and asked again and he sounded-what I would describe as relaxed, asking me how I got that phone number that I called.\n*76\"He said it",
+			"alteration": {
+				"before": "paranoid",
+				"after": "relaxed",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [7618004],
+			"completeOpinionIds": [7618003, 7618004],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": false,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'paranoid' with 'relaxed' changes the quoted words or number; the independently normalized complete set of 2 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 8218756,
+			"citation": "526 S.E.2d 23",
+			"split": "development",
+			"sourceOpinionId": 8181923,
+			"sourceOpinionSha256": "a6050b86e41d2814933e7c59281ea14c98f363bd2c77a86b2a77fe0adc28aba6",
+			"sourceUtf8Start": 1032,
+			"sourceUtf8End": 1204,
+			"exactQuote": "is a Delaware Corporation with its principal offices in North Carolina; and LabCorp’s analysis of the specimen at issue was performed in Marion County and reported to Dr.",
+			"alteredQuote": "is a Nevada Corporation with its principal offices in North Carolina; and LabCorp’s analysis of the specimen at issue was performed in Marion County and reported to Dr.",
+			"alteration": {
+				"before": "Delaware",
+				"after": "Nevada",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [8181923],
+			"completeOpinionIds": [8181922, 8181923],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": false,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'Delaware' with 'Nevada' changes the quoted words or number; the independently normalized complete set of 2 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 8728443,
+			"citation": "972 F. Supp. 2d 912",
+			"split": "holdout",
+			"sourceOpinionId": 8711641,
+			"sourceOpinionSha256": "e18f333b793b8d8f40348a638338b2b7a9edfed956f3535ddc9c8e3965dfd27a",
+			"sourceUtf8Start": 22369,
+			"sourceUtf8End": 22544,
+			"exactQuote": "and actions giving rise to a Constitutional violation.” See Baker v. Putnal, 75 F.3d 190, 195 (5th Cir.1996) (emphasis added). As shown below, the Court finds that Plaintiff",
+			"alteredQuote": "and actions giving rise to a contractual violation.” See Baker v. Putnal, 75 F.3d 190, 195 (5th Cir.1996) (emphasis added). As shown below, the Court finds that Plaintiff",
+			"alteration": {
+				"before": "Constitutional",
+				"after": "contractual",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [8711641],
+			"completeOpinionIds": [8711641],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": false,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'Constitutional' with 'contractual' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		},
+		{
+			"clusterId": 8820277,
+			"citation": "245 F. 755",
+			"split": "development",
+			"sourceOpinionId": 8804906,
+			"sourceOpinionSha256": "19e48989a2a339fd257b8edbc2c9ebc75fa42e2bbac4887a664f941bdb196a9d",
+			"sourceUtf8Start": 8349,
+			"sourceUtf8End": 8505,
+			"exactQuote": "original suit, show that in Figures 1, 2, and 3 of the patent drawings there are traced a few structural modifications of the means *758for carrying out the",
+			"alteredQuote": "original suit, show that in Figures 1, 2, and 3 of the patent drawings there are traced a many structural modifications of the means *758for carrying out the",
+			"alteration": {
+				"before": "few",
+				"after": "many",
+				"occurrence": 1
+			},
+			"matchingOpinionIds": [8804906],
+			"completeOpinionIds": [8804906],
+			"citationEvidence": {
+				"kind": "COLD record citation metadata",
+				"visibleInOpinionHeading": false,
+				"currentCourtListenerLookupObserved": false
+			},
+			"reviewRationale": "The reviewed source fragment is present verbatim at the recorded UTF-8 offsets. Replacing one occurrence of 'few' with 'many' changes the quoted words or number; the independently normalized complete set of 1 opinion texts contains no altered fragment. This annotates text presence only, not legal correctness or adoption by the court."
+		}
+	]
+}

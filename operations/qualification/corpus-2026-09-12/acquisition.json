@@ -1,0 +1,175 @@
+{
+	"boundary": "Public CC0 dataset acquisition only. No CourtListener API attempts. Source successes are pinned by inputs.lock.json. This is not a complete timestamped trace: initial acquisition preceded the logger.",
+	"successfulInputs": 12,
+	"recordedViewerAttempts": [
+		{
+			"url": "https://datasets-server.huggingface.co/filter?dataset=harvard-lil%2Fcold-cases&config=default&split=train&where=%22date_filed%22%3E%3D%272023-01-01%27&offset=0&length=100",
+			"retrievedAt": "2026-09-12T19:53:49.438385+00:00",
+			"license": "CC0-1.0",
+			"source": "https://huggingface.co/datasets/harvard-lil/cold-cases",
+			"boundary": "public offline data, not a captured CourtListener API response",
+			"status": 500,
+			"error": "{\"error\":\"Unexpected error.\"}"
+		},
+		{
+			"url": "https://datasets-server.huggingface.co/filter?dataset=harvard-lil%2Fcold-cases&config=default&split=train&where=%22date_filed%22%3E%3D%272021-01-01%27&offset=0&length=100",
+			"retrievedAt": "2026-09-12T19:53:54.847760+00:00",
+			"license": "CC0-1.0",
+			"source": "https://huggingface.co/datasets/harvard-lil/cold-cases",
+			"boundary": "public offline data, not a captured CourtListener API response",
+			"status": 500,
+			"error": "{\"error\":\"Unexpected error.\"}"
+		},
+		{
+			"url": "https://datasets-server.huggingface.co/filter?dataset=harvard-lil%2Fcold-cases&config=default&split=train&where=%22date_filed%22%3E%3D%272023-01-01%27&offset=0&length=100",
+			"retrievedAt": "2026-09-12T19:56:42.735171+00:00",
+			"license": "CC0-1.0",
+			"source": "https://huggingface.co/datasets/harvard-lil/cold-cases",
+			"boundary": "public offline data, not a captured CourtListener API response",
+			"status": 500,
+			"error": "{\"error\":\"the dataset index is loading, this may take longer than usual\"}"
+		},
+		{
+			"url": "https://datasets-server.huggingface.co/filter?dataset=harvard-lil%2Fcold-cases&config=default&split=train&where=%22court_full_name%22%3D%27Supreme+Court+of+the+United+States%27+AND+%22id%22%3C200000&offset=0&length=100",
+			"retrievedAt": "2026-09-12T19:57:45.230323+00:00",
+			"license": "CC0-1.0",
+			"source": "https://huggingface.co/datasets/harvard-lil/cold-cases",
+			"boundary": "public offline data, not a captured CourtListener API response",
+			"status": 500,
+			"error": "{\"error\":\"the dataset index is loading, this can take a minute\"}"
+		},
+		{
+			"url": "https://datasets-server.huggingface.co/filter?dataset=harvard-lil%2Fcold-cases&config=default&split=train&where=%22court_full_name%22%3D%27Supreme+Court+of+the+United+States%27+AND+%22id%22%3C200000&offset=0&length=100",
+			"retrievedAt": "2026-09-12T19:58:56.215062+00:00",
+			"license": "CC0-1.0",
+			"source": "https://huggingface.co/datasets/harvard-lil/cold-cases",
+			"boundary": "public offline data, not a captured CourtListener API response",
+			"status": 500,
+			"error": "{\"error\":\"The dataset index is corrupted and being rebuilt: The DuckDB database file is invalid or corrupted: /tmp/duckdb-index/downloads/harvard-lil-cold-cases-303bcfdc/default/partial-train/index.duckdb. It has been removed and will need to be rebuilt.\"}"
+		},
+		{
+			"url": "https://datasets-server.huggingface.co/rows?dataset=harvard-lil%2Fcold-cases&config=default&split=train&offset=100&length=100",
+			"retrievedAt": "2026-09-12T19:59:39.818431+00:00",
+			"license": "CC0-1.0",
+			"source": "https://huggingface.co/datasets/harvard-lil/cold-cases",
+			"boundary": "public offline data, not a captured CourtListener API response",
+			"bytes": 1909649,
+			"sha256": "e135951213849def0e5372759ed94f7cab8711f70fbc90a880471af514275115",
+			"rows": 100,
+			"partial": true
+		},
+		{
+			"url": "https://datasets-server.huggingface.co/rows?dataset=harvard-lil%2Fcold-cases&config=default&split=train&offset=0&length=100",
+			"retrievedAt": "2026-09-12T19:59:42.271758+00:00",
+			"license": "CC0-1.0",
+			"source": "https://huggingface.co/datasets/harvard-lil/cold-cases",
+			"boundary": "public offline data, not a captured CourtListener API response",
+			"bytes": 2208887,
+			"sha256": "d42e91c34b728713d00810f65d079b0b7faef8a29c0fd4dbfe15e705f21a0988",
+			"rows": 100,
+			"partial": true
+		},
+		{
+			"url": "https://datasets-server.huggingface.co/rows?dataset=harvard-lil%2Fcold-cases&config=default&split=train&offset=300&length=100",
+			"retrievedAt": "2026-09-12T20:04:50.246331+00:00",
+			"license": "CC0-1.0",
+			"source": "https://huggingface.co/datasets/harvard-lil/cold-cases",
+			"boundary": "public offline data, not a captured CourtListener API response",
+			"bytes": 2389375,
+			"sha256": "66f38817d8ec9664f06dd9381d53805a51b42536b0e71eac0eed7f7d16353ae8",
+			"rows": 100,
+			"partial": true
+		},
+		{
+			"url": "https://datasets-server.huggingface.co/rows?dataset=harvard-lil%2Fcold-cases&config=default&split=train&offset=200&length=100",
+			"retrievedAt": "2026-09-12T20:04:50.461774+00:00",
+			"license": "CC0-1.0",
+			"source": "https://huggingface.co/datasets/harvard-lil/cold-cases",
+			"boundary": "public offline data, not a captured CourtListener API response",
+			"bytes": 2053266,
+			"sha256": "28cefe91b586b3332c491e57a167b6f46d4311e7478102dc71fe6537d93e897b",
+			"rows": 100,
+			"partial": true
+		},
+		{
+			"url": "https://datasets-server.huggingface.co/rows?dataset=harvard-lil%2Fcold-cases&config=default&split=train&offset=400&length=100",
+			"retrievedAt": "2026-09-12T20:05:17.576780+00:00",
+			"license": "CC0-1.0",
+			"source": "https://huggingface.co/datasets/harvard-lil/cold-cases",
+			"boundary": "public offline data, not a captured CourtListener API response",
+			"bytes": 1742734,
+			"sha256": "555124c92788387022619a4b818f059704f08c11812b4f7744ed87fda077dff0",
+			"rows": 100,
+			"partial": true
+		},
+		{
+			"url": "https://datasets-server.huggingface.co/rows?dataset=harvard-lil%2Fcold-cases&config=default&split=train&offset=500&length=100",
+			"retrievedAt": "2026-09-12T20:05:17.754132+00:00",
+			"license": "CC0-1.0",
+			"source": "https://huggingface.co/datasets/harvard-lil/cold-cases",
+			"boundary": "public offline data, not a captured CourtListener API response",
+			"bytes": 2207410,
+			"sha256": "1326fb7fcb0865028ecfaf7e381c67b8708360a29bda49c9b1d5c1cc5f917cc2",
+			"rows": 100,
+			"partial": true
+		},
+		{
+			"url": "https://datasets-server.huggingface.co/rows?dataset=harvard-lil%2Fcold-cases&config=default&split=train&offset=900&length=100",
+			"retrievedAt": "2026-09-12T20:05:34.297881+00:00",
+			"license": "CC0-1.0",
+			"source": "https://huggingface.co/datasets/harvard-lil/cold-cases",
+			"boundary": "public offline data, not a captured CourtListener API response",
+			"bytes": 2158493,
+			"sha256": "4e38d891211630f8aa6dd52ae6c181a4f083065fbce78f0770cd5f99eaa1c8d5",
+			"rows": 100,
+			"partial": true
+		},
+		{
+			"url": "https://datasets-server.huggingface.co/rows?dataset=harvard-lil%2Fcold-cases&config=default&split=train&offset=700&length=100",
+			"retrievedAt": "2026-09-12T20:05:35.351932+00:00",
+			"license": "CC0-1.0",
+			"source": "https://huggingface.co/datasets/harvard-lil/cold-cases",
+			"boundary": "public offline data, not a captured CourtListener API response",
+			"bytes": 2414132,
+			"sha256": "9f72c652cae1a2d504db0b3d74e358360f82786811055543cd529dc3c578f35e",
+			"rows": 100,
+			"partial": true
+		},
+		{
+			"url": "https://datasets-server.huggingface.co/rows?dataset=harvard-lil%2Fcold-cases&config=default&split=train&offset=600&length=100",
+			"retrievedAt": "2026-09-12T20:05:35.639501+00:00",
+			"license": "CC0-1.0",
+			"source": "https://huggingface.co/datasets/harvard-lil/cold-cases",
+			"boundary": "public offline data, not a captured CourtListener API response",
+			"bytes": 2700981,
+			"sha256": "9c86e16df3b1fddfc13dcdc2a5bf5a3698e5e90e8c6b4bb274ae7f417c48e7b2",
+			"rows": 100,
+			"partial": true
+		},
+		{
+			"url": "https://datasets-server.huggingface.co/rows?dataset=harvard-lil%2Fcold-cases&config=default&split=train&offset=800&length=100",
+			"retrievedAt": "2026-09-12T20:05:38.279937+00:00",
+			"license": "CC0-1.0",
+			"source": "https://huggingface.co/datasets/harvard-lil/cold-cases",
+			"boundary": "public offline data, not a captured CourtListener API response",
+			"bytes": 2453077,
+			"sha256": "ac2b61079a4a52362a1e159a5d802d4abde72ec9754320fedfe8ab927135ca23",
+			"rows": 100,
+			"partial": true
+		}
+	],
+	"additionalObservedFailures": [
+		{
+			"query": "2019-01-01 filtered page, initial attempt",
+			"status": 500,
+			"category": "dataset index loading",
+			"retrievedAt": null
+		},
+		{
+			"query": "2021-01-01 filtered page, bounded retry",
+			"status": null,
+			"category": "30-second timeout before timeout logging was added",
+			"retrievedAt": null
+		}
+	]
+}

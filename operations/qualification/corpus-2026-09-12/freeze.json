@@ -1,0 +1,7 @@
+{
+	"frozenAt": "2026-09-12T20:09:35.075037+00:00",
+	"sourceArchiveUncompressedSha256": "8375df8bb49c95b4cbc7090e375359165c0a2079dd20171d033e5b73ccdf8faa",
+	"implementationBeforeFreeze": "c0704c9fecffbbc23c808c92735dfe2d8c0bd344",
+	"productExecutedOnSelectedCases": false,
+	"annotationStatusAtFreeze": "not yet source-reviewed"
+}
