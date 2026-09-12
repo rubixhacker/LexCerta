@@ -4,11 +4,7 @@ import migrationOne from "../migrations/0001_api_key_records.sql?raw";
 import migrationTwo from "../migrations/0002_admin_key_lifecycle.sql?raw";
 import migrationThree from "../migrations/0003_api_key_limit_version.sql?raw";
 import type { ApiKeyLifecycleRecord, SanitizedAuditEvent } from "../src/admin/key-lifecycle.js";
-import {
-	type AdminKeyIssue,
-	type AdminKeyRevocation,
-	createAdminKeyStore,
-} from "../src/admin/key-store.js";
+import { type AdminKeyIssue, createAdminKeyStore } from "../src/admin/key-store.js";
 import { createApiKeyPublicId } from "../src/auth/api-key.js";
 
 const MIGRATION_STATEMENTS = /\s*CREATE TRIGGER[\s\S]*?END;|[^;]+;/gu;

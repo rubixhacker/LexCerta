@@ -1,6 +1,6 @@
 import { McpServer, createMcpHandler, preloadSchemas } from "@modelcontextprotocol/server";
 import { registerParseCitationTool } from "./verification/citation.js";
-import { registerVerificationTools } from "./verification/indeterminate.js";
+import { registerVerificationTools } from "./verification/tools.js";
 import type { CitationVerificationGateway } from "./verification/verify-citation.js";
 import type { QuoteVerificationGateway } from "./verification/verify-quote.js";
 

@@ -1,7 +1,22 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { verifyQuote } from "./verify-quote.js";
 
 describe("verifyQuote", () => {
+	it("rejects an empty normalized quote at the direct verification boundary", async () => {
+		const readSource = vi.fn(async () => {
+			throw new Error("Invalid input must not read a source");
+		});
+		await expect(
+			verifyQuote(
+				{ citation: "347 U.S. 483", quote: " \t\n\u00a0".repeat(20) },
+				{ lookup: readSource },
+				{ readCluster: readSource, readOpinion: readSource },
+				{ maxOpinions: 2 },
+			),
+		).rejects.toThrow("Quote must contain non-whitespace text.");
+		expect(readSource).not.toHaveBeenCalled();
+	});
+
 	it("returns verified with metadata-only provenance when the first opinion contains an exact match", async () => {
 		// Given: a supported citation and an opinion containing its requested quotation.
 		const citationGateway = {

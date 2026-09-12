@@ -1,5 +1,7 @@
 # LexCerta
 
+> Historical plan, superseded by [the current README](../README.md), [PRD #1](https://github.com/rubixhacker/LexCerta/issues/1), and the [runtime decision](../operations/worker-runtime-qualification.md). The Vercel/Supabase/Stripe roadmap and universal hallucination claims below do not describe the current service.
+
 ## What This Is
 
 LexCerta is an MCP-native (Model Context Protocol) server that eliminates hallucinated legal citations in AI-generated legal drafting. It verifies West Reporter citations against CourtListener and checks quote integrity via fuzzy matching. Built for legal AI agents and tools like Claude Desktop.

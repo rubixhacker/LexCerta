@@ -216,24 +216,6 @@ function confirmedState(
 	if (completed.kind !== "recorded") throw new RangeError("quota sync must be recorded");
 	return completed.state;
 }
-function failRequest(
-	state: CourtListenerBudgetState,
-	endpoint: "citation" | "case_law",
-	token: string,
-	offset = 0,
-): CourtListenerBudgetState {
-	const reserved = admit(state, endpoint, token, offset);
-	if (reserved.kind !== "reserved") throw new RangeError("request must be admitted");
-	const failed = recordCourtListenerOutcome({
-		endpoint,
-		now: new Date(NOW.getTime() + offset),
-		outcome: { kind: "server_error" },
-		reservationToken: token,
-		state: reserved.state,
-	});
-	if (failed.kind !== "recorded") throw new RangeError("outcome must be recorded");
-	return failed.state;
-}
 function window(scope: string, rate: string, remaining: number): QuotaWindow {
 	return {
 		limit: 10,

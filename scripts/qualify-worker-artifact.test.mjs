@@ -25,7 +25,7 @@ test("refuses a tracked source change before creating an artifact directory", ()
 		runGit(repository, ["config", "user.email", "qualification@example.invalid"]);
 		runGit(repository, ["config", "user.name", "Qualification"]);
 		runGit(repository, ["add", "."]);
-		runGit(repository, ["commit", "--quiet", "-m", "baseline"]);
+		runGit(repository, ["-c", "commit.gpgsign=false", "commit", "--quiet", "-m", "baseline"]);
 		appendFileSync(join(repository, "tracked.txt"), "dirty\n");
 
 		const result = spawnSync(process.execPath, ["qualify-worker-artifact.mjs", outdir], {

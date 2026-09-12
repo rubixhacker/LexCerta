@@ -178,7 +178,8 @@ export type VerifyCitationResult =
 
 export const verifyCitationToolDefinition = {
 	title: "Verify citation",
-	description: "Verify a supported case-law citation against CourtListener evidence.",
+	description:
+		"Look up a supported case-law citation in CourtListener. A match establishes source existence, not case-name accuracy, pin cites, legal support, or good-law status. A miss is limited to CourtListener coverage.",
 	inputSchema: verifyCitationInputSchema,
 	outputSchema: verifyCitationOutputSchema,
 	annotations: {

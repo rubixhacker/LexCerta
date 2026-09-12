@@ -26,6 +26,7 @@ type BenchmarkRecord = {
 
 type ParentAcknowledgementStdin = {
 	readonly isTTY?: boolean;
+	readonly readableEnded?: boolean;
 	off(event: "end" | "error", listener: (() => void) | ((error: Error) => void)): void;
 	once(event: "end" | "error", listener: (() => void) | ((error: Error) => void)): void;
 	resume(): void;
@@ -160,7 +161,8 @@ async function emitRecord(input: {
 }
 
 async function waitForParentAcknowledgement(): Promise<void> {
-	if (process.stdin.isTTY) return;
+	// In an ordinary piped test run, the first scenario consumes stdin's only end event.
+	if (process.stdin.isTTY || process.stdin.readableEnded) return;
 	await new Promise<void>((resolve, reject) => {
 		let settled = false;
 		const finish = (completion: () => void) => {

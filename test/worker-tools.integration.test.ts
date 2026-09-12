@@ -121,6 +121,7 @@ describe("Worker tool routing", () => {
 					},
 					{
 						name: "verify_quote",
+						annotations: { readOnlyHint: true, openWorldHint: true },
 						inputSchema: {
 							properties: {
 								citation: { maxLength: 256, minLength: 1 },

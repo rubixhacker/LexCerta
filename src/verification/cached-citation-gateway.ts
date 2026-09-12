@@ -1,6 +1,5 @@
 import type {
 	CitationObservationStore,
-	LeaseFillResult,
 	StoredCitationObservation,
 } from "../cache/citation-observation-store.js";
 import {

@@ -14,7 +14,6 @@ import type {
 	LeaseAcquireResult,
 	LeaseFillResult,
 	LeasePurgeResult,
-	LeaseReleaseResult,
 	StoredCitationObservation,
 } from "./citation-observation-store.js";
 
