@@ -1,0 +1,17 @@
+{
+	"recordedAt": "2026-09-12",
+	"protocol": "2026-07-28",
+	"node": "24.21.0",
+	"serverSdk": "2.0.0",
+	"clientSdk": "2.0.0",
+	"conformanceCommit": "7169291ec0b68eb370fddcd9947313ab0d5e4156",
+	"sdkFixtureCommit": "cc4b41617ce3601b1290d67216ea0b194a3cd9ac",
+	"fixtureSource": "test/conformance/src/everythingServer.ts",
+	"fixturePatch": "Bind app.listen to 127.0.0.1 instead of all interfaces; no protocol changes.",
+	"requirementsSha256": "ae2f4f6210fd729e2e318edd5bbfa31a43cee0bc608e48052fa26dbf1d939b57",
+	"fixtureSourceSha256": "3a94417774fa20b17971e8162f9865b1cefd2650c7d88fdcd17f971d91213852",
+	"conformanceArchiveSha256": "859f2c9141aa89b98cc0e482fe002fb04c2713f367d2557ac40136c2fc4e19c7",
+	"scope": "Official SDK diagnostic fixture only. Not the LexCerta product or a deployed Cloud Run revision.",
+	"command": "npm start -- server --url http://127.0.0.1:30317/mcp --requirements 2026-07-28 --output-dir <empty evidence directory>",
+	"exitCode": 0
+}

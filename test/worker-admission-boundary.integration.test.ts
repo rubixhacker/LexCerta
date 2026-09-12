@@ -146,7 +146,7 @@ describe("Worker admission adapter boundaries", () => {
 		expect(await response.text()).toBe("");
 	});
 
-	it.each(["1e400", "9007199254740993"])(
+	it.each(["1e400", "9007199254740993", "1.5", "null"])(
 		"does not reflect an unsafe numeric request ID (%s)",
 		async (numericId) => {
 			// Given: an exhausted limiter and a JSON-RPC envelope with an unsafe numeric ID.
@@ -173,33 +173,6 @@ describe("Worker admission adapter boundaries", () => {
 			expect(await response.text()).toBe("");
 		},
 	);
-
-	it("echoes a finite fractional numeric request ID", async () => {
-		// Given: an exhausted limiter and a JSON-RPC envelope with a finite fractional ID.
-		workerEnvironment = {
-			...workerEnvironment,
-			API_KEY_LIMITER: {
-				getByName: () => ({ admit: async () => ({ kind: "exhausted", retryAfterSeconds: 6 }) }),
-			},
-		};
-		const headers = new Headers(request.headers);
-		request = new Request("https://mcp.lexcerta.ai/", {
-			method: "POST",
-			headers,
-			body: '{"jsonrpc":"2.0","id":1.5,"method":"server/discover"}',
-		});
-
-		// When: the Worker evaluates the exhausted response's fractional numeric request ID.
-		const response = await worker.fetch(request, workerEnvironment);
-
-		// Then: the finite bounded number is recoverable and echoed in the JSON-RPC error.
-		expect(response.status).toBe(429);
-		expect(await response.json()).toEqual({
-			jsonrpc: "2.0",
-			id: 1.5,
-			error: { code: -32029, message: "API key allowance exhausted" },
-		});
-	});
 
 	it("fails citation verification closed without a CourtListener token or fetch", async () => {
 		// Given: an authenticated supported citation and an environment without the optional secret.

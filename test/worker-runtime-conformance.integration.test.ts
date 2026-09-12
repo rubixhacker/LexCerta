@@ -52,6 +52,7 @@ function subscriptionRequest(source: Request): Request {
 			id: 1,
 			method: "subscriptions/listen",
 			params: {
+				notifications: [],
 				_meta: {
 					[PROTOCOL_VERSION_META_KEY]: PROTOCOL_VERSION,
 					[CLIENT_INFO_META_KEY]: { name: "runtime-conformance", version: "1.0.0" },
@@ -126,7 +127,8 @@ describe("Worker runtime conformance", () => {
 		const response = await SELF.fetch(subscription);
 
 		// Then: the response is bounded rejection, never a persistent SSE stream or source request.
-		expect(response.status).toBe(400);
+		expect(response.status).toBe(404);
+		expect(await response.json()).toMatchObject({ id: 1, error: { code: -32601 } });
 		expect(response.headers.get("content-type") ?? "").not.toContain("text/event-stream");
 		expect(fixture.outbound).toHaveLength(0);
 	});

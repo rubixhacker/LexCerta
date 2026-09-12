@@ -25,6 +25,18 @@ function streamed(bytes: Uint8Array, contentLength?: string) {
 }
 
 describe("MCP request body cap", () => {
+	it("preserves cancellation after rebuilding the bounded request", async () => {
+		const controller = new AbortController();
+		const request = new Request("https://mcp.lexcerta.ai/", {
+			method: "POST",
+			body: "{}",
+			signal: controller.signal,
+		});
+		const bounded = await boundedMcpRequest(request);
+		expect(bounded?.signal.aborted).toBe(false);
+		controller.abort();
+		expect(bounded?.signal.aborted).toBe(true);
+	});
 	it("rebuilds an equivalent bounded request for downstream MCP parsing", async () => {
 		// Given: a small modern MCP JSON request with routing and custom headers.
 		const request = new Request("https://mcp.lexcerta.ai/?fixture=1", {

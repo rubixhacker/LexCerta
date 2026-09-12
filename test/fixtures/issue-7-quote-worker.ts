@@ -23,6 +23,7 @@ type OpinionFixture = {
 export type QuoteWorkerScenario = {
 	readonly opinions: readonly OpinionFixture[];
 	readonly usage?: "blocked" | "high";
+	readonly citationMissing?: boolean;
 };
 
 export type QuoteWorkerFixture = {
@@ -83,7 +84,14 @@ function sourceResponse(request: Request, scenario: QuoteWorkerScenario): Promis
 	const pathname = new URL(request.url).pathname;
 	if (pathname.endsWith("/api-usage/"))
 		return Promise.resolve(Response.json(usage(scenario.usage)));
-	if (pathname.endsWith("/citation-lookup/")) return Promise.resolve(Response.json(citation()));
+	if (pathname.endsWith("/citation-lookup/"))
+		return Promise.resolve(
+			Response.json(
+				scenario.citationMissing
+					? [{ status: 404, normalized_citations: ["347 U.S. 483"], clusters: [] }]
+					: citation(),
+			),
+		);
 	if (pathname.endsWith(`/clusters/${CLUSTER_ID}/`))
 		return Promise.resolve(Response.json(cluster(scenario.opinions)));
 	const opinion = scenario.opinions.find((item) => pathname.endsWith(`/opinions/${item.id}/`));

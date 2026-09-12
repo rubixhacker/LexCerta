@@ -18,10 +18,11 @@
 		"types": "wrangler types worker-configuration.d.ts",
 		"types:check": "wrangler types worker-configuration.d.ts --check",
 		"typecheck": "npm run types:check && tsc --noEmit && tsc --project test/tsconfig.json --noEmit",
-		"lint": "biome lint scripts src/admin src/admission src/courtlistener src/cache src/retention src/telemetry src/worker.ts src/worker-request.ts src/request-body.ts src/mcp.ts src/auth src/verification test vitest.config.ts vitest.admin.config.ts vitest.telemetry.config.ts",
-		"format": "biome format --write package.json tsconfig.json test/tsconfig.json vitest.config.ts vitest.admin.config.ts vitest.telemetry.config.ts wrangler.jsonc wrangler.admin.jsonc wrangler.telemetry.jsonc scripts src/admin src/admission src/courtlistener src/cache src/retention src/telemetry src/worker.ts src/worker-request.ts src/request-body.ts src/mcp.ts src/auth src/verification test operations",
-		"format:check": "biome format package.json tsconfig.json test/tsconfig.json vitest.config.ts vitest.admin.config.ts vitest.telemetry.config.ts wrangler.jsonc wrangler.admin.jsonc wrangler.telemetry.jsonc scripts src/admin src/admission src/courtlistener src/cache src/retention src/telemetry src/worker.ts src/worker-request.ts src/request-body.ts src/mcp.ts src/auth src/verification test operations",
-		"check": "npm run runtime:check && npm run format:check && npm run lint && npm run typecheck && npm run test"
+		"lint": "biome lint scripts src/admin src/admission src/courtlistener src/cache src/retention src/telemetry src/worker.ts src/worker-request.ts src/request-body.ts src/mcp.ts src/auth src/verification test vitest.config.ts vitest.admin.config.ts vitest.telemetry.config.ts examples",
+		"format": "biome format --write package.json tsconfig.json test/tsconfig.json vitest.config.ts vitest.admin.config.ts vitest.telemetry.config.ts wrangler.jsonc wrangler.admin.jsonc wrangler.telemetry.jsonc scripts src/admin src/admission src/courtlistener src/cache src/retention src/telemetry src/worker.ts src/worker-request.ts src/request-body.ts src/mcp.ts src/auth src/verification test operations examples",
+		"format:check": "biome format package.json tsconfig.json test/tsconfig.json vitest.config.ts vitest.admin.config.ts vitest.telemetry.config.ts wrangler.jsonc wrangler.admin.jsonc wrangler.telemetry.jsonc scripts src/admin src/admission src/courtlistener src/cache src/retention src/telemetry src/worker.ts src/worker-request.ts src/request-body.ts src/mcp.ts src/auth src/verification test operations examples",
+		"check": "npm run runtime:check && npm run format:check && npm run lint && npm run typecheck && npm run test",
+		"client": "node scripts/pilot-client.mjs"
 	},
 	"dependencies": {
 		"@modelcontextprotocol/server": "2.0.0",
@@ -31,6 +32,7 @@
 	"devDependencies": {
 		"@biomejs/biome": "^1",
 		"@cloudflare/vitest-pool-workers": "0.20.3",
+		"@modelcontextprotocol/client": "2.0.0",
 		"typescript": "6.0.3",
 		"vitest": "4.1.11",
 		"wrangler": "4.120.0"

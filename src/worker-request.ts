@@ -31,6 +31,15 @@ export async function respondToRequest(
 	env: Env,
 	pathname: string,
 ): Promise<RequestCompletion> {
+	if (pathname === "/" && request.headers.has("origin")) {
+		return completed(
+			new Response(null, { status: 403, headers: { "cache-control": "no-store" } }),
+			{
+				...ANONYMOUS_COMPLETION,
+				boundaryOutcome: "protocol_rejected",
+			},
+		);
+	}
 	if (pathname === "/" && request.method !== "POST") {
 		return completed(new Response(null, { headers: { allow: "POST" }, status: 405 }));
 	}
@@ -52,17 +61,6 @@ export async function respondToRequest(
 					);
 				}
 				const executionFacts = createExecutionFactCollector();
-				const rejection = protocolBoundaryRejection(request);
-				if (rejection !== undefined) {
-					return completed(
-						rejection,
-						authenticatedCompletion(
-							authentication.publicId,
-							"protocol_rejected",
-							executionFacts.snapshot(),
-						),
-					);
-				}
 				const bounded = await boundedMcpRequest(request);
 				if (bounded === undefined) {
 					return completed(
@@ -70,6 +68,17 @@ export async function respondToRequest(
 						authenticatedCompletion(
 							authentication.publicId,
 							"payload_too_large",
+							executionFacts.snapshot(),
+						),
+					);
+				}
+				const rejection = await protocolBoundaryRejection(bounded);
+				if (rejection !== undefined) {
+					return completed(
+						rejection,
+						authenticatedCompletion(
+							authentication.publicId,
+							"protocol_rejected",
 							executionFacts.snapshot(),
 						),
 					);
@@ -180,7 +189,7 @@ async function createAdmissionExhaustedResponse(
 			: JSON.stringify({
 					jsonrpc: "2.0",
 					id,
-					error: { code: -32029, message: "API key allowance exhausted" },
+					error: { code: 1001, message: "API key allowance exhausted" },
 				});
 	return new Response(body, {
 		status: 429,
@@ -197,7 +206,7 @@ const MAX_STRING_REQUEST_ID_LENGTH = 256;
 const MAX_REQUEST_ID_CHUNKS = 128;
 const MAX_REQUEST_ID_RECOVERY_MILLISECONDS = 100;
 
-async function recoverRequestId(request: Request): Promise<string | number | null | undefined> {
+async function recoverRequestId(request: Request): Promise<string | number | undefined> {
 	try {
 		const body = request.body;
 		if (body === null) return undefined;
@@ -235,9 +244,8 @@ async function recoverRequestId(request: Request): Promise<string | number | nul
 		const parsed: unknown = JSON.parse(new TextDecoder().decode(bytes));
 		if (typeof parsed !== "object" || parsed === null || !("id" in parsed)) return undefined;
 		const id: unknown = parsed.id;
-		if (id === null) return id;
 		if (typeof id === "number") {
-			return Number.isFinite(id) && Math.abs(id) <= Number.MAX_SAFE_INTEGER ? id : undefined;
+			return Number.isSafeInteger(id) ? id : undefined;
 		}
 		return typeof id === "string" && id.length <= MAX_STRING_REQUEST_ID_LENGTH ? id : undefined;
 	} catch {
