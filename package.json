@@ -4,6 +4,7 @@
 	"type": "module",
 	"description": "MCP server for legal citation verification via CourtListener",
 	"scripts": {
+		"runtime:check": "node scripts/check-runtime.mjs",
 		"dev": "wrangler dev --env local",
 		"deploy": "node scripts/deploy.mjs",
 		"deploy:telemetry": "wrangler deploy --config wrangler.telemetry.jsonc --env=\"\"",
@@ -17,10 +18,10 @@
 		"types": "wrangler types worker-configuration.d.ts",
 		"types:check": "wrangler types worker-configuration.d.ts --check",
 		"typecheck": "npm run types:check && tsc --noEmit && tsc --project test/tsconfig.json --noEmit",
-		"lint": "biome lint scripts src/admin src/admission src/courtlistener src/cache src/retention src/telemetry src/worker.ts src/worker-request.ts src/mcp.ts src/auth src/verification test vitest.config.ts vitest.admin.config.ts vitest.telemetry.config.ts",
-		"format": "biome format --write package.json tsconfig.json test/tsconfig.json vitest.config.ts vitest.admin.config.ts vitest.telemetry.config.ts wrangler.jsonc wrangler.admin.jsonc wrangler.telemetry.jsonc scripts src/admin src/admission src/courtlistener src/cache src/retention src/telemetry src/worker.ts src/worker-request.ts src/mcp.ts src/auth src/verification test operations",
-		"format:check": "biome format package.json tsconfig.json test/tsconfig.json vitest.config.ts vitest.admin.config.ts vitest.telemetry.config.ts wrangler.jsonc wrangler.admin.jsonc wrangler.telemetry.jsonc scripts src/admin src/admission src/courtlistener src/cache src/retention src/telemetry src/worker.ts src/worker-request.ts src/mcp.ts src/auth src/verification test operations",
-		"check": "npm run format:check && npm run lint && npm run typecheck && npm run test"
+		"lint": "biome lint scripts src/admin src/admission src/courtlistener src/cache src/retention src/telemetry src/worker.ts src/worker-request.ts src/request-body.ts src/mcp.ts src/auth src/verification test vitest.config.ts vitest.admin.config.ts vitest.telemetry.config.ts",
+		"format": "biome format --write package.json tsconfig.json test/tsconfig.json vitest.config.ts vitest.admin.config.ts vitest.telemetry.config.ts wrangler.jsonc wrangler.admin.jsonc wrangler.telemetry.jsonc scripts src/admin src/admission src/courtlistener src/cache src/retention src/telemetry src/worker.ts src/worker-request.ts src/request-body.ts src/mcp.ts src/auth src/verification test operations",
+		"format:check": "biome format package.json tsconfig.json test/tsconfig.json vitest.config.ts vitest.admin.config.ts vitest.telemetry.config.ts wrangler.jsonc wrangler.admin.jsonc wrangler.telemetry.jsonc scripts src/admin src/admission src/courtlistener src/cache src/retention src/telemetry src/worker.ts src/worker-request.ts src/request-body.ts src/mcp.ts src/auth src/verification test operations",
+		"check": "npm run runtime:check && npm run format:check && npm run lint && npm run typecheck && npm run test"
 	},
 	"dependencies": {
 		"@modelcontextprotocol/server": "2.0.0",
@@ -28,16 +29,25 @@
 		"zod": "4.4.1"
 	},
 	"devDependencies": {
-		"@cloudflare/vitest-pool-workers": "0.20.3",
 		"@biomejs/biome": "^1",
+		"@cloudflare/vitest-pool-workers": "0.20.3",
 		"typescript": "6.0.3",
-		"vitest": "4.1.10",
+		"vitest": "4.1.11",
 		"wrangler": "4.120.0"
 	},
 	"engines": {
-		"node": ">=22"
+		"node": ">=24.21.0 <25"
+	},
+	"overrides": {
+		"sharp": "0.35.4"
 	},
 	"keywords": [],
 	"author": "",
-	"license": "ISC"
+	"license": "ISC",
+	"allowScripts": {
+		"@biomejs/biome@1.9.4": true,
+		"esbuild@0.28.1": true,
+		"workerd@1.20260801.1": true,
+		"fsevents": false
+	}
 }

@@ -12,6 +12,21 @@ afterEach(() => {
 });
 
 describe("Issue 7 quote hardening through real workerd bindings", () => {
+	it.each([" ".repeat(20), "\t\n\u00a0".repeat(20)])(
+		"rejects whitespace-only quotes before reading CourtListener",
+		async (quote) => {
+			const fixture = await setupQuoteWorker({
+				opinions: [{ body: { id: 2201, cluster: CLUSTER, plain_text: EXACT }, id: 2201 }],
+			});
+			const response = await SELF.fetch(fixture.request(quote));
+			const result = await response.json();
+
+			expect(result).toMatchObject({ result: { isError: true } });
+			expect(JSON.stringify(result)).not.toContain('"outcome":"verified"');
+			expect(fixture.outbound).toHaveLength(0);
+		},
+	);
+
 	it.each([
 		{ body: { html: `<p>${EXACT}</p>`, id: 2201, cluster: CLUSTER }, representation: "html" },
 		{ body: { plain_text: EXACT, id: 2201, cluster: CLUSTER }, representation: "plain_text" },

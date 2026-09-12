@@ -1,7 +1,6 @@
 {
-  "functions": {
-    "app/api/mcp/[transport]/route.ts": {
-      "maxDuration": 60
-    }
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "git": {
+    "deploymentEnabled": false
   }
 }

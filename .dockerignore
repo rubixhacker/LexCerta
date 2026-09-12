@@ -1,0 +1,9 @@
+.git
+.env
+.env.*
+.wrangler
+.next
+node_modules
+build
+*.tgz
+*.tsbuildinfo

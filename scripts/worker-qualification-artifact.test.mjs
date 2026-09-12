@@ -153,7 +153,7 @@ test("refuses tracked or index divergence before emitting a bundle", () => {
 		runGit(repository, ["config", "user.email", "qualification@example.invalid"]);
 		runGit(repository, ["config", "user.name", "Qualification"]);
 		runGit(repository, ["add", "."]);
-		runGit(repository, ["commit", "--quiet", "-m", "baseline"]);
+		runGit(repository, ["-c", "commit.gpgsign=false", "commit", "--quiet", "-m", "baseline"]);
 		appendFileSync(join(repository, "tracked.txt"), "dirty\n");
 		assert.throws(
 			() => qualifyWorkerArtifact(repository, join(repository, "artifact")),

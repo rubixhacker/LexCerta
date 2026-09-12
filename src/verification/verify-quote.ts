@@ -8,8 +8,8 @@ import {
 	type VerifyQuoteInput,
 	type VerifyQuoteResult,
 	type OpinionTextSource,
+	type SearchedOpinion,
 	verifyQuoteInputSchema,
-	verifyQuoteOutputSchema,
 } from "./quote-contract.js";
 export { verifyQuoteInputSchema, verifyQuoteOutputSchema } from "./quote-contract.js";
 export type { VerifyQuoteInput, VerifyQuoteResult } from "./quote-contract.js";
@@ -64,6 +64,7 @@ export async function verifyQuote(
 	quoteGateway: QuoteVerificationGateway,
 	options: { readonly maxOpinions: number },
 ): Promise<VerifyQuoteResult> {
+	verifyQuoteInputSchema.parse(input);
 	const parsed = parseCitation(input.citation);
 	if (parsed.outcome === "unrecognized") return indeterminate("unsupported_citation");
 	const citation = await citationGateway.lookup({
@@ -130,13 +131,7 @@ async function searchCluster(
 	if (requiredOpinionCount === 0) return indeterminate("source_text_unavailable");
 	if (requiredOpinionCount > options.maxOpinions) return indeterminate("cluster_limit_exceeded");
 	const normalizedQuote = normalizeQuoteText(quote);
-	const searchedOpinions: Array<{
-		readonly id: number;
-		readonly canonicalUrl: string;
-		readonly representation: "html_with_citations" | "html" | "plain_text";
-		readonly retrievedAt: string;
-		readonly freshness: "fresh" | "stale";
-	}> = [];
+	const searchedOpinions: SearchedOpinion[] = [];
 	for (const opinionUrl of clusterResult.cluster.opinionUrls) {
 		const opinionResult = await quoteGateway.readOpinion({
 			cluster: clusterResult.cluster,
@@ -202,13 +197,7 @@ function evidence(
 	cluster: QuoteCluster,
 	citationRetrievedAt: string,
 	citationFreshness: "fresh" | "stale",
-	searchedOpinions: readonly {
-		readonly id: number;
-		readonly canonicalUrl: string;
-		readonly representation: "html_with_citations" | "html" | "plain_text";
-		readonly retrievedAt: string;
-		readonly freshness: "fresh" | "stale";
-	}[],
+	searchedOpinions: readonly SearchedOpinion[],
 	requiredOpinionCount: number,
 	searchComplete: boolean,
 ) {

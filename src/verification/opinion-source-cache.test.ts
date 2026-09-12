@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, expectTypeOf, it } from "vitest";
 import {
 	DEFAULT_OPINION_SOURCE_CACHE_POLICY,
 	initialOpinionSourceCacheState,
@@ -22,14 +22,6 @@ const POSITIVE = {
 	objectKey: "opinions/456/sha256-8d84b0a57e4430ca2ba6a9d1b52d816f",
 };
 
-type Assert<T extends true> = T;
-type PositiveMetadataExcludesSourceText = Assert<
-	"sourceText" extends keyof PositiveOpinionSourceObservation ? false : true
->;
-type PositiveMetadataExcludesQuote = Assert<
-	"quote" extends keyof PositiveOpinionSourceObservation ? false : true
->;
-
 function atOffset(start: Date, milliseconds: number): Date {
 	return new Date(start.getTime() + milliseconds);
 }
@@ -47,6 +39,12 @@ function negative(state = initialOpinionSourceCacheState(), now = START) {
 }
 
 describe("opinion source cache", () => {
+	it("excludes source text and quotes from positive observation metadata types", () => {
+		expectTypeOf<"sourceText" | "quote">()
+			.extract<keyof PositiveOpinionSourceObservation>()
+			.toEqualTypeOf<never>();
+	});
+
 	it("returns fresh R2 metadata during the thirty-day positive window", () => {
 		// Given: a complete canonical opinion representation in the source cache.
 		const state = positive();

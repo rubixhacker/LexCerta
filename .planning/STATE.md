@@ -1,5 +1,7 @@
 # Project State
 
+> Historical status from February 2026. For the current implementation and outstanding Cloud Run delivery/production gates, start with [README.md](../README.md). This file is retained as planning history, not as a current release status.
+
 ## Project Reference
 
 See: .planning/PROJECT.md (updated 2026-02-13)

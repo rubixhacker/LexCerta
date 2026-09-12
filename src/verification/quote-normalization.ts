@@ -1,10 +1,6 @@
 import { parseFragment } from "parse5";
 import type { DefaultTreeAdapterTypes } from "parse5";
-import type {
-	OpinionTextRepresentation,
-	OpinionTextSource,
-	SelectedOpinionText,
-} from "./quote-contract.js";
+import type { OpinionTextSource, SelectedOpinionText } from "./quote-contract.js";
 
 const SAFE_WHITESPACE = /[\t\n\v\f\r \u00a0]+/g;
 const TYPOGRAPHIC_QUOTES = /[\u2018\u2019\u201A\u201B]/g;

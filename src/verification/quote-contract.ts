@@ -45,7 +45,10 @@ function boundedUnicodeString(minimum: number, maximum: number) {
 }
 
 export const verifyQuoteInputSchema = z
-	.object({ citation: boundedUnicodeString(1, 256), quote: boundedUnicodeString(20, 10_000) })
+	.object({
+		citation: boundedUnicodeString(1, 256),
+		quote: boundedUnicodeString(20, 10_000).regex(/\S/, "Quote must contain non-whitespace text."),
+	})
 	.strict();
 
 const searchedOpinionSchema = z
@@ -57,6 +60,8 @@ const searchedOpinionSchema = z
 		freshness: z.enum(["fresh", "stale"]),
 	})
 	.strict();
+
+export type SearchedOpinion = z.infer<typeof searchedOpinionSchema>;
 
 const evidenceSchema = z
 	.object({

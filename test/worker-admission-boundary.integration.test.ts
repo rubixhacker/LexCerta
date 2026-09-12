@@ -8,20 +8,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import worker, { type Env } from "../src/worker.js";
 import { createLocalAuthFixture } from "./fixtures/api-key.js";
 
-type AdmissionStub = {
-	readonly admit: (input: {
-		readonly admittedAt: number;
-		readonly publicId: string;
-	}) => Promise<
-		| { readonly kind: "allowed" }
-		| { readonly kind: "exhausted"; readonly retryAfterSeconds: number }
-	>;
-};
-
-type AdmissionNamespace = {
-	readonly getByName: (name: string) => AdmissionStub;
-};
-
 let request: Request;
 let workerEnvironment: Env;
 
