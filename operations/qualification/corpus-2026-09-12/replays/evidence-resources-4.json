@@ -1,0 +1,239 @@
+{
+	"version": 1,
+	"startedAt": "2026-09-12T21:07:12.927Z",
+	"node": "v24.21.0",
+	"boundary": "Eight simultaneous quote-verification calls with synthetic cached source gateways and the real normalizer pool, one CPU and 1 GiB; no HTTP, database, GCS or deployed proof",
+	"scenarios": [
+		{
+			"name": "large-html-last-opinion-match",
+			"concurrency": 8,
+			"elapsedMs": 3798.803586,
+			"passed": true,
+			"results": [
+				{
+					"outcome": "verified",
+					"reason": null,
+					"sourceBytes": 1800087,
+					"readCount": 2
+				},
+				{
+					"outcome": "verified",
+					"reason": null,
+					"sourceBytes": 1800087,
+					"readCount": 2
+				},
+				{
+					"outcome": "verified",
+					"reason": null,
+					"sourceBytes": 1800087,
+					"readCount": 2
+				},
+				{
+					"outcome": "verified",
+					"reason": null,
+					"sourceBytes": 1800087,
+					"readCount": 2
+				},
+				{
+					"outcome": "verified",
+					"reason": null,
+					"sourceBytes": 1800087,
+					"readCount": 2
+				},
+				{
+					"outcome": "verified",
+					"reason": null,
+					"sourceBytes": 1800087,
+					"readCount": 2
+				},
+				{
+					"outcome": "verified",
+					"reason": null,
+					"sourceBytes": 1800087,
+					"readCount": 2
+				},
+				{
+					"outcome": "verified",
+					"reason": null,
+					"sourceBytes": 1800087,
+					"readCount": 2
+				}
+			]
+		},
+		{
+			"name": "aggregate-cached-source-limit",
+			"concurrency": 8,
+			"elapsedMs": 499.71266700000024,
+			"passed": true,
+			"results": [
+				{
+					"outcome": "indeterminate",
+					"reason": "incomplete",
+					"sourceBytes": 17825792,
+					"readCount": 17
+				},
+				{
+					"outcome": "indeterminate",
+					"reason": "incomplete",
+					"sourceBytes": 17825792,
+					"readCount": 17
+				},
+				{
+					"outcome": "indeterminate",
+					"reason": "incomplete",
+					"sourceBytes": 17825792,
+					"readCount": 17
+				},
+				{
+					"outcome": "indeterminate",
+					"reason": "incomplete",
+					"sourceBytes": 17825792,
+					"readCount": 17
+				},
+				{
+					"outcome": "indeterminate",
+					"reason": "incomplete",
+					"sourceBytes": 17825792,
+					"readCount": 17
+				},
+				{
+					"outcome": "indeterminate",
+					"reason": "incomplete",
+					"sourceBytes": 17825792,
+					"readCount": 17
+				},
+				{
+					"outcome": "indeterminate",
+					"reason": "incomplete",
+					"sourceBytes": 17825792,
+					"readCount": 17
+				},
+				{
+					"outcome": "indeterminate",
+					"reason": "incomplete",
+					"sourceBytes": 17825792,
+					"readCount": 17
+				}
+			]
+		},
+		{
+			"name": "excessive-html-structure",
+			"concurrency": 8,
+			"elapsedMs": 381.7808330000007,
+			"passed": true,
+			"results": [
+				{
+					"outcome": "indeterminate",
+					"reason": "incomplete",
+					"sourceBytes": 240048,
+					"readCount": 1
+				},
+				{
+					"outcome": "indeterminate",
+					"reason": "incomplete",
+					"sourceBytes": 240048,
+					"readCount": 1
+				},
+				{
+					"outcome": "indeterminate",
+					"reason": "incomplete",
+					"sourceBytes": 240048,
+					"readCount": 1
+				},
+				{
+					"outcome": "indeterminate",
+					"reason": "incomplete",
+					"sourceBytes": 240048,
+					"readCount": 1
+				},
+				{
+					"outcome": "indeterminate",
+					"reason": "incomplete",
+					"sourceBytes": 240048,
+					"readCount": 1
+				},
+				{
+					"outcome": "indeterminate",
+					"reason": "incomplete",
+					"sourceBytes": 240048,
+					"readCount": 1
+				},
+				{
+					"outcome": "indeterminate",
+					"reason": "incomplete",
+					"sourceBytes": 240048,
+					"readCount": 1
+				},
+				{
+					"outcome": "indeterminate",
+					"reason": "incomplete",
+					"sourceBytes": 240048,
+					"readCount": 1
+				}
+			]
+		},
+		{
+			"name": "deep-html-bounded-traversal",
+			"concurrency": 8,
+			"elapsedMs": 20.812208000000282,
+			"passed": true,
+			"results": [
+				{
+					"outcome": "verified",
+					"reason": null,
+					"sourceBytes": 39048,
+					"readCount": 1
+				},
+				{
+					"outcome": "verified",
+					"reason": null,
+					"sourceBytes": 39048,
+					"readCount": 1
+				},
+				{
+					"outcome": "verified",
+					"reason": null,
+					"sourceBytes": 39048,
+					"readCount": 1
+				},
+				{
+					"outcome": "verified",
+					"reason": null,
+					"sourceBytes": 39048,
+					"readCount": 1
+				},
+				{
+					"outcome": "verified",
+					"reason": null,
+					"sourceBytes": 39048,
+					"readCount": 1
+				},
+				{
+					"outcome": "verified",
+					"reason": null,
+					"sourceBytes": 39048,
+					"readCount": 1
+				},
+				{
+					"outcome": "verified",
+					"reason": null,
+					"sourceBytes": 39048,
+					"readCount": 1
+				},
+				{
+					"outcome": "verified",
+					"reason": null,
+					"sourceBytes": 39048,
+					"readCount": 1
+				}
+			]
+		}
+	],
+	"finishedAt": "2026-09-12T21:07:17.694Z",
+	"maxWorkers": 2,
+	"maxQueued": 6,
+	"peakRssBytes": 253849600,
+	"cgroupPeakBytes": 218890240,
+	"cgroupMemoryEvents": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0",
+	"passed": true
+}

@@ -1,0 +1,42 @@
+{
+	"version": 1,
+	"boundary": "Offline fixture qualification only; actual API acquisition and deployed cold/warm runs remain mandatory staging gates.",
+	"sourceArchiveUncompressedSha256": "8375df8bb49c95b4cbc7090e375359165c0a2079dd20171d033e5b73ccdf8faa",
+	"compiledModulesSha256": "1e8a538b383e59e3d60d4a4862af0225e53b84b70e54d1833e29c5c30e56508e",
+	"counts": {
+		"realCitation": 60,
+		"realExactQuote": 60,
+		"realAlteredQuote": 60,
+		"synthetic": 40,
+		"total": 220,
+		"correct": 220,
+		"falsePositives": 0,
+		"falseDefinitiveNegatives": 0,
+		"unexpectedAbstentions": 0
+	},
+	"holdoutFirstExecutedAt": "2026-09-12T21:10:59.751Z",
+	"holdoutFirstPassed": true,
+	"sourceOrLabelsChangedAfterReplay": false,
+	"upstream": {
+		"actualApiAttempts": 0,
+		"nonUsageAcquisitionAndQualificationLimit": 300,
+		"minimumLiveQualificationDays": 4,
+		"ownerEligibilityObserved": false,
+		"actualResponsesCaptured": false,
+		"deployedColdWarmObserved": false
+	},
+	"resourceRun": {
+		"runtime": "Node 24.21.0",
+		"image": "sha256:3899ac67d7fa1264a488798d8479abc07e5f3345a42edc595cf3d43fd9ec59dd",
+		"platform": "linux/arm64",
+		"cpu": 1,
+		"memoryLimitBytes": 1073741824,
+		"concurrency": 8,
+		"network": "none",
+		"peakBytes": 235233280,
+		"passed": true,
+		"compiledModulesIdenticalToFinalCorpusReplay": true
+	},
+	"preservedFailure": "replays/evidence-resources-3.json: initial parser guard incorrectly counted text appends as allocated nodes; same workload passes after correction.",
+	"firstReports": "Development-first and holdout-first reports are retained unchanged in meaning; JSON formatting is canonicalized."
+}

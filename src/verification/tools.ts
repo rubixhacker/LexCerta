@@ -9,6 +9,7 @@ import {
 } from "./verify-citation.js";
 import {
 	type QuoteVerificationGateway,
+	type QuoteSearchOptions,
 	verifyQuote,
 	verifyQuoteInputSchema,
 	verifyQuoteOutputSchema,
@@ -84,10 +85,13 @@ export function registerVerificationTools(
 	server: McpServer,
 	citationGateway: CitationVerificationGateway,
 	quoteGateway: QuoteVerificationGateway,
+	execution: Pick<QuoteSearchOptions, "request" | "normalize"> = {},
 ): void {
 	server.registerTool("verify_citation", verifyCitationToolDefinition, async ({ citation }) => {
 		try {
-			return citationToolResponse(await verifyCitation({ citation }, citationGateway));
+			return citationToolResponse(
+				await verifyCitation({ citation }, citationGateway, execution.request),
+			);
 		} catch {
 			// Keep adapter errors and request content out of public responses.
 			return citationToolResponse(unavailableVerification());
@@ -96,7 +100,10 @@ export function registerVerificationTools(
 	server.registerTool("verify_quote", verifyQuoteToolDefinition, async ({ citation, quote }) => {
 		try {
 			return quoteToolResponse(
-				await verifyQuote({ citation, quote }, citationGateway, quoteGateway, { maxOpinions: 100 }),
+				await verifyQuote({ citation, quote }, citationGateway, quoteGateway, {
+					maxOpinions: 100,
+					...execution,
+				}),
 			);
 		} catch {
 			// Keep adapter errors and request content out of public responses.

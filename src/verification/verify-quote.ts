@@ -1,4 +1,6 @@
 import { CONTRACT_VERSION, parseCitation } from "./citation.js";
+import { EvidenceRequest, EvidenceRequestFailure } from "./evidence-request.js";
+import type { OpinionNormalizer } from "./quote-normalization.js";
 import type { CitationVerificationGateway, CourtListenerCluster } from "./verify-citation.js";
 import {
 	canonicalOpinionText,
@@ -58,21 +60,46 @@ export interface QuoteVerificationGateway {
 	}): Promise<QuoteOpinionObservation>;
 }
 
+export type QuoteSearchOptions = {
+	readonly maxOpinions: number;
+	readonly request?: EvidenceRequest;
+	readonly normalize?: OpinionNormalizer;
+};
+
 export async function verifyQuote(
 	input: VerifyQuoteInput,
 	citationGateway: CitationVerificationGateway,
 	quoteGateway: QuoteVerificationGateway,
-	options: { readonly maxOpinions: number },
+	options: QuoteSearchOptions,
 ): Promise<VerifyQuoteResult> {
 	verifyQuoteInputSchema.parse(input);
+	const request = options.request ?? new EvidenceRequest();
+	try {
+		return await verifyWithinRequest(input, citationGateway, quoteGateway, { ...options, request });
+	} catch (error) {
+		if (error instanceof EvidenceRequestFailure) return indeterminate(error.reason);
+		throw error;
+	} finally {
+		if (options.request === undefined) request.close();
+	}
+}
+
+async function verifyWithinRequest(
+	input: VerifyQuoteInput,
+	citationGateway: CitationVerificationGateway,
+	quoteGateway: QuoteVerificationGateway,
+	options: QuoteSearchOptions & { readonly request: EvidenceRequest },
+): Promise<VerifyQuoteResult> {
 	const parsed = parseCitation(input.citation);
 	if (parsed.outcome === "unrecognized") return indeterminate("unsupported_citation");
-	const citation = await citationGateway.lookup({
-		volume: parsed.citation.volume,
-		reporter: parsed.citation.reporter,
-		page: parsed.citation.page,
-		normalizedCitation: parsed.citation.normalized,
-	});
+	const citation = await options.request.run(() =>
+		citationGateway.lookup({
+			volume: parsed.citation.volume,
+			reporter: parsed.citation.reporter,
+			page: parsed.citation.page,
+			normalizedCitation: parsed.citation.normalized,
+		}),
+	);
 	switch (citation.kind) {
 		case "verified":
 			return searchCluster(
@@ -122,9 +149,9 @@ async function searchCluster(
 	citationRetrievedAt: string,
 	citationFreshness: "fresh" | "stale",
 	quoteGateway: QuoteVerificationGateway,
-	options: { readonly maxOpinions: number },
+	options: QuoteSearchOptions & { readonly request: EvidenceRequest },
 ): Promise<VerifyQuoteResult> {
-	const clusterResult = await quoteGateway.readCluster(cluster);
+	const clusterResult = await options.request.run(() => quoteGateway.readCluster(cluster));
 	if (clusterResult.kind === "indeterminate")
 		return indeterminate(clusterResult.reason, clusterResult.retryAfterSeconds);
 	const requiredOpinionCount = clusterResult.cluster.opinionUrls.length;
@@ -133,15 +160,21 @@ async function searchCluster(
 	const normalizedQuote = normalizeQuoteText(quote);
 	const searchedOpinions: SearchedOpinion[] = [];
 	for (const opinionUrl of clusterResult.cluster.opinionUrls) {
-		const opinionResult = await quoteGateway.readOpinion({
-			cluster: clusterResult.cluster,
-			opinionUrl,
-		});
+		const opinionResult = await options.request.run(() =>
+			quoteGateway.readOpinion({
+				cluster: clusterResult.cluster,
+				opinionUrl,
+			}),
+		);
 		if (opinionResult.kind === "indeterminate")
 			return indeterminate(opinionResult.reason, opinionResult.retryAfterSeconds);
 		const selected = selectOpinionText(opinionResult.opinion.text);
 		if (selected === undefined) return indeterminate("source_text_unavailable");
-		const canonicalText = await canonicalOpinionText(selected);
+		options.request.consumeSource(selected.content);
+		const canonicalText = await options.request.run(() =>
+			(options.normalize ?? canonicalOpinionText)(selected, options.request.signal),
+		);
+		options.request.checkpoint();
 		if (canonicalText.length === 0) return indeterminate("source_text_unavailable");
 		searchedOpinions.push({
 			id: opinionResult.opinion.id,

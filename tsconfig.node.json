@@ -1,0 +1,16 @@
+{
+	"extends": "./tsconfig.postgres.json",
+	"include": [
+		"src/node/**/*.ts",
+		"src/postgres/**/*.ts",
+		"src/courtlistener/api.ts",
+		"src/courtlistener/case-law-api.ts",
+		"src/courtlistener/gateway.ts",
+		"src/courtlistener/case-law-gateway.ts",
+		"src/verification/verify-citation.ts",
+		"src/verification/verify-quote.ts",
+		"src/verification/cached-citation-gateway.ts",
+		"src/mcp.ts"
+	],
+	"exclude": ["node_modules", "test", "src/**/*.test.ts"]
+}

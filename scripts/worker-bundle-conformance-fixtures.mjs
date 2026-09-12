@@ -12,8 +12,8 @@ export const FIXTURE_SOURCE_TEXT = "bundle fixture source text";
 export const EXPECTED_URLS = [
 	"https://www.courtlistener.com/api/rest/v4/api-usage/",
 	"https://www.courtlistener.com/api/rest/v4/citation-lookup/",
-	`https://www.courtlistener.com/api/rest/v4/clusters/${CLUSTER_ID}/`,
-	`https://www.courtlistener.com/api/rest/v4/opinions/${OPINION_ID}/`,
+	`https://www.courtlistener.com/api/rest/v4/clusters/${CLUSTER_ID}/?fields=id,absolute_url,sub_opinions`,
+	`https://www.courtlistener.com/api/rest/v4/opinions/${OPINION_ID}/?fields=id,cluster,html_with_citations,html,plain_text`,
 ];
 
 export function workerUnderTest(input) {
@@ -86,7 +86,7 @@ export function trap(request, attemptedUrls, unexpectedUrls) {
 	}
 	if (url.endsWith("/api-usage/")) return Response.json(usage());
 	if (url.endsWith("/citation-lookup/")) return Response.json(citation());
-	if (url.endsWith(`/clusters/${CLUSTER_ID}/`)) return Response.json(cluster());
+	if (new URL(url).pathname.endsWith(`/clusters/${CLUSTER_ID}/`)) return Response.json(cluster());
 	return Response.json(opinion());
 }
 

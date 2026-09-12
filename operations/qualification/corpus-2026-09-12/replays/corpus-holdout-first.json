@@ -1,0 +1,2548 @@
+{
+	"version": 1,
+	"status": "completed",
+	"startedAt": "2026-09-12T21:10:59.751Z",
+	"split": "holdout",
+	"boundary": {
+		"source": "Frozen real COLD plaintext and separately labelled invented contract records",
+		"upstream": "Simulated minimal CourtListener API envelopes; zero network fallback or live upstream attempts",
+		"storage": "Real local PostgreSQL 18 with fixture GCS generation storage and synthetic quota capacity",
+		"protocol": "Actual stateless SDK MCP handler invoked in process; no public HTTP service, authentication, Cloud Run, or external client proof",
+		"cache": "Fresh database; each case runs citation, exact quote, then altered quote sequentially, sharing its cache",
+		"memory": "Local process RSS including normalizer threads; not constrained-container or deployed capacity qualification"
+	},
+	"provenance": {
+		"sourceSha256": "8375df8bb49c95b4cbc7090e375359165c0a2079dd20171d033e5b73ccdf8faa",
+		"annotationsSha256": "4b7f5dc39b1fc47aad4d1a72b42d4c42487b785ec763565bce149879ebdf0e7a",
+		"implementationHead": "d01e21af09a1a361e2e5dd57ae5440ffe65c0f71",
+		"implementationTree": "a9801285946ca6276f8681e2ebbec86c245ed1a0",
+		"workingTreeDirty": true,
+		"sourceFilesSha256": "9c3da28b1eeb79f4db2b049c6fa3f1dc02889b1a43abea5fd9fa016abc270fda",
+		"sourceFiles": [
+			{
+				"path": "database/migrations/0001_authority.sql",
+				"sha256": "041ad4cd59fdb2c3bb07535aa97ee51a727d673a490f285875a1687f52cad159"
+			},
+			{
+				"path": "package-lock.json",
+				"sha256": "2724f4d762b23d568acdaaa8126f07e06d02045dc4499aa10951b5c1cf50047b"
+			},
+			{
+				"path": "package.json",
+				"sha256": "55d51e2498e8674716c3d8ec08b1dd38c7ea34231e717c8762f5533c0fcf660e"
+			},
+			{
+				"path": "scripts/check-runtime.mjs",
+				"sha256": "b1824042c97811c666a076627b8f6b7401e7aad84581058e3816b615345df7e5"
+			},
+			{
+				"path": "scripts/corpus-fixtures.test.mjs",
+				"sha256": "23074a2544f4d5fa4dc8fa986fa42fd0d745fc4ddee7d63131e8b040836a3171"
+			},
+			{
+				"path": "scripts/corpus-replay-fixture.mjs",
+				"sha256": "fcbf5cae297323e0d3b0166775a1dbcaa66126ffda2b1d35bc6cce1165f27770"
+			},
+			{
+				"path": "scripts/corpus-synthetic.mjs",
+				"sha256": "b6873ed07d5f0c71a6f7b9d05199a06871a3dfe8e2161e2c62a36528348ef65e"
+			},
+			{
+				"path": "scripts/deploy.mjs",
+				"sha256": "49b93cd53f13b950ec02495d24297938748acf8622e6a481d47e22e6cc98e158"
+			},
+			{
+				"path": "scripts/deploy.test.mjs",
+				"sha256": "1cdb39f146b1ea147a3ea1304cbdfbd1f52f8b9f0c8d88cfdbf01cd9942cc242"
+			},
+			{
+				"path": "scripts/freeze-corpus.mjs",
+				"sha256": "84064d072417054647699a9a0cd74f9cc764153622c874c30b209bdc7044dc6b"
+			},
+			{
+				"path": "scripts/pilot-client-qualification.mjs",
+				"sha256": "8260f844b52260a812fcf405609be500c5ae98eaea9ac45f0583016f5d9dd6ac"
+			},
+			{
+				"path": "scripts/pilot-client.mjs",
+				"sha256": "f3db954318e4a5ec836d44fed3131c7b97d9812889d33a87942ab9ec4304aae2"
+			},
+			{
+				"path": "scripts/qualify-corpus.mjs",
+				"sha256": "b54231ea18a9088742bf4d972f5e9602c3cdc40931950d4c690e715e1e38568f"
+			},
+			{
+				"path": "scripts/qualify-evidence-resources.mjs",
+				"sha256": "6fe8a6c3f2819d9112ed95d32b283f5844d737afca42b168f347f04b2b775115"
+			},
+			{
+				"path": "scripts/qualify-worker-artifact.mjs",
+				"sha256": "3947f251eeb0393555e72da1f9c42184cd8255a16af20badc90235bdf91f63cc"
+			},
+			{
+				"path": "scripts/qualify-worker-artifact.test.mjs",
+				"sha256": "c1817e17fcc271c3b7536029f41cb62f1c1c517fe7ce7b9428726f2a93b82b56"
+			},
+			{
+				"path": "scripts/worker-bundle-conformance-fixtures.mjs",
+				"sha256": "55e75e2ed4d059ba24e45bc439c7ae5dec97e336dcd5cd324ca124a4757f1d81"
+			},
+			{
+				"path": "scripts/worker-bundle-conformance.mjs",
+				"sha256": "ddb8e746d2822eda27fd19937f85b9e1f0fa665835584e7818328a006049cfba"
+			},
+			{
+				"path": "scripts/worker-bundle-conformance.test.mjs",
+				"sha256": "fb2d27b21948e03cb5de0091a1ac6fd50fcf402efb0cbf7d729c7c148808b3b6"
+			},
+			{
+				"path": "scripts/worker-qualification-artifact.mjs",
+				"sha256": "616aa5bbd196e45e15f3684a9244dfb0a20386c1c17b890f26a19dbfdc8b9f06"
+			},
+			{
+				"path": "scripts/worker-qualification-artifact.test.mjs",
+				"sha256": "af21920db31dfe0df8eaa1c8838be6b4310af14c429da31511fdb715f663e4bf"
+			},
+			{
+				"path": "scripts/worker-qualification-benchmark.mjs",
+				"sha256": "67664dd85076118842e8ce3a62dc6400001f55f567e79e12edf00eff1b7e1c1e"
+			},
+			{
+				"path": "scripts/worker-qualification-cdp.mjs",
+				"sha256": "ad05bc0a2ab43180c09deceb936ba17ec58cc7944721a6d547e8a553e1d688ab"
+			},
+			{
+				"path": "scripts/worker-qualification-cdp.test.mjs",
+				"sha256": "9561e828df2f5c1c1b0036e9fcdf9516496da033a2c6a9ca44ffcabadf30bef4"
+			},
+			{
+				"path": "scripts/worker-qualification-cleanup.mjs",
+				"sha256": "f538bdd7e84dd883ece1691d29f3d4696bd7be1f3282429138c68f9d7aac4c67"
+			},
+			{
+				"path": "scripts/worker-qualification-cleanup.test.mjs",
+				"sha256": "30256d0a00fd21cce11ebe7ec7d240a94532c0f3cc49fc13f9d4daad59e2bc05"
+			},
+			{
+				"path": "scripts/worker-qualification-heap.mjs",
+				"sha256": "ba7541282d1e211cc436651631d9cef6a0e75dece24f66bb3f7efe67593f5221"
+			},
+			{
+				"path": "scripts/worker-qualification-heap.test.mjs",
+				"sha256": "45731f244b4688f0eb7b35522fea40a161c8e03245e6aca8aaad69f19789a590"
+			},
+			{
+				"path": "scripts/worker-qualification-record.mjs",
+				"sha256": "cd3d60f023743dd06eea586da764fd3bdb194bde7736b0a2ce6805b3344bbb23"
+			},
+			{
+				"path": "scripts/worker-qualification-record.test.mjs",
+				"sha256": "5100909527300301f6ede98b078360ba6fe0727b2089d4aab4fb42402f5034cd"
+			},
+			{
+				"path": "scripts/worker-qualification-runner.mjs",
+				"sha256": "2518989e509084823577e93b2dca58421faaf3b1867a5e32249bad811868264e"
+			},
+			{
+				"path": "scripts/worker-qualification-runner.test.mjs",
+				"sha256": "54db617bb71c9ea7c7bd707ef75aa405f3f39498d48faa1d872e56f1b3ce6691"
+			},
+			{
+				"path": "scripts/worker-qualification-scenario.mjs",
+				"sha256": "a4a4908406718c29afe6d53b379bb3708b39ed0db9509940a91bb00946369e25"
+			},
+			{
+				"path": "src/admin/access.ts",
+				"sha256": "aa21379d4fb7cb1364752c945a3e59bbbbdabe64a46854e777026302374b2662"
+			},
+			{
+				"path": "src/admin/credentials.ts",
+				"sha256": "a037399cca6a391b0e620009e3210e8900a79034621cbea4b439e0fda59baf9b"
+			},
+			{
+				"path": "src/admin/key-lifecycle.test.ts",
+				"sha256": "8efa83e005ca288bab52db47b4c2675889d236aaf0d09f8235a37e6d14877f99"
+			},
+			{
+				"path": "src/admin/key-lifecycle.ts",
+				"sha256": "5505755922d1e28e38be375e1526f7c9cf338e99285f234d73d32d2c4fd9ec78"
+			},
+			{
+				"path": "src/admin/key-store.ts",
+				"sha256": "7c56db4805e6cfb6b44e15aa9319cb777f35e161724ef1d6bd0f585cd55e357d"
+			},
+			{
+				"path": "src/admin/worker.ts",
+				"sha256": "2ad31661a41db3edd4fb6967aaec057c2acba1c7d4e3df55f328fed922fcfd04"
+			},
+			{
+				"path": "src/admission/api-key-limiter.ts",
+				"sha256": "0407394eade9e3f5dffb40ed3365a1c7ff80221895e510504a2bab85e248d3cb"
+			},
+			{
+				"path": "src/admission/rolling-window.test.ts",
+				"sha256": "3af02948116c868e518f8036d245c9057e0397b64d3e582a3096fc0b26e5341d"
+			},
+			{
+				"path": "src/admission/rolling-window.ts",
+				"sha256": "7f1a5cce1e83f7ca4ac6113d4dcefea0d45d60bf2a88cb7699e0bd6d488ac890"
+			},
+			{
+				"path": "src/auth/__tests__/api-key.test.ts",
+				"sha256": "bf97e0e49ee6310f0664b8e83616aced8795143995f08e2ea9e5638bd251cdb2"
+			},
+			{
+				"path": "src/auth/api-key.ts",
+				"sha256": "549d33e1b9b608de01c419a5835b65f186b207025f39f41dbf4b268019431686"
+			},
+			{
+				"path": "src/cache/citation-observation-state.ts",
+				"sha256": "dd33ab50c24214e4007b8c7245a3096ec607d3bc758ec9bfa94dfbb299038e49"
+			},
+			{
+				"path": "src/cache/citation-observation-store.ts",
+				"sha256": "72e970869a3b5b4596327638838ab3f6534709b0be30643b0d2e118149caaca9"
+			},
+			{
+				"path": "src/cache/d1-citation-observation-store.ts",
+				"sha256": "24bd316418d3cc496675d2ac9ad6a3bb11bf1f3e94384499ecd04bdbdf3ea3eb"
+			},
+			{
+				"path": "src/cache/d1-opinion-source-purge.ts",
+				"sha256": "0953bce999bdfacea7da7d196a4de0801a55be57aef08dfa6a2d5fb6db184ff2"
+			},
+			{
+				"path": "src/cache/d1-r2-opinion-source-store.ts",
+				"sha256": "0cedf7e125759e4ea1a35749dfeeb6b9445b7a333f25a63ee71a292ba8931876"
+			},
+			{
+				"path": "src/cache/opinion-source-object.ts",
+				"sha256": "68fcf4afe0331fbe442721976952816ea60c3da3ff379c82ad8c544d69bfa398"
+			},
+			{
+				"path": "src/cache/opinion-source-record.ts",
+				"sha256": "043afe0be21f61a65f0cb5a3ec7b50f2483c99b812e4df12d5bd6721bc01f03c"
+			},
+			{
+				"path": "src/cache/opinion-source-store.ts",
+				"sha256": "91be1de4927d1b98193e22e57b0acae75000f96325bca4084c1b9fd1e08aeba0"
+			},
+			{
+				"path": "src/courtlistener/api-binding.test.ts",
+				"sha256": "10f4ea0e301def9757be0559dd51c5a0c3c2d3bfdb4961fcda7f02a017d1751b"
+			},
+			{
+				"path": "src/courtlistener/api-response.test.ts",
+				"sha256": "6f9b5696c377084db2d738b0452095553525ba5ca6f7e221a2918cb1ff3830ed"
+			},
+			{
+				"path": "src/courtlistener/api.test.ts",
+				"sha256": "56cb210fe9f0565f4b6186d2af569d9dbfc7957130050fe66c2c9e613c067472"
+			},
+			{
+				"path": "src/courtlistener/api.ts",
+				"sha256": "13ba576393f26c0d2d0334c4a9dfcf11946ff66446a5d22ad6aaf5f6722f72cf"
+			},
+			{
+				"path": "src/courtlistener/attempt-timing.ts",
+				"sha256": "1a9f76a8880079249478051f405fa1e134a094442c82ceabf4511a5dd3bb171a"
+			},
+			{
+				"path": "src/courtlistener/budget-admission.ts",
+				"sha256": "5a36750a4e21cf6964b3eb0c16e521c719e5fe200f455a62893d7d7b5ea6510b"
+			},
+			{
+				"path": "src/courtlistener/budget-circuit.test.ts",
+				"sha256": "774a1653e30791732f273f29ab595a37c78f00e92b09526c152b08308bf6b584"
+			},
+			{
+				"path": "src/courtlistener/budget-contract.ts",
+				"sha256": "6c61e37967c930f13ffc29de60485aa3796efb9f4b2e2c5e40eddc46bdda3916"
+			},
+			{
+				"path": "src/courtlistener/budget-leases.ts",
+				"sha256": "74d064d86818ea28522f60f745eeb3de7c23e444c3ee030db75d962869386125"
+			},
+			{
+				"path": "src/courtlistener/budget-outcomes.ts",
+				"sha256": "9f1b55714842cca2f82019da6be3ac73ed6f915ae3e05e3e939939d7c8b2e71e"
+			},
+			{
+				"path": "src/courtlistener/budget-state.ts",
+				"sha256": "3b084e32de90275e5784395cf2c0c79403d1218aabeedfd985dc0b568c89b904"
+			},
+			{
+				"path": "src/courtlistener/budget-sync-api-usage.test.ts",
+				"sha256": "1baa0419cc0bfd1de1d84ecb95793b6b33ac792feb3d28bf611003876d7e1227"
+			},
+			{
+				"path": "src/courtlistener/budget-sync-reconcile.test.ts",
+				"sha256": "7899e9ff188c694c90225614d24ca025bf49d65e7f1cb60b7232e7faf9b9064c"
+			},
+			{
+				"path": "src/courtlistener/budget-sync-reconcile.ts",
+				"sha256": "fed95600d27b88166274ceafbc76d101aad64433c4a6783aa67fa8fd5790ee3e"
+			},
+			{
+				"path": "src/courtlistener/budget-sync-reservation.test.ts",
+				"sha256": "3ef7663fccdb4cda2f92ed36a8e3e6e613d1d7d1baa08c3f6262682ac5b50a17"
+			},
+			{
+				"path": "src/courtlistener/budget-sync.ts",
+				"sha256": "07583827d8dbaa4862fa70f84d582670d4cc3f7335193a03d54fd59423ad376b"
+			},
+			{
+				"path": "src/courtlistener/budget.test.ts",
+				"sha256": "0f2fdef1938536f2c72c3b96b1df5c4b7c92b0ae9104b7df0b4fb8efffd7319c"
+			},
+			{
+				"path": "src/courtlistener/budget.ts",
+				"sha256": "77ffab9497710635406dbf3a39c7750b6290d6df1d789b986e085bfda3981af2"
+			},
+			{
+				"path": "src/courtlistener/case-law-admission.test.ts",
+				"sha256": "0d837c2c08bb82e6a1a78c7909a6e9abbe825443dad4068452965ac68e63fd58"
+			},
+			{
+				"path": "src/courtlistener/case-law-admission.ts",
+				"sha256": "37324c1e349c2ce867a5633e46ff2450a28a7fc2e454750531ed57c2301767b0"
+			},
+			{
+				"path": "src/courtlistener/case-law-api-body.test.ts",
+				"sha256": "7aa063dba8b2c448d7510c8dec9c2eb93a4f8d4ccfa4d9532bc20c88671e4a7e"
+			},
+			{
+				"path": "src/courtlistener/case-law-api.test.ts",
+				"sha256": "23d6b9f7d500a738c98bf65edc5cb013c844de8c0976a5a9bacb3ec47d5d3761"
+			},
+			{
+				"path": "src/courtlistener/case-law-api.ts",
+				"sha256": "8d5a1eccb5259162d8eaa4e5dc84a8a2e659a37438e49e728bf899b29522a2f0"
+			},
+			{
+				"path": "src/courtlistener/case-law-gateway.test.ts",
+				"sha256": "157447bf39bba28880ebf656c8487f96a8699a27ce956d2b84e7340ab38dc617"
+			},
+			{
+				"path": "src/courtlistener/case-law-gateway.ts",
+				"sha256": "9ba1bfd0840fd5c987de8b378ba46237ccaa5612b80f671eeeb098f795a81bb3"
+			},
+			{
+				"path": "src/courtlistener/case-law-opinion-source-purge.test.ts",
+				"sha256": "1d61301bf54503e8d6d8acc6f256b2c321264de7058ebbece70f4b663a5ab4f9"
+			},
+			{
+				"path": "src/courtlistener/case-law-opinion-source-support.ts",
+				"sha256": "e1e6eacfc1b1c98a4d342024ab823d9a81e6f7a2cc87616dab0ff9c329943919"
+			},
+			{
+				"path": "src/courtlistener/case-law-opinion-source.test.ts",
+				"sha256": "a18b1791993c8f8f6749a229b9bd2042fba8807026a2571eb4aeeb5e7feb361e"
+			},
+			{
+				"path": "src/courtlistener/case-law-opinion-source.ts",
+				"sha256": "53f0a6bfd1c2d91e60ad6e6261f00e5e87baea78b1b525efefe51428c9b5b208"
+			},
+			{
+				"path": "src/courtlistener/case-law-request.ts",
+				"sha256": "dbcf4f92a8169acbc0862da8798e61723f5aa96bde341d863f2cef55fce790e0"
+			},
+			{
+				"path": "src/courtlistener/coordinator-contract.ts",
+				"sha256": "8830627d6a9f993c85d31aea5fa842c4e56b0b2b3ce426a242d0f6ba36ce2ea0"
+			},
+			{
+				"path": "src/courtlistener/coordinator.ts",
+				"sha256": "d0afb4400406e205c1fb0e92948255301b3d3c600a04daa2949c851a62379dab"
+			},
+			{
+				"path": "src/courtlistener/gateway.test.ts",
+				"sha256": "43c5683a187b2a9d43a986d61ab6d7b99b077d2a9fa0bcda644ea9ed73f6ac1e"
+			},
+			{
+				"path": "src/courtlistener/gateway.ts",
+				"sha256": "0f71461e20cc4fb2b9f1529c7d07c8f39d6876412a693d580e2e9f0caee9e7ca"
+			},
+			{
+				"path": "src/courtlistener/quota-sync.ts",
+				"sha256": "b783a3d64d3e0e683004e5fc985c91762d43e29edc899d4581e8d9db2807e8de"
+			},
+			{
+				"path": "src/courtlistener/response-body.ts",
+				"sha256": "d415a5fa42ae9d6f540e7afbe5137e72e3140f8a35f50a3a85f64f2c8e5077b5"
+			},
+			{
+				"path": "src/mcp.ts",
+				"sha256": "cb2eb0e71da0beb7ed17e9a48b7569e504b30f289e96cc12ea591d9df372b10a"
+			},
+			{
+				"path": "src/node/normalization-worker.ts",
+				"sha256": "4fa6f6bd11664c3de94e7b1c99da96d0e8917d76128741ad3a67ab82c416b370"
+			},
+			{
+				"path": "src/node/opinion-normalizer.ts",
+				"sha256": "00425dc09d5c487b0b8912b62f7644bb78f03cc801d1f3cdf1de3e933cd9ea06"
+			},
+			{
+				"path": "src/postgres/citations.ts",
+				"sha256": "9ee861516d4d1807d6000fe4bdf5366dd4653bcb82bb694afdf59500c8f32d3d"
+			},
+			{
+				"path": "src/postgres/coordinator.ts",
+				"sha256": "666bb6c48e677a606977fdde226290f394fcecdf9f6a75ca8323e95b3b38adfc"
+			},
+			{
+				"path": "src/postgres/database.ts",
+				"sha256": "33cb194fd724b7707c32f1fd38f0387aa6e3fcb4318e0fabd154529f8b9a6c2d"
+			},
+			{
+				"path": "src/postgres/keys.ts",
+				"sha256": "a234bba1530206d7c98b3f82fd71400ad7e600275df1bbdf164486704719227a"
+			},
+			{
+				"path": "src/postgres/migrations.ts",
+				"sha256": "000cb60b770703d587aff3d43f704d6f0a6973995b05fc4035777d0a0e821ac9"
+			},
+			{
+				"path": "src/postgres/objects.ts",
+				"sha256": "9ba66e89f999e4db3032004e25cb8c9afb0f21111602be8afaec33d92b6e7282"
+			},
+			{
+				"path": "src/postgres/opinions.ts",
+				"sha256": "2e68b8ac0707fe27829af525c535abcaf81b55f34d850fc78801e10e1b7c698b"
+			},
+			{
+				"path": "src/postgres/retention.ts",
+				"sha256": "4212269944fb7f3918d5d527dbd929dd870bddd761870dc4fc12d58f82824095"
+			},
+			{
+				"path": "src/request-body.ts",
+				"sha256": "5af62fdf4051c6a8e31b260e942649c65de8deb0144619d71f9f795e40448b74"
+			},
+			{
+				"path": "src/retention/d1-lifecycle-retention.ts",
+				"sha256": "ade792618e31afb016ce9d47064ad08320b1e1fa5d6e4e4cfd468775722b1992"
+			},
+			{
+				"path": "src/retention/scheduled-retention.ts",
+				"sha256": "4f60df4fc775759c629c584e5b8928b3f53fbdf80b3856dc47c9c9a57ea90673"
+			},
+			{
+				"path": "src/telemetry/contract.test.ts",
+				"sha256": "0646b3babc7d9bf79615836af7c11e614e75d9a9f65ae277ea9bbcabe42dfc8f"
+			},
+			{
+				"path": "src/telemetry/contract.ts",
+				"sha256": "9c4bb52d674afb210d0097c2c848ebbf3c4b569d98416d3ba52089c83f16b694"
+			},
+			{
+				"path": "src/telemetry/execution-facts-admission.test.ts",
+				"sha256": "950839b776d7bf14ead0b0e2d69982ec30155d3e9aa9fd91c00e70e36ba57790"
+			},
+			{
+				"path": "src/telemetry/execution-facts-propagation.test.ts",
+				"sha256": "df4e8f2fd945d661f66ab10c7707720bd2ee7df05306e4be82fac4a9d9290648"
+			},
+			{
+				"path": "src/telemetry/execution-facts.test.ts",
+				"sha256": "94b25f3801639763797551b53895e90bed99412e4d9a78b9712d2814b1326934"
+			},
+			{
+				"path": "src/telemetry/execution-facts.ts",
+				"sha256": "2c2bfad61fca8c48d0777b811f7335b518c15a84e23870825350dba540a45832"
+			},
+			{
+				"path": "src/telemetry/response-mapping.ts",
+				"sha256": "8b59e123b0e1304ca78bf908951f8cba4213ea91254e3fe425612cae8b261895"
+			},
+			{
+				"path": "src/telemetry/runtime.ts",
+				"sha256": "a39ded666eed96bbc79feb8e77f3d77ddd833918c4b7cfbc96be5dd9fb17743f"
+			},
+			{
+				"path": "src/telemetry/span-attributes.test.ts",
+				"sha256": "1898ee6ab7625d19fa94788c105d4525576f07649f89002c1ccdcad445107151"
+			},
+			{
+				"path": "src/telemetry/span-attributes.ts",
+				"sha256": "91811fbeb183152a2217793241fd86c2b64bf671e1b859c62bb61c2e5d7d08ef"
+			},
+			{
+				"path": "src/telemetry/trace-worker.ts",
+				"sha256": "b59c09639a12bd23474bbde0ed1241981ae365358214f6a8a65b8eb0753f4168"
+			},
+			{
+				"path": "src/telemetry/upstream-latency.test.ts",
+				"sha256": "a7e1f103bb8cba47dffea1514d03a32f060a756d388cc47313aeea5c189aeba6"
+			},
+			{
+				"path": "src/verification/cached-citation-gateway-held-lease.test.ts",
+				"sha256": "e3939b68d42cccce8eb8815c897f2d889714990a51b86519afe9deddc0239bde"
+			},
+			{
+				"path": "src/verification/cached-citation-gateway.test.ts",
+				"sha256": "04aa1b055264a8de8ba7d1aab742ae711154d225430eda1befe0aeab67b8dcb5"
+			},
+			{
+				"path": "src/verification/cached-citation-gateway.ts",
+				"sha256": "2dd1f1ec910de9f9dbd107551295b044189409bdf6e18f0cb389c475690fe5dc"
+			},
+			{
+				"path": "src/verification/citation-source-cache.test.ts",
+				"sha256": "bcab995dcee984ce727027e968df2dfdd5292f494cc5165e98eb9ae37ad01c65"
+			},
+			{
+				"path": "src/verification/citation-source-cache.ts",
+				"sha256": "4f3dd3ed60bb21c7959771dfc75fa4daf7b0149fc7fa877847ef1ede959abe89"
+			},
+			{
+				"path": "src/verification/citation.test.ts",
+				"sha256": "40dabd11107f098a0604881375b4dbb934dbf573f070802f89839ea9e34d025b"
+			},
+			{
+				"path": "src/verification/citation.ts",
+				"sha256": "3288903c92a0b28022509436b112929000c07db15aae2cc785709c3475a3d9c8"
+			},
+			{
+				"path": "src/verification/evidence-request.ts",
+				"sha256": "4ca4fd8b49b66436eabda7a0ec6ac4a80347649a568b7db87c254c0cee767483"
+			},
+			{
+				"path": "src/verification/opinion-source-cache.test.ts",
+				"sha256": "cee4d97bc6ae78bb4a619d5d58cac7b17a4a55e3227306130253fc5bba765701"
+			},
+			{
+				"path": "src/verification/opinion-source-cache.ts",
+				"sha256": "166123f569c78042b3ad700c39c145acd64d54023c678bd0f772764239441628"
+			},
+			{
+				"path": "src/verification/quote-contract.test.ts",
+				"sha256": "d622dead8125c7885756b9d7da02ebe57adaa65588e26ff60a52497b9623aee7"
+			},
+			{
+				"path": "src/verification/quote-contract.ts",
+				"sha256": "bbde96dbd22e4eef502fa795b1fb626e609a63c9e39d2c85d0aa1e87b4a21f4b"
+			},
+			{
+				"path": "src/verification/quote-normalization.test.ts",
+				"sha256": "6b225a55b7da64f4f787b7ba4abcff672ca4fe432d87a44e22c5e4c57ff9f1ee"
+			},
+			{
+				"path": "src/verification/quote-normalization.ts",
+				"sha256": "1d8be9400ae25a22ed32d253aae451f9eced0e5e97870c753cb06627ee6fbc67"
+			},
+			{
+				"path": "src/verification/quote-output-schema.test.ts",
+				"sha256": "2ed73477fbf1e0be4a82df17226b1f6f939936b7d6555da601a46ab1eabbc7af"
+			},
+			{
+				"path": "src/verification/tools.ts",
+				"sha256": "ffe912d7aec6cc6f5b63726ccfb7b7ca31581081bebd790716b7c792b97cc6d3"
+			},
+			{
+				"path": "src/verification/verify-citation.test.ts",
+				"sha256": "185b7d009027771bbf1c18e67f9ff14b7262d9c54dc234e9c6a96eb4c0f7b59f"
+			},
+			{
+				"path": "src/verification/verify-citation.ts",
+				"sha256": "dcf37a114d0afbf0adc77c7faf10d96a85d546187a173fd8e0a270e75f343371"
+			},
+			{
+				"path": "src/verification/verify-quote-completeness.test.ts",
+				"sha256": "2f104441fd091fcb7ed858fcc04b88804a659fdf48d2bcb857fe27223d15b681"
+			},
+			{
+				"path": "src/verification/verify-quote.test.ts",
+				"sha256": "013ef6ee6cfe9c31ee7cf239aa3de17b6ffcc1361e3b38e5e944a3cbd54212b5"
+			},
+			{
+				"path": "src/verification/verify-quote.ts",
+				"sha256": "56d9c983e74d2c093e41dc3718c252647d1f50993fba494a019611c14cef65da"
+			},
+			{
+				"path": "src/verification/worker-citation-gateway.ts",
+				"sha256": "a70ca7b7d66faefbf753b65b8b62acbc52e8750f49b92e4c05e0ae085cbdedf9"
+			},
+			{
+				"path": "src/verification/worker-quote-gateway.ts",
+				"sha256": "1bc4a9aabbdb34f42d6dc13d6fb5adeccf1db0af6855e79c971982e0cef40abc"
+			},
+			{
+				"path": "src/worker-request.ts",
+				"sha256": "4855f79733a2c7e5b5d8a0b66149d6cbb934c33c3ebb3e555e5f9d55e4400f6a"
+			},
+			{
+				"path": "src/worker.ts",
+				"sha256": "8d48a18ab6ce475ee56ccc7fad94134cf0f06af5810b54f5430ba7cba864db50"
+			},
+			{
+				"path": "test/admin-config.integration.test.ts",
+				"sha256": "94643eaccb2f0613fe454f70e3787f34ee395f0aa4837f87dac7e85d580d8afa"
+			},
+			{
+				"path": "test/admin-key-store.integration.test.ts",
+				"sha256": "8751c5ee4cf607c86ad52bd33357d91a4951cd4d117c9eaf286198daa7794cc7"
+			},
+			{
+				"path": "test/admin-worker-limits.integration.test.ts",
+				"sha256": "ed1511a48ffb19d4550350bdc4fcf40b02abb03cfdb8d5f65bec3b38eda3af22"
+			},
+			{
+				"path": "test/admin-worker.integration.test.ts",
+				"sha256": "fa7422921cff68cad13ebad05d9f648f37f09ae9f3a587bf04993eb2c7c02425"
+			},
+			{
+				"path": "test/api-key-limiter-retention.integration.test.ts",
+				"sha256": "f1ccf78d11f598de919e6b40359b9260f72b07ef22e44c3dedd4e44e5ee611e3"
+			},
+			{
+				"path": "test/api-key-limiter.integration.test.ts",
+				"sha256": "9fcb7dcfd10ccfa44aac28a0c9f527c9ae7bf72ddef46a42917aa6831fa3cc01"
+			},
+			{
+				"path": "test/citation-observation-store.integration.test.ts",
+				"sha256": "8d7f116fe72e8f6d05815fdc73d700174aed705d7f3051f7bd7ecbe3a027b433"
+			},
+			{
+				"path": "test/config-migration.integration.test.ts",
+				"sha256": "0761e81133c39f1334e9088f29c82c6a762cc7ea4914c9516b00226a3140186b"
+			},
+			{
+				"path": "test/courtlistener-coordinator-remediation.integration.test.ts",
+				"sha256": "37ad13c384cf42cc76812b280874c9533e6f3776cdef3bdc6e8a1d52df709f8b"
+			},
+			{
+				"path": "test/courtlistener-coordinator.integration.test.ts",
+				"sha256": "2e8674caa699a5160562fca7d08f8631912a06d9cd74d3498721dc9292e9d842"
+			},
+			{
+				"path": "test/fixtures/api-key.ts",
+				"sha256": "5f51bb3399ff3c19d48594fc894ac8ddb528d9fb5d9b4e0146d4cb807bd95360"
+			},
+			{
+				"path": "test/fixtures/citation-source-cache.ts",
+				"sha256": "b8ed8c49afdeb64431e35f36044c285c81d0508080b31936052d58f7ab859cc0"
+			},
+			{
+				"path": "test/fixtures/issue-6-worker.ts",
+				"sha256": "9ef7d6d06783e322857bd43cd8ef41a97e998a856f0961f5be9de49ae258805a"
+			},
+			{
+				"path": "test/fixtures/issue-7-quote-worker.ts",
+				"sha256": "54b78c9d6c57757a38bec0940a7c12d6c926fe12ff2e1d72da030ca9e3ea24a0"
+			},
+			{
+				"path": "test/fixtures/opinion-source-cache.ts",
+				"sha256": "b6456f9ad63cb1f632786e9df2174b5c0051040583d6139383ebaaa7fa0dae44"
+			},
+			{
+				"path": "test/issue-6-cache-poison.integration.test.ts",
+				"sha256": "e9027e88d79e98ea031055feaa6769463393909b422cf2cd45a84a7cb4f97295"
+			},
+			{
+				"path": "test/issue-6-negative-purge.integration.test.ts",
+				"sha256": "6473d10a6085f3206a10490a7cdb80a9e24cb4fd0bac2a23bc529d75133860fd"
+			},
+			{
+				"path": "test/issue-6-source-cache-race.integration.test.ts",
+				"sha256": "74b7801490f83d58fe2d60ae1d0370435bf6d9510b22f5119749aa3839351186"
+			},
+			{
+				"path": "test/issue-6-source-cache.integration.test.ts",
+				"sha256": "e04f68dd884096cc33b1d28f6eb374cf50908dc07bc158747dc18c99e6ab2f9c"
+			},
+			{
+				"path": "test/issue-7-quote-hardening.integration.test.ts",
+				"sha256": "75bd58323516a277bb9db3a04df287617499614fc53e7b82b603d5bbb10640e7"
+			},
+			{
+				"path": "test/issue-7-quote-outcomes.integration.test.ts",
+				"sha256": "092dbf438deb2e4a1e12539a45971006e65a1098fb811e3066b1a32d8acf2d20"
+			},
+			{
+				"path": "test/issue-7-quote.integration.test.ts",
+				"sha256": "003ed4917223ec9f431d57f7e81a6451233126d1caefe67d670c5338fa4b2b9d"
+			},
+			{
+				"path": "test/issue-8-opinion-cache-concurrency.integration.test.ts",
+				"sha256": "a2401944b8d7baa076793613768a93692b9d556b147e18be44d9100d6955581a"
+			},
+			{
+				"path": "test/issue-8-opinion-cache.integration.test.ts",
+				"sha256": "c07b4de246deb60a7e47bfacb538b33e428575cc07c41f732e85dd238fd7c918"
+			},
+			{
+				"path": "test/issue-9-telemetry-response.test.ts",
+				"sha256": "915fcfcb4c59724718d423098b18b98bb1c8112624acdc6ea5b01ccbe41d106e"
+			},
+			{
+				"path": "test/issue-9-telemetry.integration.test.ts",
+				"sha256": "3f795caf863abb66d558cc38b57a3b84c9fb10defb45bee6819e929f8286486d"
+			},
+			{
+				"path": "test/key-store-calendar-retention.integration.test.ts",
+				"sha256": "8059152792eed4f7813828af3a42da4b2600a9b2e0f4fe1535fc7a99352a5e74"
+			},
+			{
+				"path": "test/lifecycle-retention.integration.test.ts",
+				"sha256": "574d9ccd78d0c51d5e498b15d77feb21e6290ccaeab72505c08549859568b6e2"
+			},
+			{
+				"path": "test/node/evidence.test.mjs",
+				"sha256": "d6085fd431becf1038d53cc6681ef63efec9d73a9f018d9ee9bc01ea6ce343bb"
+			},
+			{
+				"path": "test/node/stalling-worker.mjs",
+				"sha256": "730d6ad4c09f90d91763752483cc6533e58280d1b172a0dec23c36a07e193dec"
+			},
+			{
+				"path": "test/opinion-source-store-purge.integration.test.ts",
+				"sha256": "504351e9f4aafece019cc315f0882f1f245ab10a96f192650ecfeb8a54547895"
+			},
+			{
+				"path": "test/opinion-source-store-race.integration.test.ts",
+				"sha256": "4d5a04286ec6bdd0497516171b7ca84bcb6a03e9c88cd96cbec644939ffa830c"
+			},
+			{
+				"path": "test/opinion-source-store.integration.test.ts",
+				"sha256": "a439fecc7b0dbf31ace753e933e674a7c9e00bade5c8b4129ba7be243db67012"
+			},
+			{
+				"path": "test/pilot-client.integration.test.ts",
+				"sha256": "6aaf8c506fd632c2ede9db22ff9c95521f2c4ce23659c2246f87488de7d2a9d3"
+			},
+			{
+				"path": "test/postgres/authority.test.mjs",
+				"sha256": "0330430d112249f3aef12fa0791d4069ecb6fca5d013c82e230a3d1b833dc7d6"
+			},
+			{
+				"path": "test/postgres/crash-process.mjs",
+				"sha256": "2ae94cfca205c6c450c7033bfe5d8b95807ec8cbb93e7251a3f0d108cdbe9dd4"
+			},
+			{
+				"path": "test/postgres/crashes.test.mjs",
+				"sha256": "88e07b46784653cbc1c49b23f4187a5e3d54a2e69a553abe63b58bce33d65c3c"
+			},
+			{
+				"path": "test/postgres/database.test.mjs",
+				"sha256": "6ee350cf4ff167500fe51f9fbaa1f04dcc8c631b9bcdb948949375750bd47d75"
+			},
+			{
+				"path": "test/postgres/disk-objects-fixture.mjs",
+				"sha256": "1e536666a56204b43f818bfb34b36dab79f6562e005e43f27c54dcf7d2152fbc"
+			},
+			{
+				"path": "test/postgres/failure-fixture.mjs",
+				"sha256": "4c609146758beeb3048545e105ad1bca3d30d132b62c84be6502630b69b0e8ac"
+			},
+			{
+				"path": "test/postgres/fixture.mjs",
+				"sha256": "40097848a4b04077902dc56cf294b9d6fac978d64035793367b5cfc5e2572d60"
+			},
+			{
+				"path": "test/postgres/objects-fixture.mjs",
+				"sha256": "703cb4a74f10ea6a7ad6bff208f068e3a97f2e0ec5382a2e1901255d06f9a3e0"
+			},
+			{
+				"path": "test/postgres/objects-http.test.mjs",
+				"sha256": "73b1cba4678b2e4eff625b37d60dea44f667526e46bedb2b3b4460c142d3e58c"
+			},
+			{
+				"path": "test/postgres/process.mjs",
+				"sha256": "d7a55f85b998438c70954e3730bb0887deb1298da59d018398c972f57f4e7ca2"
+			},
+			{
+				"path": "test/postgres/retention.test.mjs",
+				"sha256": "7c5774a83c9349bdcaf34583e8bf70c3e9eba9776f51d5b52315e96456c2a56e"
+			},
+			{
+				"path": "test/postgres/sources.test.mjs",
+				"sha256": "cae24887117364636dda05c99427dd85f6483e2c23034ac488f3b618de420b55"
+			},
+			{
+				"path": "test/request-body.test.ts",
+				"sha256": "3afbcc00e79b6e42141504f7ed4345b577622c7e47dea64c885bb1cfa7a4569c"
+			},
+			{
+				"path": "test/retention-calendar.integration.test.ts",
+				"sha256": "27a3bc44b56d2d00e3e8e899b48b007a8a5e5c2e3e1e81717b8f718badf9c9db"
+			},
+			{
+				"path": "test/telemetry-execution-facts.integration.test.ts",
+				"sha256": "483ce8f97de84202fb6dcb413607be73e92322966e1bc08f045770f85a5250ff"
+			},
+			{
+				"path": "test/telemetry-trace-config.integration.test.ts",
+				"sha256": "e243408f56e36f9b757c35a3a1a8d062404dd2c5018df4070420cb21715e098a"
+			},
+			{
+				"path": "test/telemetry-trace-worker.integration.test.ts",
+				"sha256": "ee42d0de667b3d2846bef9b06e7e20bbb1cf8043701a3092245972262a813ec3"
+			},
+			{
+				"path": "test/tsconfig.json",
+				"sha256": "aa769b18a0a0abc0f6b28c27aa7edd8df214db0a9e7683a055b7b28e96f8e1fc"
+			},
+			{
+				"path": "test/worker-admission-boundary.integration.test.ts",
+				"sha256": "217ba87e2562e70965a92427462d289bdcc1bc1e7b09a58ba7dd6323ffe8fa93"
+			},
+			{
+				"path": "test/worker-admission-recovery.integration.test.ts",
+				"sha256": "92ba07e20f3446987af5aca0271d109f36facdef80c3dfcb06d46bf016fad08a"
+			},
+			{
+				"path": "test/worker-citation-reservation.integration.test.ts",
+				"sha256": "dfa9394239d88572229cec7807b8b707d88ebf9563a0ddb717b7fc3a447059b2"
+			},
+			{
+				"path": "test/worker-citation.integration.test.ts",
+				"sha256": "ef2ab768796eacb1bfefcca7e70a3ea9a668d26a5c7e20cc9ca1afa510879e29"
+			},
+			{
+				"path": "test/worker-protocol-boundary.integration.test.ts",
+				"sha256": "463b4831a602b491c2d437ce1aea1594d00a98a1f4193056b71b7abe65dc0ffc"
+			},
+			{
+				"path": "test/worker-qualification-benchmark.integration.test.ts",
+				"sha256": "7430fdd36683d0113671b1bbfe2fd35c00ff31ec92e3699cae7e17e8470e4138"
+			},
+			{
+				"path": "test/worker-qualification-config.integration.test.ts",
+				"sha256": "a73e32feba7bd5d8199421ac7a46a7ecc9c9482a52e43d34b99d99bf30a71513"
+			},
+			{
+				"path": "test/worker-request-body.integration.test.ts",
+				"sha256": "f0d315777c44a7cf512fb2cbd9a9fa0881baf6dea32699fa9da53734c216e83c"
+			},
+			{
+				"path": "test/worker-routing.integration.test.ts",
+				"sha256": "d11a4d0d5d7370f893ffad054808f13d70ca240770363c0b03755201b3b22d72"
+			},
+			{
+				"path": "test/worker-runtime-conformance.integration.test.ts",
+				"sha256": "cf54d9a389f20b10c9e4ae3c73ef3f10dc3fecfecde18772d3bf68c440ba9bc5"
+			},
+			{
+				"path": "test/worker-tools.integration.test.ts",
+				"sha256": "71300a8a8fd9bdba9690eaa3eb3d52b160f7b5e0c77fa55d873e3835ca3b2333"
+			},
+			{
+				"path": "tsconfig.json",
+				"sha256": "b3673dab054119b243accf19220e874b792febb64dee10873b15b261c9304e26"
+			},
+			{
+				"path": "tsconfig.node.json",
+				"sha256": "4bb59ace7f1ed2a9be39194fdf8319c850ea58a3bca891ef4b125bfe5d1cbc91"
+			},
+			{
+				"path": "tsconfig.postgres.json",
+				"sha256": "a8bdb131a297687893f7862080cd770e7e3e719376c7a07a9e0b7ded7063631b"
+			}
+		],
+		"compiledFilesSha256": "1e8a538b383e59e3d60d4a4862af0225e53b84b70e54d1833e29c5c30e56508e",
+		"compiledFiles": [
+			{
+				"path": "build/admin/key-lifecycle.js",
+				"sha256": "a462535db97b999a41b526a7edc5c4b7dadf3a740e30e79afd5482279b2bd3a6"
+			},
+			{
+				"path": "build/admission/rolling-window.js",
+				"sha256": "98d2441550adbd8818ef11df4fde6ebe3a88f48ee94bea2dced15bbdfcb615a1"
+			},
+			{
+				"path": "build/auth/api-key.js",
+				"sha256": "9d54b39339cc1e3f3b8e8d2fb7bf8d8bcfbdcafee6e71a036833ff168a0f678f"
+			},
+			{
+				"path": "build/cache/citation-observation-state.js",
+				"sha256": "23f230bc1fe0e3cecdde32ae1bdb243eff5de336e82b574787941c0bc6aa3526"
+			},
+			{
+				"path": "build/cache/citation-observation-store.js",
+				"sha256": "8d96e961520d5911621defa13e85a3c5f64a2bd2fb5c9d33953e614bb7ff2e56"
+			},
+			{
+				"path": "build/cache/opinion-source-record.js",
+				"sha256": "200c958a5ef421d85a5ba2cfffe2749fd45d2db965966cf6b12eda1d0588fe9a"
+			},
+			{
+				"path": "build/cache/opinion-source-store.js",
+				"sha256": "b08ec1f57831b80b1f0cea5c698fa5d129c354cd6122471047450af92acc4ac6"
+			},
+			{
+				"path": "build/courtlistener/api.js",
+				"sha256": "35d241f3ff59052b4376ef2a718feae812f9524ab243356ecbf2f1d09cd20a59"
+			},
+			{
+				"path": "build/courtlistener/attempt-timing.js",
+				"sha256": "0c70169c05e55dbd86ed064e414590673fc851116208353e41212cab1ce58e7a"
+			},
+			{
+				"path": "build/courtlistener/budget-admission.js",
+				"sha256": "ff833ef1401f5c8ef77bdc6d1b9fcf4e3b92ccb219c86c11b8fa246daca5ccbe"
+			},
+			{
+				"path": "build/courtlistener/budget-contract.js",
+				"sha256": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
+			},
+			{
+				"path": "build/courtlistener/budget-leases.js",
+				"sha256": "e83ac9e68dd826705a3dc4ba7d8b9cc4a07a99de6dfa3b61c072950c5498f0e7"
+			},
+			{
+				"path": "build/courtlistener/budget-outcomes.js",
+				"sha256": "ac358940e38daa6c1b855c80ec45b5e75361841d6d13f3dc284962afdf70abf2"
+			},
+			{
+				"path": "build/courtlistener/budget-state.js",
+				"sha256": "00f279273e2091c44c2f7ca0fefa0204111dcaa093105015e6f4f3e68266dd66"
+			},
+			{
+				"path": "build/courtlistener/budget-sync-reconcile.js",
+				"sha256": "9154305e1dc63115d7447cbfffa9e5c9eb2e285e19f8135cada019bf46523438"
+			},
+			{
+				"path": "build/courtlistener/budget-sync.js",
+				"sha256": "d580c664f687153c5fd19001d9ace02a33b9aa7b671d50923468c2143a700861"
+			},
+			{
+				"path": "build/courtlistener/budget.js",
+				"sha256": "ba74ee626ff92d60654baf1ea6f62beb4e05fd2fa74fabc3bf548c3db408c5c5"
+			},
+			{
+				"path": "build/courtlistener/case-law-admission.js",
+				"sha256": "ad893e55458e926f39ef54289daf8c8fdf4acf908072b7d1d03d8ddaf22df980"
+			},
+			{
+				"path": "build/courtlistener/case-law-api.js",
+				"sha256": "adfed08506bc30577a4a7ef6ad2e0504a8ca24c0c8d1549daba05b16916aa7a6"
+			},
+			{
+				"path": "build/courtlistener/case-law-gateway.js",
+				"sha256": "bd311d7d1257f62ecb4868629beb4533b663fb8c3ad49cc62fe5f15a1dcaa8f7"
+			},
+			{
+				"path": "build/courtlistener/case-law-opinion-source-support.js",
+				"sha256": "4b5331e910a52e176473dd6ae0f94993d754b7aacfbd82a8e5c9f67fa62c806a"
+			},
+			{
+				"path": "build/courtlistener/case-law-opinion-source.js",
+				"sha256": "26a237061ed4baff702095e4d0796a6b0755e9855f3dfed97868f0f88b2bad16"
+			},
+			{
+				"path": "build/courtlistener/case-law-request.js",
+				"sha256": "7804f8e2d7912cdbd4675866a011159f5db2d37b0391c4a1d678f8cdd3e284eb"
+			},
+			{
+				"path": "build/courtlistener/coordinator-contract.js",
+				"sha256": "b9e958df7a4087cf37402ad79cc9ff368406045adac3aebf4fc8d598c9ef267f"
+			},
+			{
+				"path": "build/courtlistener/gateway.js",
+				"sha256": "4fff05e9a517781be30528199868950ac9c1a228ace367d71ccb23edc1f642a4"
+			},
+			{
+				"path": "build/courtlistener/quota-sync.js",
+				"sha256": "70de3fb970ca24b2e4f33e00e93abbe120c5a6f71e10dd9313d7b74eb0b7c0a2"
+			},
+			{
+				"path": "build/courtlistener/response-body.js",
+				"sha256": "682248c758f9bed57b3738fd919e7629e7644b5b100b31726f1171385397a04c"
+			},
+			{
+				"path": "build/mcp.js",
+				"sha256": "5c6241a348eafc02b5a57c2b237b1366bf6778ef3891ef83518555ab85d35e8b"
+			},
+			{
+				"path": "build/node/normalization-worker.js",
+				"sha256": "31f5c54b74c037049415d67bd99fa2d9d9a8ca66af647e8dde7d0ba048c7d468"
+			},
+			{
+				"path": "build/node/opinion-normalizer.js",
+				"sha256": "396e2713e46eff11854bac89e43844f93838d7f5cfb2eca3017458cca9a7e74c"
+			},
+			{
+				"path": "build/postgres/citations.js",
+				"sha256": "489b6a81342e7fea0536a7afae87680ff5e024bf6346dcec398edf44360c94d9"
+			},
+			{
+				"path": "build/postgres/coordinator.js",
+				"sha256": "bde7d346f761495d400075a2d50254b0aeae0e5bf8b4b01bd7e27d86f87fd381"
+			},
+			{
+				"path": "build/postgres/database.js",
+				"sha256": "c8fbbb3c59a1133fe21d4e8a11954290741a644182fc4bf022095b966bc24331"
+			},
+			{
+				"path": "build/postgres/keys.js",
+				"sha256": "3f56be6562db72a50494d624b6cf49c02f3776a2dd190ff3be061fa6c96d3f3e"
+			},
+			{
+				"path": "build/postgres/migrations.js",
+				"sha256": "16ac5e0cf96d6d9915dff15b3526a019b1a45a26dcca3d788b3e0d80b5ebde13"
+			},
+			{
+				"path": "build/postgres/objects.js",
+				"sha256": "d77624b2acd7b3da8cc2bfbd5ab49512d6df17a5d07bf10366c625a24448583a"
+			},
+			{
+				"path": "build/postgres/opinions.js",
+				"sha256": "075e445972e07c8753e933241e703f84bada0d55a8db49c82a8a39df94e2f074"
+			},
+			{
+				"path": "build/postgres/retention.js",
+				"sha256": "056fcc1b63f1fdf991a04ddffd5346db0086cce7d21e8cdd01a17bcb52fc38a4"
+			},
+			{
+				"path": "build/telemetry/contract.js",
+				"sha256": "ed300884df996a9c4a704bca6d43f6b896e36d52cc57bd02d130352e2d32ef73"
+			},
+			{
+				"path": "build/telemetry/execution-facts.js",
+				"sha256": "4d0602c33982812e0030945af08dadc96f1e1832153f8ab02dc9fc5c8a41cc22"
+			},
+			{
+				"path": "build/verification/cached-citation-gateway.js",
+				"sha256": "a7fb04c9ac246786a268d9b95519320f0d2d04e6a3f88eed4621fc6756a2d8df"
+			},
+			{
+				"path": "build/verification/citation-source-cache.js",
+				"sha256": "7731bc7919270f3ddb4c5700edb9060aa84a2b8eb8fcddf1919c088501b12586"
+			},
+			{
+				"path": "build/verification/citation.js",
+				"sha256": "b2698b6b431090c67753684967cdb6b69f3ce0b6b32d3667d93e7c43449cffd8"
+			},
+			{
+				"path": "build/verification/evidence-request.js",
+				"sha256": "b73c9ee7c58cbdaf08679ba1b5856b40ccede33060f2040833a889635ea95c35"
+			},
+			{
+				"path": "build/verification/opinion-source-cache.js",
+				"sha256": "a4c7fabbf1068f80c9e5a36ddba94096f59a60a11734786d7993ae31e3f8d979"
+			},
+			{
+				"path": "build/verification/quote-contract.js",
+				"sha256": "8721e4877cedf2fb805e157206ebde895495730723226b545e2f0dfa3495c42d"
+			},
+			{
+				"path": "build/verification/quote-normalization.js",
+				"sha256": "a86a14cb3c55f0cfb1d36eca274b3918dd3189258bedf5314ee65f78f4c89cd6"
+			},
+			{
+				"path": "build/verification/tools.js",
+				"sha256": "381cd9a839de1d84c6e58001da0479419246862541ae21070e974ce7ca482e65"
+			},
+			{
+				"path": "build/verification/verify-citation.js",
+				"sha256": "80b5ba8dfad2e3341df0c6649d8e63c23c9a0355896877a25f7fbc8ac73a17cc"
+			},
+			{
+				"path": "build/verification/verify-quote.js",
+				"sha256": "5480b2fd226c127a1d6134fbfd085d2c17ea94addb893abeb07a3e28010ee466"
+			}
+		],
+		"node": "v24.21.0",
+		"platform": "darwin",
+		"architecture": "arm64"
+	},
+	"vectorCount": 60,
+	"results": [
+		{
+			"id": "76618-citation",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "citation",
+			"clusterId": 76618,
+			"stratum": "federal",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 31.39470800000001,
+			"sourceResponseBytes": 213,
+			"processedSourceBytes": 0,
+			"sourceRequests": 1
+		},
+		{
+			"id": "76618-exact",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "exact-quote",
+			"clusterId": 76618,
+			"stratum": "federal",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 73.63225,
+			"sourceResponseBytes": 36611,
+			"processedSourceBytes": 35756,
+			"sourceRequests": 4
+		},
+		{
+			"id": "76618-altered",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "altered-quote",
+			"clusterId": 76618,
+			"stratum": "federal",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"expected": "not_found",
+			"outcome": "not_found",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 11.719957999999963,
+			"sourceResponseBytes": 342,
+			"processedSourceBytes": 35756,
+			"sourceRequests": 1
+		},
+		{
+			"id": "91311-citation",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "citation",
+			"clusterId": 91311,
+			"stratum": "scotus",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 8.058957999999961,
+			"sourceResponseBytes": 164,
+			"processedSourceBytes": 0,
+			"sourceRequests": 1
+		},
+		{
+			"id": "91311-exact",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "exact-quote",
+			"clusterId": 91311,
+			"stratum": "scotus",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 12.161833999999999,
+			"sourceResponseBytes": 5831,
+			"processedSourceBytes": 5484,
+			"sourceRequests": 2
+		},
+		{
+			"id": "91311-altered",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "altered-quote",
+			"clusterId": 91311,
+			"stratum": "scotus",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"expected": "not_found",
+			"outcome": "not_found",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 6.646041000000025,
+			"sourceResponseBytes": 170,
+			"processedSourceBytes": 5484,
+			"sourceRequests": 1
+		},
+		{
+			"id": "91771-citation",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "citation",
+			"clusterId": 91771,
+			"stratum": "scotus",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 8.476541999999995,
+			"sourceResponseBytes": 170,
+			"processedSourceBytes": 0,
+			"sourceRequests": 1
+		},
+		{
+			"id": "91771-exact",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "exact-quote",
+			"clusterId": 91771,
+			"stratum": "scotus",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 39.84779100000003,
+			"sourceResponseBytes": 126075,
+			"processedSourceBytes": 125072,
+			"sourceRequests": 5
+		},
+		{
+			"id": "91771-altered",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "altered-quote",
+			"clusterId": 91771,
+			"stratum": "scotus",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"expected": "not_found",
+			"outcome": "not_found",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 15.105875000000026,
+			"sourceResponseBytes": 362,
+			"processedSourceBytes": 125072,
+			"sourceRequests": 1
+		},
+		{
+			"id": "100081-citation",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "citation",
+			"clusterId": 100081,
+			"stratum": "scotus",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 8.392417000000023,
+			"sourceResponseBytes": 158,
+			"processedSourceBytes": 0,
+			"sourceRequests": 1
+		},
+		{
+			"id": "100081-exact",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "exact-quote",
+			"clusterId": 100081,
+			"stratum": "scotus",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 10.323582999999985,
+			"sourceResponseBytes": 19057,
+			"processedSourceBytes": 18727,
+			"sourceRequests": 2
+		},
+		{
+			"id": "100081-altered",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "altered-quote",
+			"clusterId": 100081,
+			"stratum": "scotus",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"expected": "not_found",
+			"outcome": "not_found",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 4.678458000000035,
+			"sourceResponseBytes": 165,
+			"processedSourceBytes": 18727,
+			"sourceRequests": 1
+		},
+		{
+			"id": "108428-citation",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "citation",
+			"clusterId": 108428,
+			"stratum": "scotus",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 7.184584000000029,
+			"sourceResponseBytes": 197,
+			"processedSourceBytes": 0,
+			"sourceRequests": 1
+		},
+		{
+			"id": "108428-exact",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "exact-quote",
+			"clusterId": 108428,
+			"stratum": "scotus",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 13.034625000000005,
+			"sourceResponseBytes": 46831,
+			"processedSourceBytes": 46149,
+			"sourceRequests": 2
+		},
+		{
+			"id": "108428-altered",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "altered-quote",
+			"clusterId": 108428,
+			"stratum": "scotus",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"expected": "not_found",
+			"outcome": "not_found",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 27.739582999999982,
+			"sourceResponseBytes": 46428,
+			"processedSourceBytes": 91881,
+			"sourceRequests": 3
+		},
+		{
+			"id": "118076-citation",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "citation",
+			"clusterId": 118076,
+			"stratum": "scotus",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 7.642583000000002,
+			"sourceResponseBytes": 189,
+			"processedSourceBytes": 0,
+			"sourceRequests": 1
+		},
+		{
+			"id": "118076-exact",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "exact-quote",
+			"clusterId": 118076,
+			"stratum": "scotus",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 20.195542000000046,
+			"sourceResponseBytes": 67674,
+			"processedSourceBytes": 66898,
+			"sourceRequests": 3
+		},
+		{
+			"id": "118076-altered",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "altered-quote",
+			"clusterId": 118076,
+			"stratum": "scotus",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"expected": "not_found",
+			"outcome": "not_found",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 18.971708000000035,
+			"sourceResponseBytes": 1033,
+			"processedSourceBytes": 67505,
+			"sourceRequests": 2
+		},
+		{
+			"id": "142898-citation",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "citation",
+			"clusterId": 142898,
+			"stratum": "scotus",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": true
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 7.376125000000002,
+			"sourceResponseBytes": 165,
+			"processedSourceBytes": 0,
+			"sourceRequests": 1
+		},
+		{
+			"id": "142898-exact",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "exact-quote",
+			"clusterId": 142898,
+			"stratum": "scotus",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": true
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 54.335500000000025,
+			"sourceResponseBytes": 142596,
+			"processedSourceBytes": 141200,
+			"sourceRequests": 6
+		},
+		{
+			"id": "142898-altered",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "altered-quote",
+			"clusterId": 142898,
+			"stratum": "scotus",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": true
+			},
+			"expected": "not_found",
+			"outcome": "not_found",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 20.21591699999999,
+			"sourceResponseBytes": 420,
+			"processedSourceBytes": 141200,
+			"sourceRequests": 1
+		},
+		{
+			"id": "334531-citation",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "citation",
+			"clusterId": 334531,
+			"stratum": "federal",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 7.231957999999963,
+			"sourceResponseBytes": 195,
+			"processedSourceBytes": 0,
+			"sourceRequests": 1
+		},
+		{
+			"id": "334531-exact",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "exact-quote",
+			"clusterId": 334531,
+			"stratum": "federal",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 33.739667000000054,
+			"sourceResponseBytes": 96859,
+			"processedSourceBytes": 95482,
+			"sourceRequests": 4
+		},
+		{
+			"id": "334531-altered",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "altered-quote",
+			"clusterId": 334531,
+			"stratum": "federal",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"expected": "not_found",
+			"outcome": "not_found",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 12.495042000000012,
+			"sourceResponseBytes": 325,
+			"processedSourceBytes": 95482,
+			"sourceRequests": 1
+		},
+		{
+			"id": "746481-citation",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "citation",
+			"clusterId": 746481,
+			"stratum": "federal",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 7.027582999999936,
+			"sourceResponseBytes": 177,
+			"processedSourceBytes": 0,
+			"sourceRequests": 1
+		},
+		{
+			"id": "746481-exact",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "exact-quote",
+			"clusterId": 746481,
+			"stratum": "federal",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 10.331375000000094,
+			"sourceResponseBytes": 11149,
+			"processedSourceBytes": 10768,
+			"sourceRequests": 2
+		},
+		{
+			"id": "746481-altered",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "altered-quote",
+			"clusterId": 746481,
+			"stratum": "federal",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"expected": "not_found",
+			"outcome": "not_found",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 4.4069580000000315,
+			"sourceResponseBytes": 184,
+			"processedSourceBytes": 10768,
+			"sourceRequests": 1
+		},
+		{
+			"id": "2341830-citation",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "citation",
+			"clusterId": 2341830,
+			"stratum": "state",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": true
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 5.961165999999935,
+			"sourceResponseBytes": 199,
+			"processedSourceBytes": 0,
+			"sourceRequests": 1
+		},
+		{
+			"id": "2341830-exact",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "exact-quote",
+			"clusterId": 2341830,
+			"stratum": "state",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": true
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 10.90625,
+			"sourceResponseBytes": 46857,
+			"processedSourceBytes": 46332,
+			"sourceRequests": 2
+		},
+		{
+			"id": "2341830-altered",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "altered-quote",
+			"clusterId": 2341830,
+			"stratum": "state",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": false,
+				"over64KiB": true
+			},
+			"expected": "not_found",
+			"outcome": "not_found",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 22.581209000000058,
+			"sourceResponseBytes": 103268,
+			"processedSourceBytes": 148470,
+			"sourceRequests": 3
+		},
+		{
+			"id": "2471989-citation",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "citation",
+			"clusterId": 2471989,
+			"stratum": "federal",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": true
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 8.88454200000001,
+			"sourceResponseBytes": 200,
+			"processedSourceBytes": 0,
+			"sourceRequests": 1
+		},
+		{
+			"id": "2471989-exact",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "exact-quote",
+			"clusterId": 2471989,
+			"stratum": "federal",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": true
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 12.362917000000039,
+			"sourceResponseBytes": 138131,
+			"processedSourceBytes": 137028,
+			"sourceRequests": 2
+		},
+		{
+			"id": "2471989-altered",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "altered-quote",
+			"clusterId": 2471989,
+			"stratum": "federal",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": true
+			},
+			"expected": "not_found",
+			"outcome": "not_found",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 5.691541000000029,
+			"sourceResponseBytes": 201,
+			"processedSourceBytes": 137028,
+			"sourceRequests": 1
+		},
+		{
+			"id": "2477561-citation",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "citation",
+			"clusterId": 2477561,
+			"stratum": "federal",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": true
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 5.983541999999943,
+			"sourceResponseBytes": 194,
+			"processedSourceBytes": 0,
+			"sourceRequests": 1
+		},
+		{
+			"id": "2477561-exact",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "exact-quote",
+			"clusterId": 2477561,
+			"stratum": "federal",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": true
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 12.37991599999998,
+			"sourceResponseBytes": 66688,
+			"processedSourceBytes": 65941,
+			"sourceRequests": 2
+		},
+		{
+			"id": "2477561-altered",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "altered-quote",
+			"clusterId": 2477561,
+			"stratum": "federal",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": true
+			},
+			"expected": "not_found",
+			"outcome": "not_found",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 4.792957999999999,
+			"sourceResponseBytes": 194,
+			"processedSourceBytes": 65941,
+			"sourceRequests": 1
+		},
+		{
+			"id": "2639580-citation",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "citation",
+			"clusterId": 2639580,
+			"stratum": "state",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 5.87724999999989,
+			"sourceResponseBytes": 164,
+			"processedSourceBytes": 0,
+			"sourceRequests": 1
+		},
+		{
+			"id": "2639580-exact",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "exact-quote",
+			"clusterId": 2639580,
+			"stratum": "state",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 10.082832999999937,
+			"sourceResponseBytes": 25160,
+			"processedSourceBytes": 24758,
+			"sourceRequests": 2
+		},
+		{
+			"id": "2639580-altered",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "altered-quote",
+			"clusterId": 2639580,
+			"stratum": "state",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"expected": "not_found",
+			"outcome": "not_found",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 4.2882079999999405,
+			"sourceResponseBytes": 171,
+			"processedSourceBytes": 24758,
+			"sourceRequests": 1
+		},
+		{
+			"id": "4580859-citation",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "citation",
+			"clusterId": 4580859,
+			"stratum": "state",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": true,
+				"over64KiB": false
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 5.784582999999998,
+			"sourceResponseBytes": 222,
+			"processedSourceBytes": 0,
+			"sourceRequests": 1
+		},
+		{
+			"id": "4580859-exact",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "exact-quote",
+			"clusterId": 4580859,
+			"stratum": "state",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": true,
+				"over64KiB": false
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 12.040124999999989,
+			"sourceResponseBytes": 26610,
+			"processedSourceBytes": 25614,
+			"sourceRequests": 2
+		},
+		{
+			"id": "4580859-altered",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "altered-quote",
+			"clusterId": 4580859,
+			"stratum": "state",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": true,
+				"over64KiB": false
+			},
+			"expected": "not_found",
+			"outcome": "not_found",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 4.573499999999967,
+			"sourceResponseBytes": 228,
+			"processedSourceBytes": 25614,
+			"sourceRequests": 1
+		},
+		{
+			"id": "4587778-citation",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "citation",
+			"clusterId": 4587778,
+			"stratum": "state",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": true,
+				"over64KiB": false
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 5.793458999999984,
+			"sourceResponseBytes": 180,
+			"processedSourceBytes": 0,
+			"sourceRequests": 1
+		},
+		{
+			"id": "4587778-exact",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "exact-quote",
+			"clusterId": 4587778,
+			"stratum": "state",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": true,
+				"over64KiB": false
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 10.342458000000079,
+			"sourceResponseBytes": 4873,
+			"processedSourceBytes": 4449,
+			"sourceRequests": 2
+		},
+		{
+			"id": "4587778-altered",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "altered-quote",
+			"clusterId": 4587778,
+			"stratum": "state",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": false,
+				"post2018": true,
+				"over64KiB": false
+			},
+			"expected": "not_found",
+			"outcome": "not_found",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 4.1664160000000265,
+			"sourceResponseBytes": 187,
+			"processedSourceBytes": 4449,
+			"sourceRequests": 1
+		},
+		{
+			"id": "4593909-citation",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "citation",
+			"clusterId": 4593909,
+			"stratum": "federal",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": true,
+				"over64KiB": false
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 5.826291999999967,
+			"sourceResponseBytes": 172,
+			"processedSourceBytes": 0,
+			"sourceRequests": 1
+		},
+		{
+			"id": "4593909-exact",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "exact-quote",
+			"clusterId": 4593909,
+			"stratum": "federal",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": true,
+				"over64KiB": false
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 10.053999999999974,
+			"sourceResponseBytes": 35147,
+			"processedSourceBytes": 33935,
+			"sourceRequests": 2
+		},
+		{
+			"id": "4593909-altered",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "altered-quote",
+			"clusterId": 4593909,
+			"stratum": "federal",
+			"attributes": {
+				"ocr": false,
+				"multipleOpinions": true,
+				"post2018": true,
+				"over64KiB": false
+			},
+			"expected": "not_found",
+			"outcome": "not_found",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 19.931790999999976,
+			"sourceResponseBytes": 30766,
+			"processedSourceBytes": 64035,
+			"sourceRequests": 3
+		},
+		{
+			"id": "5330283-citation",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "citation",
+			"clusterId": 5330283,
+			"stratum": "state",
+			"attributes": {
+				"ocr": true,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 7.299417000000062,
+			"sourceResponseBytes": 165,
+			"processedSourceBytes": 0,
+			"sourceRequests": 1
+		},
+		{
+			"id": "5330283-exact",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "exact-quote",
+			"clusterId": 5330283,
+			"stratum": "state",
+			"attributes": {
+				"ocr": true,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 16.147082999999952,
+			"sourceResponseBytes": 5929,
+			"processedSourceBytes": 5637,
+			"sourceRequests": 2
+		},
+		{
+			"id": "5330283-altered",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "altered-quote",
+			"clusterId": 5330283,
+			"stratum": "state",
+			"attributes": {
+				"ocr": true,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"expected": "not_found",
+			"outcome": "not_found",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 4.640416999999957,
+			"sourceResponseBytes": 173,
+			"processedSourceBytes": 5637,
+			"sourceRequests": 1
+		},
+		{
+			"id": "5788242-citation",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "citation",
+			"clusterId": 5788242,
+			"stratum": "state",
+			"attributes": {
+				"ocr": true,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 6.189750000000004,
+			"sourceResponseBytes": 163,
+			"processedSourceBytes": 0,
+			"sourceRequests": 1
+		},
+		{
+			"id": "5788242-exact",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "exact-quote",
+			"clusterId": 5788242,
+			"stratum": "state",
+			"attributes": {
+				"ocr": true,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 10.167957999999999,
+			"sourceResponseBytes": 8404,
+			"processedSourceBytes": 8105,
+			"sourceRequests": 2
+		},
+		{
+			"id": "5788242-altered",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "altered-quote",
+			"clusterId": 5788242,
+			"stratum": "state",
+			"attributes": {
+				"ocr": true,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": false
+			},
+			"expected": "not_found",
+			"outcome": "not_found",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 4.380084000000011,
+			"sourceResponseBytes": 169,
+			"processedSourceBytes": 8105,
+			"sourceRequests": 1
+		},
+		{
+			"id": "6244244-citation",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "citation",
+			"clusterId": 6244244,
+			"stratum": "state",
+			"attributes": {
+				"ocr": true,
+				"multipleOpinions": true,
+				"post2018": true,
+				"over64KiB": false
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 5.929000000000087,
+			"sourceResponseBytes": 180,
+			"processedSourceBytes": 0,
+			"sourceRequests": 1
+		},
+		{
+			"id": "6244244-exact",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "exact-quote",
+			"clusterId": 6244244,
+			"stratum": "state",
+			"attributes": {
+				"ocr": true,
+				"multipleOpinions": true,
+				"post2018": true,
+				"over64KiB": false
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 22.035792000000015,
+			"sourceResponseBytes": 15851,
+			"processedSourceBytes": 15327,
+			"sourceRequests": 3
+		},
+		{
+			"id": "6244244-altered",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "altered-quote",
+			"clusterId": 6244244,
+			"stratum": "state",
+			"attributes": {
+				"ocr": true,
+				"multipleOpinions": true,
+				"post2018": true,
+				"over64KiB": false
+			},
+			"expected": "not_found",
+			"outcome": "not_found",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 6.691166000000067,
+			"sourceResponseBytes": 248,
+			"processedSourceBytes": 15327,
+			"sourceRequests": 1
+		},
+		{
+			"id": "8728443-citation",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "citation",
+			"clusterId": 8728443,
+			"stratum": "federal",
+			"attributes": {
+				"ocr": true,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": true
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 5.599000000000046,
+			"sourceResponseBytes": 201,
+			"processedSourceBytes": 0,
+			"sourceRequests": 1
+		},
+		{
+			"id": "8728443-exact",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "exact-quote",
+			"clusterId": 8728443,
+			"stratum": "federal",
+			"attributes": {
+				"ocr": true,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": true
+			},
+			"expected": "verified",
+			"outcome": "verified",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 11.346625000000017,
+			"sourceResponseBytes": 68074,
+			"processedSourceBytes": 67623,
+			"sourceRequests": 2
+		},
+		{
+			"id": "8728443-altered",
+			"kind": "real-source",
+			"split": "holdout",
+			"category": "altered-quote",
+			"clusterId": 8728443,
+			"stratum": "federal",
+			"attributes": {
+				"ocr": true,
+				"multipleOpinions": false,
+				"post2018": false,
+				"over64KiB": true
+			},
+			"expected": "not_found",
+			"outcome": "not_found",
+			"reason": null,
+			"passed": true,
+			"evidenceCorrect": true,
+			"elapsedMs": 5.110500000000002,
+			"sourceResponseBytes": 202,
+			"processedSourceBytes": 67623,
+			"sourceRequests": 1
+		}
+	],
+	"summary": {
+		"total": 60,
+		"passed": 60,
+		"verified": 40,
+		"notFound": 20,
+		"indeterminate": 0,
+		"errors": 0,
+		"classCounts": {
+			"citation": {
+				"total": 20,
+				"passed": 20,
+				"verified": 20,
+				"notFound": 0,
+				"indeterminate": 0,
+				"errors": 0
+			},
+			"exact-quote": {
+				"total": 20,
+				"passed": 20,
+				"verified": 20,
+				"notFound": 0,
+				"indeterminate": 0,
+				"errors": 0
+			},
+			"altered-quote": {
+				"total": 20,
+				"passed": 20,
+				"verified": 0,
+				"notFound": 20,
+				"indeterminate": 0,
+				"errors": 0
+			}
+		},
+		"synthetic": {
+			"total": 0,
+			"passed": 0,
+			"verified": 0,
+			"notFound": 0,
+			"indeterminate": 0,
+			"errors": 0
+		},
+		"falsePositiveIds": [],
+		"falseDefinitiveNegativeIds": [],
+		"strata": {
+			"scotus": {
+				"total": 18,
+				"passed": 18,
+				"verified": 12,
+				"notFound": 6,
+				"indeterminate": 0,
+				"errors": 0
+			},
+			"federal": {
+				"total": 21,
+				"passed": 21,
+				"verified": 14,
+				"notFound": 7,
+				"indeterminate": 0,
+				"errors": 0
+			},
+			"state": {
+				"total": 21,
+				"passed": 21,
+				"verified": 14,
+				"notFound": 7,
+				"indeterminate": 0,
+				"errors": 0
+			}
+		},
+		"attributes": {
+			"ocr": {
+				"total": 12,
+				"passed": 12,
+				"verified": 8,
+				"notFound": 4,
+				"indeterminate": 0,
+				"errors": 0
+			},
+			"multipleOpinions": {
+				"total": 27,
+				"passed": 27,
+				"verified": 18,
+				"notFound": 9,
+				"indeterminate": 0,
+				"errors": 0
+			},
+			"post2018": {
+				"total": 12,
+				"passed": 12,
+				"verified": 8,
+				"notFound": 4,
+				"indeterminate": 0,
+				"errors": 0
+			},
+			"over64KiB": {
+				"total": 15,
+				"passed": 15,
+				"verified": 10,
+				"notFound": 5,
+				"indeterminate": 0,
+				"errors": 0
+			}
+		},
+		"abstentionIds": [],
+		"failureIds": [],
+		"maxElapsedMs": 73.63225
+	},
+	"gate": {
+		"minimumPerClass": 19,
+		"passed": true,
+		"fullCorpusGate": false,
+		"liveQualificationObserved": false
+	},
+	"peakRssBytes": 225427456,
+	"finishedAt": "2026-09-12T21:11:00.627Z"
+}

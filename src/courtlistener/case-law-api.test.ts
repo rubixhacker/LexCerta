@@ -68,7 +68,11 @@ describe("CourtListener case-law REST adapter", () => {
 				plainText: "Fallback source",
 			},
 		});
-		expect(given.requests.map((request) => request.url)).toEqual([CLUSTER_URL, OPINION_URL]);
+		expect(given.requests.map((request) => request.url)).toEqual([
+			`${CLUSTER_URL}?fields=id,absolute_url,sub_opinions`,
+			`${OPINION_URL}?fields=id,cluster,html_with_citations,html,plain_text`,
+		]);
+		expect(given.requests.every((request) => request.redirect === "manual")).toBe(true);
 		expect(given.requests.map((request) => request.headers.get("authorization"))).toEqual([
 			"Token fixture-token",
 			"Token fixture-token",
@@ -142,7 +146,7 @@ describe("CourtListener case-law REST adapter", () => {
 			transport: cluster.transport,
 		}).getCluster(123);
 		const opinionResult = await createCourtListenerCaseLawApi({
-			maxSourceCharacters: 4,
+			maxSourceBytes: 4,
 			token: "fixture-token",
 			transport: opinion.transport,
 		}).getOpinion(OPINION_URL);

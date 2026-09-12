@@ -27,9 +27,11 @@ export function retryAfterSeconds(value: string | null, now: () => Date): number
 	return seconds <= MAX_RETRY_AFTER_SECONDS ? seconds : undefined;
 }
 
-export function signalFor(timeoutMs: number, signal: AbortSignal | undefined): AbortSignal {
-	const timeout = AbortSignal.timeout(timeoutMs);
-	return signal === undefined ? timeout : AbortSignal.any([signal, timeout]);
+export function signalFor(timeoutMs: number, ...signals: (AbortSignal | undefined)[]): AbortSignal {
+	return AbortSignal.any([
+		AbortSignal.timeout(timeoutMs),
+		...signals.filter((signal) => signal !== undefined),
+	]);
 }
 
 export async function send(

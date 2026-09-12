@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { CONTRACT_VERSION, parseCitation } from "./citation.js";
+import { EvidenceRequest, EvidenceRequestFailure } from "./evidence-request.js";
 
 export { CONTRACT_VERSION } from "./citation.js";
 
@@ -202,6 +203,29 @@ function evidenceProvenance(
 export async function verifyCitation(
 	input: VerifyCitationInput,
 	gateway: CitationVerificationGateway,
+	request?: EvidenceRequest,
+): Promise<VerifyCitationResult> {
+	const scope = request ?? new EvidenceRequest();
+	try {
+		return await verifyWithinRequest(input, gateway, scope);
+	} catch (error) {
+		if (error instanceof EvidenceRequestFailure)
+			return {
+				outcome: "indeterminate",
+				contractVersion: CONTRACT_VERSION,
+				reason: error.reason,
+				retry: { action: "retry_later" },
+			};
+		throw error;
+	} finally {
+		if (request === undefined) scope.close();
+	}
+}
+
+async function verifyWithinRequest(
+	input: VerifyCitationInput,
+	gateway: CitationVerificationGateway,
+	request: EvidenceRequest,
 ): Promise<VerifyCitationResult> {
 	const parsed = parseCitation(input.citation);
 	if (parsed.outcome === "unrecognized") {
@@ -213,12 +237,15 @@ export async function verifyCitation(
 		};
 	}
 
-	const observation = await gateway.lookup({
-		volume: parsed.citation.volume,
-		reporter: parsed.citation.reporter,
-		page: parsed.citation.page,
-		normalizedCitation: parsed.citation.normalized,
-	});
+	const observation = await request.run(() =>
+		gateway.lookup({
+			volume: parsed.citation.volume,
+			reporter: parsed.citation.reporter,
+			page: parsed.citation.page,
+			normalizedCitation: parsed.citation.normalized,
+		}),
+	);
+	request.checkpoint();
 
 	switch (observation.kind) {
 		case "verified":

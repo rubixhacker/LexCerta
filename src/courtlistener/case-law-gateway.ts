@@ -4,8 +4,9 @@ import type { CourtListenerApi } from "./api.js";
 import { requestCaseLaw } from "./case-law-admission.js";
 import type { CourtListenerCaseLawApi } from "./case-law-api.js";
 import { readCachedCaseLawOpinion } from "./case-law-opinion-source.js";
-import type { CourtListenerCoordinatorRpc } from "./coordinator.js";
+import type { CourtListenerCoordinatorRpc } from "./coordinator-contract.js";
 import type { ExecutionFactObserver } from "../telemetry/execution-facts.js";
+import type { EvidenceRequest } from "../verification/evidence-request.js";
 
 type QuoteFailureReason =
 	| "incomplete"
@@ -16,6 +17,7 @@ type QuoteFailureReason =
 	| "circuit_open";
 
 export type CourtListenerCaseLawGatewayOptions = {
+	readonly request?: EvidenceRequest;
 	readonly api: CourtListenerCaseLawApi;
 	readonly coordinator: CourtListenerCoordinatorRpc;
 	readonly executionFacts?: ExecutionFactObserver;
@@ -59,6 +61,7 @@ export function createCourtListenerCaseLawGateway(
 		},
 		readOpinion: (input) =>
 			readCachedCaseLawOpinion(input, {
+				...(options.request === undefined ? {} : { request: options.request }),
 				...(options.executionFacts === undefined ? {} : { executionFacts: options.executionFacts }),
 				fetch: async (opinionUrl) => {
 					const requested = await requestCaseLaw(options, () => options.api.getOpinion(opinionUrl));

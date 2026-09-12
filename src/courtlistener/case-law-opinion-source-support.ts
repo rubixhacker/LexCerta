@@ -1,4 +1,5 @@
 import type { OpinionSourceReadResult, OpinionSourceStore } from "../cache/opinion-source-store.js";
+import type { EvidenceRequest } from "../verification/evidence-request.js";
 import {
 	type OpinionSourceCacheDecision,
 	type OpinionSourceProvenance,
@@ -34,6 +35,7 @@ export type OpinionResult =
 	  };
 
 export type OpinionCacheReadOptions = {
+	readonly request?: EvidenceRequest;
 	readonly executionFacts?: ExecutionFactObserver;
 	readonly now: () => Date;
 	readonly store: OpinionSourceStore;
@@ -58,6 +60,7 @@ export async function cached(
 	options: OpinionCacheReadOptions,
 	provenance: OpinionSourceProvenance,
 ): Promise<Cached> {
+	options.request?.checkpoint();
 	let read: OpinionSourceReadResult | null;
 	try {
 		read = await options.store.read({ provenance });
@@ -65,6 +68,7 @@ export async function cached(
 		if (error instanceof Error) return { kind: "failure" };
 		throw error;
 	}
+	options.request?.checkpoint();
 	if (read === null) {
 		const result: Cached = {
 			kind: "decided",
@@ -92,10 +96,14 @@ export async function waitForWinner(
 	const deadline = new Date(expiresAt).getTime();
 	let delay = INITIAL_WAIT_MS;
 	while (Number.isFinite(deadline)) {
+		options.request?.checkpoint();
 		const before = options.now().getTime();
 		const remaining = deadline - before;
 		if (remaining <= 0) break;
-		await (options.waitForFill ?? wait)(Math.min(delay, remaining));
+		const duration = Math.min(delay, remaining);
+		const pause = () =>
+			(options.waitForFill ?? ((ms: number) => options.request?.wait(ms) ?? wait(ms)))(duration);
+		await (options.request?.run(pause) ?? pause());
 		const result = await cached(options, provenance);
 		if (result.kind === "failure") return result;
 		if (

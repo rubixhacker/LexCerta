@@ -8,14 +8,14 @@ import {
 import { registerParseCitationTool } from "./verification/citation.js";
 import { registerVerificationTools } from "./verification/tools.js";
 import type { CitationVerificationGateway } from "./verification/verify-citation.js";
-import type { QuoteVerificationGateway } from "./verification/verify-quote.js";
+import type { QuoteVerificationGateway, QuoteSearchOptions } from "./verification/verify-quote.js";
 
 const PROTOCOL_VERSION = "2026-07-28";
 const CACHE_TTL_MILLISECONDS = 5 * 60 * 1000;
 
 preloadSchemas();
 
-type VerificationGateways = {
+type VerificationGateways = Pick<QuoteSearchOptions, "request" | "normalize"> & {
 	readonly citation: CitationVerificationGateway;
 	readonly quote: QuoteVerificationGateway;
 };
@@ -41,7 +41,7 @@ function createServer(gateways: VerificationGateways): McpServer {
 		},
 	);
 	registerParseCitationTool(server);
-	registerVerificationTools(server, gateways.citation, gateways.quote);
+	registerVerificationTools(server, gateways.citation, gateways.quote, gateways);
 	return server;
 }
 

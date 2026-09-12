@@ -13,10 +13,19 @@ export async function sendCourtListenerRequest(
 ): Promise<Response | CourtListenerAttemptFailure> {
 	const startedAt = timing?.monotonicNow();
 	try {
-		return await transport(request);
+		return await abortable(async () => {
+			const response = await transport(request);
+			if (request.signal.aborted) {
+				discardResponse(response);
+				throw request.signal.reason;
+			}
+			return response;
+		}, request.signal);
 	} catch {
 		return request.signal.aborted ? "timeout" : "transport";
 	} finally {
 		if (startedAt !== undefined) timing?.recordDuration(timing.monotonicNow() - startedAt);
 	}
 }
+import { abortable } from "../verification/evidence-request.js";
+import { discardResponse } from "./response-body.js";

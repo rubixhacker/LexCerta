@@ -7,7 +7,7 @@ import type { CourtListenerApi } from "./api.js";
 import type { BudgetDecision } from "./budget-contract.js";
 import type { CourtListenerOutcome } from "./budget.js";
 import type { CourtListenerCaseLawOutcome } from "./case-law-api.js";
-import type { CourtListenerCoordinatorRpc } from "./coordinator.js";
+import type { CourtListenerCoordinatorRpc } from "./coordinator-contract.js";
 import { synchronizeCourtListenerQuota } from "./quota-sync.js";
 
 export type CaseLawAdmissionOptions = {

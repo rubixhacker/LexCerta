@@ -1,6 +1,8 @@
 import { z } from "zod";
+import type { EvidenceRequest } from "../verification/evidence-request.js";
 import { type CourtListenerAttemptTiming, sendCourtListenerRequest } from "./attempt-timing.js";
-import { boundedJsonBody } from "./response-body.js";
+import { signalFor } from "./case-law-request.js";
+import { boundedJsonBody, discardResponse } from "./response-body.js";
 
 const COURTLISTENER_ORIGIN = "https://www.courtlistener.com";
 const API_ROOT = `${COURTLISTENER_ORIGIN}/api/rest/v4/`;
@@ -94,6 +96,7 @@ export type CourtListenerApi = {
 };
 
 export type CourtListenerApiOptions = {
+	readonly request?: EvidenceRequest;
 	readonly attemptTiming?: CourtListenerAttemptTiming;
 	readonly token: string;
 	readonly transport: CourtListenerTransport;
@@ -156,11 +159,6 @@ function rateLimited(
 		: { kind: "rate_limited", retryAfterSeconds: retryAfter };
 }
 
-function signalFor(timeoutMs: number, signal: AbortSignal | undefined): AbortSignal {
-	const timeout = AbortSignal.timeout(timeoutMs);
-	return signal === undefined ? timeout : AbortSignal.any([signal, timeout]);
-}
-
 function citationOutcome(
 	input: CitationLookupInput,
 	response: z.infer<typeof citationItemSchema>[],
@@ -214,6 +212,7 @@ export function createCourtListenerApi(options: CourtListenerApiOptions): CourtL
 	const authorization = `Token ${options.token}`;
 	return {
 		async lookupCitation(input, signal) {
+			const requestSignal = signalFor(timeoutMs, signal, options.request?.signal);
 			const form = new URLSearchParams({ text: input.normalized });
 			const response = await sendCourtListenerRequest(
 				options.transport,
@@ -225,36 +224,50 @@ export function createCourtListenerApi(options: CourtListenerApiOptions): CourtL
 						"content-type": "application/x-www-form-urlencoded;charset=UTF-8",
 					},
 					body: form,
-					signal: signalFor(timeoutMs, signal),
+					redirect: "manual",
+					signal: requestSignal,
 				}),
 				options.attemptTiming,
 			);
 			if (typeof response === "string") return { kind: "unavailable", failure: response };
+			if (!response.ok) discardResponse(response);
 			if (response.status >= 500 && response.status <= 599) {
 				return { kind: "unavailable", failure: "server", status: response.status };
 			}
 			if (response.status === 429) return rateLimited(response, now);
 			if (!response.ok) return { kind: "malformed_response" };
-			const parsed = z
-				.array(citationItemSchema)
-				.max(1)
-				.safeParse(await boundedJsonBody(response));
+			const body = await boundedJsonBody(response, undefined, {
+				signal: requestSignal,
+				...(options.request === undefined ? {} : { request: options.request }),
+			});
+			if (requestSignal.aborted && body === undefined)
+				return { kind: "unavailable", failure: "timeout" };
+			const parsed = z.array(citationItemSchema).max(1).safeParse(body);
 			return parsed.success ? citationOutcome(input, parsed.data) : { kind: "malformed_response" };
 		},
 		async getUsage(signal) {
+			const requestSignal = signalFor(timeoutMs, signal, options.request?.signal);
 			const response = await sendCourtListenerRequest(
 				options.transport,
 				new Request(`${API_ROOT}api-usage/`, {
 					method: "GET",
 					headers: { accept: "application/json", authorization },
-					signal: signalFor(timeoutMs, signal),
+					redirect: "manual",
+					signal: requestSignal,
 				}),
 				options.attemptTiming,
 			);
-			if (typeof response === "string" || response.status >= 500) return { kind: "unavailable" };
+			if (typeof response === "string") return { kind: "unavailable" };
+			if (!response.ok) discardResponse(response);
+			if (response.status >= 500) return { kind: "unavailable" };
 			if (response.status === 429) return rateLimited(response, now);
 			if (!response.ok) return { kind: "malformed_response" };
-			const parsed = usageResponseSchema.safeParse(await boundedJsonBody(response));
+			const parsed = usageResponseSchema.safeParse(
+				await boundedJsonBody(response, undefined, {
+					signal: requestSignal,
+					...(options.request === undefined ? {} : { request: options.request }),
+				}),
+			);
 			return parsed.success
 				? { kind: "usage", currentUsage: parsed.data.current_usage.map(usageRow) }
 				: { kind: "malformed_response" };

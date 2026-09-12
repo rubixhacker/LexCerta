@@ -6,7 +6,7 @@ import {
 import type * as Verification from "../verification/verify-citation.js";
 import type { CitationLookupOutcome, CourtListenerApi } from "./api.js";
 import type { BudgetDecision, CourtListenerOutcome } from "./budget.js";
-import type { CourtListenerCoordinatorRpc } from "./coordinator.js";
+import type { CourtListenerCoordinatorRpc } from "./coordinator-contract.js";
 import { synchronizeCourtListenerQuota } from "./quota-sync.js";
 
 const FALLBACK_RETRY_SECONDS = 15 * 60;
