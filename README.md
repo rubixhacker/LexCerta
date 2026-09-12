@@ -30,6 +30,8 @@ npm run check
 
 The check command runs formatting, lint, strict TypeScript checks, unit and local workerd integration tests, qualification-script tests, telemetry/admin tests, and emitted Worker bundle tests. Fixture-backed integrations exercise real local D1, R2, and Durable Objects without live CourtListener traffic. Passing these checks does not qualify a Cloud Run artifact or prove production behavior.
 
+The replacement PostgreSQL/GCS adapters have a separate real-PostgreSQL suite: see [storage qualification](operations/postgres-storage.md) for the disposable fixture and `npm run test:postgres`. CI runs both suites.
+
 For focused quote regressions:
 
 ```sh
@@ -42,7 +44,8 @@ npx vitest run test/issue-7-quote-hardening.integration.test.ts src/verification
 
 - `src/verification/`: parsing, citation/quote contracts, matching, source-cache policies, and MCP tool registration in `tools.ts`.
 - `src/courtlistener/`: bounded upstream requests, quotas, leases, circuits, and source adapters.
-- `src/cache/`: D1/R2 source persistence.
+- `src/cache/`: shared source contracts and retained D1/R2 reference persistence.
+- `src/postgres/`, `database/migrations/`: replacement PostgreSQL authority, immutable GCS source storage and retention.
 - `src/auth/`, `src/admission/`, `src/admin/`: key authentication, per-key limits, and isolated administration.
 - `src/telemetry/`, `src/retention/`: sanitized operational facts and record expiry.
 - `src/worker.ts`, `src/worker-request.ts`, `src/mcp.ts`: current Worker transport and dispatch.
@@ -53,6 +56,7 @@ The unused Next.js/Express implementation, legacy SDK transports, fuzzy matcher,
 
 - [PRD: Ship stateless LexCerta on Cloud Run](https://github.com/rubixhacker/LexCerta/issues/1): evidence contract and launch gates. Its original Worker delivery plan is superseded by the runtime decision below.
 - [Runtime qualification](operations/worker-runtime-qualification.md): recorded failed Worker memory gate and selected Cloud Run fallback. Linked `.omo/evidence/` artifacts are not included in this checkout, so their measurements are historical records rather than independently reproduced evidence here.
+- [Product assessment](docs/product-assessment.md): current strengths, limits and unresolved product evidence.
 - [Observability and retention](operations/observability.md): operational privacy and lifecycle rules.
 
 The [MVP route](docs/mvp-route.md) and its linked decision resolutions govern current implementation. The `.planning/` archive describes the earlier Vercel/Supabase/Stripe proposal and has no authority over current scope or behavior. Paid onboarding requires a written Free Law Project commercial arrangement.

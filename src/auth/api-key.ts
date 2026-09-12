@@ -71,51 +71,76 @@ export function parseBearerCredential(value: string | null): BearerCredential {
 	return { kind: "credential", token };
 }
 
+export type ApiKeyVerification = {
+	readonly publicId: string;
+	readonly environment: KeyEnvironment;
+	readonly digest: string;
+};
+
+export async function prepareApiKeyVerification(
+	authorization: string | null,
+	pepper: string,
+	environment: string,
+): Promise<ApiKeyVerification | null> {
+	const parsedEnvironment = KEY_ENVIRONMENT_SCHEMA.safeParse(environment);
+	if (!parsedEnvironment.success) throw new AuthInfrastructureError("key environment unavailable");
+	const credential = parseBearerCredential(authorization);
+	if (credential.kind !== "credential") return null;
+	const parts = API_KEY_TOKEN_PATTERN.exec(credential.token);
+	const expected = parsedEnvironment.data === "production" ? "live" : "test";
+	if (parts === null || parts[1] !== expected || parts[2] === undefined) return null;
+	return {
+		publicId: parts[2],
+		environment: parsedEnvironment.data,
+		digest: await hmacSha256Hex(pepper, credential.token),
+	};
+}
+
+export function authenticateApiKeyRecord(
+	rawRecord: unknown,
+	verification: ApiKeyVerification,
+	now: Date,
+): AuthenticationResult {
+	const record = API_KEY_ROW_SCHEMA.safeParse(rawRecord);
+	if (rawRecord !== null && !record.success) {
+		throw new AuthInfrastructureError("api key record unavailable", { cause: record.error });
+	}
+	const expectedHash = record.success ? record.data.hmac_sha256_hex : ZERO_SHA256_HEX;
+	const hashMatches = timingSafeHexEqual(verification.digest, expectedHash);
+	if (
+		!record.success ||
+		record.data.public_id !== verification.publicId ||
+		record.data.environment !== verification.environment ||
+		!hashMatches ||
+		!isUsableRecord(record.data, now)
+	) {
+		return { kind: "unauthorized" };
+	}
+	return {
+		kind: "authenticated",
+		publicId: record.data.public_id,
+		limits: { minute: record.data.minute_limit, day: record.data.day_limit },
+		limitsVersion: record.data.limits_version,
+	};
+}
+
 export async function authenticateRequest(
 	request: Request,
 	env: AuthEnvironment,
 	now = new Date(),
 ): Promise<AuthenticationResult> {
 	try {
-		const parsedKeyEnvironment = KEY_ENVIRONMENT_SCHEMA.safeParse(env.KEY_ENVIRONMENT);
-		if (!parsedKeyEnvironment.success) return { kind: "unavailable" };
-		const keyEnvironment = parsedKeyEnvironment.data;
-
-		const credential = parseBearerCredential(request.headers.get("authorization"));
-		if (credential.kind !== "credential") return { kind: "unauthorized" };
-
-		const tokenParts = API_KEY_TOKEN_PATTERN.exec(credential.token);
-		if (tokenParts === null) return { kind: "unauthorized" };
-		const tokenEnvironment = tokenParts[1];
-		const publicId = tokenParts[2];
-		const expectedTokenEnvironment = keyEnvironment === "production" ? "live" : "test";
-		if (tokenEnvironment !== expectedTokenEnvironment || publicId === undefined) {
-			return { kind: "unauthorized" };
-		}
-
-		const digest = await hmacSha256Hex(env.API_KEY_PEPPER, credential.token);
-		const rawRecord = await readApiKeyRecord(env.DB, publicId);
-		const record = API_KEY_ROW_SCHEMA.safeParse(rawRecord);
-		if (rawRecord !== null && !record.success) {
-			throw new AuthInfrastructureError("api key record unavailable", { cause: record.error });
-		}
-		const expectedHash = record.success ? record.data.hmac_sha256_hex : ZERO_SHA256_HEX;
-		const hashMatches = timingSafeHexEqual(digest, expectedHash);
-		if (
-			!record.success ||
-			record.data.environment !== keyEnvironment ||
-			!hashMatches ||
-			!isUsableRecord(record.data, now)
-		) {
-			return { kind: "unauthorized" };
-		}
-
-		return {
-			kind: "authenticated",
-			publicId: record.data.public_id,
-			limits: { minute: record.data.minute_limit, day: record.data.day_limit },
-			limitsVersion: record.data.limits_version,
-		};
+		const verification = await prepareApiKeyVerification(
+			request.headers.get("authorization"),
+			env.API_KEY_PEPPER,
+			env.KEY_ENVIRONMENT,
+		);
+		if (verification === null) return { kind: "unauthorized" };
+		return authenticateApiKeyRecord(
+			await readApiKeyRecord(env.DB, verification.publicId),
+			verification,
+			now,
+		);
 	} catch (error) {
 		if (error instanceof AuthInfrastructureError) return { kind: "unavailable" };
 		throw error;

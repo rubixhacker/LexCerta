@@ -19,6 +19,18 @@ jobs:
     name: Node 24 behavior and static checks
     runs-on: ubuntu-24.04
     timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:18@sha256:4ef4dbc939d61acea57712655ddb4b4ab27419c913f94cca0cd57cb3ea3c2280
+        env:
+          POSTGRES_PASSWORD: lexcerta-local-fixture
+          POSTGRES_DB: lexcerta_fixture
+        ports: [5432:5432]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lexcerta_fixture"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
@@ -27,4 +39,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run check
+      - run: npm run test:postgres
+        env:
+          LEXCERTA_TEST_DATABASE_URL: postgresql://postgres:lexcerta-local-fixture@127.0.0.1:5432/lexcerta_fixture
       - run: npm audit --audit-level=low
