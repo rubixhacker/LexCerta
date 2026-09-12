@@ -22,6 +22,7 @@ function rebuiltRequest(request: Request, bytes: Uint8Array): Request {
 		method: request.method,
 		headers: new Headers(request.headers),
 		body: bytes,
+		signal: request.signal,
 	});
 }
 

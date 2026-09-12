@@ -1,0 +1,983 @@
+{
+	"runtime": "v24.21.0",
+	"client": "@modelcontextprotocol/client@2.0.0",
+	"transport": "Node HTTP over loopback to the emitted Worker bundle",
+	"frames": [
+		{
+			"request": {
+				"method": "POST",
+				"headers": {
+					"accept": "application/json, text/event-stream",
+					"content-type": "application/json",
+					"mcp-protocol-version": "2026-07-28",
+					"mcp-method": "server/discover"
+				},
+				"body": {
+					"jsonrpc": "2.0",
+					"id": "server-discover-probe-1",
+					"method": "server/discover",
+					"params": {
+						"_meta": {
+							"io.modelcontextprotocol/protocolVersion": "2026-07-28",
+							"io.modelcontextprotocol/clientInfo": {
+								"name": "lexcerta-pilot",
+								"version": "0.1.0"
+							},
+							"io.modelcontextprotocol/clientCapabilities": {}
+						}
+					}
+				}
+			},
+			"response": {
+				"status": 200,
+				"headers": {
+					"content-type": "application/json"
+				},
+				"body": {
+					"result": {
+						"supportedVersions": ["2026-07-28"],
+						"capabilities": {
+							"tools": {
+								"listChanged": true
+							}
+						},
+						"instructions": "Use the read-only citation and quote evidence tools. Structured results are contract-versioned and source-scoped.",
+						"resultType": "complete",
+						"ttlMs": 300000,
+						"cacheScope": "public",
+						"_meta": {
+							"io.modelcontextprotocol/serverInfo": {
+								"name": "lexcerta",
+								"version": "1.0.0"
+							}
+						}
+					},
+					"jsonrpc": "2.0",
+					"id": "server-discover-probe-1"
+				}
+			}
+		},
+		{
+			"request": {
+				"method": "POST",
+				"headers": {
+					"accept": "application/json, text/event-stream",
+					"content-type": "application/json",
+					"mcp-protocol-version": "2026-07-28",
+					"mcp-method": "tools/list"
+				},
+				"body": {
+					"method": "tools/list",
+					"jsonrpc": "2.0",
+					"id": 0,
+					"params": {
+						"_meta": {
+							"io.modelcontextprotocol/protocolVersion": "2026-07-28",
+							"io.modelcontextprotocol/clientInfo": {
+								"name": "lexcerta-pilot",
+								"version": "0.1.0"
+							},
+							"io.modelcontextprotocol/clientCapabilities": {}
+						}
+					}
+				}
+			},
+			"response": {
+				"status": 200,
+				"headers": {
+					"content-type": "application/json"
+				},
+				"body": {
+					"result": {
+						"tools": [
+							{
+								"name": "parse_citation",
+								"title": "Parse citation",
+								"description": "Recognize a supported case-law citation in volume reporter page form. Preserves a trailing pin cite or parenthetical without interpreting it.",
+								"inputSchema": {
+									"type": "object",
+									"$schema": "https://json-schema.org/draft/2020-12/schema",
+									"properties": {
+										"citation": {
+											"type": "string",
+											"minLength": 1,
+											"maxLength": 256,
+											"description": "Case-law citation in volume reporter page form, optionally followed by a pin cite."
+										}
+									},
+									"required": ["citation"],
+									"additionalProperties": false
+								},
+								"annotations": {
+									"title": "Parse citation",
+									"readOnlyHint": true,
+									"destructiveHint": false,
+									"idempotentHint": true,
+									"openWorldHint": false
+								},
+								"outputSchema": {
+									"type": "object",
+									"$schema": "https://json-schema.org/draft/2020-12/schema",
+									"oneOf": [
+										{
+											"type": "object",
+											"properties": {
+												"outcome": {
+													"type": "string",
+													"const": "parsed"
+												},
+												"contractVersion": {
+													"type": "string",
+													"const": "1"
+												},
+												"citation": {
+													"type": "object",
+													"properties": {
+														"volume": {
+															"type": "integer",
+															"exclusiveMinimum": 0,
+															"maximum": 9007199254740991
+														},
+														"reporter": {
+															"type": "string",
+															"minLength": 1
+														},
+														"page": {
+															"type": "integer",
+															"exclusiveMinimum": 0,
+															"maximum": 9007199254740991
+														},
+														"normalized": {
+															"type": "string",
+															"minLength": 1
+														},
+														"suffix": {
+															"type": "string"
+														}
+													},
+													"required": ["volume", "reporter", "page", "normalized", "suffix"],
+													"additionalProperties": false
+												}
+											},
+											"required": ["outcome", "contractVersion", "citation"],
+											"additionalProperties": false
+										},
+										{
+											"type": "object",
+											"properties": {
+												"outcome": {
+													"type": "string",
+													"const": "unrecognized"
+												},
+												"contractVersion": {
+													"type": "string",
+													"const": "1"
+												}
+											},
+											"required": ["outcome", "contractVersion"],
+											"additionalProperties": false
+										}
+									]
+								}
+							},
+							{
+								"name": "verify_citation",
+								"title": "Verify citation",
+								"description": "Look up a supported case-law citation in CourtListener. A match establishes source existence, not case-name accuracy, pin cites, legal support, or good-law status. A miss is limited to CourtListener coverage.",
+								"inputSchema": {
+									"type": "object",
+									"$schema": "https://json-schema.org/draft/2020-12/schema",
+									"properties": {
+										"citation": {
+											"type": "string",
+											"minLength": 1,
+											"maxLength": 256,
+											"description": "Supported case-law citation in volume reporter page form."
+										}
+									},
+									"required": ["citation"],
+									"additionalProperties": false
+								},
+								"annotations": {
+									"title": "Verify citation",
+									"readOnlyHint": true,
+									"destructiveHint": false,
+									"idempotentHint": true,
+									"openWorldHint": true
+								},
+								"outputSchema": {
+									"type": "object",
+									"$schema": "https://json-schema.org/draft/2020-12/schema",
+									"anyOf": [
+										{
+											"type": "object",
+											"properties": {
+												"outcome": {
+													"type": "string",
+													"const": "verified"
+												},
+												"contractVersion": {
+													"type": "string",
+													"const": "1"
+												},
+												"evidence": {
+													"type": "object",
+													"properties": {
+														"source": {
+															"type": "string",
+															"const": "courtlistener"
+														},
+														"normalizedCitation": {
+															"type": "string",
+															"minLength": 1
+														},
+														"retrievedAt": {
+															"type": "string",
+															"format": "date-time",
+															"pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+														},
+														"freshness": {
+															"type": "string",
+															"enum": ["fresh", "stale"]
+														},
+														"cluster": {
+															"type": "object",
+															"properties": {
+																"id": {
+																	"type": "integer",
+																	"exclusiveMinimum": 0,
+																	"maximum": 9007199254740991
+																},
+																"canonicalUrl": {
+																	"type": "string",
+																	"format": "uri"
+																}
+															},
+															"required": ["id", "canonicalUrl"],
+															"additionalProperties": false
+														}
+													},
+													"required": [
+														"source",
+														"normalizedCitation",
+														"retrievedAt",
+														"freshness",
+														"cluster"
+													],
+													"additionalProperties": false
+												}
+											},
+											"required": ["outcome", "contractVersion", "evidence"],
+											"additionalProperties": false
+										},
+										{
+											"type": "object",
+											"properties": {
+												"outcome": {
+													"type": "string",
+													"const": "not_found"
+												},
+												"contractVersion": {
+													"type": "string",
+													"const": "1"
+												},
+												"evidence": {
+													"type": "object",
+													"properties": {
+														"source": {
+															"type": "string",
+															"const": "courtlistener"
+														},
+														"normalizedCitation": {
+															"type": "string",
+															"minLength": 1
+														},
+														"retrievedAt": {
+															"type": "string",
+															"format": "date-time",
+															"pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+														},
+														"freshness": {
+															"type": "string",
+															"enum": ["fresh", "stale"]
+														},
+														"searchComplete": {
+															"type": "boolean",
+															"const": true
+														}
+													},
+													"required": [
+														"source",
+														"normalizedCitation",
+														"retrievedAt",
+														"freshness",
+														"searchComplete"
+													],
+													"additionalProperties": false
+												}
+											},
+											"required": ["outcome", "contractVersion", "evidence"],
+											"additionalProperties": false
+										},
+										{
+											"type": "object",
+											"properties": {
+												"outcome": {
+													"type": "string",
+													"const": "indeterminate"
+												},
+												"contractVersion": {
+													"type": "string",
+													"const": "1"
+												},
+												"reason": {
+													"type": "string",
+													"const": "unsupported_citation"
+												},
+												"retry": {
+													"type": "object",
+													"properties": {
+														"action": {
+															"type": "string",
+															"const": "use_supported_citation"
+														}
+													},
+													"required": ["action"],
+													"additionalProperties": false
+												}
+											},
+											"required": ["outcome", "contractVersion", "reason", "retry"],
+											"additionalProperties": false
+										},
+										{
+											"type": "object",
+											"properties": {
+												"outcome": {
+													"type": "string",
+													"const": "indeterminate"
+												},
+												"contractVersion": {
+													"type": "string",
+													"const": "1"
+												},
+												"reason": {
+													"type": "string",
+													"enum": [
+														"incomplete",
+														"timeout",
+														"upstream_unavailable",
+														"quota_unknown",
+														"source_changed"
+													]
+												},
+												"retry": {
+													"type": "object",
+													"properties": {
+														"action": {
+															"type": "string",
+															"const": "retry_later"
+														}
+													},
+													"required": ["action"],
+													"additionalProperties": false
+												}
+											},
+											"required": ["outcome", "contractVersion", "reason", "retry"],
+											"additionalProperties": false
+										},
+										{
+											"type": "object",
+											"properties": {
+												"outcome": {
+													"type": "string",
+													"const": "indeterminate"
+												},
+												"contractVersion": {
+													"type": "string",
+													"const": "1"
+												},
+												"reason": {
+													"type": "string",
+													"enum": ["rate_limited", "circuit_open"]
+												},
+												"retry": {
+													"type": "object",
+													"properties": {
+														"action": {
+															"type": "string",
+															"const": "retry_later"
+														},
+														"retryAfterSeconds": {
+															"type": "integer",
+															"exclusiveMinimum": 0,
+															"maximum": 9007199254740991
+														}
+													},
+													"required": ["action"],
+													"additionalProperties": false
+												}
+											},
+											"required": ["outcome", "contractVersion", "reason", "retry"],
+											"additionalProperties": false
+										}
+									]
+								}
+							},
+							{
+								"name": "verify_quote",
+								"title": "Verify quote",
+								"description": "Check for an exact, safely normalized quote in CourtListener opinion text. A match establishes text presence, not whether the opinion supports an argument or remains good law.",
+								"inputSchema": {
+									"type": "object",
+									"$schema": "https://json-schema.org/draft/2020-12/schema",
+									"properties": {
+										"citation": {
+											"type": "string",
+											"minLength": 1,
+											"maxLength": 256
+										},
+										"quote": {
+											"type": "string",
+											"pattern": "\\S",
+											"minLength": 20,
+											"maxLength": 10000
+										}
+									},
+									"required": ["citation", "quote"],
+									"additionalProperties": false
+								},
+								"annotations": {
+									"title": "Verify quote",
+									"readOnlyHint": true,
+									"destructiveHint": false,
+									"idempotentHint": true,
+									"openWorldHint": true
+								},
+								"outputSchema": {
+									"type": "object",
+									"$schema": "https://json-schema.org/draft/2020-12/schema",
+									"oneOf": [
+										{
+											"type": "object",
+											"properties": {
+												"outcome": {
+													"type": "string",
+													"const": "verified"
+												},
+												"contractVersion": {
+													"type": "string",
+													"const": "1"
+												},
+												"evidence": {
+													"type": "object",
+													"properties": {
+														"source": {
+															"type": "string",
+															"const": "courtlistener"
+														},
+														"normalizedCitation": {
+															"type": "string",
+															"minLength": 1
+														},
+														"citationRetrievedAt": {
+															"type": "string",
+															"format": "date-time",
+															"pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+														},
+														"citationFreshness": {
+															"type": "string",
+															"enum": ["fresh", "stale"]
+														},
+														"cluster": {
+															"anyOf": [
+																{
+																	"type": "object",
+																	"properties": {
+																		"id": {
+																			"type": "integer",
+																			"exclusiveMinimum": 0,
+																			"maximum": 9007199254740991
+																		},
+																		"canonicalUrl": {
+																			"type": "string",
+																			"format": "uri"
+																		}
+																	},
+																	"required": ["id", "canonicalUrl"],
+																	"additionalProperties": false
+																},
+																{
+																	"type": "null"
+																}
+															]
+														},
+														"searchedOpinionCount": {
+															"type": "integer",
+															"minimum": 0,
+															"maximum": 9007199254740991
+														},
+														"requiredOpinionCount": {
+															"type": "integer",
+															"minimum": 0,
+															"maximum": 9007199254740991
+														},
+														"searchComplete": {
+															"type": "boolean"
+														},
+														"searchedOpinions": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"id": {
+																		"type": "integer",
+																		"exclusiveMinimum": 0,
+																		"maximum": 9007199254740991
+																	},
+																	"canonicalUrl": {
+																		"type": "string",
+																		"format": "uri"
+																	},
+																	"representation": {
+																		"type": "string",
+																		"enum": ["html_with_citations", "html", "plain_text"]
+																	},
+																	"retrievedAt": {
+																		"type": "string",
+																		"format": "date-time",
+																		"pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+																	},
+																	"freshness": {
+																		"type": "string",
+																		"enum": ["fresh", "stale"]
+																	}
+																},
+																"required": [
+																	"id",
+																	"canonicalUrl",
+																	"representation",
+																	"retrievedAt",
+																	"freshness"
+																],
+																"additionalProperties": false
+															}
+														},
+														"matchingOpinion": {
+															"type": "object",
+															"properties": {
+																"id": {
+																	"type": "integer",
+																	"exclusiveMinimum": 0,
+																	"maximum": 9007199254740991
+																},
+																"canonicalUrl": {
+																	"type": "string",
+																	"format": "uri"
+																}
+															},
+															"required": ["id", "canonicalUrl"],
+															"additionalProperties": false
+														},
+														"representation": {
+															"type": "string",
+															"enum": ["html_with_citations", "html", "plain_text"]
+														},
+														"retrievedAt": {
+															"type": "string",
+															"format": "date-time",
+															"pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+														},
+														"freshness": {
+															"type": "string",
+															"enum": ["fresh", "stale"]
+														}
+													},
+													"required": [
+														"source",
+														"normalizedCitation",
+														"citationRetrievedAt",
+														"citationFreshness",
+														"cluster",
+														"searchedOpinionCount",
+														"requiredOpinionCount",
+														"searchComplete",
+														"searchedOpinions",
+														"matchingOpinion",
+														"representation",
+														"retrievedAt",
+														"freshness"
+													],
+													"additionalProperties": false
+												}
+											},
+											"required": ["outcome", "contractVersion", "evidence"],
+											"additionalProperties": false
+										},
+										{
+											"type": "object",
+											"properties": {
+												"outcome": {
+													"type": "string",
+													"const": "not_found"
+												},
+												"contractVersion": {
+													"type": "string",
+													"const": "1"
+												},
+												"evidence": {
+													"type": "object",
+													"properties": {
+														"source": {
+															"type": "string",
+															"const": "courtlistener"
+														},
+														"normalizedCitation": {
+															"type": "string",
+															"minLength": 1
+														},
+														"citationRetrievedAt": {
+															"type": "string",
+															"format": "date-time",
+															"pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+														},
+														"citationFreshness": {
+															"type": "string",
+															"enum": ["fresh", "stale"]
+														},
+														"cluster": {
+															"anyOf": [
+																{
+																	"type": "object",
+																	"properties": {
+																		"id": {
+																			"type": "integer",
+																			"exclusiveMinimum": 0,
+																			"maximum": 9007199254740991
+																		},
+																		"canonicalUrl": {
+																			"type": "string",
+																			"format": "uri"
+																		}
+																	},
+																	"required": ["id", "canonicalUrl"],
+																	"additionalProperties": false
+																},
+																{
+																	"type": "null"
+																}
+															]
+														},
+														"searchedOpinionCount": {
+															"type": "integer",
+															"minimum": 0,
+															"maximum": 9007199254740991
+														},
+														"requiredOpinionCount": {
+															"type": "integer",
+															"minimum": 0,
+															"maximum": 9007199254740991
+														},
+														"searchComplete": {
+															"type": "boolean"
+														},
+														"searchedOpinions": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"id": {
+																		"type": "integer",
+																		"exclusiveMinimum": 0,
+																		"maximum": 9007199254740991
+																	},
+																	"canonicalUrl": {
+																		"type": "string",
+																		"format": "uri"
+																	},
+																	"representation": {
+																		"type": "string",
+																		"enum": ["html_with_citations", "html", "plain_text"]
+																	},
+																	"retrievedAt": {
+																		"type": "string",
+																		"format": "date-time",
+																		"pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+																	},
+																	"freshness": {
+																		"type": "string",
+																		"enum": ["fresh", "stale"]
+																	}
+																},
+																"required": [
+																	"id",
+																	"canonicalUrl",
+																	"representation",
+																	"retrievedAt",
+																	"freshness"
+																],
+																"additionalProperties": false
+															}
+														}
+													},
+													"required": [
+														"source",
+														"normalizedCitation",
+														"citationRetrievedAt",
+														"citationFreshness",
+														"cluster",
+														"searchedOpinionCount",
+														"requiredOpinionCount",
+														"searchComplete",
+														"searchedOpinions"
+													],
+													"additionalProperties": false
+												}
+											},
+											"required": ["outcome", "contractVersion", "evidence"],
+											"additionalProperties": false
+										},
+										{
+											"type": "object",
+											"properties": {
+												"outcome": {
+													"type": "string",
+													"const": "indeterminate"
+												},
+												"contractVersion": {
+													"type": "string",
+													"const": "1"
+												},
+												"reason": {
+													"type": "string",
+													"enum": [
+														"unsupported_citation",
+														"incomplete",
+														"source_text_unavailable",
+														"cluster_limit_exceeded",
+														"timeout",
+														"upstream_unavailable",
+														"quota_unknown",
+														"source_changed",
+														"rate_limited",
+														"circuit_open"
+													]
+												},
+												"retry": {
+													"anyOf": [
+														{
+															"type": "object",
+															"properties": {
+																"action": {
+																	"type": "string",
+																	"const": "retry_later"
+																},
+																"retryAfterSeconds": {
+																	"type": "integer",
+																	"exclusiveMinimum": 0,
+																	"maximum": 9007199254740991
+																}
+															},
+															"required": ["action"],
+															"additionalProperties": false
+														},
+														{
+															"type": "object",
+															"properties": {
+																"action": {
+																	"type": "string",
+																	"const": "use_supported_citation"
+																}
+															},
+															"required": ["action"],
+															"additionalProperties": false
+														}
+													]
+												}
+											},
+											"required": ["outcome", "contractVersion", "reason", "retry"],
+											"additionalProperties": false
+										}
+									]
+								}
+							}
+						],
+						"resultType": "complete",
+						"ttlMs": 300000,
+						"cacheScope": "public",
+						"_meta": {
+							"io.modelcontextprotocol/serverInfo": {
+								"name": "lexcerta",
+								"version": "1.0.0"
+							}
+						}
+					},
+					"jsonrpc": "2.0",
+					"id": 0
+				}
+			}
+		},
+		{
+			"request": {
+				"method": "POST",
+				"headers": {
+					"accept": "application/json, text/event-stream",
+					"content-type": "application/json",
+					"mcp-protocol-version": "2026-07-28",
+					"mcp-method": "tools/call",
+					"mcp-name": "parse_citation"
+				},
+				"body": {
+					"method": "tools/call",
+					"params": {
+						"name": "parse_citation",
+						"arguments": "[redacted]",
+						"_meta": {
+							"io.modelcontextprotocol/protocolVersion": "2026-07-28",
+							"io.modelcontextprotocol/clientInfo": {
+								"name": "lexcerta-pilot",
+								"version": "0.1.0"
+							},
+							"io.modelcontextprotocol/clientCapabilities": {}
+						}
+					},
+					"jsonrpc": "2.0",
+					"id": 1
+				}
+			},
+			"response": {
+				"status": 200,
+				"headers": {
+					"content-type": "application/json"
+				},
+				"body": {
+					"result": {
+						"content": "[redacted]",
+						"structuredContent": {
+							"contractVersion": "1",
+							"outcome": "parsed"
+						},
+						"isError": false,
+						"resultType": "complete",
+						"_meta": {
+							"io.modelcontextprotocol/serverInfo": {
+								"name": "lexcerta",
+								"version": "1.0.0"
+							}
+						}
+					},
+					"jsonrpc": "2.0",
+					"id": 1
+				}
+			}
+		},
+		{
+			"request": {
+				"method": "POST",
+				"headers": {
+					"accept": "application/json, text/event-stream",
+					"content-type": "application/json",
+					"mcp-protocol-version": "2026-07-28",
+					"mcp-method": "tools/call",
+					"mcp-name": "verify_citation"
+				},
+				"body": {
+					"method": "tools/call",
+					"params": {
+						"name": "verify_citation",
+						"arguments": "[redacted]",
+						"_meta": {
+							"io.modelcontextprotocol/protocolVersion": "2026-07-28",
+							"io.modelcontextprotocol/clientInfo": {
+								"name": "lexcerta-pilot",
+								"version": "0.1.0"
+							},
+							"io.modelcontextprotocol/clientCapabilities": {}
+						}
+					},
+					"jsonrpc": "2.0",
+					"id": 2
+				}
+			},
+			"response": {
+				"status": 200,
+				"headers": {
+					"content-type": "application/json"
+				},
+				"body": {
+					"result": {
+						"content": "[redacted]",
+						"structuredContent": {
+							"contractVersion": "1",
+							"outcome": "verified"
+						},
+						"isError": false,
+						"resultType": "complete",
+						"_meta": {
+							"io.modelcontextprotocol/serverInfo": {
+								"name": "lexcerta",
+								"version": "1.0.0"
+							}
+						}
+					},
+					"jsonrpc": "2.0",
+					"id": 2
+				}
+			}
+		},
+		{
+			"request": {
+				"method": "POST",
+				"headers": {
+					"accept": "application/json, text/event-stream",
+					"content-type": "application/json",
+					"mcp-protocol-version": "2026-07-28",
+					"mcp-method": "tools/call",
+					"mcp-name": "verify_quote"
+				},
+				"body": {
+					"method": "tools/call",
+					"params": {
+						"name": "verify_quote",
+						"arguments": "[redacted]",
+						"_meta": {
+							"io.modelcontextprotocol/protocolVersion": "2026-07-28",
+							"io.modelcontextprotocol/clientInfo": {
+								"name": "lexcerta-pilot",
+								"version": "0.1.0"
+							},
+							"io.modelcontextprotocol/clientCapabilities": {}
+						}
+					},
+					"jsonrpc": "2.0",
+					"id": 3
+				}
+			},
+			"response": {
+				"status": 200,
+				"headers": {
+					"content-type": "application/json"
+				},
+				"body": {
+					"result": {
+						"content": "[redacted]",
+						"structuredContent": {
+							"contractVersion": "1",
+							"outcome": "verified"
+						},
+						"isError": false,
+						"resultType": "complete",
+						"_meta": {
+							"io.modelcontextprotocol/serverInfo": {
+								"name": "lexcerta",
+								"version": "1.0.0"
+							}
+						}
+					},
+					"jsonrpc": "2.0",
+					"id": 3
+				}
+			}
+		}
+	],
+	"outboundUrls": ["https://www.courtlistener.com/api/rest/v4/clusters/108713/"]
+}

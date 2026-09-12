@@ -4,6 +4,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 
 import { join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { Miniflare } from "miniflare";
+import { qualifyPilotClient } from "./pilot-client-qualification.mjs";
 import {
 	EXPECTED_URLS,
 	FIXTURE_SOURCE_TEXT,
@@ -91,7 +92,11 @@ export async function runBundleConformance(destination) {
 					"CourtListenerCoordinator Durable Object",
 				],
 			},
-			outbound: { attemptedUrls, expectedUrls: EXPECTED_URLS, unexpectedUrls },
+			outbound: {
+				attemptedUrls: [...attemptedUrls],
+				expectedUrls: EXPECTED_URLS,
+				unexpectedUrls: [...unexpectedUrls],
+			},
 			redaction: { credentialAbsent: true, fixtureSourceTextAbsent: true },
 			scenarios: {
 				discovery: { protocolVersion: PROTOCOL_VERSION, status: discovery.status },
@@ -99,6 +104,11 @@ export async function runBundleConformance(destination) {
 			},
 		};
 		assertBundleConformance(report);
+		const pilotStart = attemptedUrls.length;
+		const pilot = await qualifyPilotClient(miniflare);
+		pilot.outboundUrls = attemptedUrls.slice(pilotStart);
+		if (unexpectedUrls.length > 0) throw new TypeError("pilot client escaped the fixture trap");
+		writeFileSync(join(outdir, "pilot-client-wire.json"), `${JSON.stringify(pilot, null, 2)}\n`);
 		const serialized = `${JSON.stringify(report, null, 2)}\n`;
 		if (
 			serialized.includes(QUOTE) ||

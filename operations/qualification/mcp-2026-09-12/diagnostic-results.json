@@ -1,0 +1,6274 @@
+[
+	{
+		"scenario": "caching",
+		"counts": {
+			"SUCCESS": 8
+		},
+		"checks": [
+			{
+				"id": "sep-2549-tools-list-caching-hints",
+				"name": "ToolsListCachingHints",
+				"description": "tools/list response includes ttlMs and cacheScope caching hints",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.901Z",
+				"specReferences": [
+					{
+						"id": "MCP-Caching",
+						"url": "https://modelcontextprotocol.io/specification/draft/server/utilities/caching"
+					},
+					{
+						"id": "SEP-2549",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2549"
+					}
+				],
+				"details": {
+					"ttlMs": 0,
+					"cacheScope": "private",
+					"hasTtlMs": true,
+					"hasCacheScope": true
+				}
+			},
+			{
+				"id": "sep-2549-prompts-list-caching-hints",
+				"name": "PromptsListCachingHints",
+				"description": "prompts/list response includes ttlMs and cacheScope caching hints",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.902Z",
+				"specReferences": [
+					{
+						"id": "MCP-Caching",
+						"url": "https://modelcontextprotocol.io/specification/draft/server/utilities/caching"
+					},
+					{
+						"id": "SEP-2549",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2549"
+					}
+				],
+				"details": {
+					"ttlMs": 0,
+					"cacheScope": "private",
+					"hasTtlMs": true,
+					"hasCacheScope": true
+				}
+			},
+			{
+				"id": "sep-2549-resources-list-caching-hints",
+				"name": "ResourcesListCachingHints",
+				"description": "resources/list response includes ttlMs and cacheScope caching hints",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.904Z",
+				"specReferences": [
+					{
+						"id": "MCP-Caching",
+						"url": "https://modelcontextprotocol.io/specification/draft/server/utilities/caching"
+					},
+					{
+						"id": "SEP-2549",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2549"
+					}
+				],
+				"details": {
+					"ttlMs": 0,
+					"cacheScope": "private",
+					"hasTtlMs": true,
+					"hasCacheScope": true
+				}
+			},
+			{
+				"id": "sep-2549-resources-templates-list-caching-hints",
+				"name": "ResourcesTemplatesListCachingHints",
+				"description": "resources/templates/list response includes ttlMs and cacheScope caching hints",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.908Z",
+				"specReferences": [
+					{
+						"id": "MCP-Caching",
+						"url": "https://modelcontextprotocol.io/specification/draft/server/utilities/caching"
+					},
+					{
+						"id": "SEP-2549",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2549"
+					}
+				],
+				"details": {
+					"ttlMs": 0,
+					"cacheScope": "private",
+					"hasTtlMs": true,
+					"hasCacheScope": true
+				}
+			},
+			{
+				"id": "sep-2549-resources-read-caching-hints",
+				"name": "ResourcesReadCachingHints",
+				"description": "resources/read response includes ttlMs and cacheScope caching hints",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.910Z",
+				"specReferences": [
+					{
+						"id": "MCP-Caching",
+						"url": "https://modelcontextprotocol.io/specification/draft/server/utilities/caching"
+					},
+					{
+						"id": "SEP-2549",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2549"
+					}
+				],
+				"details": {
+					"ttlMs": 0,
+					"cacheScope": "private",
+					"hasTtlMs": true,
+					"hasCacheScope": true
+				}
+			},
+			{
+				"id": "sep-2549-ttl-non-negative",
+				"name": "TtlNonNegative",
+				"description": "All ttlMs values are non-negative integers",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.910Z",
+				"specReferences": [
+					{
+						"id": "MCP-Caching",
+						"url": "https://modelcontextprotocol.io/specification/draft/server/utilities/caching"
+					},
+					{
+						"id": "SEP-2549",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2549"
+					}
+				],
+				"details": {
+					"endpoints": [
+						{
+							"endpoint": "tools/list",
+							"ttlMs": 0
+						},
+						{
+							"endpoint": "prompts/list",
+							"ttlMs": 0
+						},
+						{
+							"endpoint": "resources/list",
+							"ttlMs": 0
+						},
+						{
+							"endpoint": "resources/templates/list",
+							"ttlMs": 0
+						},
+						{
+							"endpoint": "resources/read",
+							"ttlMs": 0
+						}
+					]
+				}
+			},
+			{
+				"id": "sep-2549-cache-scope-valid",
+				"name": "CacheScopeValid",
+				"description": "All cacheScope values are \"public\" or \"private\"",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.910Z",
+				"specReferences": [
+					{
+						"id": "MCP-Caching",
+						"url": "https://modelcontextprotocol.io/specification/draft/server/utilities/caching"
+					},
+					{
+						"id": "SEP-2549",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2549"
+					}
+				],
+				"details": {
+					"endpoints": [
+						{
+							"endpoint": "tools/list",
+							"cacheScope": "private"
+						},
+						{
+							"endpoint": "prompts/list",
+							"cacheScope": "private"
+						},
+						{
+							"endpoint": "resources/list",
+							"cacheScope": "private"
+						},
+						{
+							"endpoint": "resources/templates/list",
+							"cacheScope": "private"
+						},
+						{
+							"endpoint": "resources/read",
+							"cacheScope": "private"
+						}
+					]
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.910Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 10,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "completion-complete",
+		"counts": {
+			"SUCCESS": 2
+		},
+		"checks": [
+			{
+				"id": "completion-complete",
+				"name": "CompletionComplete",
+				"description": "Server responds to completion requests",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.703Z",
+				"specReferences": [
+					{
+						"id": "MCP-Completion",
+						"url": "https://modelcontextprotocol.io/specification/2025-06-18/server/utilities/completion"
+					}
+				],
+				"details": {
+					"result": {
+						"completion": {
+							"values": [],
+							"total": 0,
+							"hasMore": false
+						},
+						"resultType": "complete",
+						"_meta": {
+							"io.modelcontextprotocol/serverInfo": {
+								"name": "mcp-conformance-test-server",
+								"version": "1.0.0"
+							}
+						}
+					}
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.703Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 2,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "dns-rebinding-protection",
+		"counts": {
+			"SUCCESS": 2
+		},
+		"checks": [
+			{
+				"id": "localhost-host-rebinding-rejected",
+				"name": "DNSRebindingRejected",
+				"description": "Server rejects requests with non-localhost Host/Origin headers",
+				"timestamp": "2026-09-12T18:43:10.894Z",
+				"specReferences": [
+					{
+						"id": "MCP-DNS-Rebinding-Protection",
+						"url": "https://modelcontextprotocol.io/specification/2025-11-25/basic/security_best_practices#local-mcp-server-compromise"
+					},
+					{
+						"id": "MCP-Transport-Security",
+						"url": "https://modelcontextprotocol.io/specification/2025-11-25/basic/transports#security-warning"
+					}
+				],
+				"status": "SUCCESS",
+				"details": {
+					"hostHeader": "evil.example.com",
+					"originHeader": "http://evil.example.com",
+					"statusCode": 403,
+					"body": {
+						"jsonrpc": "2.0",
+						"error": {
+							"code": -32000,
+							"message": "Invalid Host: evil.example.com"
+						},
+						"id": null
+					}
+				}
+			},
+			{
+				"id": "localhost-host-valid-accepted",
+				"name": "LocalhostHostAccepted",
+				"description": "Server accepts requests with valid localhost Host/Origin headers",
+				"timestamp": "2026-09-12T18:43:10.894Z",
+				"specReferences": [
+					{
+						"id": "MCP-DNS-Rebinding-Protection",
+						"url": "https://modelcontextprotocol.io/specification/2025-11-25/basic/security_best_practices#local-mcp-server-compromise"
+					},
+					{
+						"id": "MCP-Transport-Security",
+						"url": "https://modelcontextprotocol.io/specification/2025-11-25/basic/transports#security-warning"
+					}
+				],
+				"status": "SUCCESS",
+				"details": {
+					"hostHeader": "127.0.0.1:30317",
+					"originHeader": "http://127.0.0.1:30317",
+					"statusCode": 200,
+					"body": {
+						"result": {
+							"supportedVersions": ["2026-07-28"],
+							"capabilities": {
+								"tools": {
+									"listChanged": true
+								},
+								"resources": {
+									"subscribe": true,
+									"listChanged": true
+								},
+								"prompts": {
+									"listChanged": true
+								},
+								"logging": {},
+								"completions": {}
+							},
+							"resultType": "complete",
+							"ttlMs": 0,
+							"cacheScope": "private",
+							"_meta": {
+								"io.modelcontextprotocol/serverInfo": {
+									"name": "mcp-conformance-test-server",
+									"version": "1.0.0"
+								}
+							}
+						},
+						"jsonrpc": "2.0",
+						"id": 1
+					}
+				}
+			}
+		]
+	},
+	{
+		"scenario": "http-custom-header-server-validation",
+		"counts": {
+			"SUCCESS": 10
+		},
+		"checks": [
+			{
+				"id": "sep-2243-server-decode-base64",
+				"name": "ServerAcceptsValidBase64",
+				"description": "Server decodes valid Base64 header value and validates against body",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.045Z",
+				"specReferences": [
+					{
+						"id": "SEP-2243-Value-Encoding",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/transports#value-encoding"
+					}
+				],
+				"details": {
+					"toolName": "test_x_mcp_header",
+					"paramName": "region",
+					"bodyValue": "Hello",
+					"headerSuffix": "Region",
+					"headerValue": "=?base64?SGVsbG8=?=",
+					"responseStatus": 200,
+					"responseBody": {
+						"result": {
+							"content": [
+								{
+									"type": "text",
+									"text": "region=Hello"
+								}
+							],
+							"resultType": "complete",
+							"_meta": {
+								"io.modelcontextprotocol/serverInfo": {
+									"name": "mcp-conformance-test-server",
+									"version": "1.0.0"
+								}
+							}
+						},
+						"jsonrpc": "2.0",
+						"id": 200
+					}
+				}
+			},
+			{
+				"id": "sep-2243-server-reject-invalid-param-chars",
+				"name": "ServerRejectsInvalidBase64Padding",
+				"description": "Server MUST reject Mcp-Param header with invalid Base64 padding (per SEP-2243 test-case table)",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.047Z",
+				"specReferences": [
+					{
+						"id": "SEP-2243-Value-Encoding",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/transports#value-encoding"
+					}
+				],
+				"details": {
+					"toolName": "test_x_mcp_header",
+					"paramName": "region",
+					"bodyValue": "Hello",
+					"headerSuffix": "Region",
+					"headerValue": "=?base64?SGVsbG8?=",
+					"responseStatus": 400,
+					"responseBody": {
+						"jsonrpc": "2.0",
+						"error": {
+							"code": -32020,
+							"message": "Bad Request: the request headers and body disagree: the Mcp-Param-Region header carries an invalid Base64 sentinel value",
+							"data": {
+								"mismatch": {
+									"header": "Mcp-Param-Region",
+									"body": "the Mcp-Param-Region header carries an invalid Base64 sentinel value"
+								}
+							}
+						},
+						"id": 201
+					}
+				}
+			},
+			{
+				"id": "sep-2243-server-reject-param-mismatch",
+				"name": "ServerRejectsInvalidBase64PaddingErrorCode",
+				"description": "Server MUST reject Mcp-Param header with invalid Base64 padding (per SEP-2243 test-case table) \u2014 uses JSON-RPC error code -32020 (HeaderMismatch)",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.047Z",
+				"specReferences": [
+					{
+						"id": "SEP-2243-Value-Encoding",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/transports#value-encoding"
+					}
+				],
+				"details": {
+					"toolName": "test_x_mcp_header",
+					"paramName": "region",
+					"bodyValue": "Hello",
+					"headerSuffix": "Region",
+					"headerValue": "=?base64?SGVsbG8?=",
+					"responseStatus": 400,
+					"responseBody": {
+						"jsonrpc": "2.0",
+						"error": {
+							"code": -32020,
+							"message": "Bad Request: the request headers and body disagree: the Mcp-Param-Region header carries an invalid Base64 sentinel value",
+							"data": {
+								"mismatch": {
+									"header": "Mcp-Param-Region",
+									"body": "the Mcp-Param-Region header carries an invalid Base64 sentinel value"
+								}
+							}
+						},
+						"id": 201
+					}
+				}
+			},
+			{
+				"id": "sep-2243-server-reject-invalid-param-chars",
+				"name": "ServerRejectsInvalidBase64Chars",
+				"description": "Server MUST reject Mcp-Param header with non-alphabet Base64 characters (per SEP-2243 test-case table)",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.048Z",
+				"specReferences": [
+					{
+						"id": "SEP-2243-Value-Encoding",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/transports#value-encoding"
+					}
+				],
+				"details": {
+					"toolName": "test_x_mcp_header",
+					"paramName": "region",
+					"bodyValue": "Hello",
+					"headerSuffix": "Region",
+					"headerValue": "=?base64?SGVs!!!bG8=?=",
+					"responseStatus": 400,
+					"responseBody": {
+						"jsonrpc": "2.0",
+						"error": {
+							"code": -32020,
+							"message": "Bad Request: the request headers and body disagree: the Mcp-Param-Region header carries an invalid Base64 sentinel value",
+							"data": {
+								"mismatch": {
+									"header": "Mcp-Param-Region",
+									"body": "the Mcp-Param-Region header carries an invalid Base64 sentinel value"
+								}
+							}
+						},
+						"id": 202
+					}
+				}
+			},
+			{
+				"id": "sep-2243-server-reject-param-mismatch",
+				"name": "ServerRejectsInvalidBase64CharsErrorCode",
+				"description": "Server MUST reject Mcp-Param header with non-alphabet Base64 characters (per SEP-2243 test-case table) \u2014 uses JSON-RPC error code -32020 (HeaderMismatch)",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.048Z",
+				"specReferences": [
+					{
+						"id": "SEP-2243-Value-Encoding",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/transports#value-encoding"
+					}
+				],
+				"details": {
+					"toolName": "test_x_mcp_header",
+					"paramName": "region",
+					"bodyValue": "Hello",
+					"headerSuffix": "Region",
+					"headerValue": "=?base64?SGVs!!!bG8=?=",
+					"responseStatus": 400,
+					"responseBody": {
+						"jsonrpc": "2.0",
+						"error": {
+							"code": -32020,
+							"message": "Bad Request: the request headers and body disagree: the Mcp-Param-Region header carries an invalid Base64 sentinel value",
+							"data": {
+								"mismatch": {
+									"header": "Mcp-Param-Region",
+									"body": "the Mcp-Param-Region header carries an invalid Base64 sentinel value"
+								}
+							}
+						},
+						"id": 202
+					}
+				}
+			},
+			{
+				"id": "sep-2243-server-validate-param-match",
+				"name": "ServerLiteralMissingBase64Prefix",
+				"description": "Server treats value without =?base64? prefix as literal (not Base64)",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.049Z",
+				"specReferences": [
+					{
+						"id": "SEP-2243-Value-Encoding",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/transports#value-encoding"
+					}
+				],
+				"details": {
+					"toolName": "test_x_mcp_header",
+					"paramName": "region",
+					"bodyValue": "SGVsbG8=",
+					"headerSuffix": "Region",
+					"headerValue": "SGVsbG8=",
+					"responseStatus": 200,
+					"responseBody": {
+						"result": {
+							"content": [
+								{
+									"type": "text",
+									"text": "region=SGVsbG8="
+								}
+							],
+							"resultType": "complete",
+							"_meta": {
+								"io.modelcontextprotocol/serverInfo": {
+									"name": "mcp-conformance-test-server",
+									"version": "1.0.0"
+								}
+							}
+						},
+						"jsonrpc": "2.0",
+						"id": 203
+					}
+				}
+			},
+			{
+				"id": "sep-2243-server-validate-param-match",
+				"name": "ServerLiteralMissingBase64Suffix",
+				"description": "Server treats value without ?= suffix as literal (not Base64)",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.050Z",
+				"specReferences": [
+					{
+						"id": "SEP-2243-Value-Encoding",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/transports#value-encoding"
+					}
+				],
+				"details": {
+					"toolName": "test_x_mcp_header",
+					"paramName": "region",
+					"bodyValue": "=?base64?SGVsbG8=",
+					"headerSuffix": "Region",
+					"headerValue": "=?base64?SGVsbG8=",
+					"responseStatus": 200,
+					"responseBody": {
+						"result": {
+							"content": [
+								{
+									"type": "text",
+									"text": "region==?base64?SGVsbG8="
+								}
+							],
+							"resultType": "complete",
+							"_meta": {
+								"io.modelcontextprotocol/serverInfo": {
+									"name": "mcp-conformance-test-server",
+									"version": "1.0.0"
+								}
+							}
+						},
+						"jsonrpc": "2.0",
+						"id": 204
+					}
+				}
+			},
+			{
+				"id": "sep-2243-server-validate-param-match",
+				"name": "ServerRejectsMissingCustomHeader",
+				"description": "Server MUST reject request where custom header is omitted but value is present in body",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.051Z",
+				"specReferences": [
+					{
+						"id": "SEP-2243-Custom-Headers",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/transports#server-behavior-for-custom-headers"
+					}
+				],
+				"details": {
+					"toolName": "test_x_mcp_header",
+					"paramName": "region",
+					"bodyValue": "test-value",
+					"expectedHeader": "Mcp-Param-Region",
+					"mcpParamHeader": "(missing)",
+					"responseStatus": 400,
+					"responseBody": {
+						"jsonrpc": "2.0",
+						"error": {
+							"code": -32020,
+							"message": "Bad Request: the request headers and body disagree: the body carries region=\"test-value\" but the Mcp-Param-Region header is absent",
+							"data": {
+								"mismatch": {
+									"header": "Mcp-Param-Region",
+									"body": "the body carries region=\"test-value\" but the Mcp-Param-Region header is absent"
+								}
+							}
+						},
+						"id": 205
+					}
+				}
+			},
+			{
+				"id": "sep-2243-server-reject-param-mismatch",
+				"name": "ServerRejectsMissingCustomHeaderErrorCode",
+				"description": "Server MUST reject request where custom header is omitted but value is present in body \u2014 uses JSON-RPC error code -32020 (HeaderMismatch)",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.051Z",
+				"specReferences": [
+					{
+						"id": "SEP-2243-Custom-Headers",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/transports#server-behavior-for-custom-headers"
+					}
+				],
+				"details": {
+					"toolName": "test_x_mcp_header",
+					"paramName": "region",
+					"bodyValue": "test-value",
+					"expectedHeader": "Mcp-Param-Region",
+					"mcpParamHeader": "(missing)",
+					"responseStatus": 400,
+					"responseBody": {
+						"jsonrpc": "2.0",
+						"error": {
+							"code": -32020,
+							"message": "Bad Request: the request headers and body disagree: the body carries region=\"test-value\" but the Mcp-Param-Region header is absent",
+							"data": {
+								"mismatch": {
+									"header": "Mcp-Param-Region",
+									"body": "the body carries region=\"test-value\" but the Mcp-Param-Region header is absent"
+								}
+							}
+						},
+						"id": 205
+					}
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.051Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 2,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "http-header-validation",
+		"counts": {
+			"SUCCESS": 14
+		},
+		"checks": [
+			{
+				"id": "sep-2243-server-reject-invalid-headers",
+				"name": "ServerRejectsMismatchedMethodHeader",
+				"description": "Server rejects requests where Mcp-Method header does not match body method",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.035Z",
+				"specReferences": [
+					{
+						"id": "SEP-2243-Server-Validation",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/transports#server-validation"
+					}
+				],
+				"details": {
+					"requestBodyMethod": "tools/list",
+					"mcpMethodHeader": "prompts/list",
+					"responseStatus": 400,
+					"responseBody": {
+						"jsonrpc": "2.0",
+						"error": {
+							"code": -32020,
+							"message": "Bad Request: the request headers and body disagree: the body names method tools/list but the Mcp-Method header names prompts/list",
+							"data": {
+								"mismatch": {
+									"header": "prompts/list",
+									"body": "the body names method tools/list but the Mcp-Method header names prompts/list"
+								}
+							}
+						},
+						"id": 100
+					}
+				}
+			},
+			{
+				"id": "sep-2243-server-reject-error-code",
+				"name": "ServerRejectsMismatchedMethodHeaderErrorCode",
+				"description": "Server rejects requests where Mcp-Method header does not match body method \u2014 uses JSON-RPC error code -32020 (HeaderMismatch)",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.035Z",
+				"specReferences": [
+					{
+						"id": "SEP-2243-Server-Validation",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/transports#server-validation"
+					}
+				],
+				"details": {
+					"requestBodyMethod": "tools/list",
+					"mcpMethodHeader": "prompts/list",
+					"responseStatus": 400,
+					"responseBody": {
+						"jsonrpc": "2.0",
+						"error": {
+							"code": -32020,
+							"message": "Bad Request: the request headers and body disagree: the body names method tools/list but the Mcp-Method header names prompts/list",
+							"data": {
+								"mismatch": {
+									"header": "prompts/list",
+									"body": "the body names method tools/list but the Mcp-Method header names prompts/list"
+								}
+							}
+						},
+						"id": 100
+					}
+				}
+			},
+			{
+				"id": "sep-2243-server-reject-invalid-headers",
+				"name": "ServerRejectsMissingMethodHeader",
+				"description": "Server rejects requests with missing Mcp-Method header",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.036Z",
+				"specReferences": [
+					{
+						"id": "SEP-2243-Server-Validation",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/transports#server-validation"
+					}
+				],
+				"details": {
+					"requestBodyMethod": "tools/list",
+					"mcpMethodHeader": "(missing)",
+					"responseStatus": 400,
+					"responseBody": {
+						"jsonrpc": "2.0",
+						"error": {
+							"code": -32020,
+							"message": "Bad Request: the request headers and body disagree: the body names method tools/list but the required Mcp-Method header is absent",
+							"data": {
+								"mismatch": {
+									"header": "(missing)",
+									"body": "the body names method tools/list but the required Mcp-Method header is absent"
+								}
+							}
+						},
+						"id": 101
+					}
+				}
+			},
+			{
+				"id": "sep-2243-server-reject-error-code",
+				"name": "ServerRejectsMissingMethodHeaderErrorCode",
+				"description": "Server rejects requests with missing Mcp-Method header \u2014 uses JSON-RPC error code -32020 (HeaderMismatch)",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.036Z",
+				"specReferences": [
+					{
+						"id": "SEP-2243-Server-Validation",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/transports#server-validation"
+					}
+				],
+				"details": {
+					"requestBodyMethod": "tools/list",
+					"mcpMethodHeader": "(missing)",
+					"responseStatus": 400,
+					"responseBody": {
+						"jsonrpc": "2.0",
+						"error": {
+							"code": -32020,
+							"message": "Bad Request: the request headers and body disagree: the body names method tools/list but the required Mcp-Method header is absent",
+							"data": {
+								"mismatch": {
+									"header": "(missing)",
+									"body": "the body names method tools/list but the required Mcp-Method header is absent"
+								}
+							}
+						},
+						"id": 101
+					}
+				}
+			},
+			{
+				"id": "sep-2243-server-reject-invalid-headers",
+				"name": "ServerRejectsMismatchedNameHeader",
+				"description": "Server rejects tools/call where Mcp-Name does not match body params.name",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.036Z",
+				"specReferences": [
+					{
+						"id": "SEP-2243-Server-Validation",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/transports#server-validation"
+					}
+				],
+				"details": {
+					"requestBodyName": "test_x_mcp_header",
+					"mcpNameHeader": "wrong_tool_name",
+					"responseStatus": 400,
+					"responseBody": {
+						"jsonrpc": "2.0",
+						"error": {
+							"code": -32020,
+							"message": "Bad Request: the request headers and body disagree: the body carries params.name=\"test_x_mcp_header\" but the Mcp-Name header names \"wrong_tool_name\"",
+							"data": {
+								"mismatch": {
+									"header": "wrong_tool_name",
+									"body": "the body carries params.name=\"test_x_mcp_header\" but the Mcp-Name header names \"wrong_tool_name\""
+								}
+							}
+						},
+						"id": 102
+					}
+				}
+			},
+			{
+				"id": "sep-2243-server-reject-error-code",
+				"name": "ServerRejectsMismatchedNameHeaderErrorCode",
+				"description": "Server rejects tools/call where Mcp-Name does not match body params.name \u2014 uses JSON-RPC error code -32020 (HeaderMismatch)",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.036Z",
+				"specReferences": [
+					{
+						"id": "SEP-2243-Server-Validation",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/transports#server-validation"
+					}
+				],
+				"details": {
+					"requestBodyName": "test_x_mcp_header",
+					"mcpNameHeader": "wrong_tool_name",
+					"responseStatus": 400,
+					"responseBody": {
+						"jsonrpc": "2.0",
+						"error": {
+							"code": -32020,
+							"message": "Bad Request: the request headers and body disagree: the body carries params.name=\"test_x_mcp_header\" but the Mcp-Name header names \"wrong_tool_name\"",
+							"data": {
+								"mismatch": {
+									"header": "wrong_tool_name",
+									"body": "the body carries params.name=\"test_x_mcp_header\" but the Mcp-Name header names \"wrong_tool_name\""
+								}
+							}
+						},
+						"id": 102
+					}
+				}
+			},
+			{
+				"id": "sep-2243-server-accepts-whitespace-header-value",
+				"name": "ServerAcceptsWhitespaceHeaderValue",
+				"description": "Server MUST accept leading/trailing whitespace in Mcp-Name value (RFC 9110 \u00a75.5: field parsing MUST exclude OWS before evaluating)",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.038Z",
+				"specReferences": [
+					{
+						"id": "RFC-9110-5.5-Field-Values",
+						"url": "https://www.rfc-editor.org/rfc/rfc9110#section-5.5"
+					}
+				],
+				"details": {
+					"headerValue": "  test_x_mcp_header  ",
+					"bodyValue": "test_x_mcp_header",
+					"reason": "HTTP spec requires trimming OWS around field values",
+					"responseStatus": 200,
+					"responseBody": {
+						"result": {
+							"content": [
+								{
+									"type": "text",
+									"text": "region=<none>"
+								}
+							],
+							"resultType": "complete",
+							"_meta": {
+								"io.modelcontextprotocol/serverInfo": {
+									"name": "mcp-conformance-test-server",
+									"version": "1.0.0"
+								}
+							}
+						},
+						"jsonrpc": "2.0",
+						"id": 103
+					}
+				}
+			},
+			{
+				"id": "sep-2243-server-reject-invalid-headers",
+				"name": "ServerRejectsMissingNameHeader",
+				"description": "Server MUST reject tools/call with missing Mcp-Name header when body has params.name",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.039Z",
+				"specReferences": [
+					{
+						"id": "SEP-2243-Server-Validation",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/transports#server-validation"
+					}
+				],
+				"details": {
+					"requestBodyName": "test_x_mcp_header",
+					"mcpNameHeader": "(missing)",
+					"reason": "Standard header omitted but value present in body \u2192 MUST reject",
+					"responseStatus": 400,
+					"responseBody": {
+						"jsonrpc": "2.0",
+						"error": {
+							"code": -32020,
+							"message": "Bad Request: the request headers and body disagree: the body carries params.name=\"test_x_mcp_header\" but the required Mcp-Name header is absent",
+							"data": {
+								"mismatch": {
+									"header": "(missing)",
+									"body": "the body carries params.name=\"test_x_mcp_header\" but the required Mcp-Name header is absent"
+								}
+							}
+						},
+						"id": 104
+					}
+				}
+			},
+			{
+				"id": "sep-2243-server-reject-error-code",
+				"name": "ServerRejectsMissingNameHeaderErrorCode",
+				"description": "Server MUST reject tools/call with missing Mcp-Name header when body has params.name \u2014 uses JSON-RPC error code -32020 (HeaderMismatch)",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.039Z",
+				"specReferences": [
+					{
+						"id": "SEP-2243-Server-Validation",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/transports#server-validation"
+					}
+				],
+				"details": {
+					"requestBodyName": "test_x_mcp_header",
+					"mcpNameHeader": "(missing)",
+					"reason": "Standard header omitted but value present in body \u2192 MUST reject",
+					"responseStatus": 400,
+					"responseBody": {
+						"jsonrpc": "2.0",
+						"error": {
+							"code": -32020,
+							"message": "Bad Request: the request headers and body disagree: the body carries params.name=\"test_x_mcp_header\" but the required Mcp-Name header is absent",
+							"data": {
+								"mismatch": {
+									"header": "(missing)",
+									"body": "the body carries params.name=\"test_x_mcp_header\" but the required Mcp-Name header is absent"
+								}
+							}
+						},
+						"id": 104
+					}
+				}
+			},
+			{
+				"id": "sep-2243-header-name-case-insensitive",
+				"name": "ServerAcceptsLowercaseHeaderName",
+				"description": "Server MUST accept lowercase header name (mcp-method)",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.040Z",
+				"specReferences": [
+					{
+						"id": "SEP-2243-Case-Sensitivity",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/transports#case-sensitivity"
+					}
+				],
+				"details": {
+					"headerNameUsed": "mcp-method",
+					"responseStatus": 200,
+					"responseBody": {
+						"result": {
+							"tools": [
+								{
+									"name": "test_x_mcp_header",
+									"description": "Tests SEP-2243 Mcp-Param-* server-side validation",
+									"inputSchema": {
+										"type": "object",
+										"properties": {
+											"region": {
+												"type": "string",
+												"description": "mirrored into Mcp-Param-Region",
+												"x-mcp-header": "Region"
+											},
+											"level": {
+												"type": "integer",
+												"description": "non-mirrored argument"
+											}
+										}
+									}
+								},
+								{
+									"name": "test_missing_capability",
+									"description": "SEP-2575: requires the `sampling` client capability (drives the -32021 undeclared-capability rejection)",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_streaming_elicitation",
+									"description": "SEP-2575: yields a response stream carrying no independent top-level JSON-RPC requests",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_logging_tool",
+									"description": "SEP-2575: logs via ctx.mcpReq.log so the no-log-without-logLevel rule is exercised",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_simple_text",
+									"description": "Tests simple text content response",
+									"inputSchema": {
+										"type": "object",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_image_content",
+									"description": "Tests image content response",
+									"inputSchema": {
+										"type": "object",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_audio_content",
+									"description": "Tests audio content response",
+									"inputSchema": {
+										"type": "object",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_embedded_resource",
+									"description": "Tests embedded resource content response",
+									"inputSchema": {
+										"type": "object",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_multiple_content_types",
+									"description": "Tests response with multiple content types (text, image, resource)",
+									"inputSchema": {
+										"type": "object",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_tool_with_logging",
+									"description": "Tests tool that emits log messages during execution",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_tool_with_progress",
+									"description": "Tests tool that reports progress notifications",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_error_handling",
+									"description": "Tests error response handling",
+									"inputSchema": {
+										"type": "object",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_reconnection",
+									"description": "Tests SSE stream disconnection and client reconnection (SEP-1699). Server will close the stream mid-call and send the result after client reconnects.",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_sampling",
+									"description": "Tests server-initiated sampling (LLM completion request)",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {
+											"prompt": {
+												"type": "string",
+												"description": "The prompt to send to the LLM"
+											}
+										},
+										"required": ["prompt"]
+									}
+								},
+								{
+									"name": "test_elicitation",
+									"description": "Tests server-initiated elicitation (user input request)",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {
+											"message": {
+												"type": "string",
+												"description": "The message to show the user"
+											}
+										},
+										"required": ["message"]
+									}
+								},
+								{
+									"name": "test_elicitation_sep1034_defaults",
+									"description": "Tests elicitation with default values per SEP-1034",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_elicitation_sep1330_enums",
+									"description": "Tests elicitation with enum schema improvements per SEP-1330",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "json_schema_2020_12_tool",
+									"description": "Tool with JSON Schema 2020-12 features for conformance testing (SEP-1613, SEP-2106)",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"$defs": {
+											"address": {
+												"$anchor": "addressDef",
+												"type": "object",
+												"properties": {
+													"street": {
+														"type": "string"
+													},
+													"city": {
+														"type": "string"
+													}
+												}
+											}
+										},
+										"properties": {
+											"name": {
+												"type": "string"
+											},
+											"address": {
+												"$ref": "#/$defs/address"
+											},
+											"contactMethod": {
+												"type": "string",
+												"enum": ["phone", "email"]
+											},
+											"phone": {
+												"type": "string"
+											},
+											"email": {
+												"type": "string"
+											}
+										},
+										"allOf": [
+											{
+												"anyOf": [
+													{
+														"required": ["phone"]
+													},
+													{
+														"required": ["email"]
+													}
+												]
+											}
+										],
+										"if": {
+											"properties": {
+												"contactMethod": {
+													"const": "phone"
+												}
+											},
+											"required": ["contactMethod"]
+										},
+										"then": {
+											"required": ["phone"]
+										},
+										"else": {
+											"required": ["email"]
+										},
+										"additionalProperties": false
+									}
+								},
+								{
+									"name": "test_input_required_result_elicitation",
+									"description": "MRTR (SEP-2322): asks for the caller name via an in-band elicitation request",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_input_required_result_sampling",
+									"description": "MRTR (SEP-2322): asks for an LLM completion via an in-band sampling request",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_input_required_result_list_roots",
+									"description": "MRTR (SEP-2322): asks for the client roots via an in-band roots/list request",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_input_required_result_request_state",
+									"description": "MRTR (SEP-2322): round-trips integrity-protected requestState alongside an elicitation request",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_input_required_result_multiple_inputs",
+									"description": "MRTR (SEP-2322): asks for elicitation, sampling and roots input in a single round",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_input_required_result_multi_round",
+									"description": "MRTR (SEP-2322): two elicitation rounds with evolving requestState before completing",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_input_required_result_tampered_state",
+									"description": "MRTR (SEP-2322): rejects retries whose requestState fails integrity verification",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_input_required_result_capabilities",
+									"description": "MRTR (SEP-2322): only requests input kinds the declared client capabilities cover",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_trigger_tool_change",
+									"description": "Listen diagnostic (SEP-2575): publishes a tools/list_changed event onto the handler bus",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_trigger_prompt_change",
+									"description": "Listen diagnostic (SEP-2575): publishes a prompts/list_changed event onto the handler bus",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								}
+							],
+							"resultType": "complete",
+							"ttlMs": 0,
+							"cacheScope": "private",
+							"_meta": {
+								"io.modelcontextprotocol/serverInfo": {
+									"name": "mcp-conformance-test-server",
+									"version": "1.0.0"
+								}
+							}
+						},
+						"jsonrpc": "2.0",
+						"id": 105
+					}
+				}
+			},
+			{
+				"id": "sep-2243-header-name-case-insensitive",
+				"name": "ServerAcceptsUppercaseHeaderName",
+				"description": "Server MUST accept uppercase header name (MCP-METHOD)",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.041Z",
+				"specReferences": [
+					{
+						"id": "SEP-2243-Case-Sensitivity",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/transports#case-sensitivity"
+					}
+				],
+				"details": {
+					"headerNameUsed": "MCP-METHOD",
+					"responseStatus": 200,
+					"responseBody": {
+						"result": {
+							"tools": [
+								{
+									"name": "test_x_mcp_header",
+									"description": "Tests SEP-2243 Mcp-Param-* server-side validation",
+									"inputSchema": {
+										"type": "object",
+										"properties": {
+											"region": {
+												"type": "string",
+												"description": "mirrored into Mcp-Param-Region",
+												"x-mcp-header": "Region"
+											},
+											"level": {
+												"type": "integer",
+												"description": "non-mirrored argument"
+											}
+										}
+									}
+								},
+								{
+									"name": "test_missing_capability",
+									"description": "SEP-2575: requires the `sampling` client capability (drives the -32021 undeclared-capability rejection)",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_streaming_elicitation",
+									"description": "SEP-2575: yields a response stream carrying no independent top-level JSON-RPC requests",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_logging_tool",
+									"description": "SEP-2575: logs via ctx.mcpReq.log so the no-log-without-logLevel rule is exercised",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_simple_text",
+									"description": "Tests simple text content response",
+									"inputSchema": {
+										"type": "object",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_image_content",
+									"description": "Tests image content response",
+									"inputSchema": {
+										"type": "object",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_audio_content",
+									"description": "Tests audio content response",
+									"inputSchema": {
+										"type": "object",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_embedded_resource",
+									"description": "Tests embedded resource content response",
+									"inputSchema": {
+										"type": "object",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_multiple_content_types",
+									"description": "Tests response with multiple content types (text, image, resource)",
+									"inputSchema": {
+										"type": "object",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_tool_with_logging",
+									"description": "Tests tool that emits log messages during execution",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_tool_with_progress",
+									"description": "Tests tool that reports progress notifications",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_error_handling",
+									"description": "Tests error response handling",
+									"inputSchema": {
+										"type": "object",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_reconnection",
+									"description": "Tests SSE stream disconnection and client reconnection (SEP-1699). Server will close the stream mid-call and send the result after client reconnects.",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_sampling",
+									"description": "Tests server-initiated sampling (LLM completion request)",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {
+											"prompt": {
+												"type": "string",
+												"description": "The prompt to send to the LLM"
+											}
+										},
+										"required": ["prompt"]
+									}
+								},
+								{
+									"name": "test_elicitation",
+									"description": "Tests server-initiated elicitation (user input request)",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {
+											"message": {
+												"type": "string",
+												"description": "The message to show the user"
+											}
+										},
+										"required": ["message"]
+									}
+								},
+								{
+									"name": "test_elicitation_sep1034_defaults",
+									"description": "Tests elicitation with default values per SEP-1034",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_elicitation_sep1330_enums",
+									"description": "Tests elicitation with enum schema improvements per SEP-1330",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "json_schema_2020_12_tool",
+									"description": "Tool with JSON Schema 2020-12 features for conformance testing (SEP-1613, SEP-2106)",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"$defs": {
+											"address": {
+												"$anchor": "addressDef",
+												"type": "object",
+												"properties": {
+													"street": {
+														"type": "string"
+													},
+													"city": {
+														"type": "string"
+													}
+												}
+											}
+										},
+										"properties": {
+											"name": {
+												"type": "string"
+											},
+											"address": {
+												"$ref": "#/$defs/address"
+											},
+											"contactMethod": {
+												"type": "string",
+												"enum": ["phone", "email"]
+											},
+											"phone": {
+												"type": "string"
+											},
+											"email": {
+												"type": "string"
+											}
+										},
+										"allOf": [
+											{
+												"anyOf": [
+													{
+														"required": ["phone"]
+													},
+													{
+														"required": ["email"]
+													}
+												]
+											}
+										],
+										"if": {
+											"properties": {
+												"contactMethod": {
+													"const": "phone"
+												}
+											},
+											"required": ["contactMethod"]
+										},
+										"then": {
+											"required": ["phone"]
+										},
+										"else": {
+											"required": ["email"]
+										},
+										"additionalProperties": false
+									}
+								},
+								{
+									"name": "test_input_required_result_elicitation",
+									"description": "MRTR (SEP-2322): asks for the caller name via an in-band elicitation request",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_input_required_result_sampling",
+									"description": "MRTR (SEP-2322): asks for an LLM completion via an in-band sampling request",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_input_required_result_list_roots",
+									"description": "MRTR (SEP-2322): asks for the client roots via an in-band roots/list request",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_input_required_result_request_state",
+									"description": "MRTR (SEP-2322): round-trips integrity-protected requestState alongside an elicitation request",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_input_required_result_multiple_inputs",
+									"description": "MRTR (SEP-2322): asks for elicitation, sampling and roots input in a single round",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_input_required_result_multi_round",
+									"description": "MRTR (SEP-2322): two elicitation rounds with evolving requestState before completing",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_input_required_result_tampered_state",
+									"description": "MRTR (SEP-2322): rejects retries whose requestState fails integrity verification",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_input_required_result_capabilities",
+									"description": "MRTR (SEP-2322): only requests input kinds the declared client capabilities cover",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_trigger_tool_change",
+									"description": "Listen diagnostic (SEP-2575): publishes a tools/list_changed event onto the handler bus",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_trigger_prompt_change",
+									"description": "Listen diagnostic (SEP-2575): publishes a prompts/list_changed event onto the handler bus",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								}
+							],
+							"resultType": "complete",
+							"ttlMs": 0,
+							"cacheScope": "private",
+							"_meta": {
+								"io.modelcontextprotocol/serverInfo": {
+									"name": "mcp-conformance-test-server",
+									"version": "1.0.0"
+								}
+							}
+						},
+						"jsonrpc": "2.0",
+						"id": 106
+					}
+				}
+			},
+			{
+				"id": "sep-2243-server-reject-invalid-headers",
+				"name": "ServerRejectsCaseMismatchValue",
+				"description": "Server MUST reject uppercase method value (TOOLS/LIST) since values are case-sensitive",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.042Z",
+				"specReferences": [
+					{
+						"id": "SEP-2243-Case-Sensitivity",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/transports#case-sensitivity"
+					}
+				],
+				"details": {
+					"headerValue": "TOOLS/LIST",
+					"bodyValue": "tools/list",
+					"responseStatus": 400,
+					"responseBody": {
+						"jsonrpc": "2.0",
+						"error": {
+							"code": -32020,
+							"message": "Bad Request: the request headers and body disagree: the body names method tools/list but the Mcp-Method header names TOOLS/LIST",
+							"data": {
+								"mismatch": {
+									"header": "TOOLS/LIST",
+									"body": "the body names method tools/list but the Mcp-Method header names TOOLS/LIST"
+								}
+							}
+						},
+						"id": 107
+					}
+				}
+			},
+			{
+				"id": "sep-2243-server-reject-error-code",
+				"name": "ServerRejectsCaseMismatchValueErrorCode",
+				"description": "Server MUST reject uppercase method value (TOOLS/LIST) since values are case-sensitive \u2014 uses JSON-RPC error code -32020 (HeaderMismatch)",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.042Z",
+				"specReferences": [
+					{
+						"id": "SEP-2243-Case-Sensitivity",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/transports#case-sensitivity"
+					}
+				],
+				"details": {
+					"headerValue": "TOOLS/LIST",
+					"bodyValue": "tools/list",
+					"responseStatus": 400,
+					"responseBody": {
+						"jsonrpc": "2.0",
+						"error": {
+							"code": -32020,
+							"message": "Bad Request: the request headers and body disagree: the body names method tools/list but the Mcp-Method header names TOOLS/LIST",
+							"data": {
+								"mismatch": {
+									"header": "TOOLS/LIST",
+									"body": "the body names method tools/list but the Mcp-Method header names TOOLS/LIST"
+								}
+							}
+						},
+						"id": 107
+					}
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.042Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 2,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "input-required-result-basic-elicitation",
+		"counts": {
+			"SUCCESS": 3
+		},
+		"checks": [
+			{
+				"id": "sep-2322-elicitation-incomplete",
+				"name": "InputRequiredResultElicitationIncomplete",
+				"description": "Server returns InputRequiredResult with elicitation inputRequest",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.919Z",
+				"specReferences": [
+					{
+						"id": "SEP-2322",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/utilities/mrtr"
+					}
+				],
+				"details": {
+					"result": {
+						"resultType": "input_required",
+						"inputRequests": {
+							"user_name": {
+								"method": "elicitation/create",
+								"params": {
+									"message": "What is your name?",
+									"requestedSchema": {
+										"type": "object",
+										"properties": {
+											"name": {
+												"type": "string"
+											}
+										},
+										"required": ["name"]
+									},
+									"mode": "form"
+								}
+							}
+						},
+						"_meta": {
+							"io.modelcontextprotocol/serverInfo": {
+								"name": "mcp-conformance-test-server",
+								"version": "1.0.0"
+							}
+						}
+					}
+				}
+			},
+			{
+				"id": "sep-2322-elicitation-complete",
+				"name": "InputRequiredResultElicitationComplete",
+				"description": "Server returns complete result after retry with inputResponses",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.922Z",
+				"specReferences": [
+					{
+						"id": "SEP-2322",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/utilities/mrtr"
+					}
+				],
+				"details": {
+					"result": {
+						"content": [
+							{
+								"type": "text",
+								"text": "Hello, Alice!"
+							}
+						],
+						"resultType": "complete",
+						"_meta": {
+							"io.modelcontextprotocol/serverInfo": {
+								"name": "mcp-conformance-test-server",
+								"version": "1.0.0"
+							}
+						}
+					}
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.922Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 4,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "input-required-result-basic-list-roots",
+		"counts": {
+			"SUCCESS": 3
+		},
+		"checks": [
+			{
+				"id": "sep-2322-list-roots-incomplete",
+				"name": "InputRequiredResultListRootsIncomplete",
+				"description": "Server returns InputRequiredResult with roots/list inputRequest",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.933Z",
+				"specReferences": [
+					{
+						"id": "SEP-2322",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/utilities/mrtr"
+					}
+				],
+				"details": {
+					"result": {
+						"resultType": "input_required",
+						"inputRequests": {
+							"client_roots": {
+								"method": "roots/list"
+							}
+						},
+						"_meta": {
+							"io.modelcontextprotocol/serverInfo": {
+								"name": "mcp-conformance-test-server",
+								"version": "1.0.0"
+							}
+						}
+					}
+				}
+			},
+			{
+				"id": "sep-2322-list-roots-complete",
+				"name": "InputRequiredResultListRootsComplete",
+				"description": "Server returns complete result after retry with roots response",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.934Z",
+				"specReferences": [
+					{
+						"id": "SEP-2322",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/utilities/mrtr"
+					}
+				],
+				"details": {
+					"result": {
+						"content": [
+							{
+								"type": "text",
+								"text": "Client exposed 1 root(s): file:///test/root"
+							}
+						],
+						"resultType": "complete",
+						"_meta": {
+							"io.modelcontextprotocol/serverInfo": {
+								"name": "mcp-conformance-test-server",
+								"version": "1.0.0"
+							}
+						}
+					}
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.934Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 4,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "input-required-result-basic-sampling",
+		"counts": {
+			"SUCCESS": 3
+		},
+		"checks": [
+			{
+				"id": "sep-2322-sampling-incomplete",
+				"name": "InputRequiredResultSamplingIncomplete",
+				"description": "Server returns InputRequiredResult with sampling inputRequest",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.928Z",
+				"specReferences": [
+					{
+						"id": "SEP-2322",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/utilities/mrtr"
+					}
+				],
+				"details": {
+					"result": {
+						"resultType": "input_required",
+						"inputRequests": {
+							"capital_question": {
+								"method": "sampling/createMessage",
+								"params": {
+									"messages": [
+										{
+											"role": "user",
+											"content": {
+												"type": "text",
+												"text": "What is the capital of France?"
+											}
+										}
+									],
+									"maxTokens": 100
+								}
+							}
+						},
+						"_meta": {
+							"io.modelcontextprotocol/serverInfo": {
+								"name": "mcp-conformance-test-server",
+								"version": "1.0.0"
+							}
+						}
+					}
+				}
+			},
+			{
+				"id": "sep-2322-sampling-complete",
+				"name": "InputRequiredResultSamplingComplete",
+				"description": "Server returns complete result after retry with sampling response",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.931Z",
+				"specReferences": [
+					{
+						"id": "SEP-2322",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/utilities/mrtr"
+					}
+				],
+				"details": {
+					"result": {
+						"content": [
+							{
+								"type": "text",
+								"text": "Sampling response: The capital of France is Paris."
+							}
+						],
+						"resultType": "complete",
+						"_meta": {
+							"io.modelcontextprotocol/serverInfo": {
+								"name": "mcp-conformance-test-server",
+								"version": "1.0.0"
+							}
+						}
+					}
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.931Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 4,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "input-required-result-capability-check",
+		"counts": {
+			"SUCCESS": 2
+		},
+		"checks": [
+			{
+				"id": "sep-2322-respect-client-capabilities",
+				"name": "RespectClientCapabilities",
+				"description": "Server only includes inputRequests for declared client capabilities",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.965Z",
+				"specReferences": [
+					{
+						"id": "SEP-2322",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/utilities/mrtr"
+					}
+				],
+				"details": {
+					"result": {
+						"resultType": "input_required",
+						"inputRequests": {
+							"greeting": {
+								"method": "sampling/createMessage",
+								"params": {
+									"messages": [
+										{
+											"role": "user",
+											"content": {
+												"type": "text",
+												"text": "Generate a short greeting"
+											}
+										}
+									],
+									"maxTokens": 50
+								}
+							}
+						},
+						"_meta": {
+							"io.modelcontextprotocol/serverInfo": {
+								"name": "mcp-conformance-test-server",
+								"version": "1.0.0"
+							}
+						}
+					}
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.965Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 2,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "input-required-result-ignore-extra-params",
+		"counts": {
+			"SUCCESS": 2
+		},
+		"checks": [
+			{
+				"id": "sep-2322-ignore-unexpected-params",
+				"name": "IgnoreUnexpectedParams",
+				"description": "Server ignores extra unrecognized keys in inputResponses",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.967Z",
+				"specReferences": [
+					{
+						"id": "SEP-2322",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/utilities/mrtr"
+					}
+				],
+				"details": {
+					"result": {
+						"content": [
+							{
+								"type": "text",
+								"text": "Hello, Alice!"
+							}
+						],
+						"resultType": "complete",
+						"_meta": {
+							"io.modelcontextprotocol/serverInfo": {
+								"name": "mcp-conformance-test-server",
+								"version": "1.0.0"
+							}
+						}
+					}
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.967Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 2,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "input-required-result-missing-input-response",
+		"counts": {
+			"SUCCESS": 2
+		},
+		"checks": [
+			{
+				"id": "sep-2322-missing-response-rerequests",
+				"name": "InputRequiredResultMissingResponseRerequests",
+				"description": "Server re-requests missing inputResponses via new InputRequiredResult",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.951Z",
+				"specReferences": [
+					{
+						"id": "SEP-2322",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/utilities/mrtr"
+					}
+				],
+				"details": {
+					"result": {
+						"resultType": "input_required",
+						"inputRequests": {
+							"user_name": {
+								"method": "elicitation/create",
+								"params": {
+									"message": "What is your name?",
+									"requestedSchema": {
+										"type": "object",
+										"properties": {
+											"name": {
+												"type": "string"
+											}
+										},
+										"required": ["name"]
+									},
+									"mode": "form"
+								}
+							}
+						},
+						"_meta": {
+							"io.modelcontextprotocol/serverInfo": {
+								"name": "mcp-conformance-test-server",
+								"version": "1.0.0"
+							}
+						}
+					}
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.951Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 2,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "input-required-result-multi-round",
+		"counts": {
+			"SUCCESS": 4
+		},
+		"checks": [
+			{
+				"id": "sep-2322-multi-round-r1",
+				"name": "InputRequiredResultMultiRoundR1",
+				"description": "Round 1: Server returns InputRequiredResult with requestState",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.945Z",
+				"specReferences": [
+					{
+						"id": "SEP-2322",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/utilities/mrtr"
+					}
+				],
+				"details": {
+					"result": {
+						"resultType": "input_required",
+						"inputRequests": {
+							"step1": {
+								"method": "elicitation/create",
+								"params": {
+									"message": "Step 1: What is your name?",
+									"requestedSchema": {
+										"type": "object",
+										"properties": {
+											"name": {
+												"type": "string"
+											}
+										},
+										"required": ["name"]
+									},
+									"mode": "form"
+								}
+							}
+						},
+						"requestState": "v1.eyJwIjp7InRvb2wiOiJtdWx0aV9yb3VuZCIsInJvdW5kIjoxLCJub25jZSI6ImNiODk5NDlmLTU4NjAtNGRkZi05YjgyLTgwOWYzOGE4OGJlNyJ9LCJleHAiOjE3ODkyMzkxOTB9.c9qvPFx4VX6P6fg6HfACyIdWLcm0MaI53rZ7bMEcRyk",
+						"_meta": {
+							"io.modelcontextprotocol/serverInfo": {
+								"name": "mcp-conformance-test-server",
+								"version": "1.0.0"
+							}
+						}
+					}
+				}
+			},
+			{
+				"id": "sep-2322-multi-round-r2",
+				"name": "InputRequiredResultMultiRoundR2",
+				"description": "Round 2: Server returns another InputRequiredResult with updated requestState",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.947Z",
+				"specReferences": [
+					{
+						"id": "SEP-2322",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/utilities/mrtr"
+					}
+				],
+				"details": {
+					"result": {
+						"resultType": "input_required",
+						"inputRequests": {
+							"step2": {
+								"method": "elicitation/create",
+								"params": {
+									"message": "Step 2: What is your favorite color?",
+									"requestedSchema": {
+										"type": "object",
+										"properties": {
+											"color": {
+												"type": "string"
+											}
+										},
+										"required": ["color"]
+									},
+									"mode": "form"
+								}
+							}
+						},
+						"requestState": "v1.eyJwIjp7InRvb2wiOiJtdWx0aV9yb3VuZCIsInJvdW5kIjoyLCJuYW1lIjoiQWxpY2UiLCJub25jZSI6ImMxYzM0ZGEzLTViMzYtNDhlMi04MTBjLTc1NzkwOTU0MTljZCJ9LCJleHAiOjE3ODkyMzkxOTB9.M4al7I1Zri6Tux8aRUFp0Kg_dZ01Our_aQ2Mp2vUclU",
+						"_meta": {
+							"io.modelcontextprotocol/serverInfo": {
+								"name": "mcp-conformance-test-server",
+								"version": "1.0.0"
+							}
+						}
+					}
+				}
+			},
+			{
+				"id": "sep-2322-multi-round-r3",
+				"name": "InputRequiredResultMultiRoundR3",
+				"description": "Round 3: Server returns complete result",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.949Z",
+				"specReferences": [
+					{
+						"id": "SEP-2322",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/utilities/mrtr"
+					}
+				],
+				"details": {
+					"result": {
+						"content": [
+							{
+								"type": "text",
+								"text": "Multi-round complete: Alice likes blue"
+							}
+						],
+						"resultType": "complete",
+						"_meta": {
+							"io.modelcontextprotocol/serverInfo": {
+								"name": "mcp-conformance-test-server",
+								"version": "1.0.0"
+							}
+						}
+					}
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.949Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 6,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "input-required-result-multiple-input-requests",
+		"counts": {
+			"SUCCESS": 3
+		},
+		"checks": [
+			{
+				"id": "sep-2322-multiple-inputs-incomplete",
+				"name": "InputRequiredResultMultipleInputsIncomplete",
+				"description": "Server returns InputRequiredResult with multiple inputRequests of different types",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.942Z",
+				"specReferences": [
+					{
+						"id": "SEP-2322",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/utilities/mrtr"
+					}
+				],
+				"details": {
+					"result": {
+						"resultType": "input_required",
+						"inputRequests": {
+							"user_name": {
+								"method": "elicitation/create",
+								"params": {
+									"message": "What is your name?",
+									"requestedSchema": {
+										"type": "object",
+										"properties": {
+											"name": {
+												"type": "string"
+											}
+										},
+										"required": ["name"]
+									},
+									"mode": "form"
+								}
+							},
+							"greeting": {
+								"method": "sampling/createMessage",
+								"params": {
+									"messages": [
+										{
+											"role": "user",
+											"content": {
+												"type": "text",
+												"text": "Generate a greeting"
+											}
+										}
+									],
+									"maxTokens": 50
+								}
+							},
+							"client_roots": {
+								"method": "roots/list"
+							}
+						},
+						"requestState": "v1.eyJwIjp7InRvb2wiOiJtdWx0aXBsZV9pbnB1dHMiLCJub25jZSI6IjAwM2IwZWExLWVkYmMtNDViYy04OWY1LTE4ZTQ1MDJmZjljZiJ9LCJleHAiOjE3ODkyMzkxOTB9.aMFMvXfqZy0JM5xbrnnJ1CBc4lQvH4pfrM5iZ1Rs0P4",
+						"_meta": {
+							"io.modelcontextprotocol/serverInfo": {
+								"name": "mcp-conformance-test-server",
+								"version": "1.0.0"
+							}
+						}
+					}
+				}
+			},
+			{
+				"id": "sep-2322-multiple-inputs-complete",
+				"name": "InputRequiredResultMultipleInputsComplete",
+				"description": "Server returns complete result after all inputResponses are provided",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.943Z",
+				"specReferences": [
+					{
+						"id": "SEP-2322",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/utilities/mrtr"
+					}
+				],
+				"details": {
+					"result": {
+						"content": [
+							{
+								"type": "text",
+								"text": "Hello there! Alice \u2014 1 root(s) visible"
+							}
+						],
+						"resultType": "complete",
+						"_meta": {
+							"io.modelcontextprotocol/serverInfo": {
+								"name": "mcp-conformance-test-server",
+								"version": "1.0.0"
+							}
+						}
+					}
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.943Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 4,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "input-required-result-non-tool-request",
+		"counts": {
+			"SUCCESS": 3
+		},
+		"checks": [
+			{
+				"id": "sep-2322-non-tool-incomplete",
+				"name": "InputRequiredResultNonToolIncomplete",
+				"description": "prompts/get returns InputRequiredResult with inputRequests",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.952Z",
+				"specReferences": [
+					{
+						"id": "SEP-2322",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/utilities/mrtr"
+					}
+				],
+				"details": {
+					"result": {
+						"resultType": "input_required",
+						"inputRequests": {
+							"user_context": {
+								"method": "elicitation/create",
+								"params": {
+									"message": "What context should the prompt use?",
+									"requestedSchema": {
+										"type": "object",
+										"properties": {
+											"context": {
+												"type": "string"
+											}
+										},
+										"required": ["context"]
+									},
+									"mode": "form"
+								}
+							}
+						},
+						"_meta": {
+							"io.modelcontextprotocol/serverInfo": {
+								"name": "mcp-conformance-test-server",
+								"version": "1.0.0"
+							}
+						}
+					}
+				}
+			},
+			{
+				"id": "sep-2322-non-tool-complete",
+				"name": "InputRequiredResultNonToolComplete",
+				"description": "prompts/get returns complete GetPromptResult after retry with inputResponses",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.954Z",
+				"specReferences": [
+					{
+						"id": "SEP-2322",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/utilities/mrtr"
+					}
+				],
+				"details": {
+					"result": {
+						"messages": [
+							{
+								"role": "user",
+								"content": {
+									"type": "text",
+									"text": "Use the following context: test context"
+								}
+							}
+						],
+						"resultType": "complete",
+						"_meta": {
+							"io.modelcontextprotocol/serverInfo": {
+								"name": "mcp-conformance-test-server",
+								"version": "1.0.0"
+							}
+						}
+					}
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.954Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 4,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "input-required-result-request-state",
+		"counts": {
+			"SUCCESS": 3
+		},
+		"checks": [
+			{
+				"id": "sep-2322-request-state-incomplete",
+				"name": "InputRequiredResultRequestStateIncomplete",
+				"description": "Server returns InputRequiredResult with both inputRequests and requestState",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.938Z",
+				"specReferences": [
+					{
+						"id": "SEP-2322",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/utilities/mrtr"
+					}
+				],
+				"details": {
+					"result": {
+						"resultType": "input_required",
+						"inputRequests": {
+							"confirm": {
+								"method": "elicitation/create",
+								"params": {
+									"message": "Please confirm",
+									"requestedSchema": {
+										"type": "object",
+										"properties": {
+											"ok": {
+												"type": "boolean"
+											}
+										},
+										"required": ["ok"]
+									},
+									"mode": "form"
+								}
+							}
+						},
+						"requestState": "v1.eyJwIjp7InRvb2wiOiJyZXF1ZXN0X3N0YXRlIiwibm9uY2UiOiI2YTJlN2FlOS1jNWYwLTQ1MTUtOWE1OC00M2MzOGE2MDUzNTAifSwiZXhwIjoxNzg5MjM5MTkwfQ.rZsDCfkc7WeOZzPNALw78bGGcacBiZQsoRmjSff7C4I",
+						"_meta": {
+							"io.modelcontextprotocol/serverInfo": {
+								"name": "mcp-conformance-test-server",
+								"version": "1.0.0"
+							}
+						}
+					}
+				}
+			},
+			{
+				"id": "sep-2322-request-state-complete",
+				"name": "InputRequiredResultRequestStateComplete",
+				"description": "Server validates echoed requestState and returns complete result",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.940Z",
+				"specReferences": [
+					{
+						"id": "SEP-2322",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/utilities/mrtr"
+					}
+				],
+				"details": {
+					"result": {
+						"content": [
+							{
+								"type": "text",
+								"text": "state-ok: requestState verified and confirmation received"
+							}
+						],
+						"resultType": "complete",
+						"_meta": {
+							"io.modelcontextprotocol/serverInfo": {
+								"name": "mcp-conformance-test-server",
+								"version": "1.0.0"
+							}
+						}
+					}
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.940Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 4,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "input-required-result-result-type",
+		"counts": {
+			"SUCCESS": 2
+		},
+		"checks": [
+			{
+				"id": "sep-2322-result-type-included",
+				"name": "ResultTypeIncluded",
+				"description": "Server includes resultType field in InputRequiredResult response",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.955Z",
+				"specReferences": [
+					{
+						"id": "SEP-2322",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/utilities/mrtr"
+					}
+				],
+				"details": {
+					"result": {
+						"resultType": "input_required",
+						"inputRequests": {
+							"user_name": {
+								"method": "elicitation/create",
+								"params": {
+									"message": "What is your name?",
+									"requestedSchema": {
+										"type": "object",
+										"properties": {
+											"name": {
+												"type": "string"
+											}
+										},
+										"required": ["name"]
+									},
+									"mode": "form"
+								}
+							}
+						},
+						"_meta": {
+							"io.modelcontextprotocol/serverInfo": {
+								"name": "mcp-conformance-test-server",
+								"version": "1.0.0"
+							}
+						}
+					}
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.955Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 2,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "input-required-result-tampered-state",
+		"counts": {
+			"SUCCESS": 2
+		},
+		"checks": [
+			{
+				"id": "sep-2322-reject-tampered-state",
+				"name": "RejectTamperedState",
+				"description": "Server rejects tampered requestState with error",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.964Z",
+				"specReferences": [
+					{
+						"id": "SEP-2322",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/utilities/mrtr"
+					}
+				],
+				"details": {
+					"tamperedResponse": {
+						"code": -32602,
+						"message": "Invalid or expired requestState",
+						"data": {
+							"reason": "invalid_request_state"
+						}
+					}
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.964Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 4,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "input-required-result-unsupported-methods",
+		"counts": {
+			"SUCCESS": 2
+		},
+		"checks": [
+			{
+				"id": "sep-2322-not-on-unsupported-requests",
+				"name": "NotOnUnsupportedRequests",
+				"description": "Server does not return InputRequiredResult on unsupported methods",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.958Z",
+				"specReferences": [
+					{
+						"id": "SEP-2322",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/utilities/mrtr"
+					}
+				]
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.958Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 4,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "input-required-result-validate-input",
+		"counts": {
+			"SUCCESS": 3
+		},
+		"checks": [
+			{
+				"id": "sep-2322-validate-input-responses",
+				"name": "ValidateInputResponses",
+				"description": "Server validates InputResponses structure",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.969Z",
+				"specReferences": [
+					{
+						"id": "SEP-2322",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/utilities/mrtr"
+					}
+				],
+				"details": {
+					"result": {
+						"resultType": "input_required",
+						"inputRequests": {
+							"user_name": {
+								"method": "elicitation/create",
+								"params": {
+									"message": "What is your name?",
+									"requestedSchema": {
+										"type": "object",
+										"properties": {
+											"name": {
+												"type": "string"
+											}
+										},
+										"required": ["name"]
+									},
+									"mode": "form"
+								}
+							}
+						},
+						"_meta": {
+							"io.modelcontextprotocol/serverInfo": {
+								"name": "mcp-conformance-test-server",
+								"version": "1.0.0"
+							}
+						}
+					}
+				}
+			},
+			{
+				"id": "sep-2322-error-on-protocol-error",
+				"name": "ErrorOnProtocolError",
+				"description": "Server returns JSON-RPC error for protocol-level input errors",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.970Z",
+				"specReferences": [
+					{
+						"id": "SEP-2322",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/utilities/mrtr"
+					}
+				],
+				"details": {
+					"result": {
+						"resultType": "input_required",
+						"inputRequests": {
+							"user_name": {
+								"method": "elicitation/create",
+								"params": {
+									"message": "What is your name?",
+									"requestedSchema": {
+										"type": "object",
+										"properties": {
+											"name": {
+												"type": "string"
+											}
+										},
+										"required": ["name"]
+									},
+									"mode": "form"
+								}
+							}
+						},
+						"_meta": {
+							"io.modelcontextprotocol/serverInfo": {
+								"name": "mcp-conformance-test-server",
+								"version": "1.0.0"
+							}
+						}
+					}
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.970Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 2,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "json-schema-2020-12",
+		"counts": {
+			"SUCCESS": 8
+		},
+		"checks": [
+			{
+				"id": "json-schema-2020-12-tool-found",
+				"name": "JsonSchema2020_12ToolFound",
+				"description": "Server advertises tool 'json_schema_2020_12_tool'",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.030Z",
+				"specReferences": [
+					{
+						"id": "SEP-1613",
+						"url": "https://github.com/modelcontextprotocol/specification/pull/655"
+					}
+				],
+				"details": {
+					"toolFound": true,
+					"availableTools": [
+						"test_x_mcp_header",
+						"test_missing_capability",
+						"test_streaming_elicitation",
+						"test_logging_tool",
+						"test_simple_text",
+						"test_image_content",
+						"test_audio_content",
+						"test_embedded_resource",
+						"test_multiple_content_types",
+						"test_tool_with_logging",
+						"test_tool_with_progress",
+						"test_error_handling",
+						"test_reconnection",
+						"test_sampling",
+						"test_elicitation",
+						"test_elicitation_sep1034_defaults",
+						"test_elicitation_sep1330_enums",
+						"json_schema_2020_12_tool",
+						"test_input_required_result_elicitation",
+						"test_input_required_result_sampling",
+						"test_input_required_result_list_roots",
+						"test_input_required_result_request_state",
+						"test_input_required_result_multiple_inputs",
+						"test_input_required_result_multi_round",
+						"test_input_required_result_tampered_state",
+						"test_input_required_result_capabilities",
+						"test_trigger_tool_change",
+						"test_trigger_prompt_change"
+					]
+				}
+			},
+			{
+				"id": "json-schema-2020-12-$schema",
+				"name": "JsonSchema2020_12$Schema",
+				"description": "inputSchema.$schema field preserved with value 'https://json-schema.org/draft/2020-12/schema'",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.030Z",
+				"specReferences": [
+					{
+						"id": "SEP-1613",
+						"url": "https://github.com/modelcontextprotocol/specification/pull/655"
+					}
+				],
+				"details": {
+					"hasSchema": true,
+					"schemaValue": "https://json-schema.org/draft/2020-12/schema",
+					"expected": "https://json-schema.org/draft/2020-12/schema"
+				}
+			},
+			{
+				"id": "json-schema-2020-12-$defs",
+				"name": "JsonSchema2020_12$Defs",
+				"description": "inputSchema.$defs field preserved with expected structure",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.030Z",
+				"specReferences": [
+					{
+						"id": "SEP-1613",
+						"url": "https://github.com/modelcontextprotocol/specification/pull/655"
+					}
+				],
+				"details": {
+					"hasDefs": true,
+					"defsKeys": ["address"],
+					"defsValue": {
+						"address": {
+							"$anchor": "addressDef",
+							"type": "object",
+							"properties": {
+								"street": {
+									"type": "string"
+								},
+								"city": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			{
+				"id": "json-schema-2020-12-additionalProperties",
+				"name": "JsonSchema2020_12AdditionalProperties",
+				"description": "inputSchema.additionalProperties field preserved",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.030Z",
+				"specReferences": [
+					{
+						"id": "SEP-1613",
+						"url": "https://github.com/modelcontextprotocol/specification/pull/655"
+					}
+				],
+				"details": {
+					"hasAdditionalProps": true,
+					"additionalPropsValue": false,
+					"expected": false
+				}
+			},
+			{
+				"id": "sep-2106-composition-keywords-preserved",
+				"name": "JsonSchema2020_12CompositionKeywords",
+				"description": "inputSchema composition keywords (allOf/anyOf) preserved (SEP-2106)",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.030Z",
+				"specReferences": [
+					{
+						"id": "SEP-2106",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2106"
+					}
+				],
+				"details": {
+					"hasAllOf": true,
+					"hasNestedAnyOf": true,
+					"targetProtocolVersion": "2026-07-28"
+				}
+			},
+			{
+				"id": "sep-2106-conditional-keywords-preserved",
+				"name": "JsonSchema2020_12ConditionalKeywords",
+				"description": "inputSchema conditional keywords (if/then/else) preserved (SEP-2106)",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.030Z",
+				"specReferences": [
+					{
+						"id": "SEP-2106",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2106"
+					}
+				],
+				"details": {
+					"hasIf": true,
+					"hasThen": true,
+					"hasElse": true,
+					"targetProtocolVersion": "2026-07-28"
+				}
+			},
+			{
+				"id": "sep-2106-anchor-keyword-preserved",
+				"name": "JsonSchema2020_12AnchorKeyword",
+				"description": "inputSchema reference keyword ($anchor) preserved in $defs (SEP-2106)",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.030Z",
+				"specReferences": [
+					{
+						"id": "SEP-2106",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2106"
+					}
+				],
+				"details": {
+					"hasAnchor": true,
+					"anchorValue": "addressDef"
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.030Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 2,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "prompts-get-embedded-resource",
+		"counts": {
+			"SUCCESS": 2
+		},
+		"checks": [
+			{
+				"id": "prompts-get-embedded-resource",
+				"name": "PromptsGetEmbeddedResource",
+				"description": "Get prompt with embedded resource",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.891Z",
+				"specReferences": [
+					{
+						"id": "MCP-Prompts-Embedded-Resources",
+						"url": "https://modelcontextprotocol.io/specification/2025-06-18/server/prompts#embedded-resources"
+					}
+				],
+				"details": {
+					"messageCount": 2,
+					"messages": [
+						{
+							"role": "user",
+							"content": {
+								"type": "resource",
+								"resource": {
+									"uri": "test://example-resource",
+									"mimeType": "text/plain",
+									"text": "Embedded resource content for testing."
+								}
+							}
+						},
+						{
+							"role": "user",
+							"content": {
+								"type": "text",
+								"text": "Please process the embedded resource above."
+							}
+						}
+					]
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.891Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 2,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "prompts-get-simple",
+		"counts": {
+			"SUCCESS": 2
+		},
+		"checks": [
+			{
+				"id": "prompts-get-simple",
+				"name": "PromptsGetSimple",
+				"description": "Get simple prompt successfully",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.887Z",
+				"specReferences": [
+					{
+						"id": "MCP-Prompts-Get",
+						"url": "https://modelcontextprotocol.io/specification/2025-06-18/server/prompts#getting-prompts"
+					}
+				],
+				"details": {
+					"messageCount": 1
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.887Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 2,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "prompts-get-with-args",
+		"counts": {
+			"SUCCESS": 2
+		},
+		"checks": [
+			{
+				"id": "prompts-get-with-args",
+				"name": "PromptsGetWithArgs",
+				"description": "Get parameterized prompt with argument substitution",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.889Z",
+				"specReferences": [
+					{
+						"id": "MCP-Prompts-Get",
+						"url": "https://modelcontextprotocol.io/specification/2025-06-18/server/prompts#getting-prompts"
+					}
+				],
+				"details": {
+					"messageCount": 1,
+					"messages": [
+						{
+							"role": "user",
+							"content": {
+								"type": "text",
+								"text": "Prompt with arguments: arg1='testValue1', arg2='testValue2'"
+							}
+						}
+					]
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.889Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 2,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "prompts-get-with-image",
+		"counts": {
+			"SUCCESS": 2
+		},
+		"checks": [
+			{
+				"id": "prompts-get-with-image",
+				"name": "PromptsGetWithImage",
+				"description": "Get prompt with image content",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.893Z",
+				"specReferences": [
+					{
+						"id": "MCP-Prompts-Image",
+						"url": "https://modelcontextprotocol.io/specification/2025-06-18/server/prompts#image-content"
+					}
+				],
+				"details": {
+					"messageCount": 2
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.893Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 2,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "prompts-list",
+		"counts": {
+			"SUCCESS": 2
+		},
+		"checks": [
+			{
+				"id": "prompts-list",
+				"name": "PromptsList",
+				"description": "Server lists available prompts with valid structure",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.883Z",
+				"specReferences": [
+					{
+						"id": "MCP-Prompts-List",
+						"url": "https://modelcontextprotocol.io/specification/2025-06-18/server/prompts#listing-prompts"
+					}
+				],
+				"details": {
+					"promptCount": 5,
+					"prompts": [
+						"test_simple_prompt",
+						"test_prompt_with_arguments",
+						"test_prompt_with_embedded_resource",
+						"test_input_required_result_prompt",
+						"test_prompt_with_image"
+					]
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.883Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 2,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "resources-list",
+		"counts": {
+			"SUCCESS": 2
+		},
+		"checks": [
+			{
+				"id": "resources-list",
+				"name": "ResourcesList",
+				"description": "Server lists available resources with valid structure",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.863Z",
+				"specReferences": [
+					{
+						"id": "MCP-Resources-List",
+						"url": "https://modelcontextprotocol.io/specification/2025-06-18/server/resources#listing-resources"
+					}
+				],
+				"details": {
+					"resourceCount": 3,
+					"resources": ["test://static-text", "test://static-binary", "test://watched-resource"]
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.863Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 2,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "resources-read-binary",
+		"counts": {
+			"SUCCESS": 2
+		},
+		"checks": [
+			{
+				"id": "resources-read-binary",
+				"name": "ResourcesReadBinary",
+				"description": "Read binary resource successfully",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.872Z",
+				"specReferences": [
+					{
+						"id": "MCP-Resources-Read",
+						"url": "https://modelcontextprotocol.io/specification/2025-06-18/server/resources#reading-resources"
+					}
+				],
+				"details": {
+					"uri": "test://static-binary",
+					"mimeType": "image/png",
+					"hasBlob": true
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.872Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 2,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "resources-read-text",
+		"counts": {
+			"SUCCESS": 2
+		},
+		"checks": [
+			{
+				"id": "resources-read-text",
+				"name": "ResourcesReadText",
+				"description": "Read text resource successfully",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.868Z",
+				"specReferences": [
+					{
+						"id": "MCP-Resources-Read",
+						"url": "https://modelcontextprotocol.io/specification/2025-06-18/server/resources#reading-resources"
+					}
+				],
+				"details": {
+					"uri": "test://static-text",
+					"mimeType": "text/plain",
+					"hasText": true
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.868Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 2,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "resources-templates-read",
+		"counts": {
+			"SUCCESS": 2
+		},
+		"checks": [
+			{
+				"id": "resources-templates-read",
+				"name": "ResourcesTemplateRead",
+				"description": "Read resource from template with parameter substitution",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.874Z",
+				"specReferences": [
+					{
+						"id": "MCP-Resources-Templates",
+						"url": "https://modelcontextprotocol.io/specification/2025-06-18/server/resources#resource-templates"
+					}
+				],
+				"details": {
+					"uri": "test://template/123/data",
+					"content": "{\"id\":\"123\",\"templateTest\":true,\"data\":\"Data for ID: 123\"}"
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.874Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 2,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "sep-2164-resource-not-found",
+		"counts": {
+			"SUCCESS": 4
+		},
+		"checks": [
+			{
+				"id": "sep-2164-no-empty-contents",
+				"name": "ResourcesNotFoundNoEmptyContents",
+				"description": "Server does not return an empty contents array for a non-existent resource",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.877Z",
+				"specReferences": [
+					{
+						"id": "SEP-2164",
+						"url": "https://modelcontextprotocol.io/specification/draft/server/resources#error-handling"
+					}
+				],
+				"details": {
+					"requestedUri": "test://nonexistent-resource-for-conformance-testing",
+					"receivedResult": false
+				}
+			},
+			{
+				"id": "sep-2164-error-code",
+				"name": "ResourcesNotFoundErrorCode",
+				"description": "Server returns -32602 (Invalid Params) for non-existent resource (SHOULD)",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.877Z",
+				"specReferences": [
+					{
+						"id": "SEP-2164",
+						"url": "https://modelcontextprotocol.io/specification/draft/server/resources#error-handling"
+					}
+				],
+				"details": {
+					"requestedUri": "test://nonexistent-resource-for-conformance-testing",
+					"receivedErrorCode": -32602,
+					"receivedResult": false
+				}
+			},
+			{
+				"id": "sep-2164-data-uri",
+				"name": "ResourcesNotFoundDataUri",
+				"description": "Server includes the requested URI in the error data field (SHOULD)",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.877Z",
+				"specReferences": [
+					{
+						"id": "SEP-2164",
+						"url": "https://modelcontextprotocol.io/specification/draft/server/resources#error-handling"
+					}
+				],
+				"details": {
+					"requestedUri": "test://nonexistent-resource-for-conformance-testing",
+					"receivedDataUri": "test://nonexistent-resource-for-conformance-testing"
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.877Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 2,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "server-sse-multiple-streams",
+		"counts": {
+			"SUCCESS": 1,
+			"INFO": 1
+		},
+		"checks": [
+			{
+				"id": "server-accepts-multiple-post-streams",
+				"name": "ServerAcceptsMultiplePostStreams",
+				"description": "Server allows multiple concurrent POST requests (each may return SSE or JSON)",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.855Z",
+				"specReferences": [
+					{
+						"id": "SEP-1699",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/issues/1699"
+					}
+				],
+				"details": {
+					"numStreamsAttempted": 3,
+					"numStreamsAccepted": 3,
+					"numSseStreams": 0,
+					"statuses": [200, 200, 200],
+					"contentTypes": ["application/json", "application/json", "application/json"]
+				}
+			},
+			{
+				"id": "server-sse-streams-functional",
+				"name": "ServerSSEStreamsFunctional",
+				"description": "Server returned JSON responses (SSE streams optional)",
+				"status": "INFO",
+				"timestamp": "2026-09-12T18:43:10.855Z",
+				"specReferences": [
+					{
+						"id": "SEP-1699",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/issues/1699"
+					}
+				],
+				"details": {
+					"numSseStreams": 0,
+					"message": "Server returned JSON for all requests - SSE streaming is optional",
+					"results": [
+						{
+							"index": 0,
+							"type": "json",
+							"skipped": true
+						},
+						{
+							"index": 1,
+							"type": "json",
+							"skipped": true
+						},
+						{
+							"index": 2,
+							"type": "json",
+							"skipped": true
+						}
+					]
+				}
+			}
+		]
+	},
+	{
+		"scenario": "server-stateless",
+		"counts": {
+			"SUCCESS": 30
+		},
+		"checks": [
+			{
+				"id": "sep-2575-request-meta-invalid-missing-meta",
+				"name": "RequestMetaInvalid",
+				"description": "Rejects request with missing _meta with -32602 Invalid params",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:09.074Z",
+				"specReferences": [
+					{
+						"id": "SEP-2575",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2575"
+					}
+				],
+				"details": {
+					"fieldIssue": "missing-meta",
+					"response": {
+						"jsonrpc": "2.0",
+						"error": {
+							"code": -32602,
+							"message": "Invalid params: the MCP-Protocol-Version header names protocol revision 2026-07-28, but the request is missing the required per-request envelope key(s): _meta",
+							"data": {
+								"envelope": {
+									"missing": ["_meta"]
+								}
+							}
+						},
+						"id": 101
+					}
+				}
+			},
+			{
+				"id": "sep-2575-http-server-meta-invalid-400",
+				"name": "HttpServerMetaInvalid400",
+				"description": "Rejections of requests missing required _meta fields use HTTP 400 Bad Request.",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:09.074Z",
+				"specReferences": [
+					{
+						"id": "SEP-2575",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2575"
+					}
+				],
+				"details": {
+					"fieldIssue": "missing-meta",
+					"response": {
+						"jsonrpc": "2.0",
+						"error": {
+							"code": -32602,
+							"message": "Invalid params: the MCP-Protocol-Version header names protocol revision 2026-07-28, but the request is missing the required per-request envelope key(s): _meta",
+							"data": {
+								"envelope": {
+									"missing": ["_meta"]
+								}
+							}
+						},
+						"id": 101
+					}
+				}
+			},
+			{
+				"id": "sep-2575-request-meta-invalid-missing-protocol-version",
+				"name": "RequestMetaInvalid",
+				"description": "Rejects request with _meta missing io.modelcontextprotocol/protocolVersion",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:09.074Z",
+				"specReferences": [
+					{
+						"id": "SEP-2575",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2575"
+					}
+				],
+				"details": {
+					"fieldIssue": "missing-protocol-version",
+					"response": {
+						"jsonrpc": "2.0",
+						"error": {
+							"code": -32602,
+							"message": "Invalid params: the MCP-Protocol-Version header names protocol revision 2026-07-28, but the request is missing the required per-request envelope key(s): io.modelcontextprotocol/protocolVersion",
+							"data": {
+								"envelope": {
+									"missing": ["io.modelcontextprotocol/protocolVersion"]
+								}
+							}
+						},
+						"id": 102
+					}
+				}
+			},
+			{
+				"id": "sep-2575-http-server-meta-invalid-400",
+				"name": "HttpServerMetaInvalid400",
+				"description": "Rejections of requests missing required _meta fields use HTTP 400 Bad Request.",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:09.074Z",
+				"specReferences": [
+					{
+						"id": "SEP-2575",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2575"
+					}
+				],
+				"details": {
+					"fieldIssue": "missing-protocol-version",
+					"response": {
+						"jsonrpc": "2.0",
+						"error": {
+							"code": -32602,
+							"message": "Invalid params: the MCP-Protocol-Version header names protocol revision 2026-07-28, but the request is missing the required per-request envelope key(s): io.modelcontextprotocol/protocolVersion",
+							"data": {
+								"envelope": {
+									"missing": ["io.modelcontextprotocol/protocolVersion"]
+								}
+							}
+						},
+						"id": 102
+					}
+				}
+			},
+			{
+				"id": "sep-2575-request-meta-invalid-missing-client-capabilities",
+				"name": "RequestMetaInvalid",
+				"description": "Rejects request with _meta missing io.modelcontextprotocol/clientCapabilities",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:09.074Z",
+				"specReferences": [
+					{
+						"id": "SEP-2575",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2575"
+					}
+				],
+				"details": {
+					"fieldIssue": "missing-client-capabilities",
+					"response": {
+						"jsonrpc": "2.0",
+						"error": {
+							"code": -32602,
+							"message": "Invalid _meta envelope for protocol revision 2026-07-28: io.modelcontextprotocol/clientCapabilities: missing",
+							"data": {
+								"envelope": {
+									"key": "io.modelcontextprotocol/clientCapabilities",
+									"problem": "missing"
+								}
+							}
+						},
+						"id": 104
+					}
+				}
+			},
+			{
+				"id": "sep-2575-http-server-meta-invalid-400",
+				"name": "HttpServerMetaInvalid400",
+				"description": "Rejections of requests missing required _meta fields use HTTP 400 Bad Request.",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:09.074Z",
+				"specReferences": [
+					{
+						"id": "SEP-2575",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2575"
+					}
+				],
+				"details": {
+					"fieldIssue": "missing-client-capabilities",
+					"response": {
+						"jsonrpc": "2.0",
+						"error": {
+							"code": -32602,
+							"message": "Invalid _meta envelope for protocol revision 2026-07-28: io.modelcontextprotocol/clientCapabilities: missing",
+							"data": {
+								"envelope": {
+									"key": "io.modelcontextprotocol/clientCapabilities",
+									"problem": "missing"
+								}
+							}
+						},
+						"id": 104
+					}
+				}
+			},
+			{
+				"id": "sep-2575-request-meta-client-info-optional",
+				"name": "RequestMetaClientInfoOptional",
+				"description": "Serves requests whose _meta omits io.modelcontextprotocol/clientInfo (clientInfo is a SHOULD).",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:09.074Z",
+				"specReferences": [
+					{
+						"id": "SEP-2575",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2575"
+					}
+				],
+				"details": {
+					"response": {
+						"result": {
+							"supportedVersions": ["2026-07-28"],
+							"capabilities": {
+								"tools": {
+									"listChanged": true
+								},
+								"resources": {
+									"subscribe": true,
+									"listChanged": true
+								},
+								"prompts": {
+									"listChanged": true
+								},
+								"logging": {},
+								"completions": {}
+							},
+							"resultType": "complete",
+							"ttlMs": 0,
+							"cacheScope": "private",
+							"_meta": {
+								"io.modelcontextprotocol/serverInfo": {
+									"name": "mcp-conformance-test-server",
+									"version": "1.0.0"
+								}
+							}
+						},
+						"jsonrpc": "2.0",
+						"id": 105
+					}
+				}
+			},
+			{
+				"id": "sep-2575-server-implements-discover",
+				"name": "ServerImplementsDiscover",
+				"description": "Servers MUST implement server/discover.",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:09.074Z",
+				"specReferences": [
+					{
+						"id": "SEP-2575",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2575"
+					}
+				],
+				"details": {
+					"result": {
+						"supportedVersions": ["2026-07-28"],
+						"capabilities": {
+							"tools": {
+								"listChanged": true
+							},
+							"resources": {
+								"subscribe": true,
+								"listChanged": true
+							},
+							"prompts": {
+								"listChanged": true
+							},
+							"logging": {},
+							"completions": {}
+						},
+						"resultType": "complete",
+						"ttlMs": 0,
+						"cacheScope": "private",
+						"_meta": {
+							"io.modelcontextprotocol/serverInfo": {
+								"name": "mcp-conformance-test-server",
+								"version": "1.0.0"
+							}
+						}
+					}
+				}
+			},
+			{
+				"id": "sep-2575-server-identifies-in-result-meta",
+				"name": "ServerIdentifiesInResultMeta",
+				"description": "Servers SHOULD identify themselves via _meta['io.modelcontextprotocol/serverInfo'] on responses (spec PR #3002).",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:09.074Z",
+				"specReferences": [
+					{
+						"id": "SEP-2575",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2575"
+					}
+				],
+				"details": {
+					"serverInfo": {
+						"name": "mcp-conformance-test-server",
+						"version": "1.0.0"
+					}
+				}
+			},
+			{
+				"id": "sep-2575-server-declares-prompts-in-discover",
+				"name": "ServerDeclaresPromptsInDiscover",
+				"description": "Servers that support prompts MUST declare the prompts capability in their DiscoverResult.",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:09.074Z",
+				"specReferences": [
+					{
+						"id": "SEP-2575",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2575"
+					}
+				],
+				"details": {
+					"discoverCapabilities": {
+						"tools": {
+							"listChanged": true
+						},
+						"resources": {
+							"subscribe": true,
+							"listChanged": true
+						},
+						"prompts": {
+							"listChanged": true
+						},
+						"logging": {},
+						"completions": {}
+					},
+					"response": {
+						"result": {
+							"prompts": [
+								{
+									"name": "test_simple_prompt",
+									"title": "Simple Test Prompt",
+									"description": "A simple prompt without arguments"
+								},
+								{
+									"name": "test_prompt_with_arguments",
+									"title": "Prompt With Arguments",
+									"description": "A prompt with required arguments",
+									"arguments": [
+										{
+											"name": "arg1",
+											"description": "First test argument",
+											"required": true
+										},
+										{
+											"name": "arg2",
+											"description": "Second test argument",
+											"required": true
+										}
+									]
+								},
+								{
+									"name": "test_prompt_with_embedded_resource",
+									"title": "Prompt With Embedded Resource",
+									"description": "A prompt that includes an embedded resource",
+									"arguments": [
+										{
+											"name": "resourceUri",
+											"description": "URI of the resource to embed",
+											"required": true
+										}
+									]
+								},
+								{
+									"name": "test_input_required_result_prompt",
+									"title": "MRTR Prompt",
+									"description": "MRTR (SEP-2322): prompt that requires elicitation input before rendering"
+								},
+								{
+									"name": "test_prompt_with_image",
+									"title": "Prompt With Image",
+									"description": "A prompt that includes image content"
+								}
+							],
+							"resultType": "complete",
+							"ttlMs": 0,
+							"cacheScope": "private",
+							"_meta": {
+								"io.modelcontextprotocol/serverInfo": {
+									"name": "mcp-conformance-test-server",
+									"version": "1.0.0"
+								}
+							}
+						},
+						"jsonrpc": "2.0",
+						"id": 203
+					}
+				}
+			},
+			{
+				"id": "sep-2575-discover-capabilities-match-handlers",
+				"name": "DiscoverCapabilitiesMatchHandlers",
+				"description": "capabilities matches what the server honors on real RPC calls",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:09.074Z",
+				"specReferences": [
+					{
+						"id": "SEP-2575",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2575"
+					}
+				],
+				"details": {
+					"response": {
+						"result": {
+							"tools": [
+								{
+									"name": "test_x_mcp_header",
+									"description": "Tests SEP-2243 Mcp-Param-* server-side validation",
+									"inputSchema": {
+										"type": "object",
+										"properties": {
+											"region": {
+												"type": "string",
+												"description": "mirrored into Mcp-Param-Region",
+												"x-mcp-header": "Region"
+											},
+											"level": {
+												"type": "integer",
+												"description": "non-mirrored argument"
+											}
+										}
+									}
+								},
+								{
+									"name": "test_missing_capability",
+									"description": "SEP-2575: requires the `sampling` client capability (drives the -32021 undeclared-capability rejection)",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_streaming_elicitation",
+									"description": "SEP-2575: yields a response stream carrying no independent top-level JSON-RPC requests",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_logging_tool",
+									"description": "SEP-2575: logs via ctx.mcpReq.log so the no-log-without-logLevel rule is exercised",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_simple_text",
+									"description": "Tests simple text content response",
+									"inputSchema": {
+										"type": "object",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_image_content",
+									"description": "Tests image content response",
+									"inputSchema": {
+										"type": "object",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_audio_content",
+									"description": "Tests audio content response",
+									"inputSchema": {
+										"type": "object",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_embedded_resource",
+									"description": "Tests embedded resource content response",
+									"inputSchema": {
+										"type": "object",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_multiple_content_types",
+									"description": "Tests response with multiple content types (text, image, resource)",
+									"inputSchema": {
+										"type": "object",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_tool_with_logging",
+									"description": "Tests tool that emits log messages during execution",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_tool_with_progress",
+									"description": "Tests tool that reports progress notifications",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_error_handling",
+									"description": "Tests error response handling",
+									"inputSchema": {
+										"type": "object",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_reconnection",
+									"description": "Tests SSE stream disconnection and client reconnection (SEP-1699). Server will close the stream mid-call and send the result after client reconnects.",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_sampling",
+									"description": "Tests server-initiated sampling (LLM completion request)",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {
+											"prompt": {
+												"type": "string",
+												"description": "The prompt to send to the LLM"
+											}
+										},
+										"required": ["prompt"]
+									}
+								},
+								{
+									"name": "test_elicitation",
+									"description": "Tests server-initiated elicitation (user input request)",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {
+											"message": {
+												"type": "string",
+												"description": "The message to show the user"
+											}
+										},
+										"required": ["message"]
+									}
+								},
+								{
+									"name": "test_elicitation_sep1034_defaults",
+									"description": "Tests elicitation with default values per SEP-1034",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_elicitation_sep1330_enums",
+									"description": "Tests elicitation with enum schema improvements per SEP-1330",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "json_schema_2020_12_tool",
+									"description": "Tool with JSON Schema 2020-12 features for conformance testing (SEP-1613, SEP-2106)",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"$defs": {
+											"address": {
+												"$anchor": "addressDef",
+												"type": "object",
+												"properties": {
+													"street": {
+														"type": "string"
+													},
+													"city": {
+														"type": "string"
+													}
+												}
+											}
+										},
+										"properties": {
+											"name": {
+												"type": "string"
+											},
+											"address": {
+												"$ref": "#/$defs/address"
+											},
+											"contactMethod": {
+												"type": "string",
+												"enum": ["phone", "email"]
+											},
+											"phone": {
+												"type": "string"
+											},
+											"email": {
+												"type": "string"
+											}
+										},
+										"allOf": [
+											{
+												"anyOf": [
+													{
+														"required": ["phone"]
+													},
+													{
+														"required": ["email"]
+													}
+												]
+											}
+										],
+										"if": {
+											"properties": {
+												"contactMethod": {
+													"const": "phone"
+												}
+											},
+											"required": ["contactMethod"]
+										},
+										"then": {
+											"required": ["phone"]
+										},
+										"else": {
+											"required": ["email"]
+										},
+										"additionalProperties": false
+									}
+								},
+								{
+									"name": "test_input_required_result_elicitation",
+									"description": "MRTR (SEP-2322): asks for the caller name via an in-band elicitation request",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_input_required_result_sampling",
+									"description": "MRTR (SEP-2322): asks for an LLM completion via an in-band sampling request",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_input_required_result_list_roots",
+									"description": "MRTR (SEP-2322): asks for the client roots via an in-band roots/list request",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_input_required_result_request_state",
+									"description": "MRTR (SEP-2322): round-trips integrity-protected requestState alongside an elicitation request",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_input_required_result_multiple_inputs",
+									"description": "MRTR (SEP-2322): asks for elicitation, sampling and roots input in a single round",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_input_required_result_multi_round",
+									"description": "MRTR (SEP-2322): two elicitation rounds with evolving requestState before completing",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_input_required_result_tampered_state",
+									"description": "MRTR (SEP-2322): rejects retries whose requestState fails integrity verification",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_input_required_result_capabilities",
+									"description": "MRTR (SEP-2322): only requests input kinds the declared client capabilities cover",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_trigger_tool_change",
+									"description": "Listen diagnostic (SEP-2575): publishes a tools/list_changed event onto the handler bus",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								},
+								{
+									"name": "test_trigger_prompt_change",
+									"description": "Listen diagnostic (SEP-2575): publishes a prompts/list_changed event onto the handler bus",
+									"inputSchema": {
+										"type": "object",
+										"$schema": "https://json-schema.org/draft/2020-12/schema",
+										"properties": {}
+									}
+								}
+							],
+							"resultType": "complete",
+							"ttlMs": 0,
+							"cacheScope": "private",
+							"_meta": {
+								"io.modelcontextprotocol/serverInfo": {
+									"name": "mcp-conformance-test-server",
+									"version": "1.0.0"
+								}
+							}
+						},
+						"jsonrpc": "2.0",
+						"id": 202
+					}
+				}
+			},
+			{
+				"id": "sep-2575-server-unsupported-version-error",
+				"name": "ServerUnsupportedVersionError",
+				"description": "If the server does not implement the requested version (whether the version is unknown to the server, or is a known version the server has chosen not to support), it MUST respond with an UnsupportedProtocolVersionError listing the versions it does support; the error data carries the supported versions and echoes the requested version.",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:09.074Z",
+				"specReferences": [
+					{
+						"id": "SEP-2575",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2575"
+					}
+				],
+				"details": {
+					"response": {
+						"jsonrpc": "2.0",
+						"error": {
+							"code": -32022,
+							"message": "Unsupported protocol version: v999.0.0",
+							"data": {
+								"supported": ["2026-07-28"],
+								"requested": "v999.0.0"
+							}
+						},
+						"id": 301
+					}
+				}
+			},
+			{
+				"id": "sep-2575-http-server-unsupported-version-400",
+				"name": "HttpServerUnsupportedVersion400",
+				"description": "If the server does not implement the requested protocol version, it MUST respond with 400 Bad Request and an UnsupportedProtocolVersionError listing its supported versions.",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:09.074Z",
+				"specReferences": [
+					{
+						"id": "SEP-2575",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2575"
+					}
+				],
+				"details": {
+					"response": {
+						"jsonrpc": "2.0",
+						"error": {
+							"code": -32022,
+							"message": "Unsupported protocol version: v999.0.0",
+							"data": {
+								"supported": ["2026-07-28"],
+								"requested": "v999.0.0"
+							}
+						},
+						"id": 301
+					}
+				}
+			},
+			{
+				"id": "sep-2575-http-server-header-mismatch-400",
+				"name": "HttpServerHeaderMismatch400",
+				"description": "If the values do not match, the server MUST reject the request with 400 Bad Request and a HeaderMismatch JSON-RPC error.",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:09.074Z",
+				"specReferences": [
+					{
+						"id": "SEP-2575",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2575"
+					}
+				],
+				"details": {
+					"response": {
+						"jsonrpc": "2.0",
+						"error": {
+							"code": -32020,
+							"message": "Bad Request: the request headers and body disagree: the body envelope names protocol version v999.0.0 but the MCP-Protocol-Version header names 2026-07-28",
+							"data": {
+								"mismatch": {
+									"header": "2026-07-28",
+									"body": "the body envelope names protocol version v999.0.0 but the MCP-Protocol-Version header names 2026-07-28"
+								}
+							}
+						},
+						"id": 302
+					}
+				}
+			},
+			{
+				"id": "sep-2575-server-rejects-undeclared-capability",
+				"name": "ServerRejectsUndeclaredCapability",
+				"description": "A server MUST NOT rely on capabilities the client has not declared. If processing a request requires a capability the client did not include in io.modelcontextprotocol/clientCapabilities, the server MUST return a MissingRequiredClientCapabilityError (-32021).",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:09.074Z",
+				"specReferences": [
+					{
+						"id": "SEP-2575",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2575"
+					}
+				],
+				"details": {
+					"response": {
+						"jsonrpc": "2.0",
+						"id": 401,
+						"error": {
+							"code": -32021,
+							"message": "Cannot request input 'llm_answer' (sampling/createMessage): the request's client capabilities do not declare the required capability",
+							"data": {
+								"requiredCapabilities": {
+									"sampling": {}
+								}
+							}
+						}
+					}
+				}
+			},
+			{
+				"id": "sep-2575-missing-capability-http-400",
+				"name": "MissingCapabilityHttp400",
+				"description": "On HTTP, the response status MUST be 400 Bad Request [for MissingRequiredClientCapabilityError].",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:09.074Z",
+				"specReferences": [
+					{
+						"id": "SEP-2575",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2575"
+					}
+				],
+				"details": {
+					"response": {
+						"jsonrpc": "2.0",
+						"id": 401,
+						"error": {
+							"code": -32021,
+							"message": "Cannot request input 'llm_answer' (sampling/createMessage): the request's client capabilities do not declare the required capability",
+							"data": {
+								"requiredCapabilities": {
+									"sampling": {}
+								}
+							}
+						}
+					}
+				}
+			},
+			{
+				"id": "sep-2575-http-server-method-not-found-404-initialize",
+				"name": "HttpServerMethodNotFound404initialize",
+				"description": "If the server does not implement the removed RPC method 'initialize', it MUST respond with 404 Not Found and a JSON-RPC error with code -32601 (Method not found).",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:09.074Z",
+				"specReferences": [
+					{
+						"id": "SEP-2575",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2575"
+					}
+				],
+				"details": {
+					"response": {
+						"jsonrpc": "2.0",
+						"id": 500,
+						"error": {
+							"code": -32601,
+							"message": "Method not found"
+						}
+					}
+				}
+			},
+			{
+				"id": "sep-2575-http-server-method-not-found-404-ping",
+				"name": "HttpServerMethodNotFound404ping",
+				"description": "If the server does not implement the removed RPC method 'ping', it MUST respond with 404 Not Found and a JSON-RPC error with code -32601 (Method not found).",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:09.074Z",
+				"specReferences": [
+					{
+						"id": "SEP-2575",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2575"
+					}
+				],
+				"details": {
+					"response": {
+						"jsonrpc": "2.0",
+						"id": 500,
+						"error": {
+							"code": -32601,
+							"message": "Method not found"
+						}
+					}
+				}
+			},
+			{
+				"id": "sep-2575-http-server-method-not-found-404-logging-setlevel",
+				"name": "HttpServerMethodNotFound404loggingsetLevel",
+				"description": "If the server does not implement the removed RPC method 'logging/setLevel', it MUST respond with 404 Not Found and a JSON-RPC error with code -32601 (Method not found).",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:09.074Z",
+				"specReferences": [
+					{
+						"id": "SEP-2575",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2575"
+					}
+				],
+				"details": {
+					"response": {
+						"jsonrpc": "2.0",
+						"id": 500,
+						"error": {
+							"code": -32601,
+							"message": "Method not found"
+						}
+					}
+				}
+			},
+			{
+				"id": "sep-2575-http-server-method-not-found-404-resources-subscribe",
+				"name": "HttpServerMethodNotFound404resourcessubscribe",
+				"description": "If the server does not implement the removed RPC method 'resources/subscribe', it MUST respond with 404 Not Found and a JSON-RPC error with code -32601 (Method not found).",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:09.074Z",
+				"specReferences": [
+					{
+						"id": "SEP-2575",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2575"
+					}
+				],
+				"details": {
+					"response": {
+						"jsonrpc": "2.0",
+						"id": 500,
+						"error": {
+							"code": -32601,
+							"message": "Method not found"
+						}
+					}
+				}
+			},
+			{
+				"id": "sep-2575-http-server-method-not-found-404-resources-unsubscribe",
+				"name": "HttpServerMethodNotFound404resourcesunsubscribe",
+				"description": "If the server does not implement the removed RPC method 'resources/unsubscribe', it MUST respond with 404 Not Found and a JSON-RPC error with code -32601 (Method not found).",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:09.074Z",
+				"specReferences": [
+					{
+						"id": "SEP-2575",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2575"
+					}
+				],
+				"details": {
+					"response": {
+						"jsonrpc": "2.0",
+						"id": 500,
+						"error": {
+							"code": -32601,
+							"message": "Method not found"
+						}
+					}
+				}
+			},
+			{
+				"id": "sep-2575-http-server-method-not-found-404",
+				"name": "HttpServerMethodNotFound404",
+				"description": "If the server does not implement the requested RPC method, it MUST respond with 404 Not Found and a JSON-RPC error with code -32601 (Method not found).",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:09.074Z",
+				"specReferences": [
+					{
+						"id": "SEP-2575",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2575"
+					}
+				],
+				"details": {
+					"response": {
+						"jsonrpc": "2.0",
+						"id": 601,
+						"error": {
+							"code": -32601,
+							"message": "Method not found"
+						}
+					}
+				}
+			},
+			{
+				"id": "sep-2575-http-server-no-independent-requests-on-stream",
+				"name": "HttpServerNoIndependentRequestsOnStream",
+				"description": "Request stream contains only IncompleteResult, never independent JSON-RPC requests",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:09.074Z",
+				"specReferences": [
+					{
+						"id": "SEP-2575",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2575"
+					}
+				],
+				"details": {
+					"inspectedFramesCount": 1
+				}
+			},
+			{
+				"id": "sep-2575-server-no-log-without-loglevel",
+				"name": "ServerNoLogWithoutLogLevel",
+				"description": "No notifications/message for requests that didn't set _meta.../logLevel",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:09.074Z",
+				"specReferences": [
+					{
+						"id": "SEP-2575",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2575"
+					}
+				],
+				"details": {
+					"framesFound": 1
+				}
+			},
+			{
+				"id": "sep-2575-server-sends-subscription-ack",
+				"name": "ServerSendsSubscriptionAck",
+				"description": "notifications/subscriptions/acknowledged is the first message on a subscriptions/listen stream",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:09.074Z",
+				"specReferences": [
+					{
+						"id": "SEP-2575",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2575"
+					}
+				],
+				"details": {
+					"firstFrame": {
+						"jsonrpc": "2.0",
+						"method": "notifications/subscriptions/acknowledged",
+						"params": {
+							"notifications": {
+								"toolsListChanged": true
+							},
+							"_meta": {
+								"io.modelcontextprotocol/subscriptionId": 1789238589153
+							}
+						}
+					}
+				}
+			},
+			{
+				"id": "sep-2575-server-tags-subscription-id",
+				"name": "ServerTagsSubscriptionId",
+				"description": "Listen-stream notifications carry _meta.../subscriptionId",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:09.074Z",
+				"specReferences": [
+					{
+						"id": "SEP-2575",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2575"
+					}
+				],
+				"details": {
+					"subscriptionId": 1789238589153,
+					"inspectedNotificationCount": 2
+				}
+			},
+			{
+				"id": "sep-2575-server-honors-notification-filter",
+				"name": "ServerHonorsNotificationFilter",
+				"description": "Server doesn't send notification types the client didn't request",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:09.074Z",
+				"specReferences": [
+					{
+						"id": "SEP-2575",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2575"
+					}
+				],
+				"details": {
+					"narrowFramesCount": 1
+				}
+			},
+			{
+				"id": "sep-2575-server-sends-prompts-list-changed-on-subscription",
+				"name": "ServerSendsPromptsListChangedOnSubscription",
+				"description": "List-changed-capable servers notify listen streams with promptsListChanged: true (SHOULD)",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:09.074Z",
+				"specReferences": [
+					{
+						"id": "SEP-2575",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2575"
+					}
+				],
+				"details": {
+					"changeFrame": {
+						"jsonrpc": "2.0",
+						"method": "notifications/prompts/list_changed",
+						"params": {
+							"_meta": {
+								"io.modelcontextprotocol/subscriptionId": 1789238590663
+							}
+						}
+					}
+				}
+			},
+			{
+				"id": "sep-2575-server-sends-tools-list-changed-on-subscription",
+				"name": "ServerSendsToolsListChangedOnSubscription",
+				"description": "List-changed-capable servers notify listen streams with toolsListChanged: true (SHOULD)",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:09.074Z",
+				"specReferences": [
+					{
+						"id": "SEP-2575",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2575"
+					}
+				],
+				"details": {
+					"changeFrame": {
+						"jsonrpc": "2.0",
+						"method": "notifications/tools/list_changed",
+						"params": {
+							"_meta": {
+								"io.modelcontextprotocol/subscriptionId": 1789238590669
+							}
+						}
+					}
+				}
+			},
+			{
+				"id": "sep-2575-http-server-error-jsonrpc-id",
+				"name": "HttpServerErrorJsonrpcId",
+				"description": "All error responses carry the request JSON-RPC id",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:09.074Z",
+				"details": {
+					"errorResponsesObserved": 12
+				},
+				"specReferences": [
+					{
+						"id": "SEP-2575",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2575"
+					}
+				]
+			}
+		]
+	},
+	{
+		"scenario": "tasks-capability-negotiation",
+		"counts": {
+			"FAILURE": 4,
+			"SUCCESS": 1
+		},
+		"checks": [
+			{
+				"id": "tasks-extension-advertised",
+				"name": "TasksExtensionAdvertised",
+				"description": "Server advertises io.modelcontextprotocol/tasks under capabilities.extensions (and not capabilities.tasks)",
+				"status": "FAILURE",
+				"timestamp": "2026-09-12T18:43:10.983Z",
+				"errorMessage": "capabilities.extensions MUST be advertised",
+				"specReferences": [
+					{
+						"id": "SEP-2663",
+						"url": "https://modelcontextprotocol.io/seps/2663-tasks-extension"
+					}
+				],
+				"details": {
+					"hasExtensions": false,
+					"hasTasksExtension": false,
+					"hasV1TasksSlot": false
+				}
+			},
+			{
+				"id": "sep-2663-tasks-methods-non-declaring",
+				"name": "TasksMethodsGatedWithoutExtension",
+				"description": "tasks/get, tasks/update, tasks/cancel return -32021 when the client did not negotiate the tasks extension (SEP-2575 Missing Required Capabilities)",
+				"status": "FAILURE",
+				"timestamp": "2026-09-12T18:43:10.987Z",
+				"errorMessage": "tasks/get MUST return -32021; got -32601; tasks/update MUST return -32021; got -32601; tasks/cancel MUST return -32021; got -32601",
+				"specReferences": [
+					{
+						"id": "SEP-2575",
+						"url": "https://modelcontextprotocol.io/seps/2575-stateless-mcp"
+					},
+					{
+						"id": "SEP-2663",
+						"url": "https://modelcontextprotocol.io/seps/2663-tasks-extension"
+					}
+				]
+			},
+			{
+				"id": "sep-2663-server-rejects-undeclared-client",
+				"name": "TasksToolsCallWithoutExtensionSync",
+				"description": "tools/call from a session without the extension MUST fall through to sync (no CreateTaskResult, even for task-supporting tools)",
+				"status": "FAILURE",
+				"timestamp": "2026-09-12T18:43:10.988Z",
+				"errorMessage": "Tool slow_compute not found",
+				"specReferences": [
+					{
+						"id": "SEP-2663",
+						"url": "https://modelcontextprotocol.io/seps/2663-tasks-extension"
+					}
+				]
+			},
+			{
+				"id": "tasks-per-request-meta-opt-in",
+				"name": "TasksPerRequestMetaOptIn",
+				"description": "tools/call with extension declared in _meta.io.modelcontextprotocol/clientCapabilities produces a CreateTaskResult even when the session did not negotiate the extension",
+				"status": "FAILURE",
+				"timestamp": "2026-09-12T18:43:10.990Z",
+				"errorMessage": "Tool slow_compute not found",
+				"specReferences": [
+					{
+						"id": "SEP-2575",
+						"url": "https://modelcontextprotocol.io/seps/2575-stateless-mcp"
+					}
+				]
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.990Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 12,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "tasks-dispatch-and-envelope",
+		"counts": {
+			"SUCCESS": 3,
+			"FAILURE": 6
+		},
+		"checks": [
+			{
+				"id": "sep-2663-tasks-result-removed-method-not-found",
+				"name": "TasksRemovedTasksResult",
+				"description": "tasks/result is removed in v2 and MUST reject with -32601",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.006Z",
+				"specReferences": [
+					{
+						"id": "SEP-2663",
+						"url": "https://modelcontextprotocol.io/seps/2663-tasks-extension"
+					}
+				]
+			},
+			{
+				"id": "tasks-removed-tasks-list",
+				"name": "TasksRemovedTasksList",
+				"description": "tasks/list is removed in v2 and MUST reject with -32601",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.007Z",
+				"specReferences": [
+					{
+						"id": "SEP-2663",
+						"url": "https://modelcontextprotocol.io/seps/2663-tasks-extension"
+					}
+				]
+			},
+			{
+				"id": "tasks-server-directed-creation-no-hint",
+				"name": "TasksServerDirectedCreationNoHint",
+				"description": "tools/call with no client `task` hint param MUST still produce CreateTaskResult for task-supporting tools",
+				"status": "FAILURE",
+				"timestamp": "2026-09-12T18:43:11.009Z",
+				"errorMessage": "Tool failing_job not found",
+				"specReferences": [
+					{
+						"id": "SEP-2663",
+						"url": "https://modelcontextprotocol.io/seps/2663-tasks-extension"
+					}
+				]
+			},
+			{
+				"id": "sep-2663-legacy-task-param-ignored",
+				"name": "TasksLegacyTaskParamIgnored",
+				"description": "tools/call with legacy `task` param against a sync tool MUST NOT error and MUST NOT be promoted to a task",
+				"status": "FAILURE",
+				"timestamp": "2026-09-12T18:43:11.010Z",
+				"errorMessage": "Tool greet not found",
+				"specReferences": [
+					{
+						"id": "SEP-2663",
+						"url": "https://modelcontextprotocol.io/seps/2663-tasks-extension"
+					}
+				]
+			},
+			{
+				"id": "tasks-immediate-result-shortcut",
+				"name": "TasksImmediateResultShortcut",
+				"description": "For a fast operation, a task-supporting tool MAY skip task creation and return a sync ToolResult; either path is valid",
+				"status": "FAILURE",
+				"timestamp": "2026-09-12T18:43:11.011Z",
+				"errorMessage": "Tool slow_compute not found",
+				"specReferences": [
+					{
+						"id": "SEP-2663",
+						"url": "https://modelcontextprotocol.io/seps/2663-tasks-extension"
+					}
+				]
+			},
+			{
+				"id": "tasks-result-type-complete-on-non-task-responses",
+				"name": "TasksResultTypeCompleteOnNonTaskResponses",
+				"description": "Sync tools/call, tasks/get, tasks/update ack, and tasks/cancel ack MUST all carry resultType:\"complete\"",
+				"status": "FAILURE",
+				"timestamp": "2026-09-12T18:43:11.013Z",
+				"errorMessage": "Tool greet not found",
+				"specReferences": [
+					{
+						"id": "SEP-2322",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/utilities/mrtr"
+					}
+				]
+			},
+			{
+				"id": "sep-2663-durable-create-strong-consistency",
+				"name": "TasksStrongConsistencyImmediateGet",
+				"description": "tasks/get issued immediately after CreateTaskResult arrives MUST resolve (server MUST NOT return CreateTaskResult before the task is durably created)",
+				"status": "FAILURE",
+				"timestamp": "2026-09-12T18:43:11.014Z",
+				"errorMessage": "Tool slow_compute not found",
+				"specReferences": [
+					{
+						"id": "SEP-2663",
+						"url": "https://modelcontextprotocol.io/seps/2663-tasks-extension"
+					}
+				]
+			},
+			{
+				"id": "sep-2663-tasks-get-invalid-task-id-32602",
+				"name": "TasksGetUnknownTaskIdRejected",
+				"description": "tasks/get for a taskId the server does not recognize MUST return -32602",
+				"status": "FAILURE",
+				"timestamp": "2026-09-12T18:43:11.015Z",
+				"errorMessage": "expected -32602; got -32601 (if the server is otherwise compliant, verify it does not validate other dimensions \u2014 routing headers, _meta, params shape \u2014 before method dispatch)",
+				"specReferences": [
+					{
+						"id": "SEP-2663",
+						"url": "https://modelcontextprotocol.io/seps/2663-tasks-extension"
+					}
+				]
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.015Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 16,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "tasks-lifecycle",
+		"counts": {
+			"FAILURE": 8,
+			"SUCCESS": 1
+		},
+		"checks": [
+			{
+				"id": "tasks-sync-tool-call",
+				"name": "TasksSyncToolCall",
+				"description": "Sync tool returns ToolResult (resultType:\"complete\"), no taskId at top level",
+				"status": "FAILURE",
+				"timestamp": "2026-09-12T18:43:10.972Z",
+				"errorMessage": "Tool greet not found",
+				"specReferences": [
+					{
+						"id": "SEP-2663",
+						"url": "https://modelcontextprotocol.io/seps/2663-tasks-extension"
+					}
+				]
+			},
+			{
+				"id": "sep-2663-result-type-task-on-create",
+				"name": "TasksServerTaskCreation",
+				"description": "Task-supporting tool returns flat CreateTaskResult (no nested `task` wrapper)",
+				"status": "FAILURE",
+				"timestamp": "2026-09-12T18:43:10.973Z",
+				"errorMessage": "Tool slow_compute not found",
+				"specReferences": [
+					{
+						"id": "SEP-2663",
+						"url": "https://modelcontextprotocol.io/seps/2663-tasks-extension"
+					}
+				]
+			},
+			{
+				"id": "sep-2663-tasks-get-status-working",
+				"name": "TasksGetDuringWorking",
+				"description": "tasks/get returns status + metadata for an active task",
+				"status": "FAILURE",
+				"timestamp": "2026-09-12T18:43:10.973Z",
+				"errorMessage": "Not testable: no task was created by the preceding step, so this check could not be exercised",
+				"specReferences": [
+					{
+						"id": "SEP-2663",
+						"url": "https://modelcontextprotocol.io/seps/2663-tasks-extension"
+					}
+				],
+				"details": {
+					"untestable": true,
+					"reason": "no task was created by the preceding step, so this check could not be exercised"
+				}
+			},
+			{
+				"id": "sep-2663-tasks-get-status-completed",
+				"name": "TasksGetTerminalInlinedResult",
+				"description": "Completed task tasks/get inlines result with content[] (no separate tasks/result method)",
+				"status": "FAILURE",
+				"timestamp": "2026-09-12T18:43:10.973Z",
+				"errorMessage": "Not testable: no task was created by the preceding step, so this check could not be exercised",
+				"specReferences": [
+					{
+						"id": "SEP-2663",
+						"url": "https://modelcontextprotocol.io/seps/2663-tasks-extension"
+					}
+				],
+				"details": {
+					"untestable": true,
+					"reason": "no task was created by the preceding step, so this check could not be exercised"
+				}
+			},
+			{
+				"id": "sep-2663-tool-error-uses-completed-status",
+				"name": "TasksToolErrorCompletedIsError",
+				"description": "Tool execution error reports as completed + result.isError (NOT failed)",
+				"status": "FAILURE",
+				"timestamp": "2026-09-12T18:43:10.975Z",
+				"errorMessage": "Tool failing_job not found",
+				"specReferences": [
+					{
+						"id": "SEP-2663",
+						"url": "https://modelcontextprotocol.io/seps/2663-tasks-extension"
+					}
+				]
+			},
+			{
+				"id": "sep-2663-tasks-get-status-failed",
+				"name": "TasksProtocolErrorFailedShape",
+				"description": "Protocol-level error reports as failed + inlined error{code,message}, no result",
+				"status": "FAILURE",
+				"timestamp": "2026-09-12T18:43:10.976Z",
+				"errorMessage": "Tool protocol_error_job not found",
+				"specReferences": [
+					{
+						"id": "SEP-2663",
+						"url": "https://modelcontextprotocol.io/seps/2663-tasks-extension"
+					}
+				]
+			},
+			{
+				"id": "sep-2663-cancel-ack-empty-result",
+				"name": "TasksCancelEmptyAck",
+				"description": "tasks/cancel returns {resultType:\"complete\"} ack; status settles to cancelled",
+				"status": "FAILURE",
+				"timestamp": "2026-09-12T18:43:10.977Z",
+				"errorMessage": "Tool slow_compute not found",
+				"specReferences": [
+					{
+						"id": "SEP-2663",
+						"url": "https://modelcontextprotocol.io/seps/2663-tasks-extension"
+					}
+				]
+			},
+			{
+				"id": "tasks-cancel-terminal-idempotent-ack",
+				"name": "TasksCancelTerminalIdempotentAck",
+				"description": "tasks/cancel on a terminal task returns the same empty-ack as on an active task (idempotent)",
+				"status": "FAILURE",
+				"timestamp": "2026-09-12T18:43:10.979Z",
+				"errorMessage": "Tool slow_compute not found",
+				"specReferences": [
+					{
+						"id": "SEP-2663",
+						"url": "https://modelcontextprotocol.io/seps/2663-tasks-extension"
+					}
+				]
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.979Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 12,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "tasks-mrtr-composition",
+		"counts": {
+			"FAILURE": 1,
+			"SUCCESS": 1
+		},
+		"checks": [
+			{
+				"id": "sep-2663-mrtr-synchronous-before-task-creation",
+				"name": "Sep2663MrtrSynchronousBeforeTaskCreation",
+				"description": "MRTR loop gathers input then escalates to a task on the final round (SEP-2322 + SEP-2663 451f5e1).",
+				"status": "FAILURE",
+				"timestamp": "2026-09-12T18:43:11.028Z",
+				"errorMessage": "Tool test_tool_with_task not found",
+				"specReferences": [
+					{
+						"id": "SEP-2322",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/utilities/mrtr"
+					},
+					{
+						"id": "SEP-2663",
+						"url": "https://modelcontextprotocol.io/seps/2663-tasks-extension"
+					}
+				]
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.028Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 2,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "tasks-mrtr-input",
+		"counts": {
+			"FAILURE": 3,
+			"SUCCESS": 1
+		},
+		"checks": [
+			{
+				"id": "sep-2663-tasks-get-status-input-required",
+				"name": "TasksMRTRInputRequestsOnTasksGet",
+				"description": "tasks/get on an input_required task MUST surface a non-empty inputRequests map",
+				"status": "FAILURE",
+				"timestamp": "2026-09-12T18:43:10.997Z",
+				"errorMessage": "Tool confirm_delete not found",
+				"specReferences": [
+					{
+						"id": "SEP-2322",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/utilities/mrtr"
+					}
+				]
+			},
+			{
+				"id": "tasks-mrtr-tasks-update-resumes",
+				"name": "TasksMRTRTasksUpdateResumes",
+				"description": "tasks/update with matching inputResponses MUST be acked with {resultType:\"complete\"} and resume the task to a terminal state",
+				"status": "FAILURE",
+				"timestamp": "2026-09-12T18:43:10.999Z",
+				"errorMessage": "Tool confirm_delete not found",
+				"specReferences": [
+					{
+						"id": "SEP-2322",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/utilities/mrtr"
+					},
+					{
+						"id": "SEP-2663",
+						"url": "https://modelcontextprotocol.io/seps/2663-tasks-extension"
+					}
+				]
+			},
+			{
+				"id": "tasks-mrtr-partial-fulfillment",
+				"name": "TasksMRTRPartialFulfillment",
+				"description": "tasks/update with a subset of keys MUST keep the task in input_required with only the unanswered key remaining",
+				"status": "FAILURE",
+				"timestamp": "2026-09-12T18:43:11.000Z",
+				"errorMessage": "Tool multi_input not found",
+				"specReferences": [
+					{
+						"id": "SEP-2322",
+						"url": "https://modelcontextprotocol.io/specification/draft/basic/utilities/mrtr"
+					},
+					{
+						"id": "SEP-2663",
+						"url": "https://modelcontextprotocol.io/seps/2663-tasks-extension"
+					}
+				]
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.000Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 6,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "tasks-request-headers",
+		"counts": {
+			"FAILURE": 3,
+			"SUCCESS": 2
+		},
+		"checks": [
+			{
+				"id": "tasks-headers-tolerate-mcp-method-on-tools-call",
+				"name": "TasksHeadersTolerateMcpMethodOnToolsCall",
+				"description": "Server tolerates Mcp-Method request header on tools/call (sync tool dispatch unaffected)",
+				"status": "FAILURE",
+				"timestamp": "2026-09-12T18:43:11.002Z",
+				"errorMessage": "Tool greet not found",
+				"specReferences": [
+					{
+						"id": "SEP-2243",
+						"url": "https://modelcontextprotocol.io/seps/2243-http-standardization"
+					}
+				]
+			},
+			{
+				"id": "sep-2663-routing-headers-accepted-on-tasks-get",
+				"name": "Sep2663RoutingHeadersAcceptedOnTasksGet",
+				"description": "Server accepts matched Mcp-Method + Mcp-Name request headers on tasks/get and dispatches normally",
+				"status": "FAILURE",
+				"timestamp": "2026-09-12T18:43:11.003Z",
+				"errorMessage": "Tool slow_compute not found",
+				"specReferences": [
+					{
+						"id": "SEP-2243",
+						"url": "https://modelcontextprotocol.io/seps/2243-http-standardization"
+					}
+				]
+			},
+			{
+				"id": "tasks-headers-reject-mismatched-method",
+				"name": "TasksHeadersRejectMismatchedMethod",
+				"description": "When Mcp-Method header disagrees with body on a tools/call, server MUST reject with -32020 HeaderMismatch (SEP-2243 \u00a7Server Validation)",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.004Z",
+				"specReferences": [
+					{
+						"id": "SEP-2243",
+						"url": "https://modelcontextprotocol.io/seps/2243-http-standardization"
+					}
+				]
+			},
+			{
+				"id": "sep-2663-server-rejects-mismatched-mcp-name-on-tasks-get",
+				"name": "Sep2663ServerRejectsMismatchedMcpNameOnTasksGet",
+				"description": "When Mcp-Name header disagrees with params.taskId on tasks/get, server MUST reject with -32020 HeaderMismatch",
+				"status": "FAILURE",
+				"timestamp": "2026-09-12T18:43:11.004Z",
+				"errorMessage": "routing-task fixture from Check 2 unavailable; cannot drive negative-path probe",
+				"specReferences": [
+					{
+						"id": "SEP-2243",
+						"url": "https://modelcontextprotocol.io/seps/2243-http-standardization"
+					},
+					{
+						"id": "SEP-2663",
+						"url": "https://modelcontextprotocol.io/seps/2663-tasks-extension"
+					}
+				]
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.004Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 6,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "tasks-request-state-removal",
+		"counts": {
+			"FAILURE": 1,
+			"SUCCESS": 1
+		},
+		"checks": [
+			{
+				"id": "tasks-request-state-removal-setup",
+				"name": "TasksRequestStateRemovalSetup",
+				"description": "Failed to create a long-running task to exercise the absence-asserts",
+				"status": "FAILURE",
+				"timestamp": "2026-09-12T18:43:10.996Z",
+				"errorMessage": "Tool slow_compute not found",
+				"specReferences": [
+					{
+						"id": "SEP-2663",
+						"url": "https://modelcontextprotocol.io/seps/2663-tasks-extension"
+					}
+				]
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.996Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 2,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "tasks-required-task-error",
+		"counts": {
+			"FAILURE": 1,
+			"SUCCESS": 1
+		},
+		"checks": [
+			{
+				"id": "sep-2663-server-returns-missing-capability-when-required",
+				"name": "Sep2663ServerReturnsMissingCapabilityWhenRequired",
+				"description": "tools/call for a TaskSupport=required tool MUST reject with code -32021 (Missing Required Client Capability) when the client did not declare io.modelcontextprotocol/tasks",
+				"status": "FAILURE",
+				"timestamp": "2026-09-12T18:43:11.018Z",
+				"errorMessage": "tools/call for failing_job returned error code -32602; spec requires -32021.",
+				"specReferences": [
+					{
+						"id": "SEP-2575",
+						"url": "https://modelcontextprotocol.io/seps/2575-stateless-mcp"
+					},
+					{
+						"id": "SEP-2663",
+						"url": "https://modelcontextprotocol.io/seps/2663-tasks-extension"
+					}
+				],
+				"details": {
+					"observedCode": -32602
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:11.018Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 2,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "tasks-status-notifications",
+		"counts": {
+			"SKIPPED": 1
+		},
+		"checks": [
+			{
+				"id": "tasks-status-notifications",
+				"name": "TasksStatusNotificationsScenario",
+				"description": "Status notifications conformance, pending subscriptions/listen rewrite.",
+				"status": "SKIPPED",
+				"timestamp": "2026-09-12T18:43:11.016Z",
+				"errorMessage": "Skipped: SEP-2663 delivers notifications/tasks via the SEP-2575 subscriptions/listen stream, not via the tools/call POST SSE response that the prior harness observed. The harness needs a rewrite against the new channel; tracked as a follow-up.",
+				"specReferences": [
+					{
+						"id": "SEP-2663",
+						"url": "https://modelcontextprotocol.io/seps/2663-tasks-extension"
+					}
+				]
+			}
+		]
+	},
+	{
+		"scenario": "tasks-wire-fields",
+		"counts": {
+			"FAILURE": 3,
+			"SUCCESS": 1
+		},
+		"checks": [
+			{
+				"id": "tasks-wire-field-renames",
+				"name": "TasksWireFieldRenames",
+				"description": "CreateTaskResult uses ttlMs + pollIntervalMs (integer milliseconds); legacy ttl / pollInterval keys absent",
+				"status": "FAILURE",
+				"timestamp": "2026-09-12T18:43:10.993Z",
+				"errorMessage": "Tool slow_compute not found",
+				"specReferences": [
+					{
+						"id": "SEP-2663",
+						"url": "https://modelcontextprotocol.io/seps/2663-tasks-extension"
+					}
+				]
+			},
+			{
+				"id": "tasks-no-early-ttl-expiry",
+				"name": "TasksNoEarlyTtlExpiry",
+				"description": "Task remains accessible via tasks/get for the duration of its ttlMs",
+				"status": "FAILURE",
+				"timestamp": "2026-09-12T18:43:10.993Z",
+				"errorMessage": "Not testable: no task was created by the preceding step, so this check could not be exercised",
+				"specReferences": [
+					{
+						"id": "SEP-2663",
+						"url": "https://modelcontextprotocol.io/seps/2663-tasks-extension"
+					}
+				],
+				"details": {
+					"untestable": true,
+					"reason": "no task was created by the preceding step, so this check could not be exercised"
+				}
+			},
+			{
+				"id": "tasks-no-related-task-meta-on-inlined-result",
+				"name": "TasksNoRelatedTaskMetaOnInlinedResult",
+				"description": "tasks/get inlined result MUST NOT include the v1 io.modelcontextprotocol/related-task _meta key (taskId is at the root)",
+				"status": "FAILURE",
+				"timestamp": "2026-09-12T18:43:10.994Z",
+				"errorMessage": "Tool slow_compute not found",
+				"specReferences": [
+					{
+						"id": "SEP-2663",
+						"url": "https://modelcontextprotocol.io/seps/2663-tasks-extension"
+					}
+				]
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.994Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 4,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "tools-call-audio",
+		"counts": {
+			"SUCCESS": 2
+		},
+		"checks": [
+			{
+				"id": "tools-call-audio",
+				"name": "ToolsCallAudio",
+				"description": "Tool returns audio content",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.727Z",
+				"specReferences": [
+					{
+						"id": "MCP-Tools-Call",
+						"url": "https://modelcontextprotocol.io/specification/2025-06-18/server/tools#calling-tools"
+					}
+				],
+				"details": {
+					"hasAudioContent": true,
+					"audioDataLength": 60
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.728Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 2,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "tools-call-embedded-resource",
+		"counts": {
+			"SUCCESS": 2
+		},
+		"checks": [
+			{
+				"id": "tools-call-embedded-resource",
+				"name": "ToolsCallEmbeddedResource",
+				"description": "Tool returns embedded resource content",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.732Z",
+				"specReferences": [
+					{
+						"id": "MCP-Tools-Call",
+						"url": "https://modelcontextprotocol.io/specification/2025-06-18/server/tools#calling-tools"
+					}
+				],
+				"details": {
+					"hasResourceContent": true,
+					"resourceUri": "test://embedded-resource"
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.732Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 2,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "tools-call-error",
+		"counts": {
+			"SUCCESS": 2
+		},
+		"checks": [
+			{
+				"id": "tools-call-error",
+				"name": "ToolsCallError",
+				"description": "Tool returns error correctly",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.737Z",
+				"specReferences": [
+					{
+						"id": "MCP-Error-Handling",
+						"url": "https://modelcontextprotocol.io/specification/2025-06-18/basic/lifecycle"
+					}
+				],
+				"details": {
+					"result": {
+						"content": [
+							{
+								"type": "text",
+								"text": "This tool intentionally returns an error for testing"
+							}
+						],
+						"isError": true,
+						"resultType": "complete",
+						"_meta": {
+							"io.modelcontextprotocol/serverInfo": {
+								"name": "mcp-conformance-test-server",
+								"version": "1.0.0"
+							}
+						}
+					}
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.737Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 2,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "tools-call-image",
+		"counts": {
+			"SUCCESS": 2
+		},
+		"checks": [
+			{
+				"id": "tools-call-image",
+				"name": "ToolsCallImage",
+				"description": "Tool returns image content",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.725Z",
+				"specReferences": [
+					{
+						"id": "MCP-Tools-Call",
+						"url": "https://modelcontextprotocol.io/specification/2025-06-18/server/tools#calling-tools"
+					}
+				],
+				"details": {
+					"mimeType": "image/png",
+					"hasData": true
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.725Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 2,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "tools-call-mixed-content",
+		"counts": {
+			"SUCCESS": 2
+		},
+		"checks": [
+			{
+				"id": "tools-call-mixed-content",
+				"name": "ToolsCallMixedContent",
+				"description": "Tool returns multiple content types",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.734Z",
+				"specReferences": [
+					{
+						"id": "MCP-Tools-Call",
+						"url": "https://modelcontextprotocol.io/specification/2025-06-18/server/tools#calling-tools"
+					}
+				],
+				"details": {
+					"contentCount": 3,
+					"contentTypes": ["text", "image", "resource"]
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.734Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 2,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "tools-call-simple-text",
+		"counts": {
+			"SUCCESS": 2
+		},
+		"checks": [
+			{
+				"id": "tools-call-simple-text",
+				"name": "ToolsCallSimpleText",
+				"description": "Tool returns simple text content",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.722Z",
+				"specReferences": [
+					{
+						"id": "MCP-Tools-Call",
+						"url": "https://modelcontextprotocol.io/specification/2025-06-18/server/tools#calling-tools"
+					}
+				],
+				"details": {
+					"result": {
+						"content": [
+							{
+								"type": "text",
+								"text": "This is a simple text response for testing."
+							}
+						],
+						"resultType": "complete",
+						"_meta": {
+							"io.modelcontextprotocol/serverInfo": {
+								"name": "mcp-conformance-test-server",
+								"version": "1.0.0"
+							}
+						}
+					}
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.722Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 2,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "tools-call-with-progress",
+		"counts": {
+			"SUCCESS": 2
+		},
+		"checks": [
+			{
+				"id": "tools-call-with-progress",
+				"name": "ToolsCallWithProgress",
+				"description": "Tool reports progress notifications",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.846Z",
+				"specReferences": [
+					{
+						"id": "MCP-Progress",
+						"url": "https://modelcontextprotocol.io/specification/2025-06-18/server/utilities/progress"
+					}
+				],
+				"details": {
+					"progressCount": 3,
+					"progressNotifications": [
+						{
+							"progressToken": "progress-test-1",
+							"progress": 0,
+							"total": 100,
+							"message": "Completed step 0 of 100"
+						},
+						{
+							"progressToken": "progress-test-1",
+							"progress": 50,
+							"total": 100,
+							"message": "Completed step 50 of 100"
+						},
+						{
+							"progressToken": "progress-test-1",
+							"progress": 100,
+							"total": 100,
+							"message": "Completed step 100 of 100"
+						}
+					],
+					"result": {
+						"content": [
+							{
+								"type": "text",
+								"text": "progress-test-1"
+							}
+						],
+						"resultType": "complete",
+						"_meta": {
+							"io.modelcontextprotocol/serverInfo": {
+								"name": "mcp-conformance-test-server",
+								"version": "1.0.0"
+							}
+						}
+					}
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.846Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 5,
+					"violations": []
+				}
+			}
+		]
+	},
+	{
+		"scenario": "tools-list",
+		"counts": {
+			"SUCCESS": 4
+		},
+		"checks": [
+			{
+				"id": "tools-list",
+				"name": "ToolsList",
+				"description": "Server lists available tools with valid structure",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.709Z",
+				"specReferences": [
+					{
+						"id": "MCP-Tools-List",
+						"url": "https://modelcontextprotocol.io/specification/2025-06-18/server/tools#listing-tools"
+					}
+				],
+				"details": {
+					"toolCount": 28,
+					"tools": [
+						"test_x_mcp_header",
+						"test_missing_capability",
+						"test_streaming_elicitation",
+						"test_logging_tool",
+						"test_simple_text",
+						"test_image_content",
+						"test_audio_content",
+						"test_embedded_resource",
+						"test_multiple_content_types",
+						"test_tool_with_logging",
+						"test_tool_with_progress",
+						"test_error_handling",
+						"test_reconnection",
+						"test_sampling",
+						"test_elicitation",
+						"test_elicitation_sep1034_defaults",
+						"test_elicitation_sep1330_enums",
+						"json_schema_2020_12_tool",
+						"test_input_required_result_elicitation",
+						"test_input_required_result_sampling",
+						"test_input_required_result_list_roots",
+						"test_input_required_result_request_state",
+						"test_input_required_result_multiple_inputs",
+						"test_input_required_result_multi_round",
+						"test_input_required_result_tampered_state",
+						"test_input_required_result_capabilities",
+						"test_trigger_tool_change",
+						"test_trigger_prompt_change"
+					]
+				}
+			},
+			{
+				"id": "tools-name-format",
+				"name": "ToolsNameFormat",
+				"description": "Tool names SHOULD be 1-128 characters and match ^[A-Za-z0-9_.-]+$",
+				"specReferences": [
+					{
+						"id": "MCP-Tool-Names",
+						"url": "https://modelcontextprotocol.io/specification/2025-11-25/server/tools#tool-names"
+					},
+					{
+						"id": "MCP-Tool-Names-Draft",
+						"url": "https://modelcontextprotocol.io/specification/draft/server/tools#tool-names"
+					},
+					{
+						"id": "SEP-986-History",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/issues/986"
+					},
+					{
+						"id": "SEP-986-Spec-Integration",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/1603"
+					}
+				],
+				"timestamp": "2026-09-12T18:43:10.709Z",
+				"status": "SUCCESS",
+				"details": {
+					"toolCount": 28,
+					"results": {
+						"test_x_mcp_header": "valid",
+						"test_missing_capability": "valid",
+						"test_streaming_elicitation": "valid",
+						"test_logging_tool": "valid",
+						"test_simple_text": "valid",
+						"test_image_content": "valid",
+						"test_audio_content": "valid",
+						"test_embedded_resource": "valid",
+						"test_multiple_content_types": "valid",
+						"test_tool_with_logging": "valid",
+						"test_tool_with_progress": "valid",
+						"test_error_handling": "valid",
+						"test_reconnection": "valid",
+						"test_sampling": "valid",
+						"test_elicitation": "valid",
+						"test_elicitation_sep1034_defaults": "valid",
+						"test_elicitation_sep1330_enums": "valid",
+						"json_schema_2020_12_tool": "valid",
+						"test_input_required_result_elicitation": "valid",
+						"test_input_required_result_sampling": "valid",
+						"test_input_required_result_list_roots": "valid",
+						"test_input_required_result_request_state": "valid",
+						"test_input_required_result_multiple_inputs": "valid",
+						"test_input_required_result_multi_round": "valid",
+						"test_input_required_result_tampered_state": "valid",
+						"test_input_required_result_capabilities": "valid",
+						"test_trigger_tool_change": "valid",
+						"test_trigger_prompt_change": "valid"
+					}
+				}
+			},
+			{
+				"id": "tools-list-deterministic-order",
+				"name": "ToolsListDeterministicOrder",
+				"description": "Consecutive tools/list requests return the same tools in the same order",
+				"specReferences": [
+					{
+						"id": "MCP-Tools-Deterministic-Order",
+						"url": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools#capabilities"
+					}
+				],
+				"source": {
+					"introducedIn": "2026-07-28"
+				},
+				"timestamp": "2026-09-12T18:43:10.713Z",
+				"status": "SUCCESS",
+				"details": {
+					"toolCount": 28,
+					"probes": 3,
+					"orders": [
+						[
+							"test_x_mcp_header",
+							"test_missing_capability",
+							"test_streaming_elicitation",
+							"test_logging_tool",
+							"test_simple_text",
+							"test_image_content",
+							"test_audio_content",
+							"test_embedded_resource",
+							"test_multiple_content_types",
+							"test_tool_with_logging",
+							"test_tool_with_progress",
+							"test_error_handling",
+							"test_reconnection",
+							"test_sampling",
+							"test_elicitation",
+							"test_elicitation_sep1034_defaults",
+							"test_elicitation_sep1330_enums",
+							"json_schema_2020_12_tool",
+							"test_input_required_result_elicitation",
+							"test_input_required_result_sampling",
+							"test_input_required_result_list_roots",
+							"test_input_required_result_request_state",
+							"test_input_required_result_multiple_inputs",
+							"test_input_required_result_multi_round",
+							"test_input_required_result_tampered_state",
+							"test_input_required_result_capabilities",
+							"test_trigger_tool_change",
+							"test_trigger_prompt_change"
+						],
+						[
+							"test_x_mcp_header",
+							"test_missing_capability",
+							"test_streaming_elicitation",
+							"test_logging_tool",
+							"test_simple_text",
+							"test_image_content",
+							"test_audio_content",
+							"test_embedded_resource",
+							"test_multiple_content_types",
+							"test_tool_with_logging",
+							"test_tool_with_progress",
+							"test_error_handling",
+							"test_reconnection",
+							"test_sampling",
+							"test_elicitation",
+							"test_elicitation_sep1034_defaults",
+							"test_elicitation_sep1330_enums",
+							"json_schema_2020_12_tool",
+							"test_input_required_result_elicitation",
+							"test_input_required_result_sampling",
+							"test_input_required_result_list_roots",
+							"test_input_required_result_request_state",
+							"test_input_required_result_multiple_inputs",
+							"test_input_required_result_multi_round",
+							"test_input_required_result_tampered_state",
+							"test_input_required_result_capabilities",
+							"test_trigger_tool_change",
+							"test_trigger_prompt_change"
+						],
+						[
+							"test_x_mcp_header",
+							"test_missing_capability",
+							"test_streaming_elicitation",
+							"test_logging_tool",
+							"test_simple_text",
+							"test_image_content",
+							"test_audio_content",
+							"test_embedded_resource",
+							"test_multiple_content_types",
+							"test_tool_with_logging",
+							"test_tool_with_progress",
+							"test_error_handling",
+							"test_reconnection",
+							"test_sampling",
+							"test_elicitation",
+							"test_elicitation_sep1034_defaults",
+							"test_elicitation_sep1330_enums",
+							"json_schema_2020_12_tool",
+							"test_input_required_result_elicitation",
+							"test_input_required_result_sampling",
+							"test_input_required_result_list_roots",
+							"test_input_required_result_request_state",
+							"test_input_required_result_multiple_inputs",
+							"test_input_required_result_multi_round",
+							"test_input_required_result_tampered_state",
+							"test_input_required_result_capabilities",
+							"test_trigger_tool_change",
+							"test_trigger_prompt_change"
+						]
+					]
+				}
+			},
+			{
+				"id": "wire-schema-valid",
+				"name": "WireSchemaValid",
+				"description": "Every JSON-RPC message the implementation sent is valid per the spec JSON schema for the negotiated spec version",
+				"status": "SUCCESS",
+				"timestamp": "2026-09-12T18:43:10.713Z",
+				"specReferences": [
+					{
+						"id": "MCP-Schema",
+						"url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/draft/schema.json"
+					}
+				],
+				"details": {
+					"messagesValidated": 6,
+					"violations": []
+				}
+			}
+		]
+	}
+]

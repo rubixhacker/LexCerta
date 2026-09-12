@@ -44,6 +44,7 @@ beforeEach(async () => {
 type ModernMcpRequestOptions = {
 	readonly arguments?: Readonly<Record<string, string>>;
 	readonly name?: string;
+	readonly notifications?: readonly string[];
 	readonly protocolVersion?: string;
 };
 
@@ -64,6 +65,7 @@ function modernMcpRequest(method: string, options: ModernMcpRequestOptions = {})
 			id: 1,
 			method,
 			params: {
+				...(options.notifications === undefined ? {} : { notifications: options.notifications }),
 				...(options.name === undefined ? {} : { name: options.name }),
 				...(options.arguments === undefined ? {} : { arguments: options.arguments }),
 				_meta: {
@@ -157,8 +159,9 @@ describe("Worker HTTP routing", () => {
 		// When: it reaches the authenticated MCP endpoint.
 		const response = await SELF.fetch(request);
 
-		// Then: the Worker refuses the request before SDK dispatch.
+		// Then: the SDK preserves the required correlated protocol error.
 		expect(response.status).toBe(400);
+		expect(await response.json()).toMatchObject({ jsonrpc: "2.0", id: 1, error: { code: -32020 } });
 	});
 
 	it("delegates unsupported protocol versions to the official JSON-RPC handler", async () => {
@@ -193,19 +196,20 @@ describe("Worker HTTP routing", () => {
 
 	it("rejects an authenticated subscriptions/listen request before an SSE stream opens", async () => {
 		// Given: an authenticated modern request for the excluded subscription capability.
-		const request = modernMcpRequest("subscriptions/listen");
+		const request = modernMcpRequest("subscriptions/listen", { notifications: [] });
 
 		// When: it reaches the stateless MCP endpoint.
 		const response = await SELF.fetch(request);
 
-		// Then: no authenticated persistent SSE channel is exposed.
-		expect(response.status).toBe(400);
+		// Then: the unavailable capability returns method-not-found without opening SSE.
+		expect(response.status).toBe(404);
+		expect(await response.json()).toMatchObject({ jsonrpc: "2.0", id: 1, error: { code: -32601 } });
 		expect(response.headers.get("content-type") ?? "").not.toContain("text/event-stream");
 	});
 
 	it("rejects an authenticated subscriptions/listen request without its routing header", async () => {
 		// Given: a modern subscription request with no Mcp-Method routing header.
-		const request = modernMcpRequest("subscriptions/listen");
+		const request = modernMcpRequest("subscriptions/listen", { notifications: [] });
 		request.headers.delete("mcp-method");
 
 		// When: it reaches the stateless MCP endpoint.
@@ -281,7 +285,7 @@ describe("Worker HTTP routing", () => {
 		expect(await second.json()).toEqual({
 			jsonrpc: "2.0",
 			id: 1,
-			error: { code: -32029, message: "API key allowance exhausted" },
+			error: { code: 1001, message: "API key allowance exhausted" },
 		});
 	});
 

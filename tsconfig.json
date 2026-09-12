@@ -29,7 +29,8 @@
 		"src/retention/**/*.ts",
 		"src/telemetry/**/*.ts",
 		"src/verification/**/*.ts",
-		"worker-configuration.d.ts"
+		"worker-configuration.d.ts",
+		"examples/**/*.ts"
 	],
 	"exclude": ["node_modules", "app", "test"]
 }

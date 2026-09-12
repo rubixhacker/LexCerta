@@ -1,0 +1,13 @@
+{
+	"name": "lexcerta-sdk-diagnostic-fixture",
+	"private": true,
+	"type": "module",
+	"dependencies": {
+		"@modelcontextprotocol/server": "2.0.0",
+		"@modelcontextprotocol/node": "2.0.0",
+		"@modelcontextprotocol/express": "2.0.0",
+		"express": "5.1.0",
+		"cors": "2.8.5",
+		"zod": "4.4.1"
+	}
+}
