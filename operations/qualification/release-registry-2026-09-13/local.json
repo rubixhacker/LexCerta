@@ -1,0 +1,42 @@
+{
+	"recorded_at": "2026-09-13T06:40:51.787733+00:00",
+	"scope": "Checkpoint before moving development to Bazzite. Registry publishing implementation is incomplete and has not been qualified against Google Artifact Registry.",
+	"branch": "codex/lexcerta-node-runtime",
+	"base_commit": "e475562e0e0eb093c8e10eee859a090880f78289",
+	"checks": {
+		"repository": {
+			"command": "npm run check",
+			"exit_code": 0,
+			"tests_passed": 703,
+			"includes_registry_unit_cases": 6
+		},
+		"registry_container": {
+			"command": "node --test --test-timeout=60000 test/container/release-registry.test.mjs",
+			"exit_code": 1,
+			"passed": 0,
+			"failed": 1,
+			"environment": "macOS with Docker Desktop"
+		},
+		"workflow_syntax": {
+			"tool": "actionlint 1.7.12",
+			"exit_code": 0,
+			"shellcheck_enabled": false
+		},
+		"full_container_suite": "Not rerun after adding the registry test; previous 12-test pass is historical."
+	},
+	"unfinished": [
+		"The local registry fixture publishes its port on macOS loopback, but the Docker Desktop daemon cannot reach it from its Linux VM. The actual Docker push failed with connection refused. Native Linux behavior is unverified.",
+		"First resume by checking Bazzite runtime/daemon access and rerunning the existing registry test unchanged. Diagnose remaining failures before treating publication as qualified.",
+		"The six registry unit cases pass. The stage CLI composes fresh GitHub preparation, protection recheck and registry publication; no successful end-to-end hosted staging publication has occurred.",
+		"No dedicated LexCerta Google Cloud project was verified. An unrelated authenticated default was left untouched.",
+		"Cloud deployment, production approval, source permission and external pilot gates remain open; see operations/release.md and docs/mvp-route.md."
+	],
+	"evidence_sha256": {
+		"repository-check.txt": "ae21035b14e57dd212770551bcc49db351edfb720b065b7d20cfc77f47236ffa",
+		"registry-unit.txt": "51c4733f4a99fd71c269d2942a0cd8817f920195ae75b320616f74cff7ee40ca",
+		"registry-container-failure.txt": "e918e84889d4a0dbf3334e45cf6e0df908f252286972d47f4895a6310e77595e",
+		"workflow-syntax.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+	},
+	"historical_evidence": "operations/qualification/release-prepare-2026-09-13/local.json",
+	"approval_granted": false
+}

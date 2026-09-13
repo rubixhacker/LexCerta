@@ -1,0 +1,35 @@
+
+> lexcerta@0.1.0 test:container
+> npm run build:node && node --test --test-timeout=60000 test/container/*.test.mjs
+
+
+> lexcerta@0.1.0 build:node
+> tsc -p tsconfig.node.json
+
+✔ maintenance entrypoint fails safely without configuration or database connectivity (2137.622167ms)
+{"image":"sha256:9ff8036495773fe82efa022eafb90d2c98747a7fdb4bbe135a0fc0f967300db6","fixture":"maintenance-recovery","fixture_only":true,"memory_limit":536870912,"cpu_limit":1,"fixture_closed":true,"node":"v24.21.0","arch":"x64","uid":1000,"max_rss_kib":144772,"delete_requests":1}
+✔ packaged maintenance resumes a killed deletion through verified PostgreSQL TLS and the GCS wire adapter (6181.147584ms)
+✔ migration entrypoint rejects missing configuration, unavailable database and arbitrary arguments (3072.072875ms)
+{"image":"sha256:9ff8036495773fe82efa022eafb90d2c98747a7fdb4bbe135a0fc0f967300db6","fixture":"migration-lifecycle","fixture_only":true,"memory_limit":536870912,"cpu_limit":1,"fixture_closed":true,"node":"v24.21.0","arch":"x64","uid":1000,"max_rss_kib":106428}
+✔ packaged migrator creates the schema and grants over TLS, repeats safely and rolls back interrupted DDL (9197.648208ms)
+{"image":"sha256:9ff8036495773fe82efa022eafb90d2c98747a7fdb4bbe135a0fc0f967300db6","fixture":"neon-tls","node":"v24.21.0","arch":"x64","uid":1000,"checks":5,"max_rss_kib":106448,"source":"local-postgresql","memory_limit":536870912,"cpu_limit":1,"fixture_only":true}
+✔ the amd64 image verifies PostgreSQL TLS, delayed reconnect and idle shutdown at 512 MiB (15119.057208ms)
+✔ operator entrypoint fails safely without configuration or database connectivity at 512 MiB (2606.8495ms)
+{"image":"sha256:9ff8036495773fe82efa022eafb90d2c98747a7fdb4bbe135a0fc0f967300db6","architecture":"amd64","memory_limit":536870912,"cpu_limit":1,"fixture_only":true,"fixture_closed":true,"failures":0,"certificate_calls":1,"max_rss_kib":120624}
+✔ packaged operator authenticates the CLI, mutates real PostgreSQL and drains active SQL on SIGTERM (4092.570916ms)
+✔ the default image entrypoint fails safely without configuration or database connectivity (3197.939583ms)
+{"fixture_closed":true,"object_requests":3,"failures":0,"max_rss_kib":212380}
+{"image":"sha256:9ff8036495773fe82efa022eafb90d2c98747a7fdb4bbe135a0fc0f967300db6","architecture":"amd64","memory_limit":1073741824,"cpu_limit":1,"fixture_only":true}
+✔ the amd64 service runs all three tools with HTTP/GCS fixtures and drains an active quote on SIGTERM (5417.065333ms)
+{"image":"sha256:9ff8036495773fe82efa022eafb90d2c98747a7fdb4bbe135a0fc0f967300db6","architecture":"amd64","memory_limit":1073741824,"cpu_limit":1,"fixture_only":true}
+✔ SIGKILL preserves charged attempts and does not publish the interrupted opinion (2214.11925ms)
+{"fixture":"postgresql-backup-restore","fixture_only":true,"image":"sha256:9ff8036495773fe82efa022eafb90d2c98747a7fdb4bbe135a0fc0f967300db6","snapshot_bytes":35554,"snapshot_sha256":"7f5c261647e43f7982ecf8a4373b649a6be726fdaa9702c776110060e1ae25bc","separate_database":true,"replayed_records":5,"restored_database_sealed":true}
+✔ a real PostgreSQL dump restored into a separate database replays post-backup restrictions and stays closed (3298.873916ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 15215.581416

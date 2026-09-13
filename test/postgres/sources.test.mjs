@@ -5,6 +5,7 @@ import { once } from "node:events";
 import { after, before, test } from "node:test";
 import { createPostgresCitationStore } from "../../build/postgres/citations.js";
 import { PostgresOpinionSources } from "../../build/postgres/opinions.js";
+import { PostgresSourceAdministration } from "../../build/postgres/source-administration.js";
 import { createPostgresFixture } from "./fixture.mjs";
 import { FixtureSourceObjects, deferred } from "./objects-fixture.mjs";
 let fixture;
@@ -154,7 +155,10 @@ test("tombstone and GC during upload prevent any subsequent publication or sourc
 	};
 	const publication = fill(store, 107);
 	await uploaded.promise;
-	await store.tombstone(107);
+	await new PostgresSourceAdministration(fixture.administration, "test", fixture.journal).remove(
+		107,
+		"fixture-operator",
+	);
 	await store.collectGarbage();
 	release.resolve();
 	assert.equal((await publication).kind, "lease_unavailable");
@@ -287,15 +291,24 @@ test("an upload arriving after its tombstone is removed becomes a collectible or
 	};
 	const publication = fill(store, 112);
 	await beforeUpload.promise;
-	await store.tombstone(112);
+	await new PostgresSourceAdministration(fixture.administration, "test", fixture.journal).remove(
+		112,
+		"fixture-operator",
+	);
 	await store.collectGarbage();
 	release.resolve();
 	assert.equal((await publication).kind, "lease_unavailable");
 	assert.equal(objects.values.size, 1);
-	assert.equal((await store.collectOrphans()).deleted, 0);
+	assert.equal(
+		(await new PostgresOpinionSources(fixture.jobs, objects).collectOrphans()).deleted,
+		0,
+	);
 	for (const value of objects.values.values())
 		value.createdAt = new Date(Date.now() - 49 * 3600000);
-	assert.equal((await store.collectOrphans()).deleted, 1);
+	assert.equal(
+		(await new PostgresOpinionSources(fixture.jobs, objects).collectOrphans()).deleted,
+		1,
+	);
 	assert.equal(objects.values.size, 0);
 	await assert.rejects(store.read({ provenance: provenance(112) }), /removed/);
 });
@@ -310,7 +323,10 @@ test("orphan reconciliation preserves registered and recently created objects", 
 	const orphan = "opinions/old-fixture";
 	await objects.put(orphan, new TextEncoder().encode("old"), {});
 	objects.values.get(orphan).createdAt = new Date(Date.now() - 49 * 3600000);
-	assert.equal((await store.collectOrphans()).deleted, 1);
+	assert.equal(
+		(await new PostgresOpinionSources(fixture.jobs, objects).collectOrphans()).deleted,
+		1,
+	);
 	assert.equal(objects.values.size, 2);
 	assert.equal((await store.read({ provenance: provenance(113) })).kind, "positive");
 });
@@ -345,7 +361,10 @@ test("an orphan deletion with a lost acknowledgement remains recoverable even af
 		await remove(...args);
 		throw new Error("lost delete acknowledgement");
 	};
-	await assert.rejects(store.collectOrphans(), /lost delete/);
+	await assert.rejects(
+		new PostgresOpinionSources(fixture.jobs, objects).collectOrphans(),
+		/lost delete/,
+	);
 	assert.equal(objects.values.size, 0);
 	assert.equal(
 		(
@@ -357,7 +376,10 @@ test("an orphan deletion with a lost acknowledgement remains recoverable even af
 		1,
 	);
 	objects.remove = remove;
-	assert.equal((await store.collectOrphans()).deleted, 1);
+	assert.equal(
+		(await new PostgresOpinionSources(fixture.jobs, objects).collectOrphans()).deleted,
+		1,
+	);
 	assert.equal(
 		(
 			await fixture.migration.query(

@@ -1,0 +1,33 @@
+{
+	"recorded_at": "2026-09-13T03:55:22.913421+00:00",
+	"base_commit": "e475562e0e0eb093c8e10eee859a090880f78289",
+	"branch": "codex/lexcerta-node-runtime",
+	"uncommitted_work": true,
+	"full_run_session_id": 54658,
+	"full_run_complete": false,
+	"image_index": "sha256:1319a14dd3aa87cd8bbc4f67c523b4c23c0607bca565f517cdd3bdb5172d7291",
+	"image_manifest": "sha256:634d6ed27724c29bf210955e789e63fbbf013a41034f129c7d85146958f59259",
+	"source_sha256": {
+		"scripts/qualify-node-soak.mjs": "c3de7e35adc72d73df44d01b7c2d1a1a127b082d8a7ea73373b1104ab72939a1",
+		"test/container/soak-fixture.mjs": "971c2ad39629f851402e23654a7e4d029e9f9a19b32463d3345f4ac70c6c3f0b",
+		"test/container/soak-sources.mjs": "91fc0495a01682d5aa4bddbc9f64019eac901a402a74f8e3f03624701e3d036f",
+		"test/fixtures/postgres-tls-fixture.mjs": "9a1db9d1a80f5bad154612c0fd77848414fcc24405293d0972c65122f598c03d",
+		"test/fixtures/gcs-wire-fixture.mjs": "d7790740487fdb2fc5af3e82da789028bf6170e00774327614665048fbc2ac15",
+		"test/postgres/fixture.mjs": "5f176bc9f8b7ba853424c1ec14fd79647448444c7b934cf0a0533dca6519dc18",
+		"test/container/runtime-fixture.mjs": "f3026f5ef41de4e6bd7730a2708b05a843795a7b89510ef2a3556eee7902bfde",
+		"examples/pilot-client.ts": "329c824faa17561036c829f8ea8ab4ac88bf399196eb49d3da4b206fe5644261",
+		"src/node/service-http.ts": "4f6d7b8a52708147daedf419f11d22a4be7aed63baa9380f9d209f5c7334c0c1",
+		"test/node/public-http.test.mjs": "35d2b4015b8c8cdf6788b238b2443acb20dcb1d063a73a725c5aecca4cdf1c1f",
+		"vitest.config.ts": "88dbc232fb7d0bcd52b192e9dbb26865cf80b0ec7ad0399b940430263f1e560e",
+		"operations/node-soak.md": "a65eb6300238de5747ac960cee6f95e64a2257c1fc8b3c4f5148d2fba77ee0bb"
+	},
+	"required_repository_checks": 653,
+	"container_checks": 10,
+	"scope": "Preflight record only. Full warmup including the near-node-limit HTML reached the thirty-minute workload. The active run and its teardown/audits are not complete.",
+	"log_sha256": {
+		"node-soak-check-4.log": "e2294edd64f8105f8c2fe36102b41ccff3b1427ac26e8fc9cec82af79aad6397",
+		"node-soak-container-1.log": "176957ca83570325baa2e91d3903b1ccc3337bd5f0a4bfa1b0588900beb9a74d",
+		"node-soak-http-regression-1.log": "deacc0308e1f4708a763e84d051bffffb1e41929be6f9533bdba1c7769c26c7a",
+		"node-soak-image-build-1.log": "101c3e106e77a7bfd8190b9a7ba77bff0298e28203db79d87db911a3fb5aeb8c"
+	}
+}

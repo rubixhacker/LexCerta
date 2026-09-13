@@ -15,7 +15,7 @@ import {
 	purgeExpiredOpinionNegative,
 	recordOpinionSourceObservation,
 } from "../verification/opinion-source-cache.js";
-import type { PgDatabase, PgTransaction } from "./database.js";
+import type { PgTransaction, TransactionDatabase } from "./database.js";
 import {
 	type ListedSourceObject,
 	MAX_SOURCE_OBJECT_BYTES,
@@ -61,7 +61,7 @@ type Publication =
 
 export class PostgresOpinionSources implements OpinionSourceStore {
 	constructor(
-		private readonly database: PgDatabase,
+		private readonly database: TransactionDatabase,
 		private readonly objects: SourceObjects,
 	) {}
 
@@ -316,25 +316,6 @@ export class PostgresOpinionSources implements OpinionSourceStore {
 		});
 	}
 
-	async tombstone(opinionId: number): Promise<void> {
-		await this.database.transaction(async (transaction) => {
-			await lockCapacity(transaction);
-			await transaction.query(
-				"INSERT INTO lexcerta.opinion_sources(opinion_id) VALUES ($1) ON CONFLICT DO NOTHING",
-				[opinionId],
-			);
-			await lockOpinion(transaction, opinionId);
-			await transaction.query(
-				"UPDATE lexcerta.opinion_sources SET removed_at = clock_timestamp(), body_key = NULL, epoch = epoch + 1, owner_token = NULL, lease_expires_at = NULL WHERE opinion_id = $1",
-				[opinionId],
-			);
-			await transaction.query(
-				"UPDATE lexcerta.source_objects SET phase = 'deleting', delete_after = clock_timestamp(), delete_token = NULL WHERE opinion_id = $1",
-				[opinionId],
-			);
-		});
-	}
-
 	async collectGarbage(batchSize = 100, evict = false, budgetMs = 45_000): Promise<number> {
 		if (!Number.isSafeInteger(batchSize) || batchSize < 1 || batchSize > 100)
 			throw new RangeError("invalid cleanup batch");
@@ -378,10 +359,30 @@ export class PostgresOpinionSources implements OpinionSourceStore {
 		return deleted;
 	}
 
+	// Deleting rows awaiting their retry time still count as pending work.
+	// A zero deletion count alone cannot establish completion of a sweep.
+	async hasPendingGarbage(): Promise<boolean> {
+		return this.database.transaction(async (transaction) => {
+			const result = await transaction.query<{ pending: boolean }>(
+				"SELECT EXISTS (SELECT 1 FROM lexcerta.source_objects o WHERE o.phase = 'deleting' OR o.expires_at <= clock_timestamp() OR (o.acquired_at <= clock_timestamp() - interval '48 hours' AND NOT EXISTS (SELECT 1 FROM lexcerta.opinion_sources s WHERE s.body_key = o.object_key))) AS pending",
+			);
+			return result.rows[0]?.pending !== false;
+		});
+	}
+
 	// A bounded page scan also finds uploads completed after a tombstone, process
 	// crash or database restore. The caller checkpoints nextPageToken between jobs.
-	async collectOrphans(pageToken?: string, budgetMs = 45_000) {
+	async collectOrphans(
+		pageToken?: string,
+		budgetMs = 45_000,
+		after?: Pick<ListedSourceObject, "key" | "generation">,
+	) {
 		const deadline = cleanupDeadline(budgetMs);
+		if (
+			after !== undefined &&
+			(after.key.length < 1 || after.key.length > 1024 || !/^[0-9]{1,32}$/.test(after.generation))
+		)
+			throw new SourceObjectIntegrityError();
 		const pending = await this.database.transaction(async (transaction) => {
 			const result = await transaction.query<{ object_key: string; generation: string }>(
 				"SELECT object_key, generation FROM lexcerta.orphan_object_deletions ORDER BY marked_at LIMIT 100",
@@ -393,17 +394,13 @@ export class PostgresOpinionSources implements OpinionSourceStore {
 			}));
 		});
 		const page = await this.objects.list(pageToken);
-		const candidates = [
-			...pending,
-			...page.objects.filter(
-				(object) =>
-					!pending.some((mark) => mark.key === object.key && mark.generation === object.generation),
-			),
-		];
+		// Persist a key within the page as well as the opaque provider token. A
+		// slow page of protected objects must not restart forever after each budget.
+		const candidates = [...page.objects]
+			.sort(compareObjectVersions)
+			.filter((object) => after === undefined || compareObjectVersions(object, after) > 0);
 		let deleted = 0;
-		let scanned = 0;
-		for (const object of candidates) {
-			if (performance.now() >= deadline) break;
+		const remove = async (object: ListedSourceObject) => {
 			if (await this.claimOrphan(object)) {
 				await this.objects.remove(object.key, object.generation);
 				await this.database.transaction(async (transaction) => {
@@ -415,13 +412,40 @@ export class PostgresOpinionSources implements OpinionSourceStore {
 				});
 				deleted += 1;
 			}
-			scanned += 1;
+		};
+		// Marks recover a lost delete acknowledgement even if the provider no
+		// longer lists that generation. They are never skipped by a page cursor.
+		let recovered = 0;
+		for (const object of pending) {
+			if (performance.now() >= deadline) break;
+			await remove(object);
+			recovered += 1;
 		}
+		let scanned = 0;
+		let last = after ?? null;
+		for (const object of candidates) {
+			if (performance.now() >= deadline) break;
+			if (
+				!pending
+					.slice(0, recovered)
+					.some((mark) => mark.key === object.key && mark.generation === object.generation)
+			)
+				await remove(object);
+			scanned += 1;
+			last = { key: object.key, generation: object.generation };
+		}
+		const remaining = await this.database.transaction(async (transaction) => {
+			const result = await transaction.query<{ pending: boolean }>(
+				"SELECT EXISTS (SELECT 1 FROM lexcerta.orphan_object_deletions) AS pending",
+			);
+			return result.rows[0]?.pending !== false;
+		});
+		const pageDone = scanned === candidates.length && !remaining;
 		return {
 			deleted,
-			// Retry this page after a time limit; never skip unprocessed objects.
-			nextPageToken: scanned === candidates.length ? page.nextPageToken : (pageToken ?? null),
-			complete: scanned === candidates.length && page.nextPageToken === null,
+			nextPageToken: pageDone ? page.nextPageToken : (pageToken ?? null),
+			after: pageDone ? null : last,
+			complete: pageDone && page.nextPageToken === null,
 		};
 	}
 
@@ -447,6 +471,16 @@ export class PostgresOpinionSources implements OpinionSourceStore {
 			return true;
 		});
 	}
+}
+
+function compareObjectVersions(
+	left: Pick<ListedSourceObject, "key" | "generation">,
+	right: Pick<ListedSourceObject, "key" | "generation">,
+): number {
+	const keys = Buffer.compare(Buffer.from(left.key, "utf8"), Buffer.from(right.key, "utf8"));
+	if (keys !== 0) return keys;
+	const generations = BigInt(left.generation) - BigInt(right.generation);
+	return generations === 0n ? 0 : generations < 0n ? -1 : 1;
 }
 
 function cleanupDeadline(budgetMs: number): number {

@@ -17,7 +17,7 @@ async function cancel(
 	}
 }
 
-function rebuiltRequest(request: Request, bytes: Uint8Array): Request {
+function rebuiltRequest(request: Request, bytes: Uint8Array<ArrayBuffer>): Request {
 	return new Request(request.url, {
 		method: request.method,
 		headers: new Headers(request.headers),

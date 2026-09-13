@@ -1,0 +1,63 @@
+{
+	"recorded_at": "2026-09-12T22:59:25.929672+00:00",
+	"scope": "local amd64 public process qualification with loopback upstream and object fixtures and real PostgreSQL 18",
+	"base_commit": "e475562e0e0eb093c8e10eee859a090880f78289",
+	"uncommitted_work": true,
+	"build_id": "0000000000000000000000000000000000000000",
+	"image_index": "sha256:f733cb43997c58219c70d9de6911d32d28158a10c06088a251e71fa5844b5b3d",
+	"image_manifest": "sha256:27103e3c40a49f73e8b2bffde792784bcb4bf987e49d7cad668884d25b8c39aa",
+	"node": "24.21.0",
+	"architecture": "amd64",
+	"uid": 1000,
+	"memory_limit_bytes": 1073741824,
+	"cpu_limit": 1,
+	"compiled_file_sha256": {
+		"node/public-main.js": "9282dcad9656860fabae484f43526a0c94326428d7ce25c98c5816adc492d404",
+		"node/public-http.js": "8f3f2efe62372de1a0f2ea722a4e1460ff0dfd7b3f6b63a68262cf8868ff218f",
+		"node/public-application.js": "73b08b856c5bdbc8e9efe5e0329904fe2f225d303f9e359e8a823b15eca4a36f",
+		"node/cloud-sql-auth.js": "6e3d36426a99d2824431bd86b42881880b77fe631942060749ead87b1d9759c5",
+		"node/gcs-source-objects.js": "263bd4172cff49611f4fb31ceac7f6f389bd20df613102774695e7193ef7939e",
+		"postgres/database.js": "42c5ed321ba9850e1dd5ccca9494d5d90e5aad2d593b0e33550bb55ac424aafb"
+	},
+	"test_source_sha256": {
+		"test/container/public-service.test.mjs": "81d96260cca20de322bdb2cf8c1e92d6fbc3fd47ea93bc9106ca55d424d7cff6",
+		"test/container/public-fixture.mjs": "2c3b797dbbb1401c26bbc72f289b2ae1164c6605a4fc10d9d49e779e4609f7c9",
+		"test/fixtures/gcs-wire-fixture.mjs": "3532a34f115c78e6612c4f52da854981985346663a7e552a5f8be5ddea3daa03"
+	},
+	"results_sha256": "2c33d01d2302439a4926923dd5b114b41d57af74756c0e0c44c8d791f326b4ce",
+	"tests": 3,
+	"passed": 3,
+	"failed": 0,
+	"graceful_case": {
+		"fixture_closed": true,
+		"object_requests": 3,
+		"failures": 0,
+		"max_rss_kib": 264636
+	},
+	"observations": [
+		"Default production entrypoint exits 1 with only startup_failed for missing configuration and unavailable attached identity while networking is disabled.",
+		"Pinned MCP client discovers and calls all three tools; citation and quote are verified against HTTP fixture sources.",
+		"SIGTERM during the opinion request allows completion and a zero exit within ten seconds.",
+		"Three charged non-usage upstream attempts and one ready source object persist after graceful completion.",
+		"SIGKILL exits 137 without OOM, preserves three charged attempts and publishes no ready opinion object.",
+		"Named container SQL connections exist before SIGKILL and disappear afterward.",
+		"Both container log streams exclude fixture source text, API-key prefixes, upstream token and pepper."
+	],
+	"rss_measurement": "Node process resourceUsage maxRSS in KiB, including in-container HTTP fixtures; not sampled cgroup peak or sustained-load evidence.",
+	"earlier_failure": {
+		"local_log": "public-container-3.log",
+		"finding": "Connector 1.12.0 close() attaches an unhandled rejection after a failed initial refresh.",
+		"correction": "Abort native HTTP on all failures; close connector after successful getOptions only. Unknown process failures separately emit a constant event and exit 1.",
+		"not_suppressed": "No private SDK patch, global console override or continued execution after a fatal failure."
+	},
+	"not_established": [
+		"Thirty-minute concurrency-eight soak",
+		"Cloud Run deployment or limits",
+		"Cloud SQL TLS or IAM authentication",
+		"Google-issued certificate refresh after idle",
+		"GCS durability or IAM",
+		"Live CourtListener compatibility or permission",
+		"External pilot use",
+		"Release or promotion eligibility"
+	]
+}

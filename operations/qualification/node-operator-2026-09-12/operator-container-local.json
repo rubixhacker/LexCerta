@@ -1,0 +1,113 @@
+{
+	"recorded_at": "2026-09-12T23:42:11.417305+00:00",
+	"scope": "Local amd64 private operator qualification and public runtime regression with fixture RSA-signed Google-format identity tokens, native HTTP and real PostgreSQL 18. Google does not sign the fixture tokens.",
+	"base_commit": "e475562e0e0eb093c8e10eee859a090880f78289",
+	"branch": "codex/lexcerta-node-runtime",
+	"uncommitted_work": true,
+	"build_id": "0000000000000000000000000000000000000000",
+	"image_index": "sha256:52cd35ae90bb9e4666b5d78162841732b34462e134c1ada9fb1dda695ed6162c",
+	"image_manifest": "sha256:f3dfaa2910b4f227c6f2969a76afaee193f1a1e72970f554a7f9856abe590a7b",
+	"node": "24.21.0",
+	"architecture": "amd64",
+	"uid": 1000,
+	"compiled_files_compared_to_container_sha256": {
+		"node/cloud-sql-auth.js": "6e3d36426a99d2824431bd86b42881880b77fe631942060749ead87b1d9759c5",
+		"node/gcs-source-objects.js": "263bd4172cff49611f4fb31ceac7f6f389bd20df613102774695e7193ef7939e",
+		"node/operator-application.js": "b5bdc9fb3567040b29f0784dfebc5f388e6dcddc07eae01f20aae4df2cdaa0be",
+		"node/operator-cli.js": "7e5e457d2a2ee96e6fa7791b2676c3ebc109886ba18b097238249786f9e6faee",
+		"node/operator-http.js": "5338ad1099728e44e12abdc342d1620ce4215ef9c36fbf3afdceaeb3a9276dd5",
+		"node/operator-identity.js": "3cb1f3a09642734a38cfbd783a3b4fd2528b059440de01797eadd6cc651e2475",
+		"node/operator-main.js": "2c30e15ca8ae702f0052d318cf7a1c114f3a2cce8f56883ad39b0751318bb12a",
+		"node/public-application.js": "73b08b856c5bdbc8e9efe5e0329904fe2f225d303f9e359e8a823b15eca4a36f",
+		"node/public-http.js": "a612a95b163e2ecd595155d29836aefedad6251271bfa8cc311387ec6e10438d",
+		"node/public-main.js": "42237887d67d7201fde6f2e27b1880f671c28e7d671ed690f14f02338ffca7d6",
+		"node/runtime-config.js": "5ef14d406bb5e59bb656f1738b03b22a5e5a8425321d315c274a4cc2d89bcdff",
+		"node/service-http.js": "9ffd20e9caa7f65d67cb5cffdfe9c5afb66a127e817eaf6cdc9a2d4bbdaf1209",
+		"node/service-process.js": "fb6fc6f314e6398ce825d899be49821f8c769ae5034b210266b6255eee35b455",
+		"postgres/database.js": "42c5ed321ba9850e1dd5ccca9494d5d90e5aad2d593b0e33550bb55ac424aafb",
+		"postgres/keys.js": "804e5ad7edfd287d046d37d1f34ae9fe35ad1ed83889fbd6b38aee520009c3e3"
+	},
+	"test_source_sha256": {
+		"test/container/public-service.test.mjs": "f177920e3779df82f81688f2cb9624fe186a721c762c42b46605d0d6a637f471",
+		"test/container/public-fixture.mjs": "2c3b797dbbb1401c26bbc72f289b2ae1164c6605a4fc10d9d49e779e4609f7c9",
+		"test/container/operator-service.test.mjs": "2376a69a97a11e88990ca21605ff02e6dd378805ca3466270cc78644b6314d7d",
+		"test/container/operator-fixture.mjs": "286a51e63370bfa1fa68625fa0da4c93a2031abb41154421f1f2d17f83efb873",
+		"test/container/runtime-fixture.mjs": "f3026f5ef41de4e6bd7730a2708b05a843795a7b89510ef2a3556eee7902bfde",
+		"test/postgres/fixture.mjs": "3efa232994dd9cf28964755c08d3debb73f925ef83d82ce27d8925d1598260a3",
+		"test/postgres/operator-application.test.mjs": "846f210e20695f8d24e7427e94c60858ea6d570476c3008421a553055eb86d06",
+		"test/fixtures/operator-identity.mjs": "aa4baf83131f6da38312ec9640077708976e9a803f4a833c6eeb1e5003d588d4",
+		"test/node/operator-identity.test.mjs": "8e0fb6e9a125b6851be06515be93182901b61110dfc5df5f3848c762123ff288",
+		"test/node/operator-http.test.mjs": "30b3e8325af4a775bd83ec5294e6233ec0b215e698ec5ea9a6675a418349ec7d",
+		"test/node/operator-cli.test.mjs": "8d97108e26d19f06885404849022fa81f9da7606a4eb7b22549c4136c7110f72"
+	},
+	"results_sha256": "5c966beef53b46c71ab3a71ced08d58287fc413424715371d9c70a5ca215f2ce",
+	"checks": {
+		"repository": 627,
+		"repository_groups": {
+			"core": 498,
+			"worker_qualification": 23,
+			"telemetry": 2,
+			"worker_admin": 39,
+			"deployment": 6,
+			"frozen_source_integrity": 3,
+			"node": 56
+		},
+		"postgres": 66,
+		"container": 5,
+		"total": 698,
+		"failed": 0
+	},
+	"local_logs": {
+		"repository": "operator-check-2.log",
+		"postgres": "operator-postgres-3.log",
+		"image": "operator-image-build-2.log",
+		"container": "operator-container-4.log",
+		"operator_postgres_final": "operator-postgres-4.log"
+	},
+	"operator_container": {
+		"image": "sha256:52cd35ae90bb9e4666b5d78162841732b34462e134c1ada9fb1dda695ed6162c",
+		"architecture": "amd64",
+		"memory_limit": 536870912,
+		"cpu_limit": 1,
+		"fixture_only": true,
+		"fixture_closed": true,
+		"failures": 0,
+		"certificate_calls": 1,
+		"max_rss_kib": 156200
+	},
+	"public_graceful_case": {
+		"fixture_closed": true,
+		"object_requests": 3,
+		"failures": 0,
+		"max_rss_kib": 243928
+	},
+	"observations": [
+		"Both packaged entrypoints exit 1 with only startup_failed on missing configuration or unavailable attached identity with networking disabled.",
+		"Operator container runs with one CPU and 512 MiB; the public container runs with one CPU and 1 GiB.",
+		"The CLI issues, changes limits, rotates, reads status and revokes through actual operator HTTP with fixture RSA-signed identity tokens and PostgreSQL.",
+		"Public admission observes operator limits and revocation. The audit actor is the verified immutable subject.",
+		"Fixture root observer sees the operator audit insert blocked in real pg_sleep before SIGTERM; the mutation then commits and returns its one-time credential, service exits 0 under ten seconds, and SQL connections disappear.",
+		"Operator certificate retrieval uses one native HTTP fixture fetch; both output streams exclude credential/token/pepper/public-key sentinels.",
+		"Public pinned MCP client exercises exactly three tools; active quote completes during SIGTERM; SIGKILL preserves three charges without publishing the interrupted source.",
+		"Real PostgreSQL tests cover cross-environment mutation denial, duplicate public IDs, lost COMMIT acknowledgement and dropped HTTP output without automatic replay.",
+		"CLI status reports absent only for the authenticated application's exact missing-key response; proxy errors and malformed bodies do not establish absence."
+	],
+	"earlier_container_failure": {
+		"log": "operator-container-1.log",
+		"cause": "The migration fixture role cannot see another role's pg_stat_activity wait_event, so the SQL-stage observer never detected PgSleep. A direct probe showed null through migration identity and PgSleep/active through fixture root.",
+		"correction": "Add a fixture-root read-only observer scoped to its disposable database. No service or migration grants were expanded; same runtime image passed the rerun."
+	},
+	"rss_measurement": "Node resourceUsage maxRSS in KiB, including in-container HTTP fixtures. Not cgroup peak, sustained load, or a Cloud Run measurement.",
+	"not_established": [
+		"Cloud Run IAM or real Google token forwarding",
+		"Cloud SQL TLS/IAM authentication and idle certificate refresh",
+		"Project isolation and deployed secret grants",
+		"Durable job fencing and restore/revocation reconciliation",
+		"Thirty-minute full-service soak",
+		"GCS durability or live CourtListener eligibility/permission",
+		"External pilot use",
+		"Release or promotion eligibility"
+	],
+	"verification_sequence": "The full 66-test PostgreSQL suite passed before the CLI-only confirmed-absence response improvement; its 8 operator HTTP/CLI tests passed again afterward. Final repository check passed 627 tests. The final 5 container tests passed with swap disabled; only fixture memory arguments changed afterward relative to the repository check, with targeted formatting/lint completed.",
+	"swap_configuration": "Both services explicitly set Docker memory-plus-swap equal to memory. HostConfig.MemorySwap is inspected and equals HostConfig.Memory, allowing no additional swap allocation."
+}

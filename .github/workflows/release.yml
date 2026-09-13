@@ -1,0 +1,101 @@
+name: Release candidate
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: lexcerta-release
+  cancel-in-progress: false
+
+jobs:
+  candidate:
+    name: Build and qualify one immutable candidate
+    if: github.repository_id == '1157346206' && github.repository_owner_id == '1776138' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 65
+    services:
+      postgres:
+        image: postgres:18@sha256:4ef4dbc939d61acea57712655ddb4b4ab27419c913f94cca0cd57cb3ea3c2280
+        env:
+          POSTGRES_PASSWORD: lexcerta-local-fixture
+          POSTGRES_DB: lexcerta_fixture
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lexcerta_fixture"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      CI: "true"
+      WRANGLER_SEND_METRICS: "false"
+      LEXCERTA_TEST_IMAGE: lexcerta-candidate:${{ github.sha }}
+      LEXCERTA_TEST_DATABASE_URL: postgresql://postgres:lexcerta-local-fixture@127.0.0.1:5432/lexcerta_fixture
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Check release protection before qualification
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p .release/candidate
+          node scripts/release-readiness.mjs --output .release/protection.json
+      - run: npm ci
+      - name: Required repository checks
+        run: npm run check > .release/candidate/repository.log 2>&1
+      - name: Real PostgreSQL checks
+        run: npm run test:postgres > .release/candidate/postgres.log 2>&1
+      - name: Build the candidate once
+        run: docker build --platform linux/amd64 --build-arg BUILD_ID="$GITHUB_SHA" -t "$LEXCERTA_TEST_IMAGE" .
+      - uses: ./.github/actions/setup-release-tools
+      - name: Qualify the built container
+        env:
+          LEXCERTA_TEST_POSTGRES_CONTAINER: ${{ job.services.postgres.id }}
+        run: npm run test:container > .release/candidate/container.log 2>&1
+      - name: Dependency audit
+        run: npm audit --audit-level=low > .release/candidate/audit.log 2>&1
+      - name: Thirty-minute fixture soak of the same image
+        run: node scripts/qualify-node-soak.mjs --output .release/candidate/soak.json
+      - name: Save the tested image and bind its evidence
+        run: node scripts/release-candidate.mjs --output-directory .release/candidate
+      - name: Retain candidate bytes and evidence
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: lexcerta-candidate-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            .release/candidate/candidate.json
+            .release/candidate/runtime.tar
+            .release/candidate/repository.log
+            .release/candidate/postgres.log
+            .release/candidate/container.log
+            .release/candidate/audit.log
+            .release/candidate/soak.json
+            .release/candidate/soak.json.container.log
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+      - name: Retain failed-attempt diagnostics
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: lexcerta-candidate-failure-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            .release/protection.json
+            .release/candidate/*.log
+            .release/candidate/soak.json
+          if-no-files-found: ignore
+          include-hidden-files: true
+          retention-days: 7
+
+# Cloud authentication and deployment are added only with the staging runner
+# and exact-registry-digest promotion checks. A fixture-qualified candidate is
+# not staging evidence or production approval; this workflow has no cloud role.

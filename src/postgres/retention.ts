@@ -1,19 +1,33 @@
-import type { PgDatabase } from "./database.js";
+import type { PgTransaction, TransactionDatabase } from "./database.js";
+
+export async function purgePostgresRollingWindows(database: TransactionDatabase, batchSize = 500) {
+	validateBatchSize(batchSize);
+	return database.transaction((transaction) => purgeWindows(transaction, batchSize));
+}
+
+async function purgeWindows(transaction: PgTransaction, batchSize: number) {
+	const admissions = await transaction.query(
+		"DELETE FROM lexcerta.key_admissions WHERE ctid IN (SELECT ctid FROM lexcerta.key_admissions WHERE admitted_at <= clock_timestamp() - interval '48 hours' ORDER BY admitted_at LIMIT $1 FOR UPDATE SKIP LOCKED)",
+		[batchSize],
+	);
+	const attempts = await transaction.query(
+		"DELETE FROM lexcerta.upstream_attempts WHERE (credential_id, token) IN (SELECT credential_id, token FROM lexcerta.upstream_attempts WHERE reserved_at <= clock_timestamp() - interval '48 hours' ORDER BY reserved_at LIMIT $1 FOR UPDATE SKIP LOCKED)",
+		[batchSize],
+	);
+	return { admissions: admissions.rowCount ?? 0, attempts: attempts.rowCount ?? 0 };
+}
+
+function validateBatchSize(batchSize: number) {
+	if (!Number.isSafeInteger(batchSize) || batchSize < 1 || batchSize > 500)
+		throw new RangeError("invalid retention batch");
+}
 
 // The scheduled job uses a separate identity. Every bounded batch is SQL-only
 // and atomic; an interrupted or duplicate invocation can retry the same sweep.
-export async function purgePostgresRetention(database: PgDatabase, batchSize = 500) {
-	if (!Number.isSafeInteger(batchSize) || batchSize < 1 || batchSize > 500)
-		throw new RangeError("invalid retention batch");
+export async function purgePostgresRetention(database: TransactionDatabase, batchSize = 500) {
+	validateBatchSize(batchSize);
 	return database.transaction(async (transaction) => {
-		const admissions = await transaction.query(
-			"DELETE FROM lexcerta.key_admissions WHERE ctid IN (SELECT ctid FROM lexcerta.key_admissions WHERE admitted_at <= clock_timestamp() - interval '48 hours' ORDER BY admitted_at LIMIT $1 FOR UPDATE SKIP LOCKED)",
-			[batchSize],
-		);
-		const attempts = await transaction.query(
-			"DELETE FROM lexcerta.upstream_attempts WHERE (credential_id, token) IN (SELECT credential_id, token FROM lexcerta.upstream_attempts WHERE reserved_at <= clock_timestamp() - interval '48 hours' ORDER BY reserved_at LIMIT $1 FOR UPDATE SKIP LOCKED)",
-			[batchSize],
-		);
+		const windows = await purgeWindows(transaction, batchSize);
 		const audit = await transaction.query(
 			"DELETE FROM lexcerta.admin_audit_events WHERE id IN (SELECT id FROM lexcerta.admin_audit_events WHERE retention_expires_at <= clock_timestamp() ORDER BY retention_expires_at LIMIT $1 FOR UPDATE SKIP LOCKED)",
 			[batchSize],
@@ -33,8 +47,7 @@ export async function purgePostgresRetention(database: PgDatabase, batchSize = 5
 			[batchSize],
 		);
 		return {
-			admissions: admissions.rowCount ?? 0,
-			attempts: attempts.rowCount ?? 0,
+			...windows,
 			audit: audit.rowCount ?? 0,
 			keys: keys.rowCount ?? 0,
 			customers: customers.rowCount ?? 0,

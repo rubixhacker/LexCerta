@@ -1,0 +1,35 @@
+{
+	"accepted_at": "2026-09-13T04:27:14.026Z",
+	"scope": "Completed local fixture soak only. Not hosted or release qualification.",
+	"base_commit": "e475562e0e0eb093c8e10eee859a090880f78289",
+	"branch": "codex/lexcerta-node-runtime",
+	"uncommitted_work": true,
+	"image_index": "sha256:1319a14dd3aa87cd8bbc4f67c523b4c23c0607bca565f517cdd3bdb5172d7291",
+	"image_manifest": "sha256:634d6ed27724c29bf210955e789e63fbbf013a41034f129c7d85146958f59259",
+	"original_result_sha256": "97869cf586aeb2605246a99a42bb97e916f3ded4f809c831a5326aa5a03b1a77",
+	"archived_result_sha256": "a108c175ba02d5c8ad358a7faa5028ab13cebabd0249ca420113da78fd83a639",
+	"container_log_uncompressed_sha256": "703698676d6bb520176da1e795b8839335fadd197240e4dff2b645ca51e0d861",
+	"preflight_source_pins_matched": 12,
+	"compiled_files_matched_current_build": 77,
+	"preflight_repository_checks": 653,
+	"preflight_container_checks": 10,
+	"later_repository_checks": 661,
+	"later_repository_checks_log": "../node-recovery-2026-09-12/recovery-scan-check-1.txt",
+	"memory_review": {
+		"samples": 1794,
+		"first_five_minute_median_rss_mib": 363.3203125,
+		"last_five_minute_median_rss_mib": 412.38671875,
+		"median_growth_mib": 49.06640625,
+		"final_fifteen_minute_slope_mib_per_minute": -0.0053806304931640625,
+		"review": "Inspected the unfiltered trace. RSS rises during early workload and fluctuates with several substantial drops; the final fifteen-minute trend and window comparison pass the unchanged criteria. Main JS heap shows repeated collection, pool remains bounded. No forced GC. This bounded result does not prove the absence of every leak."
+	},
+	"boundaries": [
+		"Synthetic sources and local PostgreSQL with fixture TLS; no CourtListener load or live GCS/Neon/Cloud Run proof.",
+		"Eight client workers offer at most four starts per second each, preserving actual per-key and upstream quotas. Offered concurrency is not eight continuously active quote searches.",
+		"The fixture injects only storage/transport endpoints; the image supplies the public HTTP lifecycle, admission, MCP handler, evidence logic and normalizer.",
+		"RSS is evaluated without forced garbage collection. Passing this bounded workload does not prove absence of all memory leaks or hosted cold-start performance.",
+		"The scanner module and its eight tests were added during the soak; the scanner is absent from the tested image and is not called by the public runtime. The pinned 77 compiled runtime files still match.",
+		"The later full repository check passed 661 tests after the measured interval; it is separate from the image preflight checks.",
+		"The local image uses an all-zero build identifier and remains ineligible for production release."
+	]
+}

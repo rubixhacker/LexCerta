@@ -1,0 +1,77 @@
+{
+	"recorded_at": "2026-09-13T02:15:31.627630+00:00",
+	"scope": "Local Terraform provider-schema and mocked resource-graph validation, plus actual Prometheus expression evaluations. No cloud resources created or modified.",
+	"base_commit": "e475562e0e0eb093c8e10eee859a090880f78289",
+	"branch": "codex/lexcerta-node-runtime",
+	"uncommitted_work": true,
+	"configuration_sha256": {
+		"infrastructure/environment/foundation.tf": "80d86951c22efcde6262b3ef90d323da34fdab88a9fb8368b6db5443d6cfba07",
+		"infrastructure/environment/identity.tf": "4b29cc64fdd41630a94a8bacdca3b9c31b6a877798c0111e1c2b6d2d9e663e27",
+		"infrastructure/environment/observability.tf": "d815feb983b67fbdc21bacf23371ae85eba612a7b03e1e93f7906eeb2984a016",
+		"infrastructure/environment/outputs.tf": "648825dcda3535310a3f63362c881974fd88e0db0ce2ba5916f6659ed400a3b1",
+		"infrastructure/environment/runtime.tf": "eec929f6af8e02d5d140014783332343abeccb9a742bd4bff4f40fe52d53c2ef",
+		"infrastructure/environment/variables.tf": "23f170a8a7c54d28bd683b493819695074396c07120d313fc749d2f17bb23734",
+		"infrastructure/environment/versions.tf": "8e7888798cf0d237973af960386e00d8956eede358045d5377ee203c7c70b521",
+		"infrastructure/environment/maintenance-missing.promql.tftpl": "69960dde73f121d01624c909b4a110cda8e01773ef23a8d202dce75888c90633",
+		"infrastructure/environment/.terraform.lock.hcl": "c77660a6a0b99de2aa0526f6a7bec9869112d560273cc54e3c3cd7ddd636b6d3",
+		"infrastructure/environment/tests/environment.tftest.hcl": "e0a731f360f3e7a05d60968e9d8795834aae868e2d84e24d288ef96b2aa3dd8c",
+		"scripts/check-maintenance-alert.mjs": "70a598711318a18231d0febf47612c7bc5186de8b2f471604e0bdc3b04defb09",
+		".github/workflows/check.yml": "9bf87342559690b119298e85e226330bde446fa1d46759f43d068e4f4a7155cc"
+	},
+	"versions": {
+		"terraform": "1.16.2",
+		"google_provider": "8.2.0",
+		"promtool": "3.14.0",
+		"node": "24.21.0"
+	},
+	"provider_lock": "Signed HashiCorp checksums recorded for darwin_arm64 and linux_amd64.",
+	"prometheus_archive_sha256": {
+		"darwin_arm64": "a9623f7f4fe65b1b171b423c1a72bbf23dfdf41a171dcb33e7dd302af80dc01c",
+		"linux_amd64": "f665c6da19eb7ba399c915d30c7d9793c9b417bf8a749b504bc470678631478d"
+	},
+	"checks": {
+		"terraform_schema": "passed",
+		"terraform_mock_scenarios": 10,
+		"promql_evaluations": 8,
+		"promql_scenarios": 6,
+		"workflow_yaml": "parsed",
+		"changed_script_format_and_lint": "passed",
+		"terraform_format": "passed",
+		"git_diff_check": "passed"
+	},
+	"local_log_sha256": {
+		"terraform-validate-2.log": "f7997225125835fdd14060ac776d273f394b874f9a481b9e2122c83dc8adc5c1",
+		"terraform-lock-1.log": "d14c62da21a190c912dc5a7dd3bd24e81780cf926b6fcdbb945ade2dad697476",
+		"terraform-tests-5.log": "c8ec819cb4daa49cb33b4084837b86ad42e5ed90951825dde20bd830b00cf450"
+	},
+	"promql_observed_output": "Maintenance alert: eight PromQL evaluations passed across six scenarios.",
+	"production_runtime_change": false,
+	"observations": [
+		"Foundation can be created without a release or secret data. Private release stays IAM-protected and schedule remains paused until activation.",
+		"Explicit service/revision maxima and zero minimum instances preserve the public 1-CPU/1-GiB/concurrency-eight and operator 512-MiB/concurrency-two envelopes.",
+		"Runtime passwords use distinct secret containers and immutable numeric references; public/operator share only the pepper, and only public receives CourtListener credentials.",
+		"Scheduler uses OAuth to submit one-task bounded maintenance with database fencing. The migrator is a separate identity and has no automatic task retry.",
+		"GitHub trust binds numeric repository/owner IDs, main, the expected release workflow path and the exact environment. Release privileges update existing workloads without IAM modification or workload deletion.",
+		"Missing-job expression fires for absent and zero-valued data, including a never-created series; wrong project/job labels cannot hide an outage. Healthy hourly observations suppress it.",
+		"Database-derived health evaluates the 26-hour lifecycle threshold; the log-metric alert stays within Googles 25-hour query limit.",
+		"No matching LexCerta project was returned by the current gcloud accounts filtered read-only projects list. This does not prove that no project exists or establish access through other accounts."
+	],
+	"verification_notes": [
+		"Provider schema validation needs local IPC permission in this sandbox; the unprivileged plugin launch failed before validation. Elevated local validation succeeded without cloud mutation.",
+		"Initial mock defaults generated invalid service-account resource names; explicit synthetic identity overrides repaired the test fixture. A nonexistent string repetition function was replaced with the literal zero build ID.",
+		"Final ten-scenario Terraform run passed after explicit global instance maxima, restricted release update permissions and private canary access were added.",
+		"The workflow PostgreSQL port mapping was quoted after the local YAML parser rejected the previous plain flow-sequence scalar. The corrected workflow parsed successfully.",
+		"PromQL evaluation used the official checksum-verified darwin_arm64 Prometheus utility. Linux artifact checksum is pinned in CI; hosted CI has not run for this uncommitted change.",
+		"Production isolation now uses distinct project numbers and service-account fixtures with a separate mock state. A plan-only assertion could not inspect computed identities, so this scenario performs a mocked apply; the final ten scenarios all passed."
+	],
+	"not_established": [
+		"Provisioned GCP/Neon projects or authorized purchases/billing",
+		"Live IAM permissions, inherited log-sink/trace exclusions, Google ingress token forwarding or actual notification delivery",
+		"GCP and Neon budget notifications, combined cost reconciliation or bounded image/backup pruning",
+		"Automated Neon bootstrap, actual restricted database roles, capacity, suspension and credential rotation",
+		"Durable post-restore-point revocation/source-removal replay or isolated recovery",
+		"Strict physical retention lag or 30-minute full-service concurrency-eight soak",
+		"Hosted CI, implemented release workflow, exact-image staging/production promotion and rollback",
+		"Written CourtListener hosted-use permission or independent external pilot use"
+	]
+}

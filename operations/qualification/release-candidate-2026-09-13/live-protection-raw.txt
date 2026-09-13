@@ -1,0 +1,12 @@
+{
+  "repository": "rubixhacker/LexCerta",
+  "observed_at": "2026-09-13T05:22:13.148Z",
+  "protection_ready": false,
+  "missing": [
+    "main_branch_protection",
+    "production_owner_review",
+    "production_bypass_disabled",
+    "production_branch_restriction"
+  ],
+  "approval_granted": false
+}

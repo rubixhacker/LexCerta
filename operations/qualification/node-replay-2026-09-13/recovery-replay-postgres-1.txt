@@ -1,0 +1,102 @@
+✖ replay restores revocation and expiry ceilings, preserves stricter state and remains sealed after migration (1309.737125ms)
+✖ absent key restrictions survive without credentials and prevent later reuse of either revoked or expiry-limited IDs (1234.492708ms)
+✖ recovered keys cannot be revived, extended or renamed; expiry before issue revokes without violating SQL bounds (1252.1955ms)
+✖ source replay retains prior evidence, creates absent tombstones and preserves deletion fences on retry (1267.741083ms)
+✖ connected or CONNECT-enabled targets fail before any external reads or persistent seal (189.834917ms)
+✔ foreign key environments fail closed and runtime identities cannot administer recovery state (193.3035ms)
+✔ failed or cancelled object scanning leaves the database sealed without partial restrictions (155.852708ms)
+✖ lost batch commit acknowledgement keeps its receipts and resumes idempotently (170.760583ms)
+✖ changed generation receipts cannot be silently overwritten by a later scan (135.327ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 2
+ℹ fail 7
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6036.545334
+
+✖ failing tests:
+
+test at test/postgres/recovery-replay.test.mjs:71:1
+✖ replay restores revocation and expiry ceilings, preserves stricter state and remains sealed after migration (1309.737125ms)
+  Error: recovery replay unavailable; keep restored service closed
+      at replayRecoveryJournal (file:///Users/stewartboling/Documents/Codex/2026-09-12-find-the-lexcerta-project/LexCerta/build/postgres/recovery-replay.js:113:15)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async file:///Users/stewartboling/Documents/Codex/2026-09-12-find-the-lexcerta-project/LexCerta/test/postgres/recovery-replay.test.mjs:87:17
+      at async withObjects (file:///Users/stewartboling/Documents/Codex/2026-09-12-find-the-lexcerta-project/LexCerta/test/fixtures/gcs-wire-fixture.mjs:132:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+
+test at test/postgres/recovery-replay.test.mjs:130:1
+✖ absent key restrictions survive without credentials and prevent later reuse of either revoked or expiry-limited IDs (1234.492708ms)
+  Error: recovery replay unavailable; keep restored service closed
+      at replayRecoveryJournal (file:///Users/stewartboling/Documents/Codex/2026-09-12-find-the-lexcerta-project/LexCerta/build/postgres/recovery-replay.js:113:15)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async file:///Users/stewartboling/Documents/Codex/2026-09-12-find-the-lexcerta-project/LexCerta/test/postgres/recovery-replay.test.mjs:140:3
+      at async withObjects (file:///Users/stewartboling/Documents/Codex/2026-09-12-find-the-lexcerta-project/LexCerta/test/fixtures/gcs-wire-fixture.mjs:132:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at test/postgres/recovery-replay.test.mjs:157:1
+✖ recovered keys cannot be revived, extended or renamed; expiry before issue revokes without violating SQL bounds (1252.1955ms)
+  Error: recovery replay unavailable; keep restored service closed
+      at replayRecoveryJournal (file:///Users/stewartboling/Documents/Codex/2026-09-12-find-the-lexcerta-project/LexCerta/build/postgres/recovery-replay.js:113:15)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async file:///Users/stewartboling/Documents/Codex/2026-09-12-find-the-lexcerta-project/LexCerta/test/postgres/recovery-replay.test.mjs:175:3
+      at async withObjects (file:///Users/stewartboling/Documents/Codex/2026-09-12-find-the-lexcerta-project/LexCerta/test/fixtures/gcs-wire-fixture.mjs:132:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at test/postgres/recovery-replay.test.mjs:192:1
+✖ source replay retains prior evidence, creates absent tombstones and preserves deletion fences on retry (1267.741083ms)
+  Error: recovery replay unavailable; keep restored service closed
+      at replayRecoveryJournal (file:///Users/stewartboling/Documents/Codex/2026-09-12-find-the-lexcerta-project/LexCerta/build/postgres/recovery-replay.js:113:15)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async file:///Users/stewartboling/Documents/Codex/2026-09-12-find-the-lexcerta-project/LexCerta/test/postgres/recovery-replay.test.mjs:218:3
+      at async withObjects (file:///Users/stewartboling/Documents/Codex/2026-09-12-find-the-lexcerta-project/LexCerta/test/fixtures/gcs-wire-fixture.mjs:132:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at test/postgres/recovery-replay.test.mjs:253:1
+✖ connected or CONNECT-enabled targets fail before any external reads or persistent seal (189.834917ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection (RecoveryReplayUnavailable).
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/stewartboling/Documents/Codex/2026-09-12-find-the-lexcerta-project/LexCerta/test/postgres/recovery-replay.test.mjs:268:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at test/postgres/recovery-replay.test.mjs:331:1
+✖ lost batch commit acknowledgement keeps its receipts and resumes idempotently (170.760583ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 10
+  
+      at file:///Users/stewartboling/Documents/Codex/2026-09-12-find-the-lexcerta-project/LexCerta/test/postgres/recovery-replay.test.mjs:349:10
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async withObjects (file:///Users/stewartboling/Documents/Codex/2026-09-12-find-the-lexcerta-project/LexCerta/test/fixtures/gcs-wire-fixture.mjs:132:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 10,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/postgres/recovery-replay.test.mjs:366:1
+✖ changed generation receipts cannot be silently overwritten by a later scan (135.327ms)
+  Error: recovery replay unavailable; keep restored service closed
+      at replayRecoveryJournal (file:///Users/stewartboling/Documents/Codex/2026-09-12-find-the-lexcerta-project/LexCerta/build/postgres/recovery-replay.js:113:15)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async file:///Users/stewartboling/Documents/Codex/2026-09-12-find-the-lexcerta-project/LexCerta/test/postgres/recovery-replay.test.mjs:371:3
+      at async withObjects (file:///Users/stewartboling/Documents/Codex/2026-09-12-find-the-lexcerta-project/LexCerta/test/fixtures/gcs-wire-fixture.mjs:132:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)

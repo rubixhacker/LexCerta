@@ -1,0 +1,17 @@
+name: Install release tools
+description: Install checksum-pinned crane on the Linux amd64 release runner
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        mkdir -p "$RUNNER_TEMP/lexcerta-release-tools"
+        curl --fail --silent --show-error --location --retry 3 \
+          https://github.com/google/go-containerregistry/releases/download/v0.22.1/go-containerregistry_Linux_x86_64.tar.gz \
+          -o "$RUNNER_TEMP/lexcerta-release-tools/crane.tar.gz"
+        printf '%s  %s\n' \
+          0ab7a1d6932a213aed964ce97666c3077fe691c8606413674a8b3e0b9ec4cda0 \
+          "$RUNNER_TEMP/lexcerta-release-tools/crane.tar.gz" | sha256sum --check --status
+        tar -xzf "$RUNNER_TEMP/lexcerta-release-tools/crane.tar.gz" \
+          -C "$RUNNER_TEMP/lexcerta-release-tools" crane
+        echo "$RUNNER_TEMP/lexcerta-release-tools" >> "$GITHUB_PATH"

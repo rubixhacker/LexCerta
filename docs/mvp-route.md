@@ -4,6 +4,8 @@ The canonical decision index is [Wayfinder: Reach a trustworthy stateless LexCer
 
 The route targets a production-qualified, operator-onboarded developer pilot. Completing the plan does not build, deploy, authorize upstream access, or validate that pilot.
 
+The user's subsequent idle-cost questions prompted a [hosting cost review](research/mvp-hosting-costs.md) and [canonical platform reconciliation](https://github.com/rubixhacker/LexCerta/issues/27#issuecomment-5649573236). The active runtime now targets Cloud Run plus Neon Postgres and existing GCS storage. Direct TLS connectivity is exercised against local PostgreSQL; live Neon suspension, permissions and recovery remain qualification gates. The earlier Cloud SQL research is historical and does not authorize an always-on database purchase.
+
 ## Execution order
 
 ```mermaid
@@ -44,4 +46,4 @@ Start with the baseline. Access discovery and upstream permission can proceed in
 - [Domain vocabulary](../CONTEXT.md)
 - [Tracker workflow](agents/issue-tracker.md)
 
-These are dated source research and recommendations. Deployed service behavior, actual account access and quotas, written upstream permission, costs under load, and external-user adoption still require the evidence specified in their execution tickets. The underlying cleanup remains a [draft pull request](https://github.com/rubixhacker/LexCerta/pull/22) until reviewed and landed.
+These are dated source research and recommendations. Deployed service behavior, actual account access and quotas, written upstream permission, costs under load, and external-user adoption still require the evidence specified in their execution tickets. The baseline cleanup landed in [pull request 22](https://github.com/rubixhacker/LexCerta/pull/22); the execution tickets and their evidence records track subsequent work.

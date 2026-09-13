@@ -1,0 +1,79 @@
+{
+	"recorded_at": "2026-09-13T06:15:56.265Z",
+	"scope": "Origin-bound release preparation: ZIP extraction, exact candidate verification, actual saved-image identity and compiled/migration inspection. Registry publication and Cloud Run qualification remain incomplete.",
+	"base_commit": "e475562e0e0eb093c8e10eee859a090880f78289",
+	"branch": "codex/lexcerta-node-runtime",
+	"uncommitted_work": true,
+	"local_checks": {
+		"repository": 697,
+		"container": 12,
+		"total": 709,
+		"focused_release_cases_included_in_repository": 36,
+		"new_extraction_and_preparation_cases": 15,
+		"new_container_handoff_cases": 1,
+		"workflow_files_validated": 2
+	},
+	"dependency": {
+		"name": "yauzl",
+		"version": "3.4.0",
+		"integrity": "sha512-jIH9yLR9wqr0wOS0TpBvo/g/2UgZH5qePVbjgRliiF0BYvOZyaBknKsF+x9Iht0O6sqgnB93rCICdOZFecJuDw==",
+		"development_only": true,
+		"install_audit_vulnerabilities": 0
+	},
+	"image": {
+		"id": "sha256:9cd0472bfdb00e61b5169bcaf2120a171dae8950f6af6d01d3491e0934718f6d",
+		"amd64_manifest": "sha256:5c2d33d53dd73fc8c20cd4d2b1da9df6ebbbe76f0110445aa2f13af7d30a877a",
+		"config": "sha256:138f0aacbd9709ac01fbfb07f596c9a0a8a8aa5721aab9d195a2ba582fa94de2",
+		"fixture_build_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+		"compiled_files": 79,
+		"migrations": 4,
+		"runtime_tar_bytes": 85800448,
+		"runtime_tar_sha256": "614a8fa3baa2ff22457d9bfea339261eb8cabfaab5fc382d507a3d0c8daba776",
+		"zip_bytes": 86377347,
+		"zip_sha256": "e2bdf5ebaefc43bd2c9b45438e8fa253e7e782eb5b9aa570deea70c1dfd31863"
+	},
+	"source_sha256": {
+		"scripts/release-candidate.mjs": "940338ca2983634a9ef6e0cea91c36033f98ed487cb70610ac4609402fb67cbe",
+		"scripts/release-extract.mjs": "4b53c8a34d91c8c54bdef5d1e298df711802d7b81e2a85814f5441f8d7928bbb",
+		"scripts/release-extract.test.mjs": "bfb551d6830974d6c24be92e6dc480e3e872d0ddab2991c7ead1b6d3dff02d28",
+		"scripts/release-image.mjs": "58bde3ef493dffb5d3dde26bc111135493187280b1461b3d60fd92abf1cb0b1e",
+		"scripts/release-prepare.mjs": "f458f377162f2cab61f124c4e7ad52df68c31f7f82c04a6463537525d37b40ed",
+		"scripts/release-prepare.test.mjs": "46bbb2db25058840e7f0e5936626b23905e962694932437b3d192cc69f9790d7",
+		"scripts/release-download.mjs": "cfeaf471fc5be98a80946660ebba121d0b4a3a99a9cfac603b7e126f3cf61959",
+		"scripts/release-github.mjs": "d1b51a4e6488d3856a104bc26a8da0c903d8778243459782876edc2045236656",
+		"test/fixtures/release-archive.mjs": "dedad0db77d5293c06ff56e5b12b0bd2a5c085e23e19091cd266c58f831d1a2c",
+		"test/container/release-image.test.mjs": "9c504bb85bef8cae1f8258e0fa2b90a4954be4e42c58b86b0f54ab3de907b95d",
+		"package.json": "2f5ab494da71aefd3e84de8824676e3d470b4f98f6df8a09a5bac3dacbd58e77",
+		"package-lock.json": "4572d19c081e294875e880dca7bec8f13ad51b281cfd324c068271c3ddabacc0",
+		"Dockerfile": "986240ff26b4644dd160929ec32149bd86f39ec5477697c5e8889aa148098bd7",
+		".github/workflows/check.yml": "341d47296b1a1149af9b529acf3d26c90b7750a617c6973dac78df01c14ae7df",
+		".github/workflows/release.yml": "8f3ea98690b290ebcfe0fa89cdc4419d8495e256ac4049a330c8ed1a0ff4afca",
+		"operations/release.md": "7f95acc396f9e9ec4d83b56c1c9c9e5c8bba52705bac5f0f747c4bb8b78b9b09",
+		"operations/node-runtime.md": "73eea05703e6f058157648d6f2bfbb73fbf38fc35bd005b1a5d4ce7ad20e5b9c"
+	},
+	"evidence_sha256": {
+		"release-extract-install.txt": "e95d7367be542197a736d7d4f4294cfc8c895d4d527e65837cabe7c46b8ace12",
+		"release-extract-tests-1.txt": "33bb7c9c9adadb0a174b906eb4c95fd7ab05584ce40eaf9fc2fa76c51a12fa0d",
+		"release-prepare-tests-2.txt": "0686c14b7ac8cec91e616a88d0a5ed94f752f29ad0af599ddb33f27d0f0ed41e",
+		"release-prepare-check-1.txt": "bc5e8d6e7ecadb708b1ef50c11ace1443f3b66000452934bcbac5904248d1719",
+		"release-prepare-container-1.txt": "cbcf02780b2f8fe47c06401d521aa30701f39e1fc14a74a5d83c32f0c438d8a6",
+		"release-prepare-actionlint.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+		"release-image-fixture-build-1.txt": "2559678b904c26366de233d2df3b0132b375c5c1001674aec636681732451540",
+		"release-image-fixture-roundtrip-1.txt": "3f08e2666046a72a546c170c51a944f12188b68cfd84298adce5d7c4ff36f874",
+		"release-image-fixture-roundtrip-1.json.txt": "afbaa01542cf5886ebdfebde9fd10efe987166d2c11e35d95843c8383e315686",
+		"qualify-release-image-fixture.txt": "5f68354827bd36755f9186128a9a6633692a6d6eaa55cf9c1040efd6d379149b"
+	},
+	"boundaries": [
+		"The full repository check and container suite exited zero with 697 and 12 tests, totaling 709. The 36 focused release cases are included. Both existing workflows run the new real Docker regression through their container suite. No new hosted workflow run occurred.",
+		"ZIP tests exercise stored and deflated archives, exact paths, traversal, duplicate and malformed names, symlinks and devices, encryption, unsupported compression, missing/extra entries, size overflow/mismatch, CRC mismatch, altered candidate bytes, run mismatch, existing outputs, malformed structure and cancellation during inflation.",
+		"The complete local preparation round trip used Python zipfile for an 86,377,347-byte ZIP and real Docker save/load. All 79 compiled files and four migrations matched. GitHub responses and adapted historical soak metadata were synthetic test inputs; this was not a successful hosted release artifact or a new soak.",
+		"The container suite separately verified actual image save/load alongside existing real PostgreSQL and HTTP fixtures. Its backup/restriction replay drill remained sealed. Live Neon, GCS, Cloud Run, restoration reopening and upstream compatibility remain unqualified.",
+		"The all-a build identifier is a synthetic local fixture identifier, not an actual commit, clean checkout or promotable build.",
+		"Loading must report the expected ID before daemon inspection, preventing a pre-existing expected image from hiding an unrelated or multi-image load. The fixed inspection program runs without network, with read-only filesystem, dropped capabilities, unprivileged identity and resource constraints. The application entrypoint does not run.",
+		"Preparation requires a fresh directory and fresh GitHub origin lookup. Failure removes its own partial directory and preserves an existing destination. An image already loaded may remain in the daemon after later failure; shared images are not deleted.",
+		"The returned image_verified stage records a local image ID, not a registry digest, staging qualification or approval. No automatic production approval is granted.",
+		"Runtime TypeScript and SQL were unchanged. The ZIP reader is a development dependency. The earlier long soak and 135 separate PostgreSQL regressions remain historical and were not repeated.",
+		"Remaining work includes staging registry publication and immutable digest readback, provider ownership and identity, migration-before-serving ordering, tagged no-traffic revisions, actual upstream/Cloud Run qualification, protected same-digest production promotion and qualified rollback.",
+		"No commit, push, provisioning, purchase, publication, deployment, upstream outreach/permission or external pilot use occurred. Existing production approvals were preserved."
+	]
+}

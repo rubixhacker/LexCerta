@@ -1,0 +1,16 @@
+✔ stored and deflated archives unpack exactly the candidate and preserve byte identity (37.963666ms)
+✔ unexpected, absolute, traversing, nested, duplicate and backslash names cannot escape extraction (37.224334ms)
+✔ symlinks, devices, directories and encrypted or unsupported entries are rejected (23.866708ms)
+✔ missing and extra entries, declared overflow, inflated size mismatch and bad CRC fail closed (27.045375ms)
+✔ a correct archive hash does not excuse altered candidate bytes or a different run identity (17.211958ms)
+✔ changed, truncated or symlinked archives and existing destinations are not consumed (7.023167ms)
+✔ malformed ZIP metadata fails even when its actual archive hash was verified (7.251375ms)
+✔ cancellation during inflation removes the partial directory and closes archive I/O (40.134ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 277.348708

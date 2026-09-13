@@ -1,0 +1,29 @@
+✔ release identity excludes fork, branch, pull request, zero-build and other-workflow contexts (1.229583ms)
+✔ only a complete non-smoke soak of the selected image can back a candidate (3.9395ms)
+✔ artifact verification binds every saved file to the exact workflow run and attempt (16.100375ms)
+✔ changed image or evidence bytes are rejected before the artifact can be consumed (6.339125ms)
+✔ missing artifacts, symlinks and manifest path traversal are refused (4.154167ms)
+✔ a manifest cannot relabel fixture evidence as staging or production qualification (3.453125ms)
+✔ manifest compiled hashes must match those measured by its soak (5.068917ms)
+✔ candidate origin binds a completed main release workflow and exact artifact metadata (9.704084ms)
+✔ failed, active, rerun, foreign, PR and different-workflow sources fail before artifact listing (1.894667ms)
+✔ ambiguous, expired, replaced and cross-run artifacts cannot acquire trusted origin (2.683875ms)
+✔ download writes only bytes matching GitHub's archive digest and omits API credentials on the signed URL (6.197542ms)
+✔ wrong, truncated and oversized archives are deleted and never returned as verified (4.501542ms)
+✔ a rerun starting while bytes download invalidates the handoff and removes the archive (1.045833ms)
+✔ an existing output is preserved and unsafe signed URLs never receive a request (3.093458ms)
+✔ cancelling a stalled archive stream closes it and removes partial bytes (53.25325ms)
+✔ release API reads reject other repositories, arbitrary routes, malformed data and token header injection (0.522834ms)
+✔ production requires protected main, the owner reviewer, no bypass and branch restrictions (1.338667ms)
+✔ custom deployment policies accept only the exact main branch, not tags or extra patterns (0.098875ms)
+✔ an extra reviewer cannot substitute another person's approval for the owner gate (0.123792ms)
+✔ live inspection uses only bounded reads on the fixed repository and never grants approval (23.023084ms)
+✔ missing, malformed and unavailable remote evidence cannot become ready or disclose provider errors (0.9045ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 168.085666

@@ -1,0 +1,20 @@
+✔ release identity excludes fork, branch, pull request, zero-build and other-workflow contexts (1.074458ms)
+✔ only a complete non-smoke soak of the selected image can back a candidate (3.206375ms)
+✔ artifact verification binds every saved file to the exact workflow run and attempt (13.814375ms)
+✔ changed image or evidence bytes are rejected before the artifact can be consumed (5.490417ms)
+✔ missing artifacts, symlinks and manifest path traversal are refused (4.146083ms)
+✔ a manifest cannot relabel fixture evidence as staging or production qualification (3.734458ms)
+✔ manifest compiled hashes must match those measured by its soak (5.390875ms)
+✔ production requires protected main, the owner reviewer, no bypass and branch restrictions (1.263333ms)
+✔ custom deployment policies accept only the exact main branch, not tags or extra patterns (0.086834ms)
+✔ an extra reviewer cannot substitute another person's approval for the owner gate (0.22625ms)
+✔ live inspection uses only bounded reads on the fixed repository and never grants approval (26.795458ms)
+✔ missing, malformed and unavailable remote evidence cannot become ready or disclose provider errors (0.84775ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 119.850417

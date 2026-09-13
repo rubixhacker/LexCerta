@@ -1,0 +1,65 @@
+{
+	"recorded_at": "2026-09-13T05:29:45.437Z",
+	"scope": "Manual fixture-candidate workflow, saved-image and evidence binding, read-only production protection preflight, and workflow syntax. Staging and production deployment remain unimplemented.",
+	"base_commit": "e475562e0e0eb093c8e10eee859a090880f78289",
+	"branch": "codex/lexcerta-node-runtime",
+	"uncommitted_work": true,
+	"local_checks": {
+		"repository": 673,
+		"focused_release_cases_included_in_repository": 12,
+		"workflow_files_validated": 2
+	},
+	"source_sha256": {
+		".github/workflows/release.yml": "8f3ea98690b290ebcfe0fa89cdc4419d8495e256ac4049a330c8ed1a0ff4afca",
+		".github/workflows/check.yml": "341d47296b1a1149af9b529acf3d26c90b7750a617c6973dac78df01c14ae7df",
+		".gitignore": "7247e5ff8af69f7b3060138cc11a68163a2248d97026b477770eb41d1c6b2078",
+		"package.json": "a28fbcd507191511f9197e3bb5c498794dfdf6193e1a121dc579603c52e020b9",
+		"scripts/release-candidate.mjs": "bf3e5d8429594f852369c4dab235c52aeafc56bc3228a535a357de40987fa27f",
+		"scripts/release-candidate.test.mjs": "b0a5952e8e349d63b746a57bd37c9c2e79afd5c4e9367689621756e1ae551155",
+		"scripts/release-readiness.mjs": "4cff947fb14ee3f4d8d0f08938a702298aef3255a5019c4a40c7a76d158c6bfa",
+		"scripts/release-readiness.test.mjs": "da633f3387f5d982acafca83ae8afd1c6f683abd4603998bb7b75df2736c7095",
+		"operations/release.md": "7311cce6bf1051fb657c94a74e99fa655a0839ee9e8522e108fd74b90f755c28"
+	},
+	"evidence_sha256": {
+		"release-tools-tests-1.txt": "a99460c4b86fa19f7f2d91b4c3c022021b962815937e09f6324d9f66aae6146f",
+		"release-check-1.txt": "d1651ce5217ad3f4575b99b1a898a249bb397b1dbc74c613454226b073e9d1cf",
+		"release-actionlint-1.txt": "0e7d6d0ae8f7bab9f2b0adc3aa6a42de8ff118542bc2a31001039624e738c95f",
+		"release-actionlint-2.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+		"live-protection-raw.txt": "435e09fc636b1494c1b66387e111421b3ff2ab0dcc688eb8cc48fe4d3839c106"
+	},
+	"live_protection": {
+		"repository": "rubixhacker/LexCerta",
+		"observed_at": "2026-09-13T05:22:13.148Z",
+		"protection_ready": false,
+		"missing": [
+			"main_branch_protection",
+			"production_owner_review",
+			"production_bypass_disabled",
+			"production_branch_restriction"
+		],
+		"approval_granted": false
+	},
+	"validator": {
+		"name": "actionlint",
+		"version": "1.7.12",
+		"darwin_arm64_archive_sha256": "aba9ced2dee8d27fecca3dc7feb1a7f9a52caefa1eb46f3271ea66b6e0e6953f",
+		"linux_amd64_archive_sha256": "8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8",
+		"shellcheck": false
+	},
+	"artifact_action": {
+		"version": "7.0.1",
+		"commit": "043fb46d1a93c77aae656e7c1c64a875d1fc6a0a",
+		"runtime": "node24"
+	},
+	"boundaries": [
+		"The full npm run check exited zero. Its 673 tests include twelve new release-tool cases and existing Worker, Node, corpus, administrative and deployment regressions.",
+		"The artifact verifier tests use explicit synthetic archive/log bytes and the previously accepted historical soak record. They exercise identity and tamper rejection, not a new hosted artifact build or actual staging promotion.",
+		"No complete release-candidate producer run or new thirty-minute soak occurred this turn. Future candidate generation requires a clean exact-commit checkout, a matching nonzero-build image and that same image's full passing soak.",
+		"The read-only preflight was run against actual GitHub and exited one because four required protections are missing. Its false approval field cannot be used as deployment approval. No repository protection was changed.",
+		"GitHub separately reported main protected:false and no active branch rules. The existing Production environment had no protection rules, no branch policy, and can_admins_bypass:true. The canonical main Check run 34719704115 was successful for base e475562e0e0eb093c8e10eee859a090880f78289, not the current uncommitted work.",
+		"The first actionlint run correctly rejected job.services in job-level env. Moving that reference to the container step produced a clean run for both workflow files. The pinned validator is now part of Check.",
+		"The candidate workflow does not mint a cloud token, publish to a registry, deploy a service or grant production approval. GitHub artifact provenance verification, staging/production registry digest binding, hosted qualification, migration/deployment ordering, tagged canaries, traffic promotion and eligible rollback still require implementation.",
+		"Runtime TypeScript, SQL and Terraform resource definitions were unchanged during this release-tooling turn. Their earlier PostgreSQL, container, Terraform and soak records remain separate historical evidence and were not rerun.",
+		"No commit, push, hosted run, provisioning, purchase, upstream permission, production approval or external pilot use was established."
+	]
+}

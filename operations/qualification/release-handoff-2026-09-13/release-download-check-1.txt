@@ -1,0 +1,49 @@
+
+> lexcerta@0.1.0 check
+> npm run runtime:check && npm run format:check && npm run lint && npm run typecheck && npm run test
+
+
+> lexcerta@0.1.0 runtime:check
+> node scripts/check-runtime.mjs
+
+Node v24.21.0 at /private/tmp/lexcerta-node24/node-v24.21.0-darwin-arm64/bin/node
+
+> lexcerta@0.1.0 format:check
+> biome format package.json tsconfig.json test/tsconfig.json vitest.config.ts vitest.admin.config.ts vitest.telemetry.config.ts wrangler.jsonc wrangler.admin.jsonc wrangler.telemetry.jsonc scripts src/admin src/admission src/courtlistener src/cache src/retention src/telemetry src/worker.ts src/worker-request.ts src/request-body.ts src/mcp.ts src/auth src/verification test operations examples src/postgres tsconfig.postgres.json src/node tsconfig.node.json
+
+operations/qualification/release-candidate-2026-09-13/live-protection.json format ━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+  
+     1  1 │   {
+     2    │ - ··"repository":·"rubixhacker/LexCerta",
+     3    │ - ··"observed_at":·"2026-09-13T05:22:13.148Z",
+     4    │ - ··"protection_ready":·false,
+     5    │ - ··"missing":·[
+     6    │ - ····"main_branch_protection",
+     7    │ - ····"production_owner_review",
+     8    │ - ····"production_bypass_disabled",
+     9    │ - ····"production_branch_restriction"
+    10    │ - ··],
+    11    │ - ··"approval_granted":·false
+        2 │ + → "repository":·"rubixhacker/LexCerta",
+        3 │ + → "observed_at":·"2026-09-13T05:22:13.148Z",
+        4 │ + → "protection_ready":·false,
+        5 │ + → "missing":·[
+        6 │ + → → "main_branch_protection",
+        7 │ + → → "production_owner_review",
+        8 │ + → → "production_bypass_disabled",
+        9 │ + → → "production_branch_restriction"
+       10 │ + → ],
+       11 │ + → "approval_granted":·false
+    12 12 │   }
+    13 13 │   
+  
+
+Checked 323 files in 62ms. No fixes applied.
+Found 1 error.
+format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Some errors were emitted while running checks.
+  
+

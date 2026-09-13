@@ -1,0 +1,14 @@
+✔ publication binds the exact registry digest to the prepared image and deletes temporary credentials (39.663583ms)
+✔ an existing matching immutable tag is fully verified without another push (11.517208ms)
+✔ foreign, production, mutable, virtual and non-Docker repositories cannot receive a push (23.852833ms)
+✔ wrong tag scope, registry bytes, digest or pulled image identity cannot yield a published result (38.115709ms)
+✔ tool version and provider failures are sanitized, remove credentials and never fall back to another target (13.933083ms)
+✔ invalid targets, credentials, cancelled calls and altered evidence make no provider requests (4.564667ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 220.110709

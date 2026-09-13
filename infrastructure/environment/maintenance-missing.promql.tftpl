@@ -1,0 +1,1 @@
+(sum(sum_over_time({"logging.googleapis.com/user/lexcerta_maintenance_healthy", monitored_resource="cloud_run_job", project_id="${project_id}", job_name="lexcerta-maintenance"}[2h])) or vector(0)) == 0

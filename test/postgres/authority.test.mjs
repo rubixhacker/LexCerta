@@ -63,7 +63,7 @@ function material(publicId = randomUUID()) {
 	};
 }
 const admission = () => new PostgresKeyAdmission(fixture.database, "postgres-test-pepper", "test");
-const admin = () => new PostgresKeyAdministration(fixture.administration);
+const admin = () => new PostgresKeyAdministration(fixture.administration, "test", fixture.journal);
 
 async function budget() {
 	const credentialId = randomUUID();

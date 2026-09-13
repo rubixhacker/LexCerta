@@ -1,0 +1,17 @@
+✔ operator entrypoint fails safely without configuration or attached identity at 512 MiB (2499.635375ms)
+{"image":"sha256:52cd35ae90bb9e4666b5d78162841732b34462e134c1ada9fb1dda695ed6162c","architecture":"amd64","memory_limit":536870912,"cpu_limit":1,"fixture_only":true,"fixture_closed":true,"failures":0,"certificate_calls":1,"max_rss_kib":156200}
+✔ packaged operator authenticates the CLI, mutates real PostgreSQL and drains active SQL on SIGTERM (3202.845625ms)
+✔ the default image entrypoint fails safely without configuration or attached identity (2790.364625ms)
+{"fixture_closed":true,"object_requests":3,"failures":0,"max_rss_kib":243928}
+{"image":"sha256:52cd35ae90bb9e4666b5d78162841732b34462e134c1ada9fb1dda695ed6162c","architecture":"amd64","memory_limit":1073741824,"cpu_limit":1,"fixture_only":true}
+✔ the amd64 service runs all three tools with HTTP/GCS fixtures and drains an active quote on SIGTERM (4612.469167ms)
+{"image":"sha256:52cd35ae90bb9e4666b5d78162841732b34462e134c1ada9fb1dda695ed6162c","architecture":"amd64","memory_limit":1073741824,"cpu_limit":1,"fixture_only":true}
+✔ SIGKILL preserves charged attempts and does not publish the interrupted opinion (2148.078833ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9697.970458

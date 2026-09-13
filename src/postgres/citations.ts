@@ -8,7 +8,7 @@ import {
 	purgeExpiredCitationNegative,
 	recordCitationSourceObservation,
 } from "../verification/citation-source-cache.js";
-import type { PgDatabase, PgTransaction } from "./database.js";
+import type { PgTransaction, TransactionDatabase } from "./database.js";
 
 type SourceRow = {
 	state: unknown;
@@ -17,7 +17,9 @@ type SourceRow = {
 	lease_expires_at: Date | null;
 };
 
-export function createPostgresCitationStore(database: PgDatabase): CitationObservationStore {
+export function createPostgresCitationStore(
+	database: TransactionDatabase,
+): CitationObservationStore {
 	return {
 		read: async ({ normalizedCitation }) =>
 			database.transaction(async (transaction) => {

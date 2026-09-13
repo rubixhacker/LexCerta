@@ -1,0 +1,141 @@
+{
+	"recorded_at": "2026-09-13T00:24:51.284527+00:00",
+	"scope": "Local PostgreSQL/TLS behavior and amd64 public/operator/Neon connection qualification; no live Neon or Cloud Run evidence.",
+	"base_commit": "e475562e0e0eb093c8e10eee859a090880f78289",
+	"branch": "codex/lexcerta-node-runtime",
+	"uncommitted_work": true,
+	"build_id": "0000000000000000000000000000000000000000",
+	"image_index": "sha256:e38243abf2391931bc5a00cbc3cb0cc681872a63d2fa18a7252b2546d7588fe6",
+	"image_manifest": "sha256:c3b873df7af2b3c8df91a69f05e7aa53b1c34f90f5fd4e925984fa423c080683",
+	"node": "24.21.0",
+	"architecture": "amd64",
+	"uid": 1000,
+	"compiled_files_compared_to_container_sha256": {
+		"node/gcs-source-objects.js": "263bd4172cff49611f4fb31ceac7f6f389bd20df613102774695e7193ef7939e",
+		"node/neon-database.js": "982d86699bc2e2862cac82154a36103a851458c09ffbd8a11487c56138c95574",
+		"node/operator-application.js": "b5bdc9fb3567040b29f0784dfebc5f388e6dcddc07eae01f20aae4df2cdaa0be",
+		"node/operator-cli.js": "7e5e457d2a2ee96e6fa7791b2676c3ebc109886ba18b097238249786f9e6faee",
+		"node/operator-http.js": "5338ad1099728e44e12abdc342d1620ce4215ef9c36fbf3afdceaeb3a9276dd5",
+		"node/operator-identity.js": "3cb1f3a09642734a38cfbd783a3b4fd2528b059440de01797eadd6cc651e2475",
+		"node/operator-main.js": "80e592f30667927cd1d264d93f2f4212f1147530e4ef80e27c046b116d7c1a08",
+		"node/public-application.js": "73b08b856c5bdbc8e9efe5e0329904fe2f225d303f9e359e8a823b15eca4a36f",
+		"node/public-http.js": "a612a95b163e2ecd595155d29836aefedad6251271bfa8cc311387ec6e10438d",
+		"node/public-main.js": "120b8dc97f4c6fe9a01f1f91715673037208a0c39109f557642a19b57f9ddec0",
+		"node/runtime-config.js": "189d90848c4988bc98be36255a4a4007197c3f45d11c720fdf12af1c4f4a13dd",
+		"node/service-http.js": "9ffd20e9caa7f65d67cb5cffdfe9c5afb66a127e817eaf6cdc9a2d4bbdaf1209",
+		"node/service-process.js": "fb6fc6f314e6398ce825d899be49821f8c769ae5034b210266b6255eee35b455",
+		"postgres/database.js": "efb594ae9b0ac959a1ae96854efd28cf565a091f0605b72cfd467b7952ef9d97",
+		"postgres/keys.js": "804e5ad7edfd287d046d37d1f34ae9fe35ad1ed83889fbd6b38aee520009c3e3"
+	},
+	"package_lock_sha256": "1f04fc744fb5e05deda1d8a31365682269f511c444876542f71cce1feec45f9e",
+	"test_source_sha256": {
+		"test/container/neon-database.test.mjs": "94a1e63e8ac5ce406c5a96bb16844ce199272d5c23ad4267aca60594a451f8aa",
+		"test/container/neon-fixture.mjs": "30db9b0307a24648d999f06c783dbcdc0961c60da2a5db3217c8acda6abda08f",
+		"test/container/operator-fixture.mjs": "286a51e63370bfa1fa68625fa0da4c93a2031abb41154421f1f2d17f83efb873",
+		"test/container/operator-service.test.mjs": "97cdaee6c2a531978ab0ed7a5521c3a0bad14247bb9c0505632c7b4b2e052ad4",
+		"test/container/public-fixture.mjs": "2c3b797dbbb1401c26bbc72f289b2ae1164c6605a4fc10d9d49e779e4609f7c9",
+		"test/container/public-service.test.mjs": "8f16ff2690d6e11527a408e3a5e68f5f07b7648122d03e9e2bdbd6a1dd3e3508",
+		"test/container/runtime-fixture.mjs": "f3026f5ef41de4e6bd7730a2708b05a843795a7b89510ef2a3556eee7902bfde",
+		"test/fixtures/gcs-wire-fixture.mjs": "3532a34f115c78e6612c4f52da854981985346663a7e552a5f8be5ddea3daa03",
+		"test/fixtures/operator-identity.mjs": "aa4baf83131f6da38312ec9640077708976e9a803f4a833c6eeb1e5003d588d4",
+		"test/fixtures/postgres-tls-fixture.mjs": "9a1db9d1a80f5bad154612c0fd77848414fcc24405293d0972c65122f598c03d",
+		"test/node/neon-config.test.mjs": "ec43c47b4538eb059ca28b749d087373bc39bbfa128218ded1f399860562719f",
+		"test/node/operator-identity.test.mjs": "e0491b9b23f026f3dad00e555c2bd5f0bee7309d0bb155236ca1b3515d68abc4",
+		"test/node/public-process-fixture.mjs": "230079787dbcfc6287b1f009e10f9dd91eb6647a2f4023c3a24334e4837d314e",
+		"test/postgres/fixture.mjs": "3efa232994dd9cf28964755c08d3debb73f925ef83d82ce27d8925d1598260a3",
+		"test/postgres/neon-database.test.mjs": "7df9795063f647835d39cd2265c25896836be9410d01961fbecdc08c6502a0fd"
+	},
+	"results_sha256": "3b5fee7c4421e7058e4f44899c8dcad19807502e1fd58e8ff7979e757aa3f6b9",
+	"checks": {
+		"repository": 624,
+		"repository_groups": {
+			"core": 498,
+			"worker_qualification": 23,
+			"telemetry": 2,
+			"worker_admin": 39,
+			"deployment": 6,
+			"frozen_source_integrity": 3,
+			"node": 53
+		},
+		"postgres": 75,
+		"container": 6,
+		"total": 705,
+		"failed": 0
+	},
+	"logs": {
+		"neon-check-1.log": "d9c501877c20244eea00525d6d780011c14c463de2482e059acba13b29a07247",
+		"neon-postgres-full-1.log": "6f01712c7e4b99b405e951c9a14e26af3aaf6cf58321dcd369be59d9787df03c",
+		"neon-postgres-tls-2.log": "e882c482e73dc68b659e0599144f0ccf2fac5f35b94f83a6a0bb33f3f1b652fc",
+		"neon-image-build-1.log": "0407a3183fa51aee02fc5bcd261386ddede42040fd6317effe2e55902c0a38b2",
+		"neon-container-1.log": "3b5fee7c4421e7058e4f44899c8dcad19807502e1fd58e8ff7979e757aa3f6b9",
+		"neon-dependency-removal.log": "bf463c79a40b86fcf9bc102280842c6efb7ae5c1da1db04075e87166bf1d1e74"
+	},
+	"container_observations": [
+		{
+			"image": "sha256:e38243abf2391931bc5a00cbc3cb0cc681872a63d2fa18a7252b2546d7588fe6",
+			"fixture": "neon-tls",
+			"node": "v24.21.0",
+			"arch": "x64",
+			"uid": 1000,
+			"checks": 5,
+			"max_rss_kib": 106588,
+			"source": "local-postgresql",
+			"memory_limit": 536870912,
+			"cpu_limit": 1,
+			"fixture_only": true
+		},
+		{
+			"image": "sha256:e38243abf2391931bc5a00cbc3cb0cc681872a63d2fa18a7252b2546d7588fe6",
+			"architecture": "amd64",
+			"memory_limit": 536870912,
+			"cpu_limit": 1,
+			"fixture_only": true,
+			"fixture_closed": true,
+			"failures": 0,
+			"certificate_calls": 1,
+			"max_rss_kib": 117432
+		},
+		{
+			"fixture_closed": true,
+			"object_requests": 3,
+			"failures": 0,
+			"max_rss_kib": 213060
+		},
+		{
+			"image": "sha256:e38243abf2391931bc5a00cbc3cb0cc681872a63d2fa18a7252b2546d7588fe6",
+			"architecture": "amd64",
+			"memory_limit": 1073741824,
+			"cpu_limit": 1,
+			"fixture_only": true
+		},
+		{
+			"image": "sha256:e38243abf2391931bc5a00cbc3cb0cc681872a63d2fa18a7252b2546d7588fe6",
+			"architecture": "amd64",
+			"memory_limit": 1073741824,
+			"cpu_limit": 1,
+			"fixture_only": true
+		}
+	],
+	"observations": [
+		"Fresh image contains no Cloud SQL connector or its auth transport; dependency removal eliminated 121 installed packages.",
+		"TLS connects to real local PostgreSQL. Untrusted and wrong-host certificates and plaintext-only endpoints are rejected without retry or downgrade.",
+		"Host TLS tests exercise 1.5-second delayed activation, four-second stalls, cancellation, idle socket loss/reconnect and shutdown rollback; elevated roles are rejected.",
+		"Linux amd64 image repeats TLS rejection, restricted grants, delayed activation/reconnect and ten-second idle connection removal at one CPU/512 MiB with no extra swap.",
+		"Public MCP remains exactly three tools. Active quote completes during SIGTERM; SIGKILL retains three charged attempts and does not publish the interrupted source.",
+		"Private CLI/HTTP issue, limits, rotation, status and revocation preserve verified subject audit and active SQL draining.",
+		"Both production entrypoints exit 1 with constant startup_failed on missing config or unavailable database connectivity; output excludes credential and source sentinels."
+	],
+	"verification_sequence": "Repository 624 and PostgreSQL 75 passed after runtime changes. Subsequent changes only added a mounted TLS container fixture and shared test-certificate input; targeted Biome checks, all 9 TLS PostgreSQL cases and all 6 container tests then passed. No runtime source changed after the full checks/image build.",
+	"rss_measurement": "Process resourceUsage maxRSS, including local protocol/HTTP fixtures; not cgroup peak, sustained load, comparative benchmark or hosted measurement.",
+	"not_established": [
+		"Live Neon provisioning, database role grants and environment isolation",
+		"Neon suspension latency, compute capacity, credential rotation or backup/restore service",
+		"Cloud Run IAM, Google token forwarding, attached GCS identity and log privacy",
+		"Durable maintenance job fencing and restore/revocation replay",
+		"30-minute full-service soak",
+		"Live CourtListener eligibility and written hosted-pilot permission",
+		"External pilot use",
+		"Hosted CI for this uncommitted work or release/promotion eligibility"
+	],
+	"platform_decision": "https://github.com/rubixhacker/LexCerta/issues/27#issuecomment-5649573236"
+}

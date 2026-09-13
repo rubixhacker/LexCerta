@@ -1,0 +1,193 @@
+{
+	"recorded_at": "2026-09-13T03:13:44.689646+00:00",
+	"scope": "Local authenticated source removal, immutable journal-before-SQL behavior, restricted PostgreSQL privileges, public no-refetch behavior and amd64 container lifecycle. No complete restore or live cloud proof.",
+	"base_commit": "e475562e0e0eb093c8e10eee859a090880f78289",
+	"branch": "codex/lexcerta-node-runtime",
+	"uncommitted_work": true,
+	"build_id": "0000000000000000000000000000000000000000",
+	"image_index": "sha256:3918a2206393eea2ade295a6280944f19e6fc36d8ff1f65b1db0f3ad8c020a90",
+	"image_manifest": "sha256:f8558d4e3045c43834f90ae2f798533c86341ada275448ea6f8de0a60609d028",
+	"node": "24.21.0",
+	"architecture": "amd64",
+	"uid": 1000,
+	"compiled_files_compared_to_container_sha256": {
+		"node/gcs-recovery-journal.js": "8a064281d6f46ab333f58b17709888dbb43100c8ac2a98a916cbe18e845e1cbf",
+		"node/gcs-source-objects.js": "263bd4172cff49611f4fb31ceac7f6f389bd20df613102774695e7193ef7939e",
+		"node/http-body.js": "dfe98f926625d14dc26b19174540e0f0958ecdb19d5f51e1ad2e8526bd66c032",
+		"node/maintenance-main.js": "165a5a357f58a99b8f139a2d61ab1c9cc72c1a22d690862f91f4444e905e9282",
+		"node/metadata-token.js": "5a3468ab1057a9fc3efff13a976747c2fe124c21e256ff17f23f7017602b3c8f",
+		"node/migration-main.js": "a80a508896e54f7a107c0f708acb5601396b90e8b8a3da86ecf8b44a3198bdbc",
+		"node/neon-database.js": "3d5e262f5b5c3a7d2cac2613c20deb50b4bdea8545fd40d1424f5a1562579e08",
+		"node/operator-application.js": "d60883b4423b5dd2488cb4600a6b1c8cd9ca142ea03bd0946f82164a17f3fc0b",
+		"node/operator-cli.js": "abe06584459b6615f19b77e21c7115b72932e52cbdd2f5ce4f7d4771ce11ab41",
+		"node/operator-http.js": "5338ad1099728e44e12abdc342d1620ce4215ef9c36fbf3afdceaeb3a9276dd5",
+		"node/operator-identity.js": "3cb1f3a09642734a38cfbd783a3b4fd2528b059440de01797eadd6cc651e2475",
+		"node/operator-main.js": "4fc4624385d2db7c73dbd1bee4225988f58d51b26b2b02893a52c5fb5bd230d9",
+		"node/runtime-config.js": "ba1ef87f5ab608b74ac28e36a6e79c03b91271a4089ae093f0d6f553b0bb541a",
+		"node/service-http.js": "bd9696b5bc57a155afbc281a2b60feccaf9188d73c210be2a8d602029938343e",
+		"node/service-process.js": "fb6fc6f314e6398ce825d899be49821f8c769ae5034b210266b6255eee35b455",
+		"node/task-process.js": "7d252f26694122f925f91d4601759b5cc1ec026a8802fc80ef0c726baa0ee221",
+		"postgres/database.js": "efb594ae9b0ac959a1ae96854efd28cf565a091f0605b72cfd467b7952ef9d97",
+		"postgres/keys.js": "166ea57455c3614c3f1c490941763e72d46dab0ee925c5b719c78896df7d4e21",
+		"postgres/maintenance-steps.js": "b1f26433638047ec8a1ad398c3a0c3e5848ff07424b2d1fb8bd9a1eae5f75515",
+		"postgres/maintenance.js": "029c5c1d1ec70e01a3279d9d5e688445efcb45141ae1c6bd15250f6c1b9db661",
+		"postgres/migration-connection.js": "3c33d4c336ae01a1e0afdebfa47a58547cd7d68f9b3ef7d1d63714e6577df67b",
+		"postgres/migrations.js": "1bfdc9643bb81b799bfb07ccec18715fd9a732c81358380233220910ed650e9d",
+		"postgres/opinions.js": "c00ec4c514a4d4922b73516bbc4a647894f69d502327ed57c657d878e84f8485",
+		"postgres/recovery-journal.js": "7c938b2f879a3ae1b7fa7ba9ec2891b55bdfea65e0d991b16d57da253ca9e183",
+		"postgres/retention.js": "ed13a5a2553a6904fee0c4a4e8ce9f7d9da30b70f9908cd3b869d08a14688ac4",
+		"postgres/roles.js": "3b21e60b773f68fa73e46818c71f81becb93476af5c07bb513b93ef3190fbf12",
+		"postgres/run-maintenance.js": "eb85b9f91a928a242053471fd0040c74c541e6e93841a705ce789dc59018903c",
+		"postgres/source-administration.js": "be7e08f4607a4932adb91ceaa60e18ba81d9de307e8a3bbd0f72610650d3c324"
+	},
+	"migrations_compared_to_container_sha256": {
+		"database/migrations/0001_authority.sql": "041ad4cd59fdb2c3bb07535aa97ee51a727d673a490f285875a1687f52cad159",
+		"database/migrations/0002_maintenance.sql": "00d65cece4d2ca6b393669754cc90fdcae63c078ba4fe8a91b6884aa183a88b9",
+		"database/migrations/0003_source_removal.sql": "0c2b5f180d3c70a10b61680a9332b3495f7a0e4a88a1a10822c113a5e402c27e"
+	},
+	"source_sha256": {
+		"database/migrations/0003_source_removal.sql": "0c2b5f180d3c70a10b61680a9332b3495f7a0e4a88a1a10822c113a5e402c27e",
+		"src/postgres/source-administration.ts": "9c4930d0555fe8857126e247c492d65dcea0c36ba760c8cbdd59dcbc9f4148e2",
+		"src/postgres/roles.ts": "4a963ce9bec8aacaa1b1eb708d6cf33d5ca8b4f745e1172a361d2ce5dc9a8fec",
+		"src/postgres/opinions.ts": "d0625a98b7879a09baa2e6a8a91b9dbc18a836e7bb7a9afcb7071d5e6ea006e0",
+		"src/postgres/recovery-journal.ts": "477f3d3e98966ca5d5c8ccf7aa147b30a246b33d437b5db065ebbc14aa58770c",
+		"src/node/gcs-recovery-journal.ts": "975d79111fb5c2db1d62eaa8089b22c4a1913664d69f58f4985676ee6d2701a1",
+		"src/node/operator-application.ts": "7e76563b92567165173c8ad41fc5097fe3d7da470ca2666f16dd8721b776e3f4",
+		"src/node/operator-cli.ts": "053d8a6a72d603ca46fabba76e8420caba8587b6faab39e085f94494ca059a26",
+		"src/node/service-http.ts": "9f41df6f51ff00902e7e4e1d6945d62682fe66cae3d374cb94fb270df454b2a2",
+		"test/postgres/source-administration.test.mjs": "e85679e32d0a5ecf7dd44e973e11a8c420a8e1949d16a24ba3171c9ddc79ea72",
+		"test/postgres/operator-application.test.mjs": "c0042113e66974e007c1dab2b6ef2e9475a6ce9e11e62d2b19ddc79d5db3c56a",
+		"test/postgres/public-application.test.mjs": "1ba91b9cc2705822e769855d3838b63f4195b209d523f6013d75e99106c78ca4",
+		"test/postgres/sources.test.mjs": "a2dd87a6d7cefdf4412cebdc600a387a29cf863b32738c9c3eb4986e48b23062",
+		"test/postgres/crashes.test.mjs": "d7ddcb66eef8fa76b421e6bd532ebe13d6e644c2636b8af1ce9c727dec1b166f",
+		"test/postgres/maintenance-sources.test.mjs": "279cdb132c6b3fb485c2b20787802326162e33606766b27dd4471e153c8a7e4d",
+		"test/postgres/migration-access.test.mjs": "05cae62db4b35ba5e255186d301294304d3dad84d207071091ad7e69e480e009",
+		"test/node/operator-cli.test.mjs": "b1c9db80054617b76645e0a4bbed497993ae250d861af36ba1139699dba5d4a5",
+		"test/node/operator-http.test.mjs": "8d8b58fa31582266469f0e85a793fbb26a57afaa4cb794f209cc340d03552eab",
+		"test/container/operator-service.test.mjs": "ffc2abd065fe2fd0e7122873c6a04d59de5df20896fe1dbd3de2b8a6dfb237a1",
+		"test/container/migration-job.test.mjs": "79e09f8aee5bb597cc19df9aed3c96aba93a15769acaff43e2f56c82f983ec85",
+		"test/container/migration-fixture.mjs": "d3e50e8d531a3fe29cc0d2bf3f42160015c332cb980c1cf7a9890a99780d1c16"
+	},
+	"package_lock_sha256": "1f04fc744fb5e05deda1d8a31365682269f511c444876542f71cce1feec45f9e",
+	"local_checks": {
+		"repository": 652,
+		"postgresql": 126,
+		"container": 10,
+		"total": 788
+	},
+	"accepted_log_sha256": {
+		"source-removal-check-1.txt": "7ec55adb0681cd2c3b28e37185dea9b7bc23d62365a99bfc51c67d24990234eb",
+		"source-removal-postgres-full-2.txt": "8420c1b4a54ad60a6005d1515f8bd404709acf7ec8e7d1ed8bb02f66682cee27",
+		"source-removal-container-2.txt": "51df7163b388f1d367fffd794dcbf496c4a5c9db49347c261ec73fc667fad60f"
+	},
+	"local_diagnostic_log_sha256": {
+		"source-removal-check-1.log": "7ec55adb0681cd2c3b28e37185dea9b7bc23d62365a99bfc51c67d24990234eb",
+		"source-removal-cli-1.log": "ee666e87d2f4e38dcb7dbdc9012363264f889f5ccd8420579a949663a8b49f41",
+		"source-removal-container-1.log": "033353e0a21b6d95e80431bac1a99cc3b73092feb49072a2d4db5ae5195647f3",
+		"source-removal-container-2.log": "51df7163b388f1d367fffd794dcbf496c4a5c9db49347c261ec73fc667fad60f",
+		"source-removal-database-1.log": "8de9cc08b3b24504c2c8343c81ee3a084fe4f25f9a9c81b41a3de0ccc3a99595",
+		"source-removal-http-1.log": "0287dc1432287dbe1800cb803126b3a339841242322e57aa5b12222732cf58e6",
+		"source-removal-image-build-1.log": "96935b0abee4ae253bf3f8525bd0a4ba10d8ca0dcc47804535b5d0710d3c38c0",
+		"source-removal-postgres-full-1.log": "331a65700c7a976ac884e433e25238836b98ceefd9ff0ec806b8ac486c72ccdf",
+		"source-removal-postgres-full-2.log": "8420c1b4a54ad60a6005d1515f8bd404709acf7ec8e7d1ed8bb02f66682cee27",
+		"source-removal-smoke-1.log": "2acd03c5ffadd109c62e8f22c6962a3ade83cfc8206688fae2ce96a2d0411c50"
+	},
+	"container_observations": [
+		{
+			"image": "sha256:3918a2206393eea2ade295a6280944f19e6fc36d8ff1f65b1db0f3ad8c020a90",
+			"fixture": "maintenance-recovery",
+			"fixture_only": true,
+			"memory_limit": 536870912,
+			"cpu_limit": 1,
+			"fixture_closed": true,
+			"node": "v24.21.0",
+			"arch": "x64",
+			"uid": 1000,
+			"max_rss_kib": 145052,
+			"delete_requests": 1
+		},
+		{
+			"image": "sha256:3918a2206393eea2ade295a6280944f19e6fc36d8ff1f65b1db0f3ad8c020a90",
+			"fixture": "migration-lifecycle",
+			"fixture_only": true,
+			"memory_limit": 536870912,
+			"cpu_limit": 1,
+			"fixture_closed": true,
+			"node": "v24.21.0",
+			"arch": "x64",
+			"uid": 1000,
+			"max_rss_kib": 106104
+		},
+		{
+			"image": "sha256:3918a2206393eea2ade295a6280944f19e6fc36d8ff1f65b1db0f3ad8c020a90",
+			"fixture": "neon-tls",
+			"node": "v24.21.0",
+			"arch": "x64",
+			"uid": 1000,
+			"checks": 5,
+			"max_rss_kib": 106308,
+			"source": "local-postgresql",
+			"memory_limit": 536870912,
+			"cpu_limit": 1,
+			"fixture_only": true
+		},
+		{
+			"image": "sha256:3918a2206393eea2ade295a6280944f19e6fc36d8ff1f65b1db0f3ad8c020a90",
+			"architecture": "amd64",
+			"memory_limit": 536870912,
+			"cpu_limit": 1,
+			"fixture_only": true,
+			"fixture_closed": true,
+			"failures": 0,
+			"certificate_calls": 1,
+			"max_rss_kib": 121764
+		},
+		{
+			"fixture_closed": true,
+			"object_requests": 3,
+			"failures": 0,
+			"max_rss_kib": 216252
+		},
+		{
+			"image": "sha256:3918a2206393eea2ade295a6280944f19e6fc36d8ff1f65b1db0f3ad8c020a90",
+			"architecture": "amd64",
+			"memory_limit": 1073741824,
+			"cpu_limit": 1,
+			"fixture_only": true
+		},
+		{
+			"image": "sha256:3918a2206393eea2ade295a6280944f19e6fc36d8ff1f65b1db0f3ad8c020a90",
+			"architecture": "amd64",
+			"memory_limit": 1073741824,
+			"cpu_limit": 1,
+			"fixture_only": true
+		}
+	],
+	"unchanged_cloud_configuration": {
+		"previous_record": "../node-recovery-2026-09-12/local.json",
+		"configuration_sha256": {
+			"infrastructure/environment/foundation.tf": "80d86951c22efcde6262b3ef90d323da34fdab88a9fb8368b6db5443d6cfba07",
+			"infrastructure/environment/identity.tf": "4b29cc64fdd41630a94a8bacdca3b9c31b6a877798c0111e1c2b6d2d9e663e27",
+			"infrastructure/environment/observability.tf": "d815feb983b67fbdc21bacf23371ae85eba612a7b03e1e93f7906eeb2984a016",
+			"infrastructure/environment/outputs.tf": "648825dcda3535310a3f63362c881974fd88e0db0ce2ba5916f6659ed400a3b1",
+			"infrastructure/environment/recovery.tf": "c879a97ec298f8104f9c0ba9d60d4c19b660ce637083fcfcc8b56fa216eb68d4",
+			"infrastructure/environment/runtime.tf": "eec929f6af8e02d5d140014783332343abeccb9a742bd4bff4f40fe52d53c2ef",
+			"infrastructure/environment/variables.tf": "23f170a8a7c54d28bd683b493819695074396c07120d313fc749d2f17bb23734",
+			"infrastructure/environment/versions.tf": "8e7888798cf0d237973af960386e00d8956eede358045d5377ee203c7c70b521"
+		},
+		"note": "All listed Terraform configuration bytes are unchanged from the prior mocked qualification. Cloud checks were not repeated for this SQL and application change."
+	},
+	"boundaries": [
+		"The full repository check exited zero. Its 652 tests include existing protocol, corpus and Worker regression checks; they are not 652 new source-removal tests.",
+		"The PostgreSQL suite exercises the actual GCS journal HTTP adapter against a local wire fixture. It proves ordering and failure behavior, not real GCS durability or IAM.",
+		"The container operator uses a volatile journal fixture and a locally signed identity. It exercises the real CLI, HTTP service, database removal function and audit, not live Google authentication.",
+		"The mounted MCP client reaches a removed opinion with upstream quota available, returns indeterminate/upstream_unavailable and does not repeat that opinion's endpoint. A cluster lookup remains permitted.",
+		"Removal suppresses future source reads/acquisition and queues registered objects. The returned count is not proof of immediate physical erasure; late uploads require orphan reconciliation.",
+		"Initial focused runs exposed an outdated migration-fixture name and an incorrect expected public outcome. Full PostgreSQL initially passed 124/126 because two legacy test callers still used the removed public tombstone method; they now use operator administration.",
+		"The first container run passed 9/10. Its injected 0003 fixture sorted before the newly applied real migration, so the migrator correctly refused it before the expected sleep. The fixture now uses 9000 and expects three persisted migrations; all ten cases passed with the same runtime image.",
+		"After successful behavioral checks, two test import lists were sorted. Their bindings and executable logic did not change; targeted formatting and lint checks cover those edits.",
+		"The short container checks are not the required 30-minute concurrency-eight soak, cgroup peak-memory measurement, hosted CI or a production-eligible build.",
+		"Full isolated restore/replay and a durable reopening barrier, changed-limit/admission/upstream/evidence-history reconciliation, safe journal retention and live provider qualification remain unfinished.",
+		"No cloud resources were provisioned and no purchase, upstream permission, CourtListener acquisition, external pilot use or production approval is established here."
+	]
+}

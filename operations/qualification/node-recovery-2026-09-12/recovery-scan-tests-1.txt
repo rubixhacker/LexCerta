@@ -1,0 +1,16 @@
+✔ scan verifies 205 exact GCS generations across three pages, excluding the other environment (158.383834ms)
+✔ inventory identity ignores enumeration order but includes generation, creation time and environment (0.8335ms)
+✔ multi-page cursor cycles and duplicate objects across pages fail without a partial result (0.5065ms)
+✔ page and record limits stop work rather than truncating the inventory (0.209125ms)
+✔ foreign, malformed and content-mismatched records cannot enter a scan (0.720417ms)
+✔ bounded scan failure sanitizes provider errors and never automatically retries (0.179584ms)
+✔ cancellation bounds uncooperative list and read adapters and prevents later work (51.8625ms)
+✔ already cancelled scans and invalid bounds perform no object I/O (0.6545ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 299.009542

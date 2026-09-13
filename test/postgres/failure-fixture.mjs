@@ -4,6 +4,8 @@ export function poolWithCommitFault(pool, { afterCommit = true, onCommit }) {
 		async connect() {
 			const client = await pool.connect();
 			return {
+				on: (...args) => client.on(...args),
+				removeListener: (...args) => client.removeListener(...args),
 				async query(...args) {
 					if (args[0] === "COMMIT" && !afterCommit) await onCommit();
 					const result = await client.query(...args);

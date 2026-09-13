@@ -1,0 +1,168 @@
+{
+	"recorded_at": "2026-09-13T01:05:11.361113+00:00",
+	"scope": "Local PostgreSQL maintenance fencing, bounded cleanup, process lifecycle and amd64 container recovery. No live cloud or upstream evidence.",
+	"base_commit": "e475562e0e0eb093c8e10eee859a090880f78289",
+	"branch": "codex/lexcerta-node-runtime",
+	"uncommitted_work": true,
+	"build_id": "0000000000000000000000000000000000000000",
+	"image_index": "sha256:c6758ba44f29daa937727c713a51f953e844a05e63ddd26def621c143d5bc609",
+	"image_manifest": "sha256:7f29b34246882984912ef0fec27ff6bc7aaacf843c7a0969b0dc8c581bdbba22",
+	"node": "24.21.0",
+	"architecture": "amd64",
+	"uid": 1000,
+	"compiled_files_compared_to_container_sha256": {
+		"node/gcs-source-objects.js": "263bd4172cff49611f4fb31ceac7f6f389bd20df613102774695e7193ef7939e",
+		"node/maintenance-main.js": "8337abaca9cc8af6ab125d572e834a360d1e5c6a44b89b1be021344a8ddb95f5",
+		"node/neon-database.js": "982d86699bc2e2862cac82154a36103a851458c09ffbd8a11487c56138c95574",
+		"node/operator-application.js": "b5bdc9fb3567040b29f0784dfebc5f388e6dcddc07eae01f20aae4df2cdaa0be",
+		"node/operator-cli.js": "7e5e457d2a2ee96e6fa7791b2676c3ebc109886ba18b097238249786f9e6faee",
+		"node/operator-http.js": "5338ad1099728e44e12abdc342d1620ce4215ef9c36fbf3afdceaeb3a9276dd5",
+		"node/operator-identity.js": "3cb1f3a09642734a38cfbd783a3b4fd2528b059440de01797eadd6cc651e2475",
+		"node/operator-main.js": "80e592f30667927cd1d264d93f2f4212f1147530e4ef80e27c046b116d7c1a08",
+		"node/public-application.js": "73b08b856c5bdbc8e9efe5e0329904fe2f225d303f9e359e8a823b15eca4a36f",
+		"node/public-http.js": "a612a95b163e2ecd595155d29836aefedad6251271bfa8cc311387ec6e10438d",
+		"node/public-main.js": "120b8dc97f4c6fe9a01f1f91715673037208a0c39109f557642a19b57f9ddec0",
+		"node/runtime-config.js": "5b73b4f1e84cd13f9de62f0d8fd0a27e0cef0e9ade2d5fdcabfec6dc6d1b8dad",
+		"node/service-http.js": "9ffd20e9caa7f65d67cb5cffdfe9c5afb66a127e817eaf6cdc9a2d4bbdaf1209",
+		"node/service-process.js": "fb6fc6f314e6398ce825d899be49821f8c769ae5034b210266b6255eee35b455",
+		"postgres/database.js": "efb594ae9b0ac959a1ae96854efd28cf565a091f0605b72cfd467b7952ef9d97",
+		"postgres/keys.js": "804e5ad7edfd287d046d37d1f34ae9fe35ad1ed83889fbd6b38aee520009c3e3",
+		"postgres/maintenance-steps.js": "b1f26433638047ec8a1ad398c3a0c3e5848ff07424b2d1fb8bd9a1eae5f75515",
+		"postgres/maintenance.js": "029c5c1d1ec70e01a3279d9d5e688445efcb45141ae1c6bd15250f6c1b9db661",
+		"postgres/opinions.js": "c234132efd5f0388d33890f365c8d0eabb29649fb9698e727c2472e811cd576d",
+		"postgres/retention.js": "ed13a5a2553a6904fee0c4a4e8ce9f7d9da30b70f9908cd3b869d08a14688ac4",
+		"postgres/run-maintenance.js": "eb85b9f91a928a242053471fd0040c74c541e6e93841a705ce789dc59018903c"
+	},
+	"migration_compared_to_container_sha256": {
+		"database/migrations/0002_maintenance.sql": "00d65cece4d2ca6b393669754cc90fdcae63c078ba4fe8a91b6884aa183a88b9"
+	},
+	"package_lock_sha256": "1f04fc744fb5e05deda1d8a31365682269f511c444876542f71cce1feec45f9e",
+	"test_source_sha256": {
+		"test/container/maintenance-fixture.mjs": "fcd7712ae8bff06bf4cdf8f69a4b26a0c73285b3680f7d74369cc03205ac4885",
+		"test/container/maintenance-job.test.mjs": "d028af0bf7437e226b2e19621cd8acde575be3948479379214baa1a0d2f7a1fc",
+		"test/container/neon-database.test.mjs": "94a1e63e8ac5ce406c5a96bb16844ce199272d5c23ad4267aca60594a451f8aa",
+		"test/container/neon-fixture.mjs": "30db9b0307a24648d999f06c783dbcdc0961c60da2a5db3217c8acda6abda08f",
+		"test/container/operator-fixture.mjs": "286a51e63370bfa1fa68625fa0da4c93a2031abb41154421f1f2d17f83efb873",
+		"test/container/operator-service.test.mjs": "97cdaee6c2a531978ab0ed7a5521c3a0bad14247bb9c0505632c7b4b2e052ad4",
+		"test/container/public-fixture.mjs": "2c3b797dbbb1401c26bbc72f289b2ae1164c6605a4fc10d9d49e779e4609f7c9",
+		"test/container/public-service.test.mjs": "8f16ff2690d6e11527a408e3a5e68f5f07b7648122d03e9e2bdbd6a1dd3e3508",
+		"test/container/runtime-fixture.mjs": "f3026f5ef41de4e6bd7730a2708b05a843795a7b89510ef2a3556eee7902bfde",
+		"test/fixtures/gcs-wire-fixture.mjs": "32289cc150b8ff598deda06d202fc67544461a6b0392b44bb3c883068136ee55",
+		"test/fixtures/postgres-tls-fixture.mjs": "9a1db9d1a80f5bad154612c0fd77848414fcc24405293d0972c65122f598c03d",
+		"test/node/maintenance-process-fixture.mjs": "ebc8dc656a46d6205c1053500d1106b8c890087143d5d5fa3d456236a48aa15d",
+		"test/node/maintenance-process.test.mjs": "21c9dda266b2a5278786534b5e742ed65a169f789b030fdb4e681198c283c62c",
+		"test/postgres/fixture.mjs": "f2983b6c319e5d2f16f38d6705de0adfa1914b5ad8f87ecfc85bf87757e8bfd7",
+		"test/postgres/maintenance-process.mjs": "3a4b6db02c9e628c391462796f4e86d59546366b026b73a79d56cb566104281d",
+		"test/postgres/maintenance-sources.test.mjs": "e8e07d29014895d0a5912d9a50bef218aa44d4cf7eae23b9c24e2b23bbdfeefa",
+		"test/postgres/maintenance.test.mjs": "5efbcd7a0d7ea6c40d02bc06ee586ce3103d17f60a4646b6fcf23de9f6b4c724"
+	},
+	"workflow_sha256": "0d4292886d4aeabe5b63c8da29bf845aafd6f0e7d66a1b9ae746a90519eb2e9f",
+	"workflow_validation": "YAML parses locally. New image build and container steps have not run in hosted CI.",
+	"results_sha256": "9bd24c2b95e5cf26eb7b655d0c15e994d98707aa82508c040a53aeaadf6ad96e",
+	"checks": {
+		"repository": 639,
+		"repository_groups": {
+			"core": 498,
+			"worker_qualification": 23,
+			"telemetry": 2,
+			"worker_admin": 39,
+			"deployment": 6,
+			"frozen_source_integrity": 3,
+			"node": 68
+		},
+		"postgres": 95,
+		"container": 8,
+		"total": 742,
+		"failed": 0,
+		"dependency_advisories": 0
+	},
+	"logs": {
+		"maintenance-check-3.log": "3d447352b00e3466889258597d1d1398239b4a9a8710e39a956f332b438fbe1a",
+		"maintenance-postgres-full-2.log": "146ca44abe17a9fdc940a8e358bc044f584a452fc24ef8077f22cb2d69707595",
+		"maintenance-image-build-2.log": "0fffe827a16028467614883e60224bc06380471ac711f05661395f4f900ad599",
+		"maintenance-container-2.log": "9bd24c2b95e5cf26eb7b655d0c15e994d98707aa82508c040a53aeaadf6ad96e",
+		"maintenance-audit-1.log": "6d8c5c8f3d7684adb070417bd608d01ae90aa3dc26a65af03ffda4955f38d9a3"
+	},
+	"container_observations": [
+		{
+			"image": "sha256:c6758ba44f29daa937727c713a51f953e844a05e63ddd26def621c143d5bc609",
+			"fixture": "maintenance-recovery",
+			"fixture_only": true,
+			"memory_limit": 536870912,
+			"cpu_limit": 1,
+			"fixture_closed": true,
+			"node": "v24.21.0",
+			"arch": "x64",
+			"uid": 1000,
+			"max_rss_kib": 145952,
+			"delete_requests": 1
+		},
+		{
+			"image": "sha256:c6758ba44f29daa937727c713a51f953e844a05e63ddd26def621c143d5bc609",
+			"fixture": "neon-tls",
+			"node": "v24.21.0",
+			"arch": "x64",
+			"uid": 1000,
+			"checks": 5,
+			"max_rss_kib": 107792,
+			"source": "local-postgresql",
+			"memory_limit": 536870912,
+			"cpu_limit": 1,
+			"fixture_only": true
+		},
+		{
+			"image": "sha256:c6758ba44f29daa937727c713a51f953e844a05e63ddd26def621c143d5bc609",
+			"architecture": "amd64",
+			"memory_limit": 536870912,
+			"cpu_limit": 1,
+			"fixture_only": true,
+			"fixture_closed": true,
+			"failures": 0,
+			"certificate_calls": 1,
+			"max_rss_kib": 118780
+		},
+		{
+			"fixture_closed": true,
+			"object_requests": 3,
+			"failures": 0,
+			"max_rss_kib": 211916
+		},
+		{
+			"image": "sha256:c6758ba44f29daa937727c713a51f953e844a05e63ddd26def621c143d5bc609",
+			"architecture": "amd64",
+			"memory_limit": 1073741824,
+			"cpu_limit": 1,
+			"fixture_only": true
+		},
+		{
+			"image": "sha256:c6758ba44f29daa937727c713a51f953e844a05e63ddd26def621c143d5bc609",
+			"architecture": "amd64",
+			"memory_limit": 1073741824,
+			"cpu_limit": 1,
+			"fixture_only": true
+		}
+	],
+	"observations": [
+		"Independent Node processes elect one owner. SIGKILL preserves a pending slot; a successor fences stale SQL, checkpoint and release operations.",
+		"Expired ownership rolls back a transaction; a lost checkpoint COMMIT acknowledgement resumes from database progress without replaying the mutation.",
+		"Locked retention rows, active source publishers and deferred object deletions keep the run partial instead of reporting zero-work success.",
+		"Negative sweeps paginate and preserve positive/reversal provenance and removal tombstones. Malformed opinion provenance fails without replacing evidence.",
+		"Regression tests exposed and repaired false completion with 205 orphan marks and repeated restart of slow protected pages; name plus exact generation now resumes within a page.",
+		"Node shutdown and error tests cover cancellation during startup/work, late completion, fatal exceptions and a hung close; provider and credential sentinels are absent from process output.",
+		"The packaged job uses actual Neon adapter TLS and GCS JSON API transport against local fixtures. SIGKILL after HTTP deletion leaves its durable mark; a new container recovers the absent object and completes the original slot. A further duplicate is idle.",
+		"All eight final-image container cases pass, including retained public/operator and TLS lifecycle cases. No container OOM was observed."
+	],
+	"verification_sequence": "Initial repository checks stopped on formatting and a template-literal lint rule; both were corrected. Final repository checks passed. The lint-clean image was rebuilt, then all 95 PostgreSQL and eight container tests passed. Documentation and the local qualification record were added afterward; workflow YAML was parsed separately. No runtime source changed after these final checks.",
+	"rss_measurement": "Process resourceUsage maxRSS including local protocol fixtures, not cgroup peak, sustained load or a hosted measurement.",
+	"not_established": [
+		"Provisioned Cloud Run Jobs, Scheduler authentication, attached identity, bounded deployment retries or installed missed-run alerts",
+		"Live Neon permissions, suspension latency, capacity, secret rotation or environment isolation",
+		"Strict 48-hour physical deletion: the existing cutoff with hourly dispatch permits roughly 49 hours before failures",
+		"External durable post-restore-point revocation/source-removal replay and an isolated restore drill",
+		"30-minute full-service concurrency-eight soak",
+		"Live Cloud Run/GCS behavior, IAM or log privacy",
+		"Written CourtListener hosted-pilot permission and external pilot use",
+		"Hosted CI of this uncommitted work or production release eligibility"
+	],
+	"platform_decision": "https://github.com/rubixhacker/LexCerta/issues/27#issuecomment-5649573236"
+}

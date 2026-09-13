@@ -2,8 +2,10 @@ import { randomUUID } from "node:crypto";
 import { Pool } from "pg";
 import { PgDatabase } from "../../build/postgres/database.js";
 import { migratePostgres } from "../../build/postgres/migrations.js";
+import { DATABASE_CONNECTION_LIMITS } from "../../build/postgres/roles.js";
+import { memoryRecoveryJournal } from "../fixtures/recovery-journal.mjs";
 
-export async function createPostgresFixture() {
+export async function createPostgresFixture({ initializeSchema = true } = {}) {
 	const connection = process.env.LEXCERTA_TEST_DATABASE_URL;
 	if (!connection)
 		throw new Error(
@@ -26,7 +28,16 @@ export async function createPostgresFixture() {
 	const pools = [];
 	const closingConnections = new Set();
 	try {
-		for (const role of roles) await root.query(`CREATE ROLE ${role} LOGIN PASSWORD '${password}'`);
+		const roleNames = {
+			public: publicRole,
+			admin: adminRole,
+			job: jobRole,
+			migrator: migrationRole,
+		};
+		for (const [purpose, role] of Object.entries(roleNames))
+			await root.query(
+				`CREATE ROLE ${role} LOGIN CONNECTION LIMIT ${DATABASE_CONNECTION_LIMITS[purpose]} PASSWORD '${password}'`,
+			);
 		await root.query(`CREATE DATABASE ${name} OWNER ${migrationRole}`);
 		function connectionFor(role) {
 			const url = new URL(base);
@@ -51,37 +62,40 @@ export async function createPostgresFixture() {
 			return pool;
 		}
 		const migration = poolFor(migrationRole, 1);
-		await migratePostgres(migration, "database/migrations", migrationRole);
-		await migration.query(
-			`GRANT USAGE ON SCHEMA lexcerta TO ${publicRole}, ${adminRole}, ${jobRole}`,
-		);
-		await migration.query(`GRANT SELECT ON lexcerta.api_keys TO ${publicRole}`);
-		await migration.query(
-			`GRANT SELECT, UPDATE ON lexcerta.api_key_admission_locks TO ${publicRole}`,
-		);
-		await migration.query(`GRANT SELECT, INSERT ON lexcerta.key_admissions TO ${publicRole}`);
-		await migration.query(
-			`GRANT SELECT, INSERT, UPDATE, DELETE ON lexcerta.upstream_budgets, lexcerta.upstream_attempts, lexcerta.citation_sources, lexcerta.opinion_sources, lexcerta.source_objects, lexcerta.orphan_object_deletions, lexcerta.cache_capacity TO ${publicRole}`,
-		);
-		await migration.query(
-			`GRANT SELECT, INSERT, UPDATE ON lexcerta.customers, lexcerta.api_keys, lexcerta.api_key_admission_locks, lexcerta.admin_audit_events TO ${adminRole}`,
-		);
-		await migration.query(
-			`GRANT SELECT, DELETE ON lexcerta.api_keys, lexcerta.key_admissions, lexcerta.upstream_attempts, lexcerta.admin_audit_events TO ${jobRole}`,
-		);
-		await migration.query(`GRANT UPDATE (rotation_parent_id) ON lexcerta.api_keys TO ${jobRole}`);
-		await migration.query(`GRANT UPDATE (admitted_at) ON lexcerta.key_admissions TO ${jobRole}`);
-		await migration.query(
-			`GRANT UPDATE (completed_at) ON lexcerta.upstream_attempts TO ${jobRole}`,
-		);
-		await migration.query(`GRANT UPDATE (public_id) ON lexcerta.admin_audit_events TO ${jobRole}`);
-		await migration.query(`GRANT SELECT, UPDATE, DELETE ON lexcerta.customers TO ${jobRole}`);
+		if (initializeSchema)
+			await migratePostgres(migration, "database/migrations", migrationRole, { roles: roleNames });
 		const jobPool = poolFor(jobRole, 2);
 		const publicPool = poolFor(publicRole, 5);
 		const adminPool = poolFor(adminRole, 2);
 		return {
+			journal: memoryRecoveryJournal(),
+			productionJournal: memoryRecoveryJournal("production"),
+			async setRoleConnectionLimit(role, limit) {
+				if (!roles.includes(role) || !Number.isInteger(limit) || limit < 1 || limit > 40)
+					throw new Error("role mutation must stay inside this fixture");
+				await root.query(`ALTER ROLE ${role} CONNECTION LIMIT ${limit}`);
+			},
+			async setRoleMembership(member, inherited, enabled) {
+				if (!roles.includes(member) || !roles.includes(inherited) || member === inherited)
+					throw new Error("role mutation must stay inside this fixture");
+				await root.query(
+					enabled ? `GRANT ${inherited} TO ${member}` : `REVOKE ${inherited} FROM ${member}`,
+				);
+			},
+			async inspectActivity() {
+				// This fixture-only root connection observes its own disposable DB.
+				// Application and migration roles retain their restricted grants.
+				return (
+					await root.query(
+						"SELECT pid, usename, application_name, state, wait_event FROM pg_stat_activity WHERE datname = $1",
+						[name],
+					)
+				).rows;
+			},
 			migration,
 			migrationRole,
+			migrationConnection: connectionFor(migrationRole),
+			roleNames,
 			publicRole,
 			adminRole,
 			jobPool,

@@ -14,7 +14,7 @@ This repository contains a tested service implementation, but the replacement pr
 
 Verification returns `verified`, `not_found`, or `indeterminate` under contract version 1. A negative quote result requires a complete search of the required opinion sources. Stale positive evidence is disclosed; incomplete searches and operational failures do not become negative claims. Whitespace-only quotes are rejected.
 
-Inputs are bounded: citations are limited to 256 characters, quotes to 20–10,000 Unicode code points, and quote searches to 100 opinions. Each upstream JSON response is limited to 65,536 bytes. These are operational bounds, not evidence of coverage across real legal documents. Quote matching preserves substantive wording, case, brackets, ellipses, and ordering.
+Inputs are bounded: citations are limited to 256 characters, quotes to 20–10,000 Unicode code points, and quote searches to 100 opinions. Each upstream JSON response and source body is limited to 1 MiB, with independent aggregate response and processed-source limits of 16 MiB per request. These are operational bounds; the [frozen corpus replay](operations/qualification/corpus-2026-09-12/README.md) records the tested source coverage. Quote matching preserves substantive wording, case, brackets, ellipses, and ordering.
 
 The service accepts only stateless MCP `2026-07-28`, with the protocol's request headers and metadata, at `POST /`. This is the [latest official specification](https://modelcontextprotocol.io/specification/2026-07-28) as checked on September 12, 2026, and the pinned `@modelcontextprotocol/server` 2.0.0 is the latest stable server SDK release on npm on that date. Authentication uses operator-issued LexCerta bearer keys. `GET /healthz` is the unauthenticated health route. Legacy initialization, sessions and subscriptions are rejected. Supplied browser Origins return 403. The [pinned TypeScript client](examples/README.md) has local HTTP and fixture qualification; deployed-client verification remains open.
 
@@ -32,6 +32,8 @@ The check command runs formatting, lint, strict TypeScript checks, unit and loca
 
 The replacement PostgreSQL/GCS adapters have a separate real-PostgreSQL suite: see [storage qualification](operations/postgres-storage.md) for the disposable fixture and `npm run test:postgres`. CI runs both suites.
 
+The [Node public service](operations/node-runtime.md) is executable through `npm run build:node` and `npm run start:public`. It targets Google Cloud Run with Neon PostgreSQL and GCS, allowing service and database compute to sleep when idle. A separate `npm run test:container` exercises its amd64 image with real local Postgres and HTTP source fixtures. The separate [private operator service and CLI](operations/operator-service.md) implement key issuance, rotation, revocation, limits and status. The [maintenance entry point](operations/maintenance-jobs.md) implements fenced, resumable cleanup. The [migration command](operations/database-migrations.md) applies packaged SQL and restricted runtime grants. The [cloud configuration](infrastructure/README.md) defines isolated GCP resources and maintenance alerts. A [thirty-minute local soak](operations/node-soak.md) and [sealed replay against a restored local database](operations/recovery-journal.md) have passed. Provider setup, complete restore reconciliation and live deployment qualification remain open.
+
 For focused quote regressions:
 
 ```sh
@@ -46,9 +48,10 @@ npx vitest run test/issue-7-quote-hardening.integration.test.ts src/verification
 - `src/courtlistener/`: bounded upstream requests, quotas, leases, circuits, and source adapters.
 - `src/cache/`: shared source contracts and retained D1/R2 reference persistence.
 - `src/postgres/`, `database/migrations/`: replacement PostgreSQL authority, immutable GCS source storage and retention.
+- `src/node/`: public HTTP process, bounded Google identity/object transports and parsing workers.
 - `src/auth/`, `src/admission/`, `src/admin/`: key authentication, per-key limits, and isolated administration.
 - `src/telemetry/`, `src/retention/`: sanitized operational facts and record expiry.
-- `src/worker.ts`, `src/worker-request.ts`, `src/mcp.ts`: current Worker transport and dispatch.
+- `src/worker.ts`, `src/worker-request.ts`: retained Worker reference transport; `src/mcp.ts`: shared MCP boundary and dispatch.
 
 The unused Next.js/Express implementation, legacy SDK transports, fuzzy matcher, in-memory authority and their disconnected tests have been removed. The user authorized early obsolete-code removal on September 12, 2026. The active Worker adapter remains a behavioral reference until its Cloud Run replacement is qualified. Vercel Git deployments are disabled in `vercel.json`; existing remote deployments and hostname retirement still require the verified cutover procedure.
 

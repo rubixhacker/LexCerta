@@ -1,0 +1,21 @@
+✖ actual registry publication preserves the prepared image and a retry reuses the verified digest (3163.994458ms)
+ℹ Local registry fixture docker image push: failed to do request: Head "https://127.0.0.1:49297/v2/lexcerta-fixture/lexcerta/runtime/blobs/sha256:54a4a09716a076e22b4614735e6dee2bea87474e5106ab936e277792520affa8": dial tcp 127.0.0.1:49297: connect: connection refused
+
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3252.341875
+
+✖ failing tests:
+
+test at test/container/release-registry.test.mjs:14:1
+✖ actual registry publication preserves the prepared image and a retry reuses the verified digest (3163.994458ms)
+  Error: Staging image publication unavailable
+      at publishStagingCandidate (file://$REPO/scripts/release-registry.mjs:173:9)
+      at async TestContext.<anonymous> (file://$REPO/test/container/release-registry.test.mjs:120:21)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)

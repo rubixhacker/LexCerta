@@ -1,0 +1,78 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.03kB 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:24.21.0-bookworm-slim@sha256:2fe369e969550cde8e867afc3fe370b260140cab4a23d467074295b42163d553
+#2 DONE 4.5s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 112B done
+#3 DONE 0.0s
+
+#4 [internal] load build context
+#4 transferring context: 15.63kB 0.0s done
+#4 DONE 0.0s
+
+#5 [build 1/8] FROM docker.io/library/node:24.21.0-bookworm-slim@sha256:2fe369e969550cde8e867afc3fe370b260140cab4a23d467074295b42163d553
+#5 resolve docker.io/library/node:24.21.0-bookworm-slim@sha256:2fe369e969550cde8e867afc3fe370b260140cab4a23d467074295b42163d553 0.0s done
+#5 DONE 0.0s
+
+#6 [build 4/8] RUN npm ci
+#6 CACHED
+
+#7 [build 2/8] WORKDIR /app
+#7 CACHED
+
+#8 [build 3/8] COPY package.json package-lock.json ./
+#8 CACHED
+
+#9 [build 5/8] COPY .nvmrc tsconfig.json tsconfig.postgres.json tsconfig.node.json worker-configuration.d.ts ./
+#9 CACHED
+
+#10 [build 6/8] COPY src ./src
+#10 DONE 0.1s
+
+#11 [build 7/8] COPY scripts/check-runtime.mjs ./scripts/check-runtime.mjs
+#11 DONE 0.0s
+
+#12 [build 8/8] RUN npm run runtime:check && npm run build:node && npm prune --omit=dev
+#12 1.361 
+#12 1.361 > lexcerta@0.1.0 runtime:check
+#12 1.361 > node scripts/check-runtime.mjs
+#12 1.361 
+#12 1.935 Node v24.21.0 at /usr/local/bin/node
+#12 3.257 
+#12 3.257 > lexcerta@0.1.0 build:node
+#12 3.257 > tsc -p tsconfig.node.json
+#12 3.257 
+#12 19.08 
+#12 19.08 removed 97 packages, and audited 45 packages in 10s
+#12 19.08 
+#12 19.08 8 packages are looking for funding
+#12 19.08   run `npm fund` for details
+#12 19.08 
+#12 19.08 found 0 vulnerabilities
+#12 DONE 19.1s
+
+#13 [stage-1 3/6] COPY --from=build --chown=node:node /app/package.json ./package.json
+#13 CACHED
+
+#14 [stage-1 4/6] COPY --from=build --chown=node:node /app/node_modules ./node_modules
+#14 CACHED
+
+#15 [stage-1 5/6] COPY --from=build --chown=node:node /app/build ./build
+#15 DONE 0.0s
+
+#16 [stage-1 6/6] COPY --chown=node:node database/migrations ./database/migrations
+#16 DONE 0.0s
+
+#17 exporting to image
+#17 exporting layers 0.1s done
+#17 exporting manifest sha256:634d6ed27724c29bf210955e789e63fbbf013a41034f129c7d85146958f59259 done
+#17 exporting config sha256:ae67b0b1b75800a7d717011006f2a3095deb34a7fb8e762a3ec8168c84d51aa4 done
+#17 exporting attestation manifest sha256:6c04526b4eb7c9cc334561f412e55d597e0e97bb19baa6068f0df88371f7dbcb 0.0s done
+#17 exporting manifest list sha256:1319a14dd3aa87cd8bbc4f67c523b4c23c0607bca565f517cdd3bdb5172d7291 done
+#17 naming to docker.io/library/lexcerta-runtime-qualification:soak-work-in-progress done
+#17 DONE 0.1s

@@ -4,6 +4,11 @@
 	"type": "module",
 	"description": "MCP server for legal citation verification via CourtListener",
 	"scripts": {
+		"start:public": "node build/node/public-main.js",
+		"start:operator": "node build/node/operator-main.js",
+		"start:maintenance": "node build/node/maintenance-main.js",
+		"migrate": "node build/node/migration-main.js",
+		"operator": "node build/node/operator-cli.js",
 		"runtime:check": "node scripts/check-runtime.mjs",
 		"dev": "wrangler dev --env local",
 		"deploy": "node scripts/deploy.mjs",
@@ -12,7 +17,7 @@
 		"test": "vitest run && npm run test:worker-qualification && npm run test:telemetry && npm run test:admin && npm run test:deployment && npm run test:corpus-fixtures && npm run test:node",
 		"test:corpus-fixtures": "node --test scripts/corpus-fixtures.test.mjs",
 		"test:admin": "vitest run --config vitest.admin.config.ts",
-		"test:deployment": "node --test scripts/deploy.test.mjs scripts/worker-bundle-conformance.test.mjs",
+		"test:deployment": "node --test scripts/deploy.test.mjs scripts/worker-bundle-conformance.test.mjs scripts/release-*.test.mjs",
 		"test:worker-qualification": "node --test scripts/qualify-worker-artifact.test.mjs scripts/worker-qualification-*.test.mjs",
 		"test:telemetry": "vitest run --config vitest.telemetry.config.ts",
 		"test:watch": "vitest",
@@ -28,11 +33,12 @@
 		"test:postgres": "npm run build:node && node --test --test-timeout=30000 test/postgres/*.test.mjs",
 		"build:node": "tsc -p tsconfig.node.json",
 		"test:node": "npm run build:node && node --test --test-timeout=10000 test/node/*.test.mjs",
+		"test:container": "npm run build:node && node --test --test-timeout=60000 test/container/*.test.mjs",
 		"qualify:corpus": "npm run build:node && node scripts/qualify-corpus.mjs"
 	},
 	"dependencies": {
-		"@google-cloud/storage": "8.1.0",
 		"@modelcontextprotocol/server": "2.0.0",
+		"google-auth-library": "11.0.2",
 		"parse5": "8.0.1",
 		"pg": "8.23.0",
 		"zod": "4.4.1"
@@ -44,7 +50,8 @@
 		"@types/pg": "8.23.1",
 		"typescript": "6.0.3",
 		"vitest": "4.1.11",
-		"wrangler": "4.120.0"
+		"wrangler": "4.120.0",
+		"yauzl": "3.4.0"
 	},
 	"engines": {
 		"node": ">=24.21.0 <25"
@@ -59,6 +66,7 @@
 		"@biomejs/biome@1.9.4": true,
 		"esbuild@0.28.1": true,
 		"workerd@1.20260801.1": true,
-		"fsevents": false
+		"fsevents": false,
+		"protobufjs": false
 	}
 }

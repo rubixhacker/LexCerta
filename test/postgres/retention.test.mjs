@@ -15,7 +15,7 @@ after(async () => {
 });
 async function issue() {
 	const id = randomUUID();
-	await new PostgresKeyAdministration(fixture.administration).issue({
+	await new PostgresKeyAdministration(fixture.administration, "test", fixture.journal).issue({
 		publicId: id,
 		customerId: id,
 		environment: "test",

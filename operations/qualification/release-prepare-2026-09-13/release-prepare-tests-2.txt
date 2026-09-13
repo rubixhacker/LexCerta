@@ -1,0 +1,44 @@
+✔ release identity excludes fork, branch, pull request, zero-build and other-workflow contexts (1.3355ms)
+✔ only a complete non-smoke soak of the selected image can back a candidate (3.672292ms)
+✔ artifact verification binds every saved file to the exact workflow run and attempt (21.087541ms)
+✔ changed image or evidence bytes are rejected before the artifact can be consumed (11.932542ms)
+✔ missing artifacts, symlinks and manifest path traversal are refused (5.444ms)
+✔ a manifest cannot relabel fixture evidence as staging or production qualification (4.532708ms)
+✔ manifest compiled hashes must match those measured by its soak (7.260292ms)
+✔ candidate origin binds a completed main release workflow and exact artifact metadata (10.379875ms)
+✔ failed, active, rerun, foreign, PR and different-workflow sources fail before artifact listing (2.087875ms)
+✔ ambiguous, expired, replaced and cross-run artifacts cannot acquire trusted origin (2.995666ms)
+✔ download writes only bytes matching GitHub's archive digest and omits API credentials on the signed URL (6.144042ms)
+✔ wrong, truncated and oversized archives are deleted and never returned as verified (5.179459ms)
+✔ a rerun starting while bytes download invalidates the handoff and removes the archive (1.87975ms)
+✔ an existing output is preserved and unsafe signed URLs never receive a request (6.017375ms)
+✔ cancelling a stalled archive stream closes it and removes partial bytes (51.797417ms)
+✔ release API reads reject other repositories, arbitrary routes, malformed data and token header injection (0.506458ms)
+✔ stored and deflated archives unpack exactly the candidate and preserve byte identity (44.953166ms)
+✔ unexpected, absolute, traversing, nested, duplicate and backslash names cannot escape extraction (37.636958ms)
+✔ symlinks, devices, directories and encrypted or unsupported entries are rejected (25.666083ms)
+✔ missing and extra entries, declared overflow, inflated size mismatch and bad CRC fail closed (30.21125ms)
+✔ a correct archive hash does not excuse altered candidate bytes or a different run identity (19.714875ms)
+✔ changed, truncated or symlinked archives and existing destinations are not consumed (6.883541ms)
+✔ malformed ZIP metadata fails even when its actual archive hash was verified (7.813125ms)
+✔ cancellation during inflation removes the partial directory and closes archive I/O (37.478958ms)
+✔ loading binds the actual load result and every measured compiled and migration file (20.0065ms)
+✔ a pre-existing expected image cannot conceal loading a different image or multiple images (23.462459ms)
+✔ wrong image identity, platform, user, build label or executable environment prevents execution (31.176125ms)
+✔ changed runtime or migration contents and execution errors fail and clean up the owned container (22.500459ms)
+✔ changed candidate bytes and pre-cancelled requests perform no Docker operations (4.549416ms)
+✔ prepare connects actual archive parsing and candidate verification to image verification (26.753209ms)
+✔ prepare failures leave no successful handoff or partial work and preserve existing directories (25.561125ms)
+✔ production requires protected main, the owner reviewer, no bypass and branch restrictions (1.501834ms)
+✔ custom deployment policies accept only the exact main branch, not tags or extra patterns (0.124583ms)
+✔ an extra reviewer cannot substitute another person's approval for the owner gate (0.121708ms)
+✔ live inspection uses only bounded reads on the fixed repository and never grants approval (35.501ms)
+✔ missing, malformed and unavailable remote evidence cannot become ready or disclose provider errors (1.024625ms)
+ℹ tests 36
+ℹ suites 0
+ℹ pass 36
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 316.4705

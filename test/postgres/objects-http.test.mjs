@@ -1,109 +1,15 @@
 import assert from "node:assert/strict";
-import { once } from "node:events";
-import { createServer } from "node:http";
 import { test } from "node:test";
-import { CRC32C, Storage } from "@google-cloud/storage";
-import { GcsSourceObjects, MAX_SOURCE_OBJECT_BYTES } from "../../build/postgres/objects.js";
+import { setTimeout as delay } from "node:timers/promises";
+import { GcsSourceObjects } from "../../build/node/gcs-source-objects.js";
+import {
+	MAX_SOURCE_OBJECT_BYTES,
+	SourceObjectIntegrityError,
+} from "../../build/postgres/objects.js";
 
-// An HTTP protocol fixture for the real pinned GCS SDK, not a GCS or IAM emulator.
-async function withObjects(run) {
-	const values = new Map();
-	const requests = [];
-	let nextGeneration = 9007199254740993n;
-	const behavior = { extraBytes: false, size: null, corruptChecksum: false, stall: false };
-	const server = createServer(async (request, response) => {
-		const url = new URL(request.url, "http://fixture");
-		requests.push({
-			method: request.method,
-			path: url.pathname,
-			query: Object.fromEntries(url.searchParams),
-			authorization: request.headers.authorization,
-		});
-		function json(status, body) {
-			response.writeHead(status, { "content-type": "application/json" });
-			response.end(JSON.stringify(body));
-		}
-		const name =
-			url.searchParams.get("name") ?? decodeURIComponent(url.pathname.split("/o/")[1] ?? "");
-		if (request.method === "POST" && url.pathname.startsWith("/upload/")) {
-			if (url.searchParams.get("ifGenerationMatch") !== "0")
-				return json(400, { error: { message: "missing create precondition" } });
-			if (values.has(name)) return json(412, { error: { code: 412, message: "existing object" } });
-			const chunks = [];
-			for await (const chunk of request) chunks.push(chunk);
-			const text = Buffer.concat(chunks).toString("utf8");
-			const boundary = request.headers["content-type"].match(/boundary="?([^";]+)"?/)[1];
-			const parts = text.split(`--${boundary}`);
-			const metadata = JSON.parse(parts[1].split("\r\n\r\n")[1].trim());
-			const bytes = Buffer.from(parts[2].slice(parts[2].indexOf("\r\n\r\n") + 4, -2));
-			const crc = new CRC32C();
-			crc.update(bytes);
-			const stored = {
-				...metadata,
-				name,
-				generation: String(nextGeneration++),
-				size: String(bytes.length),
-				timeCreated: new Date().toISOString(),
-				crc32c: crc.toString(),
-			};
-			values.set(name, { bytes, metadata: stored });
-			return json(200, stored);
-		}
-		if (request.method === "GET" && url.pathname.endsWith("/o"))
-			return json(200, {
-				items: [...values.values()].map((value) => value.metadata),
-				nextPageToken: "fixture-next-page",
-			});
-		const value = values.get(name);
-		const requestedGeneration = url.searchParams.get("generation");
-		if (
-			!value ||
-			(requestedGeneration !== null && requestedGeneration !== value.metadata.generation)
-		)
-			return json(404, { error: { code: 404, message: "absent" } });
-		if (request.method === "DELETE") {
-			if (url.searchParams.get("ifGenerationMatch") !== value.metadata.generation)
-				return json(412, { error: { code: 412 } });
-			values.delete(name);
-			response.writeHead(204);
-			return response.end();
-		}
-		if (url.searchParams.get("alt") === "media") {
-			response.writeHead(200, {
-				"content-type": "text/plain",
-				"x-goog-stored-content-encoding": "identity",
-				"x-goog-hash": `crc32c=${behavior.corruptChecksum ? "AAAAAA==" : value.metadata.crc32c}`,
-			});
-			response.flushHeaders();
-			if (behavior.stall) {
-				response.write(value.bytes.subarray(0, 1));
-				return;
-			}
-			response.end(
-				behavior.extraBytes ? Buffer.alloc(MAX_SOURCE_OBJECT_BYTES + 1, 65) : value.bytes,
-			);
-			return;
-		}
-		return json(200, { ...value.metadata, size: behavior.size ?? value.metadata.size });
-	});
-	server.listen(0, "127.0.0.1");
-	await once(server, "listening");
-	const storage = new Storage({
-		apiEndpoint: `http://127.0.0.1:${server.address().port}`,
-		projectId: "local-fixture",
-		timeout: 5000,
-		retryOptions: { autoRetry: false, maxRetries: 0 },
-	});
-	const objects = new GcsSourceObjects(storage.bucket("fixture"));
-	try {
-		await run({ objects, values, requests, behavior });
-	} finally {
-		server.closeAllConnections();
-		await new Promise((resolve) => server.close(resolve));
-	}
-}
+import { withObjects } from "../fixtures/gcs-wire-fixture.mjs";
 
-test("GCS SDK sends immutable writes, exact generation reads/deletes and bounded pagination", async () =>
+test("GCS JSON API sends immutable writes, exact generation reads/deletes and bounded pagination", async () =>
 	withObjects(async ({ objects, requests }) => {
 		const bytes = Buffer.from("synthetic source text");
 		const key = "opinions/123/example";
@@ -128,10 +34,12 @@ test("GCS SDK sends immutable writes, exact generation reads/deletes and bounded
 		assert.equal(listing.query.pageToken, "prior-page");
 		assert.equal(listing.query.prefix, "opinions/");
 		assert.equal(listing.query.versions, "true");
-		assert.ok(requests.every((request) => request.authorization === undefined));
+		assert.ok(
+			requests.every((request) => request.authorization === "Bearer synthetic-fixture-token"),
+		);
 	}));
 
-test("GCS SDK rejects oversized metadata before requesting a body", async () =>
+test("GCS JSON API rejects oversized metadata before requesting a body", async () =>
 	withObjects(async ({ objects, behavior, requests }) => {
 		const stored = await objects.put("opinions/size", Buffer.from("fixture"), {});
 		requests.length = 0;
@@ -140,25 +48,132 @@ test("GCS SDK rejects oversized metadata before requesting a body", async () =>
 		assert.equal(requests.length, 1);
 	}));
 
-test("GCS SDK bounds streamed bytes even when the advertised size is small", async () =>
+test("GCS JSON API bounds streamed bytes even when the advertised size is small", async () =>
 	withObjects(async ({ objects, behavior }) => {
 		const stored = await objects.put("opinions/overflow", Buffer.from("fixture"), {});
 		behavior.extraBytes = true;
 		await assert.rejects(objects.read("opinions/overflow", stored.generation));
 	}));
 
-test("GCS SDK detects a corrupt transfer checksum", async () =>
+test("GCS JSON API detects a corrupt transfer checksum", async () =>
 	withObjects(async ({ objects, behavior }) => {
 		const stored = await objects.put("opinions/checksum", Buffer.from("fixture"), {});
 		behavior.corruptChecksum = true;
 		await assert.rejects(objects.read("opinions/checksum", stored.generation));
 	}));
 
-test("GCS SDK destroys a stalled body within the five-second transfer deadline", async () =>
-	withObjects(async ({ objects, behavior }) => {
+test("GCS JSON API destroys a stalled body within the five-second transfer deadline", async () =>
+	withObjects(async ({ objects, behavior, activeResponses }) => {
 		const stored = await objects.put("opinions/stall", Buffer.from("fixture"), {});
 		behavior.stall = true;
 		const started = performance.now();
 		await assert.rejects(objects.read("opinions/stall", stored.generation));
 		assert.ok(performance.now() - started < 6000);
+		await until(() => activeResponses.size === 0);
 	}));
+
+async function until(condition) {
+	const deadline = performance.now() + 2000;
+	while (!condition()) {
+		assert.ok(performance.now() < deadline, "HTTP cancellation did not close the fixture response");
+		await delay(10);
+	}
+}
+
+test("a full-size UTF8 opinion survives immutable upload and checksum verification", async () =>
+	withObjects(async ({ objects }) => {
+		const bytes = Buffer.from("🧪".repeat(MAX_SOURCE_OBJECT_BYTES / 4));
+		const result = await objects.put("opinions/unicode", bytes, {});
+		assert.deepEqual(Buffer.from(result.bytes), bytes);
+	}));
+
+test("request cancellation closes stalled metadata, upload, listing and deletion sockets", async () =>
+	withObjects(async ({ objects, behavior, requests, activeResponses }) => {
+		const stored = await objects.put("opinions/cancel", Buffer.from("fixture"), {});
+		behavior.hold = "all";
+		for (const operation of [
+			(scoped) => scoped.read("opinions/cancel", stored.generation),
+			(scoped) => scoped.put("opinions/new", Buffer.from("fixture"), {}),
+			(scoped) => scoped.list(),
+			(scoped) => scoped.remove("opinions/cancel", stored.generation),
+		]) {
+			const controller = new AbortController();
+			const count = requests.length;
+			const rejected = assert.rejects(
+				operation(objects.withSignal(controller.signal)),
+				SourceObjectIntegrityError,
+			);
+			await until(() => requests.length === count + 1);
+			controller.abort("private-legal-credential-sentinel");
+			await rejected;
+			await until(() => activeResponses.size === 0);
+			assert.equal(requests.length, count + 1);
+		}
+	}));
+
+test("the default five-second deadline closes a request that never receives headers", async () =>
+	withObjects(async ({ objects, behavior, activeResponses }) => {
+		behavior.hold = "all";
+		const started = performance.now();
+		await assert.rejects(objects.generation("opinions/no-headers"), SourceObjectIntegrityError);
+		assert.ok(performance.now() - started < 6000);
+		await until(() => activeResponses.size === 0);
+	}));
+
+test("upload and verification share one deadline even when each HTTP phase is individually fast", async () =>
+	withObjects(async ({ objects, behavior, requests, values, activeResponses }) => {
+		behavior.delayMs = 1800;
+		const started = performance.now();
+		await assert.rejects(
+			objects.put("opinions/aggregate", Buffer.from("fixture"), {}),
+			SourceObjectIntegrityError,
+		);
+		assert.ok(performance.now() - started < 6000);
+		assert.equal(requests.length, 3);
+		assert.ok(
+			values.has("opinions/aggregate"),
+			"the upload may persist after verification times out",
+		);
+		await until(() => activeResponses.size === 0);
+	}));
+
+test("a credential arriving after request cancellation cannot dispatch an object request", async () => {
+	const started = Promise.withResolvers();
+	const token = Promise.withResolvers();
+	await withObjects(
+		async ({ objects, requests }) => {
+			const controller = new AbortController();
+			const rejected = assert.rejects(
+				objects.withSignal(controller.signal).generation("opinions/auth"),
+				SourceObjectIntegrityError,
+			);
+			await started.promise;
+			controller.abort();
+			await rejected;
+			token.resolve("synthetic-fixture-token");
+			await delay(20);
+			assert.equal(requests.length, 0);
+		},
+		{
+			accessToken: () => {
+				started.resolve();
+				return token.promise;
+			},
+		},
+	);
+});
+
+test("object credentials cannot be sent to a configured third-party endpoint", () => {
+	for (const endpoint of [
+		"https://example.com",
+		"https://storage.googleapis.com.evil.example",
+		"https://user@storage.googleapis.com",
+		"https://storage.googleapis.com/path",
+	]) {
+		assert.throws(
+			() =>
+				new GcsSourceObjects("fixture", { endpoint, accessToken: async () => "private-sentinel" }),
+			SourceObjectIntegrityError,
+		);
+	}
+});

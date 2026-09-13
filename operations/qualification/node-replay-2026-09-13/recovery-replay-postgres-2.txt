@@ -1,0 +1,17 @@
+✔ replay restores revocation and expiry ceilings, preserves stricter state and remains sealed after migration (1530.185208ms)
+✔ absent key restrictions survive without credentials and prevent later reuse of either revoked or expiry-limited IDs (1276.403042ms)
+✔ recovered keys cannot be revived, extended or renamed; expiry before issue revokes without violating SQL bounds (1261.062875ms)
+✔ source replay retains prior evidence, creates absent tombstones and preserves deletion fences on retry (1285.459ms)
+✔ connected or CONNECT-enabled targets fail before any external reads or persistent seal (107.382208ms)
+✔ foreign key environments fail closed and runtime identities cannot administer recovery state (152.811167ms)
+✔ failed or cancelled object scanning leaves the database sealed without partial restrictions (121.367458ms)
+✔ lost batch commit acknowledgement keeps its receipts and resumes idempotently (245.890167ms)
+✔ changed generation receipts cannot be silently overwritten by a later scan (152.099167ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6268.260875

@@ -1,0 +1,1 @@
+{"image":"sha256:9cd0472bfdb00e61b5169bcaf2120a171dae8950f6af6d01d3491e0934718f6d","stage":"image_verified","compiled_files":79,"migrations":4,"archive_bytes":86377347,"fixture_only":true}

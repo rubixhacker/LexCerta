@@ -1,0 +1,73 @@
+{
+	"recorded_at": "2026-09-13T05:54:29.860Z",
+	"scope": "GitHub release protections and origin-bound artifact download; no extraction, image publication, staging or production deployment.",
+	"base_commit": "e475562e0e0eb093c8e10eee859a090880f78289",
+	"branch": "codex/lexcerta-node-runtime",
+	"uncommitted_work": true,
+	"local_checks": {
+		"repository": 682,
+		"focused_release_cases_included_in_repository": 21,
+		"new_download_cases": 9,
+		"workflow_files_validated": 2
+	},
+	"live_protection": {
+		"repository": "rubixhacker/LexCerta",
+		"observed_at": "2026-09-13T05:49:29.241Z",
+		"protection_ready": true,
+		"missing": [],
+		"approval_granted": false
+	},
+	"remote_changes": {
+		"main": "Required up-to-date GitHub Actions checks from app 15368, administrator enforcement, pull requests with zero required approvers, linear history, resolved conversations, no force pushes or deletion.",
+		"production": "Owner 1776138 as sole reviewer, no administrator bypass, main-only branch policy, owner may explicitly approve their own triggered run.",
+		"production_approval_granted": false,
+		"preview_changed": false
+	},
+	"source_sha256": {
+		"scripts/release-github.mjs": "d1b51a4e6488d3856a104bc26a8da0c903d8778243459782876edc2045236656",
+		"scripts/release-download.mjs": "cfeaf471fc5be98a80946660ebba121d0b4a3a99a9cfac603b7e126f3cf61959",
+		"scripts/release-download.test.mjs": "335d1d6953089b1aa79fd57b505079c5a79f631e05400226833244fda5b46ad3",
+		"scripts/release-readiness.mjs": "6b197e97d7fe60f0c819a722fb60cb10b07abe59d13b25fc14ce6c79d8db641a",
+		"scripts/release-readiness.test.mjs": "da633f3387f5d982acafca83ae8afd1c6f683abd4603998bb7b75df2736c7095",
+		"scripts/release-candidate.mjs": "c164449996b0c265a785569c73204b787786c7a3d03e2993d790122d29d88b31",
+		"scripts/release-candidate.test.mjs": "b0a5952e8e349d63b746a57bd37c9c2e79afd5c4e9367689621756e1ae551155",
+		".github/workflows/release.yml": "8f3ea98690b290ebcfe0fa89cdc4419d8495e256ac4049a330c8ed1a0ff4afca",
+		".github/workflows/check.yml": "341d47296b1a1149af9b529acf3d26c90b7750a617c6973dac78df01c14ae7df",
+		"package.json": "a28fbcd507191511f9197e3bb5c498794dfdf6193e1a121dc579603c52e020b9",
+		"operations/release.md": "5e51f68bd25f727b39e5fd4308838460234f2569044d7550bbaff63ddab35522",
+		"operations/node-runtime.md": "cc346d3e56a2b8a8a0014e0ca2e24c96a29a818fade9c3b9b8844af7b4ddfb51",
+		"infrastructure/README.md": "7f9915a3b1081890a188937a762b97522af7993d29df6e306bc3c4e462e1ff9a"
+	},
+	"evidence_sha256": {
+		"main-protection-request.txt": "15ab20141f42342a60e5275d89d9f8d970d68d71ab4c0946bebb69b10cc32c98",
+		"main-protection-applied.txt": "0d70c5b8f4b40fb5d1bba054efc0e14b20f3c2b4ef02b71c3154153176ab483d",
+		"main-protection-applied-2.txt": "e4207764cd968212b40de28a682a484e90cb5935e71a7d242df933d531d6bca6",
+		"main-protection-verified.txt": "e4207764cd968212b40de28a682a484e90cb5935e71a7d242df933d531d6bca6",
+		"production-protection-request.txt": "b72c0e3f26942f6cadc44497e86f7a2b704c8fa79e89e4facd595dbfb61a2f69",
+		"production-protection-applied.txt": "3bf2b1628f4d727b8a400932c4bce1028b521dff41dd2b694d403e2518312149",
+		"production-protection-verified.txt": "3bf2b1628f4d727b8a400932c4bce1028b521dff41dd2b694d403e2518312149",
+		"production-branch-policy-request.txt": "34679cb780db937dfd017b68c9f193375b833cc9b2b9e046d99d622b7f506c72",
+		"production-branch-policy-applied.txt": "44bed5a417e4c97d07ff8f3d6d944cde86dba0dee4003fce08fd5dde22d029be",
+		"production-branch-policy-verified.txt": "8433c9fbc83301cf4a1c5071212e4955730ba03c9dd377c92c9c6a9023c2072b",
+		"release-protection-live-configured-20260913.txt": "440ee9d93565d6da08b976d83c20dad15091171a284eb2b7ec0bacb5aa2aff13",
+		"release-protection-live-handoff-20260913.txt": "0bc5872a4a478e151b7edb35f9bb123d9fe3d3064a5b950736d474439f2c0389",
+		"release-origin-live-negative-verified-20260913.txt": "2fc1761edfb2604bae8b4ada3dbd8782ab3cb03113bf6873b4424033425abc10",
+		"release-download-tests-1.txt": "be458837751c03cb6df09908d72f548c515dd0048f25ded6bc98d5b0cab25faa",
+		"release-download-check-1.txt": "e25d93584bb388d43124374d6c24dec2370a211cb122b4332eb6e12f3e315eac",
+		"release-download-check-2.txt": "7f1c8e325f75ba4c454e08fa1156e587d1df7fc8314abcfbc848ca453c421693",
+		"release-download-actionlint-1.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+	},
+	"boundaries": [
+		"The full repository check exited zero with 682 tests. The focused 21 release cases include nine new downloader cases; these counts are not additive. Actionlint passed both workflow files with ShellCheck disabled as in the prior record.",
+		"Independent GitHub GET responses verify the configured branch and Production environment protection. The current read-only preflight passes and returns approval_granted:false. Detailed required check settings are in the separate branch readback; the current preflight itself checks the main protected flag and environment policy.",
+		"The first branch update received API 422 because both deprecated contexts and checks were provided. The corrected checks-only request succeeded. This was an API validation error, not an approval rejection.",
+		"The second required check is present in the local workflow but not yet published. The successful remote Check run for the base commit does not qualify these uncommitted changes.",
+		"The new tests use synthetic opaque archive bytes, not a real saved Docker image or eligible hosted artifact. They verify origin metadata, exact bytes, bounded size, cancellation cleanup, existing-file preservation and exclusion of the GitHub token from the signed download request.",
+		"A live HTTP 200 response for successful ordinary Check run 34719704115 attempt 2 was observed and rejected as a release source. Exactly one metadata request occurred; no artifact request or output archive was created. This is a negative origin check, not successful artifact handoff evidence.",
+		"Metadata requests use native fetch deadlines and the stream download has an overall cancellation deadline. No claim is made that arbitrary injected network adapters which ignore AbortSignal are bounded.",
+		"The first full check stopped on the earlier raw JSON evidence format. Those original bytes were preserved as live-protection-raw.txt, with the prior record referencing the same hash; the second full check passed. Earlier protection findings remain historical, superseded by this record.",
+		"Runtime TypeScript, SQL and Terraform resources did not change in this handoff work; no new database, Docker or soak qualification was needed or claimed.",
+		"Safe extraction, candidate directory verification after download, Docker load and content checks, staging registry digest binding, cloud authentication, hosted qualification, deployment ordering and protected production promotion remain incomplete.",
+		"No commit, push, hosted release run, cloud provisioning, purchase, deployment approval, upstream permission or external pilot use was established."
+	]
+}

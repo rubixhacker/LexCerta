@@ -17,6 +17,8 @@ export default defineConfig({
 		}),
 	],
 	test: {
+		// Bound simultaneous fixture isolates on developer machines and CI.
+		maxWorkers: 4,
 		include: [
 			"src/admission/**/*.test.ts",
 			"src/auth/**/*.test.ts",

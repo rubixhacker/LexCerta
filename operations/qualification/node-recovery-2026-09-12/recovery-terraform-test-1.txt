@@ -1,0 +1,15 @@
+tests/environment.tftest.hcl... in progress
+  run "foundation_without_credentials_or_release"... pass
+  run "private_release_has_bounded_runtime_and_isolated_secrets"... pass
+  run "activation_enables_public_iam_and_schedule"... pass
+  run "production_uses_its_own_project_and_github_environment"... pass
+  run "reject_mutable_secret_version"... pass
+  run "reject_pooler_endpoint"... pass
+  run "reject_zero_build"... pass
+  run "reject_four_pilot_customers"... pass
+  run "reject_activation_without_alert_delivery"... pass
+  run "reject_cross_project_notification_channel"... pass
+tests/environment.tftest.hcl... tearing down
+tests/environment.tftest.hcl... pass
+
+Success! 10 passed, 0 failed.

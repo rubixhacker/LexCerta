@@ -1,0 +1,30 @@
+{
+	"recorded_at": "2026-09-13T04:19:11.264Z",
+	"scope": "Bounded recovery-journal inventory only; no SQL replay or reopening barrier.",
+	"base_commit": "e475562e0e0eb093c8e10eee859a090880f78289",
+	"branch": "codex/lexcerta-node-runtime",
+	"uncommitted_work": true,
+	"node": "v24.21.0",
+	"source_sha256": {
+		"src/postgres/recovery-scan.ts": "c4a5d8855ff32679d13dddd64935b2936a4bb638f3abac761127984012e61646",
+		"src/postgres/recovery-journal.ts": "477f3d3e98966ca5d5c8ccf7aa147b30a246b33d437b5db065ebbc14aa58770c",
+		"src/node/gcs-recovery-journal.ts": "975d79111fb5c2db1d62eaa8089b22c4a1913664d69f58f4985676ee6d2701a1",
+		"src/verification/evidence-request.ts": "4ca4fd8b49b66436eabda7a0ec6ac4a80347649a568b7db87c254c0cee767483",
+		"test/node/recovery-scan.test.mjs": "da2bbad6da79bd882b5b183ad3d2bf08c6fcdbb58b85406ffbb77b19a6ec23cd",
+		"test/fixtures/gcs-wire-fixture.mjs": "d7790740487fdb2fc5af3e82da789028bf6170e00774327614665048fbc2ac15"
+	},
+	"checks": {
+		"typescript_node_build": true,
+		"focused_checks_passed": 8,
+		"focused_checks_failed": 0,
+		"format": true,
+		"lint": true
+	},
+	"test_log_sha256": "4e644fb70e0ef031b7272caccf3c1002645d7dc21a131f8579dddd6267e7345e",
+	"boundaries": [
+		"Loopback GCS wire fixture, including 205 exact-generation reads; no real GCS/IAM or Neon restore.",
+		"The scanner was added during the existing public-service soak and is absent from that immutable image. It has not changed the running service.",
+		"Only focused checks are recorded here; earlier complete repository and container checks describe their respective source/image snapshots.",
+		"No mutation, deployment command, scan checkpoint store, writer barrier or permission to reopen a restored database is implemented by this component."
+	]
+}

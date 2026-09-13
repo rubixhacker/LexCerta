@@ -1,0 +1,14 @@
+✔ the default image entrypoint fails safely without configuration or attached identity (2842.575ms)
+{"fixture_closed":true,"object_requests":3,"failures":0,"max_rss_kib":264636}
+{"image":"sha256:f733cb43997c58219c70d9de6911d32d28158a10c06088a251e71fa5844b5b3d","architecture":"amd64","memory_limit":1073741824,"cpu_limit":1,"fixture_only":true}
+✔ the amd64 service runs all three tools with HTTP/GCS fixtures and drains an active quote on SIGTERM (4441.244292ms)
+{"image":"sha256:f733cb43997c58219c70d9de6911d32d28158a10c06088a251e71fa5844b5b3d","architecture":"amd64","memory_limit":1073741824,"cpu_limit":1,"fixture_only":true}
+✔ SIGKILL preserves charged attempts and does not publish the interrupted opinion (2166.029125ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9648.343875

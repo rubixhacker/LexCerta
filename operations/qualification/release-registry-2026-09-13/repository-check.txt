@@ -1,0 +1,295 @@
+
+> lexcerta@0.1.0 check
+> npm run runtime:check && npm run format:check && npm run lint && npm run typecheck && npm run test
+
+
+> lexcerta@0.1.0 runtime:check
+> node scripts/check-runtime.mjs
+
+Node v24.21.0 at /private/tmp/lexcerta-node24/node-v24.21.0-darwin-arm64/bin/node
+
+> lexcerta@0.1.0 format:check
+> biome format package.json tsconfig.json test/tsconfig.json vitest.config.ts vitest.admin.config.ts vitest.telemetry.config.ts wrangler.jsonc wrangler.admin.jsonc wrangler.telemetry.jsonc scripts src/admin src/admission src/courtlistener src/cache src/retention src/telemetry src/worker.ts src/worker-request.ts src/request-body.ts src/mcp.ts src/auth src/verification test operations examples src/postgres tsconfig.postgres.json src/node tsconfig.node.json
+
+Checked 336 files in 65ms. No fixes applied.
+
+> lexcerta@0.1.0 lint
+> biome lint scripts src/admin src/admission src/courtlistener src/cache src/retention src/telemetry src/worker.ts src/worker-request.ts src/request-body.ts src/mcp.ts src/auth src/verification test vitest.config.ts vitest.admin.config.ts vitest.telemetry.config.ts examples src/postgres src/node
+
+Checked 295 files in 51ms. No fixes applied.
+
+> lexcerta@0.1.0 typecheck
+> npm run types:check && tsc --noEmit && tsc --project test/tsconfig.json --noEmit && tsc -p tsconfig.postgres.json --noEmit && tsc -p tsconfig.node.json --noEmit
+
+
+> lexcerta@0.1.0 types:check
+> wrangler types worker-configuration.d.ts --check
+
+
+ ⛅️ wrangler 4.120.0 (update available 4.131.1)
+───────────────────────────────────────────────
+✨ Types at worker-configuration.d.ts are up to date.
+
+
+> lexcerta@0.1.0 test
+> vitest run && npm run test:worker-qualification && npm run test:telemetry && npm run test:admin && npm run test:deployment && npm run test:corpus-fixtures && npm run test:node
+
+
+ RUN  v4.1.11 $REPO
+
+console warning; message = Called .text() on an HTTP body which does not appear to be text. The body's Content-Type is "application/x-www-form-urlencoded;charset=UTF-8". The result will probably be corrupted. Consider checking the Content-Type header before interpreting entities as text.
+
+ Test Files  72 passed (72)
+      Tests  498 passed (498)
+   Start at  01:39:23
+   Duration  22.58s (transform 1.88s, setup 0ms, import 47.18s, tests 18.25s, environment 3ms)
+
+
+> lexcerta@0.1.0 test:worker-qualification
+> node --test scripts/qualify-worker-artifact.test.mjs scripts/worker-qualification-*.test.mjs
+
+✔ refuses a tracked source change before creating an artifact directory (138.435584ms)
+✔ passes exact resource limits and fails an exceeded runner measurement (0.697542ms)
+✔ fails a weakened maximum-workload benchmark record (1.2425ms)
+✔ fails a missing or duplicated canonical workload scenario (0.172625ms)
+✔ fails empty, invalid, or mismatched raw heap observations (0.409375ms)
+✔ fails a missing or nonfinite runner measurement (0.195ms)
+✔ fails a measurement from the wrong target or without non-idle CPU samples (0.146542ms)
+✔ fails when no runner measurement is emitted (0.080583ms)
+✔ refuses a stale artifact directory before running Wrangler (1.867958ms)
+✔ refuses tracked or index divergence before emitting a bundle (89.204334ms)
+✔ rejects and clears pending CDP calls before closing the socket (21.184084ms)
+✔ aborts and closes a CDP handshake that never opens (0.134875ms)
+✔ cleans sampler inspector and paused child when a scenario fails (0.77025ms)
+✔ terminates the child even when inspector cleanup fails (0.479792ms)
+✔ escalates a paused process group from SIGTERM to SIGKILL (16.005958ms)
+✔ uses totalSize rather than usedSize for the conservative isolate measurement (0.59175ms)
+✔ retains the raw fields from the sample with the highest conservative isolate sum (0.091375ms)
+✔ marks missing and nonfinite Runtime.getHeapUsage fields invalid (0.076ms)
+✔ rejects a stalled live scenario at its absolute deadline and runs cleanup (1.170208ms)
+✔ selects the exact Vitest runner target and keeps core entry as control (0.678334ms)
+✔ rejects an inspector target whose runner identity differs from Vitest (0.175292ms)
+✔ rejects a stall before record waiting at the scenario deadline and cleans up (0.766166ms)
+✔ closes both control and runner CDP clients when control cleanup fails (0.075625ms)
+ℹ tests 23
+ℹ suites 0
+ℹ pass 23
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 197.773583
+
+> lexcerta@0.1.0 test:telemetry
+> vitest run --config vitest.telemetry.config.ts
+
+
+ RUN  v4.1.11 $REPO
+
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  01:39:47
+   Duration  610ms (transform 167ms, setup 0ms, import 398ms, tests 5ms, environment 0ms)
+
+
+> lexcerta@0.1.0 test:admin
+> vitest run --config vitest.admin.config.ts
+
+
+ RUN  v4.1.11 $REPO
+
+
+ Test Files  5 passed (5)
+      Tests  39 passed (39)
+   Start at  01:39:48
+   Duration  2.16s (transform 187ms, setup 0ms, import 1.03s, tests 167ms, environment 1ms)
+
+
+> lexcerta@0.1.0 test:deployment
+> node --test scripts/deploy.test.mjs scripts/worker-bundle-conformance.test.mjs scripts/release-*.test.mjs
+
+✔ deploy fails closed before invoking the rejected Worker deployment (154.946042ms)
+✔ blocked deployment invokes no legacy Worker command (29.573667ms)
+✔ Worker deployment plan preserves the telemetry, migration, and public command order (0.425792ms)
+✔ Worker deployment plan skips remote migrations during a dry run (0.078125ms)
+✔ release identity excludes fork, branch, pull request, zero-build and other-workflow contexts (1.363417ms)
+✔ only a complete non-smoke soak of the selected image can back a candidate (4.766917ms)
+✔ artifact verification binds every saved file to the exact workflow run and attempt (33.60725ms)
+✔ changed image or evidence bytes are rejected before the artifact can be consumed (31.0155ms)
+✔ missing artifacts, symlinks and manifest path traversal are refused (11.390084ms)
+✔ a manifest cannot relabel fixture evidence as staging or production qualification (7.32975ms)
+✔ manifest compiled hashes must match those measured by its soak (11.087292ms)
+✔ candidate origin binds a completed main release workflow and exact artifact metadata (12.8005ms)
+✔ failed, active, rerun, foreign, PR and different-workflow sources fail before artifact listing (4.245042ms)
+✔ ambiguous, expired, replaced and cross-run artifacts cannot acquire trusted origin (4.325083ms)
+✔ download writes only bytes matching GitHub's archive digest and omits API credentials on the signed URL (7.027792ms)
+✔ wrong, truncated and oversized archives are deleted and never returned as verified (13.8215ms)
+✔ a rerun starting while bytes download invalidates the handoff and removes the archive (3.001708ms)
+✔ an existing output is preserved and unsafe signed URLs never receive a request (9.777041ms)
+✔ cancelling a stalled archive stream closes it and removes partial bytes (53.039ms)
+✔ release API reads reject other repositories, arbitrary routes, malformed data and token header injection (0.912833ms)
+✔ stored and deflated archives unpack exactly the candidate and preserve byte identity (86.033667ms)
+✔ unexpected, absolute, traversing, nested, duplicate and backslash names cannot escape extraction (55.458042ms)
+✔ symlinks, devices, directories and encrypted or unsupported entries are rejected (33.429875ms)
+✔ missing and extra entries, declared overflow, inflated size mismatch and bad CRC fail closed (41.724584ms)
+✔ a correct archive hash does not excuse altered candidate bytes or a different run identity (38.011959ms)
+✔ changed, truncated or symlinked archives and existing destinations are not consumed (10.699375ms)
+✔ malformed ZIP metadata fails even when its actual archive hash was verified (11.401708ms)
+✔ cancellation during inflation removes the partial directory and closes archive I/O (47.655709ms)
+✔ loading binds the actual load result and every measured compiled and migration file (32.914958ms)
+✔ a pre-existing expected image cannot conceal loading a different image or multiple images (42.942375ms)
+✔ wrong image identity, platform, user, build label or executable environment prevents execution (58.597792ms)
+✔ changed runtime or migration contents and execution errors fail and clean up the owned container (42.372917ms)
+✔ changed candidate bytes and pre-cancelled requests perform no Docker operations (7.174459ms)
+✔ prepare connects actual archive parsing and candidate verification to image verification (38.281084ms)
+✔ prepare failures leave no successful handoff or partial work and preserve existing directories (45.384167ms)
+✔ production requires protected main, the owner reviewer, no bypass and branch restrictions (0.699625ms)
+✔ custom deployment policies accept only the exact main branch, not tags or extra patterns (0.083667ms)
+✔ an extra reviewer cannot substitute another person's approval for the owner gate (0.940125ms)
+✔ live inspection uses only bounded reads on the fixed repository and never grants approval (14.529958ms)
+✔ missing, malformed and unavailable remote evidence cannot become ready or disclose provider errors (2.071166ms)
+✔ publication binds the exact registry digest to the prepared image and deletes temporary credentials (55.144208ms)
+✔ an existing matching immutable tag is fully verified without another push (27.641459ms)
+✔ foreign, production, mutable, virtual and non-Docker repositories cannot receive a push (46.826542ms)
+✔ wrong tag scope, registry bytes, digest or pulled image identity cannot yield a published result (68.099ms)
+✔ tool version and provider failures are sanitized, remove credentials and never fall back to another target (31.346625ms)
+✔ invalid targets, credentials, cancelled calls and altered evidence make no provider requests (10.970084ms)
+✔ rejects a report containing a non-fixture outbound attempt (0.4315ms)
+responseMode: 'json' drops mid-call notifications. subscriptions/listen streams are always served over SSE regardless; other notifications emitted before a result are dropped.
+responseMode: 'json' drops mid-call notifications. subscriptions/listen streams are always served over SSE regardless; other notifications emitted before a result are dropped.
+responseMode: 'json' drops mid-call notifications. subscriptions/listen streams are always served over SSE regardless; other notifications emitted before a result are dropped.
+responseMode: 'json' drops mid-call notifications. subscriptions/listen streams are always served over SSE regardless; other notifications emitted before a result are dropped.
+responseMode: 'json' drops mid-call notifications. subscriptions/listen streams are always served over SSE regardless; other notifications emitted before a result are dropped.
+responseMode: 'json' drops mid-call notifications. subscriptions/listen streams are always served over SSE regardless; other notifications emitted before a result are dropped.
+responseMode: 'json' drops mid-call notifications. subscriptions/listen streams are always served over SSE regardless; other notifications emitted before a result are dropped.
+✔ runs the emitted Wrangler bundle through D1 R2 Durable Objects and the fixture trap (1178.759458ms)
+ℹ tests 48
+ℹ suites 0
+ℹ pass 48
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1475.444083
+
+> lexcerta@0.1.0 test:corpus-fixtures
+> node --test scripts/corpus-fixtures.test.mjs
+
+✔ frozen case identities, source bytes, and holdout match the pre-tuning tracker anchor (7.275209ms)
+✔ every reviewed exact fragment is anchored to immutable source bytes (1.343416ms)
+✔ all reviewed alterations remain absent across the complete frozen source texts (113.062709ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 173.66575
+
+> lexcerta@0.1.0 test:node
+> npm run build:node && node --test --test-timeout=10000 test/node/*.test.mjs
+
+
+> lexcerta@0.1.0 build:node
+> tsc -p tsconfig.node.json
+
+✔ a blocked event loop cannot let an overdue adapter result bypass the deadline (32.755291ms)
+✔ a legal source above the old 64 KiB cap is accepted and UTF-8 source limits count bytes (11.714083ms)
+✔ the selected JSON response accepts exactly 1 MiB and rejects an extra byte despite a false length (6.880834ms)
+✔ invalid UTF-8 and an incomplete multi-byte sequence never become replacement-character evidence (1.567167ms)
+✔ a stalled stream returns at cancellation even when cancellation acknowledgment never resolves (32.2875ms)
+✔ a transport that ignores abort cannot hang the caller or leave a late response unread (22.779375ms)
+✔ one aggregate budget spans citation, usage, and case-law API instances and stops new dispatch (3.383291ms)
+✔ real Node HTTP response body cancellation closes the upstream socket (163.310042ms)
+✔ redirects are rejected without a second request (4.899791ms)
+✔ cached source work cannot exceed the aggregate processing allowance or produce a negative (0.735208ms)
+✔ citation and opinion lease polling stop after the request is cancelled (224.273333ms)
+✔ eight concurrent normalization requests preserve exact HTML semantics in two workers (54.242916ms)
+✔ large ordinary HTML is bounded by actual nodes rather than appended text tokens (138.766583ms)
+✔ excessive allocated HTML nodes cannot become a verified quote (72.241667ms)
+✔ normalization queue is finite and cancellation terminates actual busy CPU workers (36.1615ms)
+✔ a normalization deadline terminates a CPU worker even without caller cancellation (215.988917ms)
+✔ maintenance configuration needs only its database identity and source bucket context (5.679958ms)
+✔ maintenance complete emits bounded progress and closes its resources (95.5195ms)
+✔ maintenance partial emits bounded progress and closes its resources (122.407333ms)
+✔ maintenance busy emits bounded progress and closes its resources (117.668416ms)
+✔ maintenance idle emits bounded progress and closes its resources (98.851542ms)
+✔ maintenance startup-failure fails with a constant event and no provider details (91.458292ms)
+✔ maintenance run-failure fails with a constant event and no provider details (76.067209ms)
+✔ maintenance health-failure fails with a constant event and no provider details (75.578458ms)
+✔ maintenance unhandled fails with a constant event and no provider details (78.9415ms)
+✔ maintenance uncaught fails with a constant event and no provider details (71.117ms)
+✔ SIGTERM during startup-abort cannot report job completion (65.8035ms)
+✔ SIGTERM during late-startup cannot report job completion (66.575708ms)
+✔ SIGTERM during running-abort cannot report job completion (65.311042ms)
+✔ SIGTERM during late-completion cannot report job completion (65.194583ms)
+✔ a hung close exits unsuccessfully within the shutdown backstop (10064.95525ms)
+✔ attached service identity is fetched on demand and cached inside its expiry margin (58.703709ms)
+✔ tokens inside the expiry margin are refreshed instead of being cached as current (10.087459ms)
+✔ metadata flavor and token lifetime failures are sanitized (6.869875ms)
+✔ metadata headers stalls close the actual socket within one second (1012.875917ms)
+✔ metadata body stalls close the actual socket within one second (1013.903083ms)
+✔ migration uses only its staging database identity and build context (3.921042ms)
+✔ migration uses only its production database identity and build context (0.196042ms)
+✔ migration rejects missing or unsafe configuration with a constant error (0.656125ms)
+✔ database configuration rejects URLs, poolers, other regions and missing secrets without echoing them (5.324542ms)
+✔ invalid or cancelled database setup never constructs a pool (1.386208ms)
+✔ pool credentials bind environment and service purpose without a TLS-overriding URL (2.50025ms)
+✔ gcloud runs without a shell or token argument and bounded failures discard provider output (546.689792ms)
+✔ CLI status accepts only the authenticated application's exact absence response (14.26775ms)
+✔ source-removal CLI validates opinion IDs and verifies a bounded source result (2.300834ms)
+✔ source-removal CLI never mistakes failed, foreign or leaking output for confirmation (2.373083ms)
+✔ CLI rejects invalid configuration and command input before identity or network work (1.112792ms)
+✔ CLI never follows redirects or retries mutations and never copies response error material (1.154209ms)
+✔ CLI refuses malformed, oversized and mismatched credential responses before printing a secret (1.933834ms)
+✔ operator routes and duplicate identity headers are bounded before application work (50.75775ms)
+✔ operator concurrency is two with no queue; its response cap cannot leak an oversized secret (17.547583ms)
+✔ two cold concurrent operator requests share one bounded certificate retrieval (45.619ms)
+✔ Google signature, audience and immutable subject are checked; public keys are cached (46.989ms)
+✔ wrong identity, issuer, audience, algorithm and strictly expired tokens fail before fetching (16.669958ms)
+✔ certificate failures, excess bodies and expired caches fail closed without error contents (16.190083ms)
+✔ certificate headers stalls abort the actual socket within two seconds (2013.593083ms)
+✔ certificate body stalls abort the actual socket within two seconds (2017.798792ms)
+✔ already cancelled authentication does not contact Google (1.667541ms)
+✔ operator configuration has its own identity and at most three enrolled customer IDs (2.446583ms)
+✔ public routes reject origins, methods and duplicate boundary headers before admission (23.93575ms)
+✔ eight active requests fill the service envelope and the ninth is rejected without queuing (36.461416ms)
+✔ deadline cancellation covers a stalled incoming body and frees the service slot (106.789208ms)
+✔ a disconnected client cancels evidence work and cannot retain a concurrency slot (24.275791ms)
+✔ aggregate evidence exhaustion cancels work and reports unavailable without claiming a timeout (6.398625ms)
+✔ shutdown forcibly cancels the remaining request at its bound (115.477834ms)
+✔ shutdown lets an in-flight response finish before releasing the service (35.879292ms)
+✔ unexpected exceptions cannot expose legal content or credentials in HTTP responses (3.786292ms)
+✔ SIGTERM cancels startup-abort and cleans up any resources that arrive later (258.901708ms)
+✔ SIGTERM cancels late-startup and cleans up any resources that arrive later (249.635416ms)
+✔ process startup failure emits a constant event and exits unsuccessfully (155.481458ms)
+✔ unhandled process failures emit a constant event and exit without resuming service (143.553292ms)
+✔ uncaught process failures emit a constant event and exit without resuming service (125.808625ms)
+✔ an occupied listening port closes initialized resources and exits unsuccessfully (127.843917ms)
+✔ a listening service answers health and closes its resources on SIGTERM (135.257667ms)
+✔ recovery format permits only canonical restrictions and binds every byte and environment (2.988708ms)
+✔ immutable append verifies a precise generation; replaying the append verifies the same object after 412 (50.181125ms)
+✔ an upload with a lost acknowledgement is not retried; an explicit retry finds its persisted restriction (67.252417ms)
+✔ bounded pages enumerate 205 restrictions and omit another environment (34.567291ms)
+✔ missing, replaced, corrupt and oversized journal objects stop reconciliation (26.237958ms)
+✔ repeated cursors and cross-environment listings fail instead of reporting complete (8.781583ms)
+✔ HTTP errors and redirects never retry or disclose provider messages (5.782417ms)
+✔ abort cancels pending auth, upload, metadata and media without a retry (172.1345ms)
+✔ scan verifies 205 exact GCS generations across three pages, excluding the other environment (400.464666ms)
+✔ inventory identity ignores enumeration order but includes generation, creation time and environment (1.0345ms)
+✔ multi-page cursor cycles and duplicate objects across pages fail without a partial result (0.572ms)
+✔ page and record limits stop work rather than truncating the inventory (0.231042ms)
+✔ foreign, malformed and content-mismatched records cannot enter a scan (0.809583ms)
+✔ bounded scan failure sanitizes provider errors and never automatically retries (0.197959ms)
+✔ cancellation bounds uncooperative list and read adapters and prevents later work (51.577542ms)
+✔ already cancelled scans and invalid bounds perform no object I/O (1.508375ms)
+ℹ tests 90
+ℹ suites 0
+ℹ pass 90
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 11266.836875

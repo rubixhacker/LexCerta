@@ -1,0 +1,19 @@
+{"image":"sha256:e38243abf2391931bc5a00cbc3cb0cc681872a63d2fa18a7252b2546d7588fe6","fixture":"neon-tls","node":"v24.21.0","arch":"x64","uid":1000,"checks":5,"max_rss_kib":106588,"source":"local-postgresql","memory_limit":536870912,"cpu_limit":1,"fixture_only":true}
+✔ the amd64 image verifies PostgreSQL TLS, delayed reconnect and idle shutdown at 512 MiB (14291.912583ms)
+✔ operator entrypoint fails safely without configuration or database connectivity at 512 MiB (1784.636417ms)
+{"image":"sha256:e38243abf2391931bc5a00cbc3cb0cc681872a63d2fa18a7252b2546d7588fe6","architecture":"amd64","memory_limit":536870912,"cpu_limit":1,"fixture_only":true,"fixture_closed":true,"failures":0,"certificate_calls":1,"max_rss_kib":117432}
+✔ packaged operator authenticates the CLI, mutates real PostgreSQL and drains active SQL on SIGTERM (3000.239125ms)
+✔ the default image entrypoint fails safely without configuration or database connectivity (2093.684583ms)
+{"fixture_closed":true,"object_requests":3,"failures":0,"max_rss_kib":213060}
+{"image":"sha256:e38243abf2391931bc5a00cbc3cb0cc681872a63d2fa18a7252b2546d7588fe6","architecture":"amd64","memory_limit":1073741824,"cpu_limit":1,"fixture_only":true}
+✔ the amd64 service runs all three tools with HTTP/GCS fixtures and drains an active quote on SIGTERM (4283.784333ms)
+{"image":"sha256:e38243abf2391931bc5a00cbc3cb0cc681872a63d2fa18a7252b2546d7588fe6","architecture":"amd64","memory_limit":1073741824,"cpu_limit":1,"fixture_only":true}
+✔ SIGKILL preserves charged attempts and does not publish the interrupted opinion (1893.773625ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 14359.905875

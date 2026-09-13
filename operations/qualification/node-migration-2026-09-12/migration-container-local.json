@@ -1,0 +1,160 @@
+{
+	"recorded_at": "2026-09-13T01:45:06.289555+00:00",
+	"scope": "Local restricted migration identity, ordered schema and runtime grant reconciliation, cancellation recovery and amd64 container lifecycle. No live cloud or upstream evidence.",
+	"base_commit": "e475562e0e0eb093c8e10eee859a090880f78289",
+	"branch": "codex/lexcerta-node-runtime",
+	"uncommitted_work": true,
+	"build_id": "0000000000000000000000000000000000000000",
+	"image_index": "sha256:401a46f40fa09c0b523e5a2b27ac62674cebcb2b87bbad3ab1c108a0d6b69946",
+	"image_manifest": "sha256:d07e6944b783376edb9756c5f0f3bc78ceaa097823b2c088d26ea7e6a03a71db",
+	"node": "24.21.0",
+	"architecture": "amd64",
+	"uid": 1000,
+	"compiled_files_compared_to_container_sha256": {
+		"node/gcs-source-objects.js": "263bd4172cff49611f4fb31ceac7f6f389bd20df613102774695e7193ef7939e",
+		"node/maintenance-main.js": "165a5a357f58a99b8f139a2d61ab1c9cc72c1a22d690862f91f4444e905e9282",
+		"node/migration-main.js": "a80a508896e54f7a107c0f708acb5601396b90e8b8a3da86ecf8b44a3198bdbc",
+		"node/neon-database.js": "3d5e262f5b5c3a7d2cac2613c20deb50b4bdea8545fd40d1424f5a1562579e08",
+		"node/operator-application.js": "b5bdc9fb3567040b29f0784dfebc5f388e6dcddc07eae01f20aae4df2cdaa0be",
+		"node/operator-cli.js": "7e5e457d2a2ee96e6fa7791b2676c3ebc109886ba18b097238249786f9e6faee",
+		"node/operator-http.js": "5338ad1099728e44e12abdc342d1620ce4215ef9c36fbf3afdceaeb3a9276dd5",
+		"node/operator-identity.js": "3cb1f3a09642734a38cfbd783a3b4fd2528b059440de01797eadd6cc651e2475",
+		"node/operator-main.js": "80e592f30667927cd1d264d93f2f4212f1147530e4ef80e27c046b116d7c1a08",
+		"node/public-application.js": "73b08b856c5bdbc8e9efe5e0329904fe2f225d303f9e359e8a823b15eca4a36f",
+		"node/public-http.js": "a612a95b163e2ecd595155d29836aefedad6251271bfa8cc311387ec6e10438d",
+		"node/public-main.js": "120b8dc97f4c6fe9a01f1f91715673037208a0c39109f557642a19b57f9ddec0",
+		"node/runtime-config.js": "ba1ef87f5ab608b74ac28e36a6e79c03b91271a4089ae093f0d6f553b0bb541a",
+		"node/service-http.js": "9ffd20e9caa7f65d67cb5cffdfe9c5afb66a127e817eaf6cdc9a2d4bbdaf1209",
+		"node/service-process.js": "fb6fc6f314e6398ce825d899be49821f8c769ae5034b210266b6255eee35b455",
+		"node/task-process.js": "7d252f26694122f925f91d4601759b5cc1ec026a8802fc80ef0c726baa0ee221",
+		"postgres/database.js": "efb594ae9b0ac959a1ae96854efd28cf565a091f0605b72cfd467b7952ef9d97",
+		"postgres/keys.js": "804e5ad7edfd287d046d37d1f34ae9fe35ad1ed83889fbd6b38aee520009c3e3",
+		"postgres/maintenance-steps.js": "b1f26433638047ec8a1ad398c3a0c3e5848ff07424b2d1fb8bd9a1eae5f75515",
+		"postgres/maintenance.js": "029c5c1d1ec70e01a3279d9d5e688445efcb45141ae1c6bd15250f6c1b9db661",
+		"postgres/migration-connection.js": "3c33d4c336ae01a1e0afdebfa47a58547cd7d68f9b3ef7d1d63714e6577df67b",
+		"postgres/migrations.js": "1bfdc9643bb81b799bfb07ccec18715fd9a732c81358380233220910ed650e9d",
+		"postgres/opinions.js": "c234132efd5f0388d33890f365c8d0eabb29649fb9698e727c2472e811cd576d",
+		"postgres/retention.js": "ed13a5a2553a6904fee0c4a4e8ce9f7d9da30b70f9908cd3b869d08a14688ac4",
+		"postgres/roles.js": "ccc99f1c2466fd06855837b0e8fc1c9e7f634ed8a68e797ec155d96077b426fb",
+		"postgres/run-maintenance.js": "eb85b9f91a928a242053471fd0040c74c541e6e93841a705ce789dc59018903c"
+	},
+	"migrations_compared_to_container_sha256": {
+		"database/migrations/0001_authority.sql": "041ad4cd59fdb2c3bb07535aa97ee51a727d673a490f285875a1687f52cad159",
+		"database/migrations/0002_maintenance.sql": "00d65cece4d2ca6b393669754cc90fdcae63c078ba4fe8a91b6884aa183a88b9"
+	},
+	"package_lock_sha256": "1f04fc744fb5e05deda1d8a31365682269f511c444876542f71cce1feec45f9e",
+	"test_source_sha256": {
+		"test/postgres/migration-access.test.mjs": "fbc0a34a90ec11a4f1de9d14382b583a1db68e4f6b196f7a01aadf153f18d489",
+		"test/postgres/fixture.mjs": "d7f2e422e6724c550580d43fb22f433e43de5a96be763a9581faebe8d4952a41",
+		"test/node/migration-config.test.mjs": "6fc7d48688c5778bcc5f0c0130e40d2c6f20436b1106ad11d909de2557811673",
+		"test/container/migration-job.test.mjs": "5c856d66436806d617349e4a8f4bac44d44fbccf8604311fd4bf997d661be29f",
+		"test/container/migration-fixture.mjs": "3a05911435cff610d609b0f5c914666286de20aba82d29d02d525418637f3e91",
+		"test/container/maintenance-job.test.mjs": "8cf4b791d73bd1649e20eb7090b17e1724a30d5c1f1d8bbeb534191de910dee5"
+	},
+	"local_checks": {
+		"repository": 642,
+		"postgresql": 106,
+		"container": 10,
+		"total": 758,
+		"dependency_advisories": 0
+	},
+	"local_log_sha256": {
+		"migration-check-2.log": "354451a95e733234b6a8e11a51ee1074ee4c46b805e2c85ed7e6e4c88fe4de3d",
+		"migration-postgres-full-1.log": "f533b812e79626a14bc799842a688ea5668c7b07d6da4d15dedd40eba3d8c505",
+		"migration-image-build-2.log": "2e4f6a97ffd3ef3edcff2fb2126989c235f094b73e5a9f94f30953b7d1c75837",
+		"migration-container-1.log": "b66e5c2d613b8faa7d87de14f47b06dff5a1d9358018d4d52c2b6c86c5eef048",
+		"migration-audit-1.log": "6d8c5c8f3d7684adb070417bd608d01ae90aa3dc26a65af03ffda4955f38d9a3"
+	},
+	"container_observations": [
+		{
+			"image": "sha256:401a46f40fa09c0b523e5a2b27ac62674cebcb2b87bbad3ab1c108a0d6b69946",
+			"fixture": "maintenance-recovery",
+			"fixture_only": true,
+			"memory_limit": 536870912,
+			"cpu_limit": 1,
+			"fixture_closed": true,
+			"node": "v24.21.0",
+			"arch": "x64",
+			"uid": 1000,
+			"max_rss_kib": 143492,
+			"delete_requests": 1
+		},
+		{
+			"image": "sha256:401a46f40fa09c0b523e5a2b27ac62674cebcb2b87bbad3ab1c108a0d6b69946",
+			"fixture": "migration-lifecycle",
+			"fixture_only": true,
+			"memory_limit": 536870912,
+			"cpu_limit": 1,
+			"fixture_closed": true,
+			"node": "v24.21.0",
+			"arch": "x64",
+			"uid": 1000,
+			"max_rss_kib": 106636
+		},
+		{
+			"image": "sha256:401a46f40fa09c0b523e5a2b27ac62674cebcb2b87bbad3ab1c108a0d6b69946",
+			"fixture": "neon-tls",
+			"node": "v24.21.0",
+			"arch": "x64",
+			"uid": 1000,
+			"checks": 5,
+			"max_rss_kib": 108528,
+			"source": "local-postgresql",
+			"memory_limit": 536870912,
+			"cpu_limit": 1,
+			"fixture_only": true
+		},
+		{
+			"image": "sha256:401a46f40fa09c0b523e5a2b27ac62674cebcb2b87bbad3ab1c108a0d6b69946",
+			"architecture": "amd64",
+			"memory_limit": 536870912,
+			"cpu_limit": 1,
+			"fixture_only": true,
+			"fixture_closed": true,
+			"failures": 0,
+			"certificate_calls": 1,
+			"max_rss_kib": 117560
+		},
+		{
+			"fixture_closed": true,
+			"object_requests": 3,
+			"failures": 0,
+			"max_rss_kib": 212424
+		},
+		{
+			"image": "sha256:401a46f40fa09c0b523e5a2b27ac62674cebcb2b87bbad3ab1c108a0d6b69946",
+			"architecture": "amd64",
+			"memory_limit": 1073741824,
+			"cpu_limit": 1,
+			"fixture_only": true
+		},
+		{
+			"image": "sha256:401a46f40fa09c0b523e5a2b27ac62674cebcb2b87bbad3ab1c108a0d6b69946",
+			"architecture": "amd64",
+			"memory_limit": 1073741824,
+			"cpu_limit": 1,
+			"fixture_only": true
+		}
+	],
+	"observations": [
+		"Fresh-schema fixtures and production migration use the same runtime grants. Role ceilings are public 30, admin 4, job 2, migrator 1, with at least 20 configured ordinary connections remaining.",
+		"Public identity cannot alter budgets, cache ceilings, credential state, role membership or schema. Operator audit privileges are append-only. New tables and functions remain inaccessible by default.",
+		"Grant reconciliation repairs excess table, column, PUBLIC and global or schema-specific default grants; inherited administrative access and incorrect connection ceilings are rejected.",
+		"Cancellation before acquisition prevents late SQL. Interrupted DDL rolls back and releases its session lock; a lost COMMIT acknowledgement is reconciled through checksummed history without replaying committed DDL.",
+		"The packaged migration command creates both migrations and grants through actual TLS against local PostgreSQL, repeats with zero new migrations, and recovers after SIGTERM during DDL.",
+		"All ten final-image container cases pass, including maintenance SIGKILL recovery, public and operator lifecycle, and verified TLS/reconnect. No container OOM was observed."
+	],
+	"verification_sequence": "An initial PostgreSQL fixture setup failure exposed name-array parsing in the grant inventory; attname is now cast to text. After final role connection and default-grant changes, all 642 repository and 106 PostgreSQL checks passed. The image was rebuilt and all ten container checks passed. Dependency audit reported zero advisories. Documentation and this record were added afterward without runtime changes.",
+	"rss_measurement": "Process resourceUsage maxRSS including local protocol fixtures, not cgroup peak, sustained load or hosted measurement.",
+	"not_established": [
+		"Automated Neon role/database bootstrap, real ownership or privileges, password rotation and provider capacity",
+		"Provisioned Cloud Run services/jobs, Scheduler IAM, attached identities, WIF or installed missed-job alerts",
+		"Actual cloud privacy, log sinks, environment isolation, database suspension and backup behavior",
+		"Strict 48-hour physical deletion with the current hourly cleanup cutoff",
+		"External durable post-restore-point revocation/source-removal replay and an isolated restore drill",
+		"30-minute full-service concurrency-eight soak",
+		"Written CourtListener hosted-pilot permission and external pilot use",
+		"Hosted CI of this uncommitted work or production release eligibility"
+	],
+	"platform_decision": "https://github.com/rubixhacker/LexCerta/issues/27#issuecomment-5649573236"
+}

@@ -13,6 +13,7 @@ import {
 } from "../../build/postgres/coordinator.js";
 import { PgDatabase } from "../../build/postgres/database.js";
 import { PostgresOpinionSources } from "../../build/postgres/opinions.js";
+import { PostgresSourceAdministration } from "../../build/postgres/source-administration.js";
 import { DiskSourceObjects } from "./disk-objects-fixture.mjs";
 import { createPostgresFixture } from "./fixture.mjs";
 let fixture;
@@ -158,7 +159,10 @@ test("SIGKILL after publication commit preserves verified evidence; death after 
 		(await store.read({ provenance: provenance(502) })).sourceText,
 		"crash fixture opinion",
 	);
-	await store.tombstone(502);
+	await new PostgresSourceAdministration(fixture.administration, "test", fixture.journal).remove(
+		502,
+		"fixture-operator",
+	);
 	await crash({ mode: "after-deletion", opinionId: 502, token: randomUUID() });
 	assert.equal((await readdir(directory)).length, 0);
 	await assert.rejects(store.read({ provenance: provenance(502) }), /removed/);

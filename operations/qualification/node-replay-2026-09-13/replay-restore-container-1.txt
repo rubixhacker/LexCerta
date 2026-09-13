@@ -1,0 +1,10 @@
+{"fixture":"postgresql-backup-restore","fixture_only":true,"image":"sha256:9ff8036495773fe82efa022eafb90d2c98747a7fdb4bbe135a0fc0f967300db6","snapshot_bytes":35557,"snapshot_sha256":"d43816649708971d0ceb4231281c8875af6cc01c2e06d72a55e90693ff12ace2","separate_database":true,"replayed_records":5,"restored_database_sealed":true}
+✔ a real PostgreSQL dump restored into a separate database replays post-backup restrictions and stays closed (2492.729542ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2644.078167

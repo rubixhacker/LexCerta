@@ -1,0 +1,54 @@
+# Recovery journal
+
+The SQL audit table is restored along with the database. It cannot preserve revocations made after a restore point. The operator now persists a restriction in the separate private GCS recovery bucket before a revocation or rotation-expiry mutation can succeed in SQL. This is a component of restoration, not a completed restore procedure.
+
+## Record and transport
+
+Version-one records contain only `version`, `environment` and one strict restriction: `revoke_key` with a public ID, `expire_key` with a public ID and UTC expiry ceiling, or `remove_opinion` with a positive opinion ID. All three writes are integrated into the operator and the isolated SQL replay component below. Fields for credentials, HMACs, user content, actors and additional metadata are rejected. Canonical JSON is bounded to 1 KiB and its SHA-256 names the object under `restrictions/v1/<environment>/`. The bucket is `<GCP-project>-lexcerta-recovery`, separate from cached opinion bodies.
+
+The native GCS adapter uploads a single multipart object with an MD5 transfer checksum and `ifGenerationMatch=0`. It verifies the resulting generation, metadata, transfer checksum and content-addressed canonical bytes. A precondition conflict reads and verifies the existing object; it never overwrites one. A lost upload acknowledgement produces an uncertain failure without automatically repeating the upload. An explicit retry can establish that the identical restriction exists. Reads use the exact generation; missing, replaced, corrupt, oversized or cross-environment objects fail. Provider bodies, credentials and error details never appear in errors. Authentication, headers and bounded bodies share a five-second deadline and the caller's cancellation signal.
+
+GCS list requests return at most 100 references, use an environment-specific prefix and retain generation strings without numeric conversion. Page tokens are bounded; repeated tokens and duplicate entries within a page fail. Object listing is strongly consistent but multiple page reads are not a transactional snapshot. IAM revocation is eventually consistent and is not an immediate writer barrier. [GCS consistency](https://docs.cloud.google.com/storage/docs/consistency).
+
+`scanRecoveryJournal` in `src/postgres/recovery-scan.ts` collects a verified inventory for the recovery coordinator. It rejects cursor cycles across pages, duplicate object names including changed generations, foreign environments and records that do not match their content-addressed names. The fixed ceilings are 100 pages, 10,000 records and 540 seconds; callers may only lower them. Each GCS operation retains its separate five-second bound. Cancellation also bounds the caller's wait if an injected adapter ignores its signal. Errors reveal neither provider details nor partial records, and there are no automatic retries.
+
+The inventory contains the exact object references and parsed restrictions. Its SHA-256 covers the environment and every reference, sorted by object name, so enumeration order does not change its identity. Generation strings never pass through a JavaScript number. A failed scan restarts from the first page; SQL replay persists its own progress. Exceeding a bound is a failed recovery attempt, never permission to omit older restrictions.
+
+A returned inventory establishes only which generations were read successfully. It does not establish writer quiescence, reconstruct missing SQL state, apply restrictions or authorize opening the service. The isolated restore coordinator and its external barrier remain required. This helper has no deployment command or runtime IAM grant yet.
+
+The [local scan record](qualification/node-recovery-2026-09-12/recovery-scan-local.json) records eight passing focused checks and a successful Node TypeScript build. Coverage includes 205 exact-generation reads across three pages, stable inventory identity, cross-page cycles and duplicate generations, hard work limits, malformed records, sanitized errors and cancellation. These checks use a loopback GCS wire fixture.
+
+Terraform defines a private recovery bucket with no automatic deletion and gives only the operator create/get permission on its environment's prefix. It grants no runtime delete, overwrite, metadata-update or list capability on that bucket. Replacing an existing GCS object requires delete permission as well as create permission. These are unprovisioned configuration definitions; actual inherited IAM and precondition/error behavior require live qualification. No irrevocable bucket lock is enabled. [Object insert permissions and preconditions](https://docs.cloud.google.com/storage/docs/json_api/v1/objects/insert).
+
+## Mutation and uncertainty
+
+Key preflight and final mutation both check environment and share the admission lock. The preflight transaction ends before object I/O. A successful final mutation therefore always has an externally persisted restriction; no success depends on a later outbox flush. Rotation logs its preflight database-time expiry ceiling and the final mutation may only shorten it. A successful rotation still gives its child 90 days and permits the parent for at most seven days.
+
+An external write can commit while SQL later fails or rolls back. The restriction remains authoritative for recovery; it is not undone. The service returns `outcome_unknown`, including conflicts discovered after journaling. SQL-only status cannot establish that a pending restriction does not exist. Finish an uncertain revocation against the same public ID; after uncertain rotation, revoke any issued child with lost credentials and retire the parent before replacing it. An operator retry does not create another copy of an identical revocation record.
+
+## Replay against an isolated database
+
+`replayRecoveryJournal` in `src/postgres/recovery-replay.ts` applies a verified inventory with the restricted database-owning migration identity. Migration `0004_recovery_replay.sql` adds the recovery seal, inventory progress, exact-generation receipts and persistent key restrictions. The caller must already have revoked database `CONNECT` from every identity other than the owner and drained other connections. Replay checks those facts in PostgreSQL before reading GCS; it does not accept a boolean assertion of isolation. It also checks the migration identity, environment and shared migration advisory lock.
+
+The session check counts every other backend in the target database. Restricted roles can observe another session's existence and database while other `pg_stat_activity` fields are null; filtering on `backend_type` would miss those connections. A real PostgreSQL regression caught that mistake. [PostgreSQL statistics visibility](https://www.postgresql.org/docs/18/monitoring-stats.html).
+
+Sealing and removal of runtime database, schema, table, column, sequence and function grants commit together before external I/O. Routine migration grant repair preserves that seal and cannot reopen the database. Every replay transaction rechecks isolation and SQL grants. The scan runs outside SQL transactions; subsequent transactions apply at most ten restrictions together with their receipts and inventory checkpoint. The total attempt is bounded to 540 seconds, with the existing shorter database and GCS deadlines. A lost commit acknowledgement fails the attempt; an explicit retry rescans, checks exact receipts and resumes committed progress without duplicating effects or audit events.
+
+Key restrictions only revoke or shorten expiry. Their registry survives absent keys and contains no credential material. The database trigger prevents reusing a restricted ID, changing a recovered key's identity, extending its expiry or reviving it after revocation. Source replay calls the same removal function as the operator, preserving historical evidence and deletion fences and creating a tombstone for an absent opinion. Replay queues source deletion; it does not itself establish physical erasure.
+
+Success returns `restrictions_replayed` with the inventory digest and `databaseSealed: true`. There is no public recovery endpoint, deployed recovery job, reader IAM grant or automatic reopening command. The internal caller is responsible for supplying a verified operator identity. Neither a successful scan nor replay proves external writers have stopped.
+
+The [local replay record](qualification/node-replay-2026-09-13/local.json) includes nine real PostgreSQL replay cases and a separate actual PostgreSQL 18 dump-and-restore drill. The drill takes a backup, changes the source database through the journaled operator paths, restores the older SQL into a different database and applies five post-backup restrictions. It verifies a revoked key, a shortened parent expiry, the absence and retained revocation of a post-backup child, two source tombstones and denied runtime connections. The replay helper runs on the host against the disposable PostgreSQL container; its compiled files are compared with the new amd64 image. This is not execution of a deployed recovery job or a Neon PITR test.
+
+## Remaining launch gates
+
+The writer is integrated for key revocation, rotation and source removal. The source-removal SQL function is idempotent and preserves evidence history, audit identity and deletion fences; runtime roles cannot directly clear tombstones. This does **not** yet establish that a restored deployment is safe to open. Remaining work includes:
+
+- Keep public and operator writers closed throughout an isolated restore, with a verified barrier that survives the database restore itself.
+- Package the replay component into the isolated recovery job with authenticated invocation and narrowly scoped GCS reader permissions. Preserve its closed-database result until every reopening prerequisite is established.
+- Exercise source-removal replay through that job, including late uploads and interrupted garbage collection. The local restored-database drill covers existing and absent opinions, but does not reconcile all external objects.
+- Reconcile post-restore-point limit changes, rolling admission/global upstream ledgers and source/citation evidence history. A complete restriction scan alone does not reconstruct those facts.
+- Apply retention and object reconciliation before opening; establish bounded record retention compatible with 90-day keys, seven-day recovery history and persistent source removal. Automatic journal deletion stays disabled until that is qualified.
+- Exercise the complete procedure against an actual isolated Neon restore and live GCS/IAM, including pending writes, lost acknowledgements and failed or interrupted replay.
+
+Local wire, real PostgreSQL and dump-and-restore tests establish transport bounds, journal-before-mutation behavior and sealed SQL replay. They are not live GCS, IAM, Neon restoration or launch evidence.
