@@ -4,7 +4,7 @@ This is a machine preflight for the connection frontier in the confirmed [produc
 
 ## Run
 
-Use Node 22 or newer and the repository's installed dependencies. Set `LEXCERTA_PREFLIGHT_ENDPOINT` to the exact MCP URL and `LEXCERTA_PREFLIGHT_TOKEN` through your environment or secret manager, then run:
+Use the repository-pinned Node 24.21.0 and the repository's installed dependencies. Set `LEXCERTA_PREFLIGHT_ENDPOINT` to the exact MCP URL and `LEXCERTA_PREFLIGHT_TOKEN` through your environment or secret manager, then run:
 
 ```sh
 node scripts/connection-preflight.mjs
@@ -27,15 +27,17 @@ A cross-origin metadata URL is reported as `cross_origin_not_tested` and is not 
 ## Reproducing local evidence
 
 ```sh
+npm run build:node
 node --test --test-timeout=20000 scripts/worker-qualification-connection-preflight.test.mjs
 ```
 
-The tests use real loopback HTTP. One launches the real `src/mcp.ts` handler with fixture-only bearer admission and gateways that throw on source access, then invokes the CLI as a separate process. This establishes CLI-to-handler behavior; it does not exercise the full Worker/Node admission and storage path. `scripts/connection-preflight-runtime-fixture.mjs` is a local test fixture only, not a deployable service. The existing `test:worker-qualification` glob includes this test file.
+The tests use real loopback HTTP. One launches the real `src/mcp.ts` handler with fixture-only bearer admission and gateways that throw on source access, then invokes the CLI as a separate process. This establishes CLI-to-handler behavior; it does not exercise the full Worker/Node admission and storage path. `scripts/connection-preflight-runtime-fixture.mjs` is a local test fixture only, not a deployable service. The existing `test:worker-qualification` command builds the Node handler and includes this test file.
 
 For interactive inspection, start the fixture in one terminal:
 
 ```sh
-node --import tsx scripts/connection-preflight-runtime-fixture.mjs
+npm run build:node
+node scripts/connection-preflight-runtime-fixture.mjs
 ```
 
 Use its printed loopback URL as the endpoint and the public synthetic value `fixture-preflight-token` as the token in another terminal. Stop the fixture afterward. Its expected CLI exit is 1: unauthenticated access is rejected and parsing passes, but OAuth metadata is not advertised.

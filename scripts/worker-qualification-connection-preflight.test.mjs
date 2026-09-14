@@ -221,11 +221,9 @@ test("CLI reaches the real MCP handler and records only bounded machine evidence
 	const { spawn, execFile } = await import("node:child_process");
 	const { promisify } = await import("node:util");
 	const { once } = await import("node:events");
-	const runtime = spawn(
-		process.execPath,
-		["--import", "tsx", "scripts/connection-preflight-runtime-fixture.mjs"],
-		{ stdio: ["ignore", "pipe", "pipe"] },
-	);
+	const runtime = spawn(process.execPath, ["scripts/connection-preflight-runtime-fixture.mjs"], {
+		stdio: ["ignore", "pipe", "pipe"],
+	});
 	t.after(async () => {
 		if (runtime.exitCode === null) {
 			const closed = once(runtime, "close");

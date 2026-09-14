@@ -1,5 +1,5 @@
 import { createServer } from "node:http";
-import { createLexCertaMcpHandler } from "../src/mcp.ts";
+import { createLexCertaMcpHandler } from "../build/mcp.js";
 
 const forbiddenGateway = new Proxy(
 	{},
