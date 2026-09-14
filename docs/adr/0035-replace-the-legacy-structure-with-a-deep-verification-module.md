@@ -1,0 +1,3 @@
+# Replace the legacy structure with a deep verification module
+
+The migration will replace the current shallow tool, cache, resilience, and transport structure in place with one deep verification module exposing `parseCitation`, `verifyCitation`, and `verifyQuote`. MCP/HTTP is an adapter above that seam; CourtListener, D1/R2, and coordinated quota and circuit state are adapters at internal external-system seams, with in-memory adapters used for tests. Correct pure parsing behavior may be retained, but Next.js, Express, legacy transports, fuzzy verification, Worker-local authority, and compatibility wrappers will be removed. Tests exercise the verification interface rather than internal implementation details.

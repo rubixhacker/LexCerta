@@ -1,0 +1,3 @@
+# Return metadata-only evidence provenance
+
+LexCerta verification results will return metadata sufficient to inspect their source and search completeness: CourtListener cluster and matching-opinion identifiers, a canonical public CourtListener URL, the normalized citation and evidence-source scope, retrieval time and cache freshness, the selected opinion-text representation, and the number and completeness of opinions searched. Tool results will not echo the submitted quotation, a matched excerpt, or full opinion text. This keeps the public contract verifiable without expanding payloads or redistributing content callers already possess.

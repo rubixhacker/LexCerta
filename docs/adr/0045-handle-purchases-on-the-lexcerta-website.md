@@ -1,0 +1,3 @@
+# Handle purchases on the LexCerta website
+
+On September 13, 2026, the user accepted handling subscriptions, prepaid-credit purchases, and billing on LexCerta's website, with Claude and ChatGPT connecting to an existing LexCerta account for draft verification and report delivery. This preserves one commercial relationship across both AI hosts and accommodates [OpenAI's plugin commerce rules](https://developers.openai.com/plugins/app-guidelines#commerce-and-monetization), which allow existing paid-account access but prohibit digital-service sales, upgrade promotion, and purchase-initiating links through the plugin. Account-linking and checkout details remain to be designed and qualified before paid launch.

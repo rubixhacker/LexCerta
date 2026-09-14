@@ -1,3 +1,5 @@
+> Historical planning record: the [confirmed product scope](../docs/product-scope.md) supersedes conflicting product requirements and Customer milestones. Runtime evidence and release gates retain their recorded limits.
+
 # Project State
 
 > Historical status from February 2026. For the current implementation and outstanding Cloud Run delivery/production gates, start with [README.md](../README.md). This file is retained as planning history, not as a current release status.

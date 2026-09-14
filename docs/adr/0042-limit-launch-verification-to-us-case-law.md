@@ -1,0 +1,3 @@
+# Limit launch verification to U.S. case law
+
+LexCerta's launch verification scope is U.S. federal and state case law in supported citation formats, checked against available CourtListener evidence. The user accepted this scope on September 13, 2026 to align the evidence checks with the existing case-law source while preserving whole-draft accounting: statutes, regulations, foreign authorities, and secondary sources remain visible and are labelled outside the supported verification scope. This establishes a product boundary, not a claim of complete source coverage or support for every U.S. citation format.

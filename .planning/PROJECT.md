@@ -1,3 +1,5 @@
+> Historical planning record: the [confirmed product scope](../docs/product-scope.md) supersedes conflicting product requirements and Customer milestones. Runtime evidence and release gates retain their recorded limits.
+
 # LexCerta
 
 > Historical plan, superseded by [the current README](../README.md), [PRD #1](https://github.com/rubixhacker/LexCerta/issues/1), and the [runtime decision](../operations/worker-runtime-qualification.md). The Vercel/Supabase/Stripe roadmap and universal hallucination claims below do not describe the current service.

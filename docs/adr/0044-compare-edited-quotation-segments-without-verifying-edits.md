@@ -1,0 +1,3 @@
+# Compare edited quotation segments without verifying edits
+
+For quotations with ellipses or bracketed edits that fail full exact matching, LexCerta's launch draft review will compare unchanged text segments against a single source passage and report edited quotation—manual review required, with established and unresolved matches distinguished. Accepted on September 13, 2026, this assists source inspection while reserving quotation-matched findings for full exact matches after safe normalization and leaving the meaning of editorial changes unassessed. This extends the draft-review workflow alongside ADR 0011's exact-match rule; it does not authorize fuzzy verification or returned source excerpts.

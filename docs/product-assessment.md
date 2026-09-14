@@ -1,3 +1,5 @@
+> Historical planning record: the [confirmed product scope](product-scope.md) supersedes conflicting product requirements and Customer milestones. Runtime evidence and release gates retain their recorded limits.
+
 # Product assessment
 
 September 12, 2026, during MVP implementation.

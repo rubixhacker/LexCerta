@@ -1,5 +1,13 @@
 # LexCerta
 
+LexCerta's target product is a hosted citation and quotation verification service for lawyers working in Claude or ChatGPT. It supports reviewing supplied drafts and checking evidence while an AI host creates a draft, followed by a final whole-draft review and verification report.
+
+The [confirmed product scope](docs/product-scope.md), accepted September 13, 2026, defines the workflows, evidence boundaries, pilot, commercial model, and public-launch criteria. Implementation and host qualification require the separate evidence specified there.
+
+Use the [domain glossary](CONTEXT.md) for terminology and the [architecture decisions](docs/adr/) for recorded boundaries and tradeoffs. The original [product brief](LexCerta.md) and legacy `.planning` project, roadmap, and state files are historical records; their conflicting promises and milestones are superseded by the confirmed scope.
+
+## Implementation checkpoint
+
 LexCerta provides three MCP tools for checking supported U.S. case citations and quoted opinion text against CourtListener. Results distinguish supporting evidence, a source-scoped miss, and an incomplete or unavailable check.
 
 This repository contains a tested service implementation, but the replacement production service is not yet qualified for launch. The recorded runtime decision rejects the Cloudflare Worker candidate and selects TypeScript on Cloud Run. Follow [Deliver isolated staging and immutable promotion](https://github.com/rubixhacker/LexCerta/issues/11) and [Cut over production and retire the legacy runtime](https://github.com/rubixhacker/LexCerta/issues/12). `npm run deploy` intentionally fails until that delivery is implemented.
@@ -63,4 +71,4 @@ The unused Next.js/Express implementation, legacy SDK transports, fuzzy matcher,
 - [Frozen source corpus](operations/qualification/corpus-2026-09-12/README.md): 60 real cases, a 20-case holdout and source-reviewed quote annotations, frozen before tuning. Source-integrity checks do not establish product or live API accuracy.
 - [Observability and retention](operations/observability.md): operational privacy and lifecycle rules.
 
-The [MVP route](docs/mvp-route.md) and its linked decision resolutions govern current implementation. The `.planning/` archive describes the earlier Vercel/Supabase/Stripe proposal and has no authority over current scope or behavior. Paid onboarding requires a written Free Law Project commercial arrangement.
+The [confirmed product scope](docs/product-scope.md) governs product requirements. The [MVP route](docs/mvp-route.md) retains earlier runtime decisions and evidence pointers; its developer-pilot assumptions are superseded. The `.planning/` archive describes the earlier Vercel/Supabase/Stripe proposal and has no authority over current scope or behavior. Paid onboarding requires a written Free Law Project commercial arrangement.

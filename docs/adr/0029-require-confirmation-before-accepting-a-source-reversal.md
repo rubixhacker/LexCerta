@@ -1,0 +1,3 @@
+# Require confirmation before accepting a source reversal
+
+When a successful fresh CourtListener lookup contradicts retained positive evidence, LexCerta will immediately stop using the older evidence to return `verified`, preserve it internally as superseded, and return `indeterminate` with reason `source_changed`. A second successful lookup at least 24 hours later is required before accepting the negative state. LexCerta will not retry automatically; a later caller or operator check performs confirmation. If CourtListener supports the evidence again, normal positive operation resumes immediately.

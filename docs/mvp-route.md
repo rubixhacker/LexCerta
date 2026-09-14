@@ -1,3 +1,5 @@
+> Historical planning record: the [confirmed product scope](product-scope.md) supersedes conflicting product requirements and Customer milestones. Runtime evidence and release gates retain their recorded limits.
+
 # LexCerta MVP route
 
 The canonical decision index is [Wayfinder: Reach a trustworthy stateless LexCerta pilot MVP](https://github.com/rubixhacker/LexCerta/issues/23). Its resolution comments govern the plan. This file is a navigation handoff, not a second tracker. The user delegated recommended answers without interviews on September 12, 2026; no customer answers or validation were invented.

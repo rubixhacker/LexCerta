@@ -1,0 +1,3 @@
+# Serve lawyers through Claude and ChatGPT
+
+LexCerta's initial Customers are lawyers using Claude or ChatGPT, and its paid verification service will be accessed through those AI hosts. The earlier developer-integrator pilot does not establish the intended Customer outcome, so product validation must include lawyers using LexCerta in those hosts. The scope decisions accepted on September 13, 2026 make the lawyer's connection and verification workflow the basis for integration design: the invited Customer pilot uses custom connections, while public launch requires approved and published directory listings in both hosts.

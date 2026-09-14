@@ -1,0 +1,3 @@
+# Require whole-draft coverage accounting
+
+LexCerta's launch workflow must report item-by-item findings and whole-draft review coverage, because successful checks on a subset of a draft cannot establish that the draft was fully reviewed. A complete review requires evidence that the draft's relevant citations and quotations were identified and addressed; otherwise the report must state that coverage is partial, with unresolved items visible. Accepted on September 13, 2026, this requirement keeps review coverage separate from verification outcomes; [ADR 0041](0041-process-full-drafts-transiently-for-coverage.md) defines full-draft intake, LexCerta-owned extraction, and transient processing.

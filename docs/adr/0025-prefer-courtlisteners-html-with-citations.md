@@ -1,0 +1,3 @@
+# Prefer CourtListener's HTML with citations for quote verification
+
+LexCerta will use CourtListener's `html_with_citations` as the canonical opinion representation for exact quote verification, followed deterministically by `html` and then `plain_text` when the preferred field is unavailable. HTML representations will be processed with a standards-compliant parser before safe textual normalization, never stripped with a regular expression. Results will identify the selected source field in provenance. If no representation is usable, quote verification returns `indeterminate` with reason `source_text_unavailable`.

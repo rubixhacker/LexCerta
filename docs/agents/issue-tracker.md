@@ -19,3 +19,7 @@ The canonical tracker is GitHub Issues in `rubixhacker/LexCerta`. Use explicit r
 On September 12, 2026, the user explicitly requested recommended answers without interviews or per-step confirmations. The MVP map records that exception to the skill's usual interactive and one-ticket-per-session pauses. Resolutions must identify recommendations adopted under that delegation; they must not invent human interview responses or external validation.
 
 The map is complete when the route is decided. Implementation, deployment, external participants, commercial arrangements, and pilot outcomes are separate work and evidence gates. Closing a planning issue does not complete those gates.
+
+## Product requirements and publishing
+
+The confirmed `docs/product-scope.md` supersedes conflicting developer-pilot assumptions in the older map. Publish PRDs and execution tickets as GitHub Issues; pull requests are not the request surface. Use the default triage vocabulary in `triage-labels.md` for execution triage; the Wayfinder labels above identify planning records.

@@ -1,3 +1,5 @@
+> Completed implementation record from the earlier Worker checkout. The active baseline is now the [reconciled Node integration branch](../../../operations/branch-reconciliation.md); the original baseline and test counts below describe that earlier execution.
+
 # Connection preflight implementation plan
 
 **Goal:** Make the first integration uncertainty observable through a bounded HTTP preflight, without representing a machine probe as Customer qualification.

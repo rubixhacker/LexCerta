@@ -1,3 +1,5 @@
+> Historical planning record: the [confirmed product scope](../docs/product-scope.md) supersedes conflicting product requirements and Customer milestones. Runtime evidence and release gates retain their recorded limits.
+
 # Roadmap: LexCerta
 
 ## Milestones
